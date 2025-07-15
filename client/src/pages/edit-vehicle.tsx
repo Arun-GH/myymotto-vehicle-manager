@@ -414,15 +414,20 @@ export default function EditVehicle() {
                   )}
                 />
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="insuranceExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Insurance Expiry</FormLabel>
+                        <FormLabel>Insurance Expiry (Optional)</FormLabel>
                         <FormControl>
-                          <Input type="date" {...field} />
+                          <Input 
+                            type="date" 
+                            {...field} 
+                            value={field.value || ""} 
+                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -433,9 +438,14 @@ export default function EditVehicle() {
                     name="emissionExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Emission Expiry</FormLabel>
+                        <FormLabel>Emission Expiry (Optional)</FormLabel>
                         <FormControl>
-                          <Input type="date" {...field} />
+                          <Input 
+                            type="date" 
+                            {...field} 
+                            value={field.value || ""} 
+                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -446,9 +456,32 @@ export default function EditVehicle() {
                     name="rcExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>RC Expiry</FormLabel>
+                        <FormLabel>RC Expiry (Optional)</FormLabel>
                         <FormControl>
-                          <Input type="date" {...field} />
+                          <Input 
+                            type="date" 
+                            {...field} 
+                            value={field.value || ""} 
+                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastServiceDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Service Date (Optional)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="date" 
+                            {...field} 
+                            value={field.value || ""} 
+                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

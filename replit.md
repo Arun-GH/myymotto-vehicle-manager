@@ -58,6 +58,9 @@ Preferred communication style: Simple, everyday language.
 - Added document management with file timestamps, sizes, and direct file viewing in new tabs
 - Implemented proper navigation flow: dashboard → category selection → document list → file viewer with back navigation
 - Connected "View Documents" link to new categorized document browser (/vehicle/:id/documents)
+- Added last service date field to vehicle forms and database schema
+- Display last service date on vehicle cards with relative time formatting (e.g., "2 weeks ago")
+- Enhanced vehicle tracking with maintenance history capture for better vehicle care management
 
 **January 15, 2025**: Migrated authentication system to PostgreSQL database
 - Fixed critical OTP verification issues by migrating from in-memory to database storage

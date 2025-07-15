@@ -182,6 +182,7 @@ export class MemStorage implements IStorage {
       insuranceExpiry: insertVehicle.insuranceExpiry || null,
       emissionExpiry: insertVehicle.emissionExpiry || null,
       rcExpiry: insertVehicle.rcExpiry || null,
+      lastServiceDate: insertVehicle.lastServiceDate || null,
       id, 
       createdAt: new Date() 
     };

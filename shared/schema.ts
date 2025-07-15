@@ -17,6 +17,7 @@ export const vehicles = pgTable("vehicles", {
   insuranceExpiry: date("insurance_expiry"),
   emissionExpiry: date("emission_expiry"),
   rcExpiry: date("rc_expiry"),
+  lastServiceDate: date("last_service_date"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -45,6 +46,7 @@ export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   insuranceExpiry: z.string().optional().nullable(),
   emissionExpiry: z.string().optional().nullable(),
   rcExpiry: z.string().optional().nullable(),
+  lastServiceDate: z.string().optional().nullable(),
 });
 
 export const insertDocumentSchema = createInsertSchema(documents).omit({

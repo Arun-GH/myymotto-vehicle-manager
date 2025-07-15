@@ -95,10 +95,10 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
         )}
         
-        <div className="grid grid-cols-2 gap-3 text-sm">
+        <div className="grid grid-cols-3 gap-2 text-sm">
           <div className="bg-muted/50 rounded-lg p-2">
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Insurance</span>
+            <div className="flex flex-col">
+              <span className="text-muted-foreground text-xs">Insurance</span>
               <span className={`font-medium ${
                 insuranceStatus.status === "expired" ? "text-destructive" :
                 insuranceStatus.status === "expiring" ? "text-warning" :
@@ -109,14 +109,24 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             </div>
           </div>
           <div className="bg-muted/50 rounded-lg p-2">
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Emission</span>
+            <div className="flex flex-col">
+              <span className="text-muted-foreground text-xs">Emission</span>
               <span className={`font-medium ${
                 emissionStatus.status === "expired" ? "text-destructive" :
                 emissionStatus.status === "expiring" ? "text-warning" :
                 "text-green-600"
               }`}>
                 {emissionStatus.shortText}
+              </span>
+            </div>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-2">
+            <div className="flex flex-col">
+              <span className="text-muted-foreground text-xs">Last Service</span>
+              <span className="font-medium text-gray-700">
+                {vehicle.lastServiceDate 
+                  ? formatDistanceToNow(new Date(vehicle.lastServiceDate))
+                  : "Not set"}
               </span>
             </div>
           </div>

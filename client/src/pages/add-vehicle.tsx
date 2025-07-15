@@ -379,19 +379,44 @@ export default function AddVehicle() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="rcExpiry"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>RC Expiry</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="rcExpiry"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>RC Expiry (Optional)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="date" 
+                            {...field} 
+                            value={field.value || ""} 
+                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastServiceDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Service Date (Optional)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="date" 
+                            {...field} 
+                            value={field.value || ""} 
+                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <Button 
                   type="submit" 
