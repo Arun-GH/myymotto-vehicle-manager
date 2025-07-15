@@ -9,6 +9,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { type UserProfile } from "@shared/schema";
 import Dashboard from "@/pages/dashboard";
 import AddVehicle from "@/pages/add-vehicle";
+import EditVehicle from "@/pages/edit-vehicle";
 import VehicleDetails from "@/pages/vehicle-details";
 import Documents from "@/pages/documents";
 import Profile from "@/pages/profile";
@@ -53,6 +54,7 @@ function Router() {
       <Route path="/signin" component={SignIn} />
       <Route path="/" component={Dashboard} />
       <Route path="/add-vehicle" component={AddVehicle} />
+      <Route path="/vehicle/:id/edit" component={EditVehicle} />
       <Route path="/vehicle/:id" component={VehicleDetails} />
       <Route path="/documents" component={Documents} />
       <Route path="/profile" component={Profile} />
