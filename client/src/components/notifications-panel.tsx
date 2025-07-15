@@ -73,7 +73,7 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
   if (isLoading) {
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-        <Card className="w-full max-w-md mx-4">
+        <Card className="w-full max-w-md mx-4 shadow-orange">
           <CardHeader>
             <CardTitle>Loading Notifications...</CardTitle>
           </CardHeader>
@@ -84,7 +84,7 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl max-h-[80vh] overflow-hidden">
+      <Card className="w-full max-w-2xl max-h-[80vh] overflow-hidden shadow-orange">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="flex items-center space-x-2">
             <Bell className="w-5 h-5" />

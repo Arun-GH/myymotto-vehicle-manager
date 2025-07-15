@@ -176,7 +176,7 @@ export default function SignIn() {
   if (step === "register") {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center bg-warm-pattern">
-        <Card className="w-full max-w-md card-hover shadow-xl">
+        <Card className="w-full max-w-md card-hover shadow-orange">
           <CardHeader className="text-center">
             <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
               <img 
@@ -218,7 +218,7 @@ export default function SignIn() {
   if (step === "verify-otp") {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center bg-warm-pattern">
-        <Card className="w-full max-w-md card-hover shadow-xl">
+        <Card className="w-full max-w-md card-hover shadow-orange">
           <CardHeader className="text-center">
             <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
               <img 

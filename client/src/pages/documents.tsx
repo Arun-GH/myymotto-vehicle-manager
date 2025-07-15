@@ -80,7 +80,7 @@ function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
   });
 
   return (
-    <Card>
+    <Card className="shadow-orange">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between text-base">
           <span>{vehicle.make} {vehicle.model}</span>

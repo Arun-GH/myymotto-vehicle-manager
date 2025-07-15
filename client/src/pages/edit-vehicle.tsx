@@ -209,7 +209,7 @@ export default function EditVehicle() {
       </header>
 
       <div className="p-4 pb-20 bg-warm-pattern">
-        <Card className="card-hover shadow-lg">
+        <Card className="card-hover shadow-orange">
           <CardHeader className="bg-gradient-to-r from-red-50 to-orange-50 rounded-t-lg">
             <CardTitle className="flex items-center space-x-2 text-gray-800">
               <Car className="w-5 h-5 text-red-600" />

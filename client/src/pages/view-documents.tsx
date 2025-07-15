@@ -165,7 +165,7 @@ export default function ViewDocuments() {
 
       <div className="p-4 pb-20 bg-warm-pattern">
         {/* Vehicle Info */}
-        <Card className="mb-4">
+        <Card className="mb-4 shadow-orange">
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
               {vehicle.thumbnailPath ? (
@@ -244,7 +244,7 @@ export default function ViewDocuments() {
                 <p className="text-muted-foreground">Loading documents...</p>
               </div>
             ) : getDocumentsByCategory(selectedCategory).length === 0 ? (
-              <Card className="p-8 text-center">
+              <Card className="p-8 text-center shadow-orange">
                 <Folder className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">No Documents Found</h3>
                 <p className="text-gray-600 mb-4">

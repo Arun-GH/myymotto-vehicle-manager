@@ -52,7 +52,7 @@ export default function DocumentUpload({ documents, onDocumentsChange }: Documen
     <div className="space-y-4">
       <label className="block text-sm font-medium text-foreground">Documents</label>
       
-      <Card className="border-dashed border-2 border-muted-foreground/25">
+      <Card className="border-dashed border-2 border-muted-foreground/25 shadow-orange">
         <CardContent className="p-6 text-center">
           <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
           <p className="text-sm text-muted-foreground mb-4">

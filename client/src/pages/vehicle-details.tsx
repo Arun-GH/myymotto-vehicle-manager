@@ -161,7 +161,7 @@ export default function VehicleDetails() {
 
       <div className="p-4 pb-20 space-y-6">
         {/* Vehicle Info Card */}
-        <Card>
+        <Card className="shadow-orange">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>{vehicle.make} {vehicle.model}</span>
@@ -191,7 +191,7 @@ export default function VehicleDetails() {
         </Card>
 
         {/* Expiry Status Card */}
-        <Card>
+        <Card className="shadow-orange">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Calendar className="w-5 h-5" />
@@ -237,7 +237,7 @@ export default function VehicleDetails() {
         </Card>
 
         {/* Documents Card */}
-        <Card>
+        <Card className="shadow-orange">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -288,7 +288,7 @@ export default function VehicleDetails() {
         </Card>
 
         {/* Vehicle Actions Card */}
-        <Card>
+        <Card className="shadow-orange">
           <CardHeader>
             <CardTitle className="text-base">Vehicle Actions</CardTitle>
           </CardHeader>

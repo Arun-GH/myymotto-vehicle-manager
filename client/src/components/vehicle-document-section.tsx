@@ -44,7 +44,7 @@ export default function VehicleDocumentSection({
   };
 
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 shadow-orange">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center space-x-2">
           <File className="w-5 h-5" />

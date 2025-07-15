@@ -72,7 +72,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
 
   if (!isSupported) {
     return (
-      <Card className="max-w-md mx-auto">
+      <Card className="max-w-md mx-auto shadow-orange">
         <CardContent className="p-6 text-center">
           <Camera className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Camera Not Supported</h3>

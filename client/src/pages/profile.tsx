@@ -161,7 +161,7 @@ export default function Profile() {
         </header>
 
         <div className="p-4 flex items-center justify-center min-h-[80vh] bg-warm-pattern">
-          <Card className="w-full max-w-md card-hover shadow-xl">
+          <Card className="w-full max-w-md card-hover shadow-orange">
             <CardContent className="p-6 text-center">
               <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
                 <img 
@@ -239,7 +239,7 @@ export default function Profile() {
       <div className="p-4 pb-20">
         {!isEditing && profile ? (
           // Display Mode
-          <Card>
+          <Card className="shadow-orange">
             <CardHeader>
               <CardTitle>Personal Information</CardTitle>
             </CardHeader>
@@ -295,7 +295,7 @@ export default function Profile() {
           </Card>
         ) : (
           // Edit/Create Mode
-          <Card>
+          <Card className="shadow-orange">
             <CardHeader>
               <CardTitle>Personal Information</CardTitle>
             </CardHeader>

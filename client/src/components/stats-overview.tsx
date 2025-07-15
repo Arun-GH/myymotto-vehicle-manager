@@ -31,7 +31,7 @@ export default function StatsOverview() {
   return (
     <section className="px-4 py-3">
       <div className="grid grid-cols-3 gap-2">
-        <Card className="stats-card border-none text-white shadow-md">
+        <Card className="stats-card border-none text-white shadow-orange">
           <CardContent className="p-2 text-center">
             <div className="flex justify-center mb-1">
               <Car className="w-4 h-4" />
@@ -41,7 +41,7 @@ export default function StatsOverview() {
           </CardContent>
         </Card>
         
-        <Card className="stats-card-accent border-none text-white shadow-md">
+        <Card className="stats-card-accent border-none text-white shadow-orange">
           <CardContent className="p-2 text-center">
             <div className="flex justify-center mb-1">
               <Clock className="w-4 h-4" />
@@ -53,7 +53,7 @@ export default function StatsOverview() {
           </CardContent>
         </Card>
         
-        <Card className="bg-gradient-to-br from-orange-600 to-orange-700 border-none text-white shadow-md">
+        <Card className="bg-gradient-to-br from-orange-600 to-orange-700 border-none text-white shadow-orange">
           <CardContent className="p-2 text-center">
             <div className="flex justify-center mb-1">
               <AlertTriangle className="w-4 h-4" />
