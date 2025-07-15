@@ -124,9 +124,11 @@ export default function VehicleDetails() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-                <Edit className="w-5 h-5" />
-              </Button>
+              <Link href={`/vehicle/${vehicleId}/edit`}>
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+                  <Edit className="w-5 h-5" />
+                </Button>
+              </Link>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
