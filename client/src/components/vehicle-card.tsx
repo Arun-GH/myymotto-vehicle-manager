@@ -48,9 +48,17 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center shadow-md">
-                <Car className="w-6 h-6 text-white" />
-              </div>
+              {vehicle.thumbnailPath ? (
+                <img 
+                  src={vehicle.thumbnailPath} 
+                  alt={`${vehicle.make} ${vehicle.model}`}
+                  className="w-12 h-12 object-cover rounded-lg shadow-md"
+                />
+              ) : (
+                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center shadow-md">
+                  <Car className="w-6 h-6 text-white" />
+                </div>
+              )}
               <div>
                 <h3 className="font-semibold text-gray-800">{vehicle.make} {vehicle.model}</h3>
                 <p className="text-sm text-gray-600">{vehicle.licensePlate}</p>

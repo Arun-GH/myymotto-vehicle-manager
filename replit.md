@@ -10,7 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 15, 2025**: Fixed date field validation and form errors
+**July 15, 2025**: Added vehicle thumbnail photo upload feature
+- Added thumbnailPath field to vehicle database schema
+- Created file upload UI with image preview and removal functionality
+- Implemented general file upload API endpoint for handling images
+- Updated vehicle cards to display thumbnail images when available
+- Added static file serving for uploaded images
+- Enhanced vehicle form with drag-and-drop photo upload
+- Fixed date field validation and form errors
 - Fixed "invalid input syntax for type date" errors by properly handling empty date strings
 - Updated form submission to convert empty date strings to null values for database
 - Added nullable date field validation in Zod schema for RC, insurance, and emission expiry

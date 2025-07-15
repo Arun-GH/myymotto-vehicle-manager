@@ -1,4 +1,5 @@
 import type { Express } from "express";
+import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, insertUserSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser } from "@shared/schema";
@@ -60,6 +61,8 @@ function maskIdentifier(identifier: string): string {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve static files from uploads directory
+  app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
   
   // Authentication routes
   app.post("/api/auth/signin", async (req, res) => {
@@ -293,6 +296,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to delete vehicle" });
+    }
+  });
+
+  // General file upload route
+  app.post("/api/upload", upload.single("file"), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const { type } = req.body;
+      const fileExtension = path.extname(req.file.originalname);
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}${fileExtension}`;
+      const newPath = path.join(uploadsDir, fileName);
+
+      // Move file to permanent location with proper name
+      fs.renameSync(req.file.path, newPath);
+
+      res.json({
+        fileName: req.file.originalname,
+        filePath: `/uploads/${fileName}`,
+        fileSize: req.file.size,
+        mimeType: req.file.mimetype,
+        type: type || 'other'
+      });
+    } catch (error) {
+      console.error("Upload error:", error);
+      res.status(500).json({ message: "Failed to upload file" });
     }
   });
 

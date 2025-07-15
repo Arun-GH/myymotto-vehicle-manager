@@ -176,6 +176,7 @@ export class MemStorage implements IStorage {
     const vehicle: Vehicle = { 
       ...insertVehicle,
       ownerPhone: insertVehicle.ownerPhone || null,
+      thumbnailPath: insertVehicle.thumbnailPath || null,
       insuranceExpiry: insertVehicle.insuranceExpiry || null,
       emissionExpiry: insertVehicle.emissionExpiry || null,
       rcExpiry: insertVehicle.rcExpiry || null,

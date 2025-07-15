@@ -27,6 +27,8 @@ export default function AddVehicle() {
   const [rcDocuments, setRcDocuments] = useState<File[]>([]);
   const [insuranceDocuments, setInsuranceDocuments] = useState<File[]>([]);
   const [serviceDocuments, setServiceDocuments] = useState<File[]>([]);
+  const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
 
   const form = useForm<InsertVehicle>({
     resolver: zodResolver(insertVehicleSchema),
@@ -57,9 +59,22 @@ export default function AddVehicle() {
 
   const createVehicleMutation = useMutation({
     mutationFn: async (data: InsertVehicle) => {
+      // Upload thumbnail first if exists
+      let thumbnailPath = null;
+      if (thumbnailImage) {
+        const thumbnailFormData = new FormData();
+        thumbnailFormData.append("file", thumbnailImage);
+        thumbnailFormData.append("type", "thumbnail");
+        
+        const thumbnailResponse = await apiRequest("POST", "/api/upload", thumbnailFormData);
+        const thumbnailResult = await thumbnailResponse.json();
+        thumbnailPath = thumbnailResult.filePath;
+      }
+
       // Clean up date fields - convert empty strings to null
       const cleanedData = {
         ...data,
+        thumbnailPath,
         insuranceExpiry: data.insuranceExpiry?.trim() || null,
         emissionExpiry: data.emissionExpiry?.trim() || null,
         rcExpiry: data.rcExpiry?.trim() || null,
@@ -112,6 +127,25 @@ export default function AddVehicle() {
     createVehicleMutation.mutate(data);
   };
 
+  const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      setThumbnailImage(file);
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setThumbnailPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeThumbnail = () => {
+    setThumbnailImage(null);
+    setThumbnailPreview(null);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -152,6 +186,44 @@ export default function AddVehicle() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                
+                {/* Vehicle Thumbnail Upload */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Vehicle Photo</label>
+                  <div className="flex items-center space-x-4">
+                    {thumbnailPreview ? (
+                      <div className="relative">
+                        <img 
+                          src={thumbnailPreview} 
+                          alt="Vehicle thumbnail" 
+                          className="w-20 h-20 object-cover rounded-lg border-2 border-gray-200"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                          onClick={removeThumbnail}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+                        <Camera className="w-8 h-8 text-gray-400" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleThumbnailChange}
+                        className="file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Upload a photo of your vehicle</p>
+                    </div>
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
