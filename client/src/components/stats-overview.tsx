@@ -53,7 +53,7 @@ export default function StatsOverview() {
           </CardContent>
         </Card>
         
-        <Card className="bg-gradient-to-br from-gray-600 to-gray-700 border-none text-white shadow-md">
+        <Card className="bg-gradient-to-br from-orange-600 to-orange-700 border-none text-white shadow-md">
           <CardContent className="p-2 text-center">
             <div className="flex justify-center mb-1">
               <AlertTriangle className="w-4 h-4" />
