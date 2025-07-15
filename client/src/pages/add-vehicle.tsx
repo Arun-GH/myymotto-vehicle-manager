@@ -3,21 +3,29 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Camera, Upload } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { getAllMakes, getModelsForMake } from "@/lib/vehicle-data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import DocumentUpload from "@/components/document-upload";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import VehicleDocumentSection from "@/components/vehicle-document-section";
 
 export default function AddVehicle() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [documents, setDocuments] = useState<File[]>([]);
+  const [selectedMake, setSelectedMake] = useState<string>("");
+  
+  // Document states for different types
+  const [emissionDocuments, setEmissionDocuments] = useState<File[]>([]);
+  const [rcDocuments, setRcDocuments] = useState<File[]>([]);
+  const [insuranceDocuments, setInsuranceDocuments] = useState<File[]>([]);
+  const [serviceDocuments, setServiceDocuments] = useState<File[]>([]);
 
   const form = useForm<InsertVehicle>({
     resolver: zodResolver(insertVehicleSchema),
@@ -27,35 +35,60 @@ export default function AddVehicle() {
       year: new Date().getFullYear(),
       color: "",
       licensePlate: "",
-      vin: "",
+      chassisNumber: "",
+      engineNumber: "",
       ownerName: "",
       ownerPhone: "",
+      insuranceExpiry: "",
+      emissionExpiry: "",
+      rcExpiry: "",
+      serviceDate: "",
     },
   });
+
+  const watchedMake = form.watch("make");
+
+  // Reset model when make changes
+  const handleMakeChange = (make: string) => {
+    setSelectedMake(make);
+    form.setValue("make", make);
+    form.setValue("model", ""); // Reset model when make changes
+  };
 
   const createVehicleMutation = useMutation({
     mutationFn: async (data: InsertVehicle) => {
       const response = await apiRequest("POST", "/api/vehicles", data);
       return response.json();
     },
-    onSuccess: (vehicle) => {
+    onSuccess: async (vehicle) => {
       queryClient.invalidateQueries({ queryKey: ["/api/vehicles"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       
-      // Upload documents if any
-      if (documents.length > 0) {
-        documents.forEach(async (file) => {
+      // Upload documents by type
+      const documentUploads = [
+        { files: emissionDocuments, type: "emission" },
+        { files: rcDocuments, type: "rc" },
+        { files: insuranceDocuments, type: "insurance" },
+        { files: serviceDocuments, type: "service" }
+      ];
+
+      for (const { files, type } of documentUploads) {
+        for (const file of files) {
           const formData = new FormData();
           formData.append("file", file);
-          formData.append("type", "other"); // Default type, user can categorize later
+          formData.append("type", type);
           
-          await apiRequest("POST", `/api/vehicles/${vehicle.id}/documents`, formData);
-        });
+          try {
+            await apiRequest("POST", `/api/vehicles/${vehicle.id}/documents`, formData);
+          } catch (error) {
+            console.error(`Failed to upload ${type} document:`, error);
+          }
+        }
       }
       
       toast({
         title: "Vehicle Added",
-        description: "Your vehicle has been successfully added.",
+        description: "Your vehicle has been successfully added with all documents.",
       });
       setLocation("/");
     },
@@ -107,7 +140,18 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel>Make</FormLabel>
                         <FormControl>
-                          <Input placeholder="Honda" {...field} />
+                          <Select onValueChange={handleMakeChange} value={field.value}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select make" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {getAllMakes().map((make) => (
+                                <SelectItem key={make} value={make}>
+                                  {make}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -120,7 +164,18 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel>Model</FormLabel>
                         <FormControl>
-                          <Input placeholder="Civic" {...field} />
+                          <Select onValueChange={field.onChange} value={field.value} disabled={!watchedMake}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select model" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {getModelsForMake(watchedMake).map((model) => (
+                                <SelectItem key={model} value={model}>
+                                  {model}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -175,19 +230,34 @@ export default function AddVehicle() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="vin"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>VIN Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="1HGCM82633A123456" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="chassisNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Chassis Number</FormLabel>
+                        <FormControl>
+                          <Input placeholder="MAT123456789" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="engineNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Engine Number</FormLabel>
+                        <FormControl>
+                          <Input placeholder="ENG987654321" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <FormField
                   control={form.control}
@@ -220,10 +290,10 @@ export default function AddVehicle() {
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="insuranceExpiry"
+                    name="rcExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Insurance Expiry</FormLabel>
+                        <FormLabel>RC Expiry</FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
                         </FormControl>
@@ -233,10 +303,10 @@ export default function AddVehicle() {
                   />
                   <FormField
                     control={form.control}
-                    name="emissionExpiry"
+                    name="serviceDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Emission Expiry</FormLabel>
+                        <FormLabel>Last Service Date</FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
                         </FormControl>
@@ -246,32 +316,54 @@ export default function AddVehicle() {
                   />
                 </div>
 
-                <DocumentUpload 
-                  documents={documents}
-                  onDocumentsChange={setDocuments}
-                />
-
-                <div className="flex space-x-3 pt-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    className="flex-1"
-                    onClick={() => setLocation("/")}
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    className="flex-1"
-                    disabled={createVehicleMutation.isPending}
-                  >
-                    {createVehicleMutation.isPending ? "Adding..." : "Add Vehicle"}
-                  </Button>
-                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full"
+                  disabled={createVehicleMutation.isPending}
+                >
+                  {createVehicleMutation.isPending ? "Adding..." : "Add Vehicle"}
+                </Button>
               </form>
             </Form>
           </CardContent>
         </Card>
+
+        {/* Document Upload Sections */}
+        <div className="mt-6 space-y-4">
+          <VehicleDocumentSection
+            title="Emission Certificate"
+            documentType="emission"
+            documents={emissionDocuments}
+            onDocumentsChange={setEmissionDocuments}
+            dateValue={form.watch("emissionExpiry")}
+            onDateChange={(date) => form.setValue("emissionExpiry", date)}
+            dateLabel="Emission Expiry Date"
+          />
+
+          <VehicleDocumentSection
+            title="RC Book Copy"
+            documentType="rc"
+            documents={rcDocuments}
+            onDocumentsChange={setRcDocuments}
+          />
+
+          <VehicleDocumentSection
+            title="Insurance Copy"
+            documentType="insurance"
+            documents={insuranceDocuments}
+            onDocumentsChange={setInsuranceDocuments}
+            dateValue={form.watch("insuranceExpiry")}
+            onDateChange={(date) => form.setValue("insuranceExpiry", date)}
+            dateLabel="Insurance Expiry Date"
+          />
+
+          <VehicleDocumentSection
+            title="Service Invoice/Copy"
+            documentType="service"
+            documents={serviceDocuments}
+            onDocumentsChange={setServiceDocuments}
+          />
+        </div>
       </div>
     </div>
   );

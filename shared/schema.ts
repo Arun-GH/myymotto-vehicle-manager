@@ -9,12 +9,14 @@ export const vehicles = pgTable("vehicles", {
   year: integer("year").notNull(),
   color: text("color").notNull(),
   licensePlate: text("license_plate").notNull().unique(),
-  vin: text("vin").notNull(),
+  chassisNumber: text("chassis_number").notNull(),
+  engineNumber: text("engine_number").notNull(),
   ownerName: text("owner_name").notNull(),
   ownerPhone: text("owner_phone"),
   insuranceExpiry: date("insurance_expiry"),
   emissionExpiry: date("emission_expiry"),
   rcExpiry: date("rc_expiry"),
+  serviceDate: date("service_date"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -35,7 +37,8 @@ export const insertVehicleSchema = createInsertSchema(vehicles).omit({
 }).extend({
   year: z.number().min(1900).max(new Date().getFullYear() + 1),
   licensePlate: z.string().min(1, "License plate is required"),
-  vin: z.string().min(1, "VIN is required"),
+  chassisNumber: z.string().min(1, "Chassis number is required"),
+  engineNumber: z.string().min(1, "Engine number is required"),
   ownerName: z.string().min(1, "Owner name is required"),
   ownerPhone: z.string().optional(),
 });
