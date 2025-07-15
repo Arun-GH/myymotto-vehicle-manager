@@ -236,12 +236,12 @@ export default function SignIn() {
                   <Badge variant="outline" className="mb-4">
                     Code sent to: {identifier}
                   </Badge>
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-                    <p className="text-sm text-amber-800">
-                      <strong>Current Valid OTP: 361943</strong> (for testing with 9880105082)
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-green-800">
+                      <strong>Current Valid OTP: 301505</strong> (for testing with 9880105082)
                     </p>
-                    <p className="text-xs text-amber-600 mt-1">
-                      Server restarts reset OTPs. Always use the latest 🔐 OTP from server logs or click "Resend OTP".
+                    <p className="text-xs text-green-600 mt-1">
+                      Use this code or click "Resend OTP" for a fresh one.
                     </p>
                   </div>
                 </div>
