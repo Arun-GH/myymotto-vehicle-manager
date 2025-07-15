@@ -10,7 +10,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 15, 2025**: Added vehicle thumbnail photo upload feature
+**July 15, 2025**: Reorganized dashboard and added vehicle management links
+- Moved "Your Vehicles" section above "Quick Actions" on dashboard
+- Added Edit and Upload links next to "View Documents" on vehicle cards
+- Enhanced vehicle card navigation with separate Edit and Upload actions
+- Added vehicle thumbnail photo upload feature
 - Added thumbnailPath field to vehicle database schema
 - Created file upload UI with image preview and removal functionality
 - Implemented general file upload API endpoint for handling images

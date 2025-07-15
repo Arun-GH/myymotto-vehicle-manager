@@ -51,31 +51,8 @@ export default function Dashboard() {
         {/* Stats Overview */}
         <StatsOverview />
 
-        {/* Quick Actions */}
-        <section className="px-4 py-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <Link href="/add-vehicle">
-              <div className="card-hover bg-white rounded-xl p-4 flex flex-col items-center space-y-3 cursor-pointer">
-                <div className="bg-gradient-to-br from-red-500 to-orange-500 p-3 rounded-xl shadow-lg">
-                  <Plus className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-sm font-medium text-gray-800">Add Vehicle</span>
-              </div>
-            </Link>
-            <Link href="/documents">
-              <div className="card-hover bg-white rounded-xl p-4 flex flex-col items-center space-y-3 cursor-pointer">
-                <div className="bg-gradient-to-br from-orange-500 to-yellow-500 p-3 rounded-xl shadow-lg">
-                  <FileText className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-sm font-medium text-gray-800">Documents</span>
-              </div>
-            </Link>
-          </div>
-        </section>
-
         {/* Vehicle List */}
-        <section className="px-4 pb-6">
+        <section className="px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">Your Vehicles</h2>
             <Button variant="ghost" size="sm" className="text-primary">
@@ -106,6 +83,29 @@ export default function Dashboard() {
               ))}
             </div>
           )}
+        </section>
+
+        {/* Quick Actions */}
+        <section className="px-4 pb-6">
+          <h2 className="text-lg font-semibold mb-4 text-gray-800">Quick Actions</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <Link href="/add-vehicle">
+              <div className="card-hover bg-white rounded-xl p-4 flex flex-col items-center space-y-3 cursor-pointer">
+                <div className="bg-gradient-to-br from-red-500 to-orange-500 p-3 rounded-xl shadow-lg">
+                  <Plus className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-sm font-medium text-gray-800">Add Vehicle</span>
+              </div>
+            </Link>
+            <Link href="/documents">
+              <div className="card-hover bg-white rounded-xl p-4 flex flex-col items-center space-y-3 cursor-pointer">
+                <div className="bg-gradient-to-br from-orange-500 to-yellow-500 p-3 rounded-xl shadow-lg">
+                  <FileText className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-sm font-medium text-gray-800">Documents</span>
+              </div>
+            </Link>
+          </div>
         </section>
       </main>
 
