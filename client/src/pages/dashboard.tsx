@@ -52,7 +52,7 @@ export default function Dashboard() {
           <h2 className="text-base font-semibold mb-3 text-gray-800">Quick Actions</h2>
           <div className="grid grid-cols-2 gap-3">
             <Link href="/add-vehicle">
-              <div className="card-hover bg-white rounded-xl p-3 flex flex-col items-center space-y-2 cursor-pointer">
+              <div className="card-hover bg-white rounded-xl p-3 flex flex-col items-center space-y-2 cursor-pointer shadow-orange">
                 <div className="bg-gradient-to-br from-red-500 to-orange-500 p-2 rounded-xl shadow-lg">
                   <Plus className="w-5 h-5 text-white" />
                 </div>
@@ -60,7 +60,7 @@ export default function Dashboard() {
               </div>
             </Link>
             <Link href="/documents">
-              <div className="card-hover bg-white rounded-xl p-3 flex flex-col items-center space-y-2 cursor-pointer">
+              <div className="card-hover bg-white rounded-xl p-3 flex flex-col items-center space-y-2 cursor-pointer shadow-orange">
                 <div className="bg-gradient-to-br from-orange-500 to-yellow-500 p-2 rounded-xl shadow-lg">
                   <FileText className="w-5 h-5 text-white" />
                 </div>
