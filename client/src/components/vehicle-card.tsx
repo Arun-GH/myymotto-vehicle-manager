@@ -124,7 +124,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         
         <div className="mt-3 flex justify-between items-center">
           <div className="flex items-center space-x-3 text-sm">
-            <Link href={`/vehicle/${vehicle.id}`}>
+            <Link href={`/vehicle/${vehicle.id}/documents`}>
               <Button variant="ghost" size="sm" className="text-primary p-0 h-auto hover:underline">
                 View Documents
               </Button>

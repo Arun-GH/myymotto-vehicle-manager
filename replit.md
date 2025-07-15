@@ -54,6 +54,10 @@ Preferred communication style: Simple, everyday language.
 - Enhanced visual identity with multi-colored logo display while maintaining brand recognition
 - Made chassis and engine numbers optional fields with validation warnings displayed on dashboard when missing
 - Updated form labels to indicate optional fields and provide user guidance
+- Created comprehensive document viewer with category-based browsing (insurance, emission, service logs, RC book)
+- Added document management with file timestamps, sizes, and direct file viewing in new tabs
+- Implemented proper navigation flow: dashboard → category selection → document list → file viewer with back navigation
+- Connected "View Documents" link to new categorized document browser (/vehicle/:id/documents)
 
 **January 15, 2025**: Migrated authentication system to PostgreSQL database
 - Fixed critical OTP verification issues by migrating from in-memory to database storage
