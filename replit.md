@@ -11,7 +11,8 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes: Latest modifications with dates
 
 **July 15, 2025**: Added comprehensive user interface improvements and vehicle management features
-- Enhanced notification bell with blue color and bold styling for better visibility against red header background
+- Enhanced notification bell with dark blue color (blue-800), larger size (w-7 h-7), and bold styling for better visibility against red header background
+- Applied consistent orange shadow effects to all Card components across every page and component for unified design
 - Redesigned dashboard layout with compact stats tiles and reorganized Quick Actions section above Your Vehicles
 - Fixed Documents page upload functionality with proper navigation links to upload and view document pages
 - Added orange shadow effects throughout interface for visual cohesion (lighter shadows on Quick Action buttons, darker shadows on vehicle cards)

@@ -25,10 +25,10 @@ export default function NotificationBell() {
       <Button 
         variant="ghost" 
         size="icon" 
-        className="text-blue-300 hover:bg-white/20 hover:text-blue-200 relative"
+        className="text-blue-800 hover:bg-white/20 hover:text-blue-700 relative"
         onClick={() => setShowNotifications(true)}
       >
-        <Bell className="w-6 h-6 font-bold stroke-2" />
+        <Bell className="w-7 h-7 font-bold stroke-2" />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
             {unreadCount > 9 ? '9+' : unreadCount}
