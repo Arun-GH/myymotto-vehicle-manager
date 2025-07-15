@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { FileText, Search, Filter } from "lucide-react";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { type Vehicle, type Document } from "@shared/schema";
 import BottomNav from "@/components/bottom-nav";
 import { Button } from "@/components/ui/button";
@@ -14,18 +15,27 @@ export default function Documents() {
   return (
     <>
       {/* Header */}
-      <header className="bg-primary text-white shadow-lg sticky top-0 z-10">
-        <div className="px-4 py-3">
+      <header className="gradient-warm text-white shadow-lg sticky top-0 z-10">
+        <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <FileText className="w-6 h-6" />
-              <h1 className="text-xl font-semibold">Documents</h1>
+              <div className="bg-white/20 p-1 rounded-xl">
+                <img 
+                  src={logoImage} 
+                  alt="Myymotto Logo" 
+                  className="w-8 h-8 rounded-lg"
+                />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold">Myymotto</h1>
+                <p className="text-xs text-white/80">Documents</p>
+              </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-primary/80">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                 <Search className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-white hover:bg-primary/80">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                 <Filter className="w-5 h-5" />
               </Button>
             </div>

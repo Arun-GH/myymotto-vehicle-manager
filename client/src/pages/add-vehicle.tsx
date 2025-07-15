@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import VehicleDocumentSection from "@/components/vehicle-document-section";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function AddVehicle() {
   const [, setLocation] = useLocation();
@@ -119,8 +120,12 @@ export default function AddVehicle() {
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <div className="bg-white/20 p-2 rounded-xl">
-              <Car className="w-6 h-6" />
+            <div className="bg-white/20 p-1 rounded-xl">
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-8 h-8 rounded-lg"
+              />
             </div>
             <div>
               <h1 className="text-xl font-semibold">Myymotto</h1>

@@ -7,6 +7,7 @@ import StatsOverview from "@/components/stats-overview";
 import BottomNav from "@/components/bottom-nav";
 import FloatingActionButton from "@/components/floating-action-button";
 import { Button } from "@/components/ui/button";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function Dashboard() {
   const { data: vehicles = [], isLoading } = useQuery<Vehicle[]>({
@@ -20,8 +21,12 @@ export default function Dashboard() {
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="bg-white/20 p-2 rounded-xl">
-                <Car className="w-6 h-6" />
+              <div className="bg-white/20 p-1 rounded-xl">
+                <img 
+                  src={logoImage} 
+                  alt="Myymotto Logo" 
+                  className="w-8 h-8 rounded-lg"
+                />
               </div>
               <div>
                 <h1 className="text-xl font-semibold">Myymotto</h1>

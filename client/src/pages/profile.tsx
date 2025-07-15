@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 // For demo purposes, we'll use a hardcoded userId. In a real app, this would come from authentication
 const DEMO_USER_ID = 1;
@@ -138,8 +139,12 @@ export default function Profile() {
         <header className="gradient-warm text-white shadow-lg sticky top-0 z-10">
           <div className="px-4 py-4">
             <div className="flex items-center space-x-3">
-              <div className="bg-white/20 p-2 rounded-xl">
-                <User className="w-6 h-6" />
+              <div className="bg-white/20 p-1 rounded-xl">
+                <img 
+                  src={logoImage} 
+                  alt="Myymotto Logo" 
+                  className="w-8 h-8 rounded-lg"
+                />
               </div>
               <div>
                 <h1 className="text-xl font-semibold">Myymotto</h1>
@@ -152,8 +157,12 @@ export default function Profile() {
         <div className="p-4 flex items-center justify-center min-h-[80vh] bg-warm-pattern">
           <Card className="w-full max-w-md card-hover shadow-xl">
             <CardContent className="p-6 text-center">
-              <div className="bg-gradient-to-br from-red-500 to-orange-500 p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                <User className="w-10 h-10 text-white" />
+              <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
+                <img 
+                  src={logoImage} 
+                  alt="Myymotto Logo" 
+                  className="w-16 h-16 rounded-full"
+                />
               </div>
               <h2 className="text-2xl font-bold mb-2 text-gray-800">Welcome to Myymotto!</h2>
               <p className="text-gray-600 mb-6">
@@ -190,8 +199,12 @@ export default function Profile() {
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               )}
-              <div className="bg-white/20 p-2 rounded-xl">
-                <User className="w-6 h-6" />
+              <div className="bg-white/20 p-1 rounded-xl">
+                <img 
+                  src={logoImage} 
+                  alt="Myymotto Logo" 
+                  className="w-8 h-8 rounded-lg"
+                />
               </div>
               <div>
                 <h1 className="text-xl font-semibold">Myymotto</h1>

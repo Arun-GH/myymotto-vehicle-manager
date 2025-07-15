@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function VehicleDetails() {
   const { id } = useParams();
@@ -98,27 +99,37 @@ export default function VehicleDetails() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-primary text-white shadow-lg sticky top-0 z-10">
-        <div className="px-4 py-3">
+      <header className="gradient-warm text-white shadow-lg sticky top-0 z-10">
+        <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-primary/80"
+                className="text-white hover:bg-white/20"
                 onClick={() => setLocation("/")}
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <h1 className="text-xl font-semibold">Vehicle Details</h1>
+              <div className="bg-white/20 p-1 rounded-xl">
+                <img 
+                  src={logoImage} 
+                  alt="Myymotto Logo" 
+                  className="w-8 h-8 rounded-lg"
+                />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold">Myymotto</h1>
+                <p className="text-xs text-white/80">Vehicle Details</p>
+              </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-primary/80">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                 <Edit className="w-5 h-5" />
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-white hover:bg-primary/80">
+                  <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                     <Trash2 className="w-5 h-5" />
                   </Button>
                 </AlertDialogTrigger>
