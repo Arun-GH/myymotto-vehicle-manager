@@ -61,6 +61,10 @@ Preferred communication style: Simple, everyday language.
 - Added last service date field to vehicle forms and database schema
 - Display last service date on vehicle cards with relative time formatting (e.g., "2 weeks ago")
 - Enhanced vehicle tracking with maintenance history capture for better vehicle care management
+- Updated renewal tracking to show days/months instead of years for better time awareness
+- Insurance and emission certificates now show precise time remaining (e.g., "3m left", "15d left")
+- Service tracking shows when next service is due based on 4-month intervals from last service date
+- Color-coded status indicators: green (valid), orange (expiring soon), red (expired/overdue)
 
 **January 15, 2025**: Migrated authentication system to PostgreSQL database
 - Fixed critical OTP verification issues by migrating from in-memory to database storage

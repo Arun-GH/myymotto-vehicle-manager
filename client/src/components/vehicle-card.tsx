@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload } from "lucide-react";
 import { type Vehicle } from "@shared/schema";
-import { formatDistanceToNow, getExpiryStatus } from "@/lib/date-utils";
+import { formatDistanceToNow, getExpiryStatus, getServiceStatus } from "@/lib/date-utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,16 +13,17 @@ interface VehicleCardProps {
 export default function VehicleCard({ vehicle }: VehicleCardProps) {
   const insuranceStatus = getExpiryStatus(vehicle.insuranceExpiry);
   const emissionStatus = getExpiryStatus(vehicle.emissionExpiry);
+  const serviceStatus = getServiceStatus(vehicle.lastServiceDate);
 
   // Check for missing details
   const missingDetails = [];
   if (!vehicle.chassisNumber?.trim()) missingDetails.push("Chassis Number");
   if (!vehicle.engineNumber?.trim()) missingDetails.push("Engine Number");
 
-  // Determine overall status
-  const overallStatus = insuranceStatus.status === "expired" || emissionStatus.status === "expired" 
+  // Determine overall status including service
+  const overallStatus = insuranceStatus.status === "expired" || emissionStatus.status === "expired" || serviceStatus.status === "expired"
     ? "expired"
-    : insuranceStatus.status === "expiring" || emissionStatus.status === "expiring"
+    : insuranceStatus.status === "expiring" || emissionStatus.status === "expiring" || serviceStatus.status === "expiring"
     ? "expiring"
     : "valid";
 
@@ -122,11 +123,13 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
           <div className="bg-muted/50 rounded-lg p-2">
             <div className="flex flex-col">
-              <span className="text-muted-foreground text-xs">Last Service</span>
-              <span className="font-medium text-gray-700">
-                {vehicle.lastServiceDate 
-                  ? formatDistanceToNow(new Date(vehicle.lastServiceDate))
-                  : "Not set"}
+              <span className="text-muted-foreground text-xs">Service Due</span>
+              <span className={`font-medium ${
+                serviceStatus.status === "expired" ? "text-destructive" :
+                serviceStatus.status === "expiring" ? "text-warning" :
+                "text-green-600"
+              }`}>
+                {serviceStatus.shortText}
               </span>
             </div>
           </div>

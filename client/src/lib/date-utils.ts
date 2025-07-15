@@ -26,7 +26,7 @@ export function getExpiryStatus(date: string | null) {
     return { 
       status: "unknown" as const, 
       text: "Not set", 
-      shortText: "N/A",
+      shortText: "Not set",
       color: "secondary" as const 
     };
   }
@@ -40,23 +40,86 @@ export function getExpiryStatus(date: string | null) {
     return { 
       status: "expired" as const, 
       text: `Expired ${absDays} day${absDays === 1 ? '' : 's'} ago`,
-      shortText: `${absDays}d ago`,
+      shortText: "Expired",
       color: "destructive" as const 
     };
   } else if (diffDays <= 30) {
     return { 
       status: "expiring" as const, 
       text: `Expires in ${diffDays} day${diffDays === 1 ? '' : 's'}`,
-      shortText: `${diffDays}d`,
+      shortText: `${diffDays}d left`,
       color: "warning" as const 
     };
-  } else {
-    const timeText = formatDistanceToNow(expiryDate);
+  } else if (diffDays <= 365) {
+    const monthsLeft = Math.ceil(diffDays / 30);
     return { 
       status: "valid" as const, 
-      text: timeText,
-      shortText: timeText.split(' ').slice(0, 2).join(' '),
+      text: `Expires in ${monthsLeft} month${monthsLeft === 1 ? '' : 's'}`,
+      shortText: `${monthsLeft}m left`,
       color: "success" as const 
+    };
+  } else {
+    const monthsLeft = Math.ceil(diffDays / 30);
+    return { 
+      status: "valid" as const, 
+      text: `Expires in ${monthsLeft} month${monthsLeft === 1 ? '' : 's'}`,
+      shortText: `${monthsLeft}m left`,
+      color: "success" as const 
+    };
+  }
+}
+
+export function getServiceStatus(lastServiceDate: string | null) {
+  if (!lastServiceDate) {
+    return {
+      status: "unknown" as const,
+      text: "No service date recorded",
+      shortText: "Not set",
+      color: "secondary" as const
+    };
+  }
+
+  const serviceDate = new Date(lastServiceDate);
+  const today = new Date();
+  const timeDiff = today.getTime() - serviceDate.getTime();
+  const daysSince = Math.floor(timeDiff / (1000 * 3600 * 24));
+
+  // Assuming service is due every 4 months (120 days)
+  const serviceDueDays = 120;
+  const daysUntilService = serviceDueDays - daysSince;
+
+  if (daysUntilService < 0) {
+    const overdueDays = Math.abs(daysUntilService);
+    if (overdueDays > 30) {
+      const overdueMonths = Math.floor(overdueDays / 30);
+      return {
+        status: "expired" as const,
+        text: `Service overdue by ${overdueMonths} month${overdueMonths !== 1 ? 's' : ''}`,
+        shortText: "Overdue",
+        color: "destructive" as const
+      };
+    } else {
+      return {
+        status: "expired" as const,
+        text: `Service overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`,
+        shortText: "Overdue",
+        color: "destructive" as const
+      };
+    }
+  } else if (daysUntilService <= 30) {
+    return {
+      status: "expiring" as const,
+      text: `Service due in ${daysUntilService} day${daysUntilService !== 1 ? 's' : ''}`,
+      shortText: `${daysUntilService}d left`,
+      color: "warning" as const
+    };
+  } else {
+    const monthsLeft = Math.ceil(daysUntilService / 30);
+    return {
+      status: "valid" as const,
+      text: `Service due in ${monthsLeft} month${monthsLeft !== 1 ? 's' : ''}`,
+      shortText: `${monthsLeft}m left`,
+      color: "success" as const
     };
   }
 }
