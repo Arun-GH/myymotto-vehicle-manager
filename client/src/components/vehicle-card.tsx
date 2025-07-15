@@ -20,11 +20,9 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   if (!vehicle.chassisNumber?.trim()) missingDetails.push("Chassis Number");
   if (!vehicle.engineNumber?.trim()) missingDetails.push("Engine Number");
 
-  // Determine overall status including service
-  const overallStatus = insuranceStatus.status === "expired" || emissionStatus.status === "expired" || serviceStatus.status === "expired"
-    ? "expired"
-    : insuranceStatus.status === "expiring" || emissionStatus.status === "expiring" || serviceStatus.status === "expiring"
-    ? "expiring"
+  // Determine overall status (all certificates show when issued, so status is always valid unless not set)
+  const overallStatus = insuranceStatus.status === "unknown" || emissionStatus.status === "unknown"
+    ? "unknown"
     : "valid";
 
   const StatusIcon = {
@@ -100,11 +98,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           <div className="bg-muted/50 rounded-lg p-2">
             <div className="flex flex-col">
               <span className="text-muted-foreground text-xs">Insurance</span>
-              <span className={`font-medium ${
-                insuranceStatus.status === "expired" ? "text-destructive" :
-                insuranceStatus.status === "expiring" ? "text-warning" :
-                "text-green-600"
-              }`}>
+              <span className="font-medium text-gray-700">
                 {insuranceStatus.shortText}
               </span>
             </div>
@@ -112,23 +106,15 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           <div className="bg-muted/50 rounded-lg p-2">
             <div className="flex flex-col">
               <span className="text-muted-foreground text-xs">Emission</span>
-              <span className={`font-medium ${
-                emissionStatus.status === "expired" ? "text-destructive" :
-                emissionStatus.status === "expiring" ? "text-warning" :
-                "text-green-600"
-              }`}>
+              <span className="font-medium text-gray-700">
                 {emissionStatus.shortText}
               </span>
             </div>
           </div>
           <div className="bg-muted/50 rounded-lg p-2">
             <div className="flex flex-col">
-              <span className="text-muted-foreground text-xs">Service Due</span>
-              <span className={`font-medium ${
-                serviceStatus.status === "expired" ? "text-destructive" :
-                serviceStatus.status === "expiring" ? "text-warning" :
-                "text-green-600"
-              }`}>
+              <span className="text-muted-foreground text-xs">Last Service</span>
+              <span className="font-medium text-gray-700">
                 {serviceStatus.shortText}
               </span>
             </div>
@@ -157,15 +143,9 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               </Button>
             </Link>
           </div>
-          {overallStatus === "expired" || overallStatus === "expiring" ? (
-            <Button variant="ghost" size="sm" className="text-destructive p-0 h-auto">
-              Renew Now
-            </Button>
-          ) : (
-            <Button variant="ghost" size="sm" className="text-muted-foreground p-0 h-auto cursor-default">
-              All Current
-            </Button>
-          )}
+          <Button variant="ghost" size="sm" className="text-muted-foreground p-0 h-auto cursor-default">
+            {overallStatus === "unknown" ? "Missing Info" : "Records Updated"}
+          </Button>
         </div>
       </CardContent>
     </Card>
