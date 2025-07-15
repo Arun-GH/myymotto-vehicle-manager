@@ -3,6 +3,7 @@ import { FileText, Search, Filter } from "lucide-react";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { type Vehicle, type Document } from "@shared/schema";
 import BottomNav from "@/components/bottom-nav";
+import NotificationBell from "@/components/notification-bell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +40,7 @@ export default function Documents() {
               <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                 <Filter className="w-5 h-5" />
               </Button>
+              <NotificationBell />
             </div>
           </div>
         </div>

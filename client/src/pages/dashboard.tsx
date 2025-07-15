@@ -6,6 +6,7 @@ import VehicleCard from "@/components/vehicle-card";
 import StatsOverview from "@/components/stats-overview";
 import BottomNav from "@/components/bottom-nav";
 import FloatingActionButton from "@/components/floating-action-button";
+import NotificationBell from "@/components/notification-bell";
 import { Button } from "@/components/ui/button";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
@@ -40,9 +41,7 @@ export default function Dashboard() {
                   <Search className="w-5 h-5" />
                 </Button>
               </Link>
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-                <Bell className="w-5 h-5" />
-              </Button>
+              <NotificationBell />
             </div>
           </div>
         </div>

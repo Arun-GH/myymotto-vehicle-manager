@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import ColorfulLogo from "@/components/colorful-logo";
+import NotificationBell from "@/components/notification-bell";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 // Authentication is now handled via localStorage
@@ -218,16 +219,19 @@ export default function Profile() {
                 </p>
               </div>
             </div>
-            {profile && !isEditing && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/20"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit
-              </Button>
-            )}
+            <div className="flex items-center space-x-2">
+              {profile && !isEditing && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-white/20"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit
+                </Button>
+              )}
+              <NotificationBell />
+            </div>
           </div>
         </div>
       </header>
