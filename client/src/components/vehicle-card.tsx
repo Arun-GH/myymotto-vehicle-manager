@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload } from "lucide-react";
+import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye } from "lucide-react";
 import { type Vehicle } from "@shared/schema";
 import { formatDistanceToNow, getExpiryStatus, getServiceStatus } from "@/lib/date-utils";
 import { Card, CardContent } from "@/components/ui/card";
@@ -124,23 +124,24 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         </div>
         
         <div className="mt-3">
-          <div className="flex items-center space-x-3 text-sm">
-            <span className="text-gray-600 font-medium">Documents:</span>
+          <div className="mb-1">
+            <span className="text-gray-600 font-medium text-sm">Documents:</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
             <Link href={`/vehicle/${vehicle.id}/documents`}>
-              <Button variant="ghost" size="sm" className="text-primary p-0 h-auto hover:underline">
-                View
+              <Button variant="ghost" size="sm" className="w-full text-primary p-2 h-auto hover:bg-red-50 flex items-center justify-center space-x-1">
+                <Eye className="w-3 h-3" />
+                <span>View</span>
               </Button>
             </Link>
-            <span className="text-gray-300">|</span>
             <Link href={`/vehicle/${vehicle.id}/edit`}>
-              <Button variant="ghost" size="sm" className="text-blue-600 p-0 h-auto hover:underline flex items-center space-x-1">
+              <Button variant="ghost" size="sm" className="w-full text-blue-600 p-2 h-auto hover:bg-blue-50 flex items-center justify-center space-x-1">
                 <Edit className="w-3 h-3" />
                 <span>Edit</span>
               </Button>
             </Link>
-            <span className="text-gray-300">|</span>
             <Link href={`/vehicle/${vehicle.id}/upload`}>
-              <Button variant="ghost" size="sm" className="text-green-600 p-0 h-auto hover:underline flex items-center space-x-1">
+              <Button variant="ghost" size="sm" className="w-full text-green-600 p-2 h-auto hover:bg-green-50 flex items-center justify-center space-x-1">
                 <Upload className="w-3 h-3" />
                 <span>Upload</span>
               </Button>
