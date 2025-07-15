@@ -283,6 +283,53 @@ export default function VehicleDetails() {
             )}
           </CardContent>
         </Card>
+
+        {/* Vehicle Actions Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Vehicle Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Link href={`/vehicle/${vehicleId}/edit`}>
+              <Button variant="outline" className="w-full justify-start">
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Vehicle Details
+              </Button>
+            </Link>
+            <Link href={`/vehicle/${vehicleId}/upload`}>
+              <Button variant="outline" className="w-full justify-start">
+                <FileText className="w-4 h-4 mr-2" />
+                Upload Documents
+              </Button>
+            </Link>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" className="w-full justify-start text-destructive border-destructive hover:bg-destructive hover:text-destructive-foreground">
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Remove Vehicle (Sold)
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Remove Vehicle</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to remove this vehicle from your account? This is typically done when the vehicle has been sold. This action cannot be undone and will also delete all associated documents and notifications.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={() => deleteVehicleMutation.mutate()}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    disabled={deleteVehicleMutation.isPending}
+                  >
+                    {deleteVehicleMutation.isPending ? "Removing..." : "Remove Vehicle"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
