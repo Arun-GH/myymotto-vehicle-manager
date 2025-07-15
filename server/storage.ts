@@ -1,6 +1,6 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, gt } from "drizzle-orm";
+import { eq, and, gt, lte } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -32,6 +32,13 @@ export interface IStorage {
   getDocument(id: number): Promise<Document | undefined>;
   createDocument(document: InsertDocument): Promise<Document>;
   deleteDocument(id: number): Promise<boolean>;
+  
+  // Notification methods
+  getNotifications(): Promise<Notification[]>;
+  getNotificationsByVehicle(vehicleId: number): Promise<Notification[]>;
+  createNotification(notification: InsertNotification): Promise<Notification>;
+  markNotificationAsRead(id: number): Promise<void>;
+  generateRenewalNotifications(): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -233,6 +240,91 @@ export class MemStorage implements IStorage {
   async deleteDocument(id: number): Promise<boolean> {
     return this.documents.delete(id);
   }
+
+  // Notification methods (stub implementations for MemStorage)
+  async getNotifications(): Promise<Notification[]> {
+    return [];
+  }
+
+  async getNotificationsByVehicle(vehicleId: number): Promise<Notification[]> {
+    return [];
+  }
+
+  async createNotification(notification: InsertNotification): Promise<Notification> {
+    const newNotification: Notification = {
+      id: 1,
+      vehicleId: notification.vehicleId || null,
+      type: notification.type,
+      title: notification.title,
+      message: notification.message,
+      dueDate: notification.dueDate,
+      isRead: notification.isRead || false,
+      createdAt: new Date()
+    };
+    return newNotification;
+  }
+
+  async markNotificationAsRead(id: number): Promise<void> {
+    // Stub implementation
+  }
+
+  async generateRenewalNotifications(): Promise<void> {
+    const currentDate = new Date();
+    const oneMonthFromNow = new Date();
+    oneMonthFromNow.setMonth(currentDate.getMonth() + 1);
+
+    const vehicles = await this.getVehicles();
+    
+    for (const vehicle of vehicles) {
+      // Check insurance expiry
+      if (vehicle.insuranceExpiry) {
+        const insuranceDate = new Date(vehicle.insuranceExpiry);
+        if (insuranceDate > currentDate && insuranceDate <= oneMonthFromNow) {
+          await this.createNotification({
+            vehicleId: vehicle.id,
+            type: 'insurance',
+            title: `Insurance Renewal Due - ${vehicle.make} ${vehicle.model}`,
+            message: `Your insurance expires on ${insuranceDate.toLocaleDateString()}. Renew now to avoid penalties.`,
+            dueDate: vehicle.insuranceExpiry,
+            isRead: false
+          });
+        }
+      }
+
+      // Check emission certificate expiry
+      if (vehicle.emissionExpiry) {
+        const emissionDate = new Date(vehicle.emissionExpiry);
+        if (emissionDate > currentDate && emissionDate <= oneMonthFromNow) {
+          await this.createNotification({
+            vehicleId: vehicle.id,
+            type: 'emission',
+            title: `Emission Certificate Renewal Due - ${vehicle.make} ${vehicle.model}`,
+            message: `Your emission certificate expires on ${emissionDate.toLocaleDateString()}. Get it renewed soon.`,
+            dueDate: vehicle.emissionExpiry,
+            isRead: false
+          });
+        }
+      }
+
+      // Check last service date for service reminder (every 4 months)
+      if (vehicle.lastServiceDate) {
+        const lastService = new Date(vehicle.lastServiceDate);
+        const nextServiceDue = new Date(lastService);
+        nextServiceDue.setMonth(lastService.getMonth() + 4);
+        
+        if (nextServiceDue <= oneMonthFromNow && nextServiceDue > currentDate) {
+          await this.createNotification({
+            vehicleId: vehicle.id,
+            type: 'service',
+            title: `Service Reminder - ${vehicle.make} ${vehicle.model}`,
+            message: `Your vehicle is due for service on ${nextServiceDue.toLocaleDateString()}. Book an appointment now.`,
+            dueDate: nextServiceDue.toISOString().split('T')[0],
+            isRead: false
+          });
+        }
+      }
+    }
+  }
 }
 
 export class DatabaseStorage implements IStorage {
@@ -341,6 +433,95 @@ export class DatabaseStorage implements IStorage {
   async deleteDocument(id: number): Promise<boolean> {
     const result = await db.delete(documents).where(eq(documents.id, id));
     return (result.rowCount || 0) > 0;
+  }
+
+  async getNotifications(): Promise<Notification[]> {
+    return await db.select().from(notifications).orderBy(notifications.createdAt);
+  }
+
+  async getNotificationsByVehicle(vehicleId: number): Promise<Notification[]> {
+    return await db.select().from(notifications).where(eq(notifications.vehicleId, vehicleId)).orderBy(notifications.createdAt);
+  }
+
+  async createNotification(notification: InsertNotification): Promise<Notification> {
+    const [newNotification] = await db
+      .insert(notifications)
+      .values(notification)
+      .returning();
+    return newNotification;
+  }
+
+  async markNotificationAsRead(id: number): Promise<void> {
+    await db.update(notifications)
+      .set({ isRead: true })
+      .where(eq(notifications.id, id));
+  }
+
+  async generateRenewalNotifications(): Promise<void> {
+    // Get all vehicles with expiry dates
+    const allVehicles = await db.select().from(vehicles);
+    
+    const today = new Date();
+    
+    for (const vehicle of allVehicles) {
+      // Check insurance expiry (1 month before)
+      if (vehicle.insuranceExpiry) {
+        const insuranceDate = new Date(vehicle.insuranceExpiry);
+        const notifyDate = new Date(insuranceDate);
+        notifyDate.setMonth(notifyDate.getMonth() - 1);
+        
+        if (notifyDate <= today && insuranceDate > today) {
+          // Check if notification already exists
+          const existingNotifications = await db.select()
+            .from(notifications)
+            .where(and(
+              eq(notifications.vehicleId, vehicle.id),
+              eq(notifications.type, 'insurance'),
+              eq(notifications.dueDate, vehicle.insuranceExpiry)
+            ));
+            
+          if (existingNotifications.length === 0) {
+            await this.createNotification({
+              vehicleId: vehicle.id,
+              type: 'insurance',
+              title: 'Insurance Renewal Due',
+              message: `Insurance for your ${vehicle.make} ${vehicle.model} expires soon!`,
+              dueDate: vehicle.insuranceExpiry,
+              isRead: false
+            });
+          }
+        }
+      }
+      
+      // Check emission expiry (1 month before)
+      if (vehicle.emissionExpiry) {
+        const emissionDate = new Date(vehicle.emissionExpiry);
+        const notifyDate = new Date(emissionDate);
+        notifyDate.setMonth(notifyDate.getMonth() - 1);
+        
+        if (notifyDate <= today && emissionDate > today) {
+          // Check if notification already exists
+          const existingNotifications = await db.select()
+            .from(notifications)
+            .where(and(
+              eq(notifications.vehicleId, vehicle.id),
+              eq(notifications.type, 'emission'),
+              eq(notifications.dueDate, vehicle.emissionExpiry)
+            ));
+            
+          if (existingNotifications.length === 0) {
+            await this.createNotification({
+              vehicleId: vehicle.id,
+              type: 'emission',
+              title: 'Emission Certificate Renewal Due',
+              message: `Emission certificate for your ${vehicle.make} ${vehicle.model} expires soon!`,
+              dueDate: vehicle.emissionExpiry,
+              isRead: false
+            });
+          }
+        }
+      }
+    }
   }
 }
 

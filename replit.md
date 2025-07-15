@@ -10,6 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 15, 2025**: Implemented smart notifications system for renewal alerts
+- Created comprehensive notification database schema with vehicleId, type, title, message, dueDate, isRead, and createdAt fields
+- Added notification storage methods for creating, reading, and marking notifications as read
+- Implemented notification API routes for fetching, creating, and managing notifications
+- Enhanced floating action button with notification bell showing unread count badge
+- Created NotificationsPanel component with categorized notification display (insurance, emission, service)
+- Added "Check Renewals" button to manually trigger notification generation for testing
+- Implemented generateRenewalNotifications logic to check vehicles and create alerts 1 month before expiry
+- Notifications system tracks insurance expiry, emission certificate expiry, and service reminders (every 4 months)
+- Added Badge UI component for notification categorization and status display
+- Integrated notification polling every 30 seconds for real-time updates
+
 **July 15, 2025**: Added document upload system and service center search
 - Created document upload page for vehicle-specific documents (/vehicle/:id/upload)
 - Added support for uploading emission certificates, insurance copies, service invoices, and RC book copies

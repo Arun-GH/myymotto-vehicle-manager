@@ -139,3 +139,22 @@ export type SignInData = z.infer<typeof signInSchema>;
 export type VerifyOtpData = z.infer<typeof verifyOtpSchema>;
 export type OtpVerification = typeof otpVerifications.$inferSelect;
 export type InsertOtpVerification = z.infer<typeof insertOtpSchema>;
+
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  vehicleId: integer("vehicle_id").references(() => vehicles.id),
+  type: text("type").notNull(), // 'insurance', 'emission', 'service'
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  dueDate: date("due_date").notNull(),
+  isRead: boolean("is_read").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+});
+
+export const insertNotificationSchema = createInsertSchema(notifications).omit({
+  id: true,
+  createdAt: true
+});
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
