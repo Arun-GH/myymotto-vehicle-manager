@@ -10,7 +10,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 15, 2025**: Added vehicle editing functionality and enhanced navigation
+**July 15, 2025**: Added service center search and vehicle editing functionality
+- Created service center search page with location-based results and map integration
+- Added search icon functionality to navigate to service centers (/service-centers)
+- Implemented geolocation to find nearby automotive service centers
+- Service center cards show distance, ratings, services, and contact options
 - Created edit vehicle page with full form pre-populated with existing data
 - Added edit vehicle route (/vehicle/:id/edit) to router
 - Enhanced vehicle editing with thumbnail image update capability

@@ -35,9 +35,11 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-                <Search className="w-5 h-5" />
-              </Button>
+              <Link href="/service-centers">
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+                  <Search className="w-5 h-5" />
+                </Button>
+              </Link>
               <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                 <Bell className="w-5 h-5" />
               </Button>
