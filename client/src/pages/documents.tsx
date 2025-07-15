@@ -35,9 +35,6 @@ export default function Documents() {
             </div>
             <div className="flex items-center space-x-2">
               <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-                <Search className="w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                 <Filter className="w-5 h-5" />
               </Button>
               <NotificationBell />

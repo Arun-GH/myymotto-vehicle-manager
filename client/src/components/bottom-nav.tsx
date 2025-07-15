@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Home, Car, FileText, User } from "lucide-react";
+import { Home, Search, FileText, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface BottomNavProps {
@@ -9,7 +9,7 @@ interface BottomNavProps {
 export default function BottomNav({ currentPath }: BottomNavProps) {
   const navItems = [
     { path: "/", icon: Home, label: "Home" },
-    { path: "/vehicles", icon: Car, label: "Vehicles" },
+    { path: "/service-centers", icon: Search, label: "Search" },
     { path: "/documents", icon: FileText, label: "Documents" },
     { path: "/profile", icon: User, label: "Profile" },
   ];

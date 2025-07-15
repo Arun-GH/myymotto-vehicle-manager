@@ -36,11 +36,6 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Link href="/service-centers">
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-                  <Search className="w-5 h-5" />
-                </Button>
-              </Link>
               <NotificationBell />
             </div>
           </div>

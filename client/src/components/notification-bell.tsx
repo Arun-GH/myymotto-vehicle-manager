@@ -25,12 +25,12 @@ export default function NotificationBell() {
       <Button 
         variant="ghost" 
         size="icon" 
-        className="text-white hover:bg-white/20 relative"
+        className="text-yellow-300 hover:bg-white/20 hover:text-yellow-200 relative"
         onClick={() => setShowNotifications(true)}
       >
-        <Bell className="w-5 h-5" />
+        <Bell className="w-6 h-6" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium text-[10px]">
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
