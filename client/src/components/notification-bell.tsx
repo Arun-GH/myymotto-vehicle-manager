@@ -25,7 +25,7 @@ export default function NotificationBell() {
       <Button 
         variant="ghost" 
         size="icon" 
-        className="text-yellow-300 hover:bg-white/20 hover:text-yellow-200 relative"
+        className="text-blue-300 hover:bg-white/20 hover:text-blue-200 relative"
         onClick={() => setShowNotifications(true)}
       >
         <Bell className="w-6 h-6" />
