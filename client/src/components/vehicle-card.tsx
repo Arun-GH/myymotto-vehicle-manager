@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Calendar, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel } from "lucide-react";
 import { type Vehicle } from "@shared/schema";
 import { formatDistanceToNow, getExpiryStatus } from "@/lib/date-utils";
 import { Card, CardContent } from "@/components/ui/card";
@@ -43,27 +43,25 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   }[overallStatus];
 
   return (
-    <Card className="shadow-card hover:shadow-lg transition-shadow cursor-pointer">
+    <Card className="card-hover shadow-lg cursor-pointer bg-white">
       <Link href={`/vehicle/${vehicle.id}`}>
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center">
-                <span className="text-primary font-bold text-lg">
-                  {vehicle.make.charAt(0)}{vehicle.model.charAt(0)}
-                </span>
+              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center shadow-md">
+                <Car className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold">{vehicle.make} {vehicle.model}</h3>
-                <p className="text-sm text-muted-foreground">{vehicle.licensePlate}</p>
+                <h3 className="font-semibold text-gray-800">{vehicle.make} {vehicle.model}</h3>
+                <p className="text-sm text-gray-600">{vehicle.licensePlate}</p>
               </div>
             </div>
             <div className="flex items-center space-x-1">
-              <div className={`w-2 h-2 rounded-full ${
-                overallStatus === "expired" ? "bg-destructive" :
-                overallStatus === "expiring" ? "bg-warning" :
+              <div className={`w-3 h-3 rounded-full ${
+                overallStatus === "expired" ? "bg-red-500" :
+                overallStatus === "expiring" ? "bg-orange-500" :
                 "bg-green-500"
-              }`}></div>
+              } shadow-sm`}></div>
               <StatusIcon className={`w-4 h-4 ${statusColor}`} />
               <span className={`text-xs font-medium ${statusColor}`}>
                 {statusText}

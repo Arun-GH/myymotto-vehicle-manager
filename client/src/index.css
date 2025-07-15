@@ -4,56 +4,56 @@
 
 :root {
   --background: hsl(0, 0%, 100%);
-  --foreground: hsl(240, 10%, 3.9%);
-  --muted: hsl(240, 4.8%, 95.9%);
-  --muted-foreground: hsl(240, 3.8%, 46.1%);
+  --foreground: hsl(0, 0%, 3.9%);
+  --muted: hsl(0, 40%, 96%);
+  --muted-foreground: hsl(0, 0%, 45%);
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 3.9%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(240, 10%, 3.9%);
-  --border: hsl(240, 5.9%, 90%);
-  --input: hsl(240, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
+  --card-foreground: hsl(0, 0%, 3.9%);
+  --border: hsl(0, 20%, 89%);
+  --input: hsl(0, 20%, 89%);
+  --primary: hsl(0, 72%, 51%);
   --primary-foreground: hsl(0, 0%, 98%);
-  --secondary: hsl(240, 4.8%, 95.9%);
-  --secondary-foreground: hsl(240, 5.9%, 10%);
-  --accent: hsl(240, 4.8%, 95.9%);
-  --accent-foreground: hsl(240, 5.9%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
+  --secondary: hsl(0, 40%, 96%);
+  --secondary-foreground: hsl(0, 0%, 9%);
+  --accent: hsl(14, 100%, 57%);
+  --accent-foreground: hsl(0, 0%, 9%);
+  --destructive: hsl(0, 84%, 60%);
   --destructive-foreground: hsl(0, 0%, 98%);
   --success: hsl(122, 39%, 49%);
   --success-foreground: hsl(0, 0%, 98%);
   --warning: hsl(38, 92%, 50%);
   --warning-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 5%, 64.9%);
-  --radius: 0.5rem;
+  --ring: hsl(0, 72%, 51%);
+  --radius: 0.75rem;
 }
 
 .dark {
-  --background: hsl(240, 10%, 3.9%);
+  --background: hsl(0, 0%, 3.9%);
   --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 10%, 3.9%);
+  --muted: hsl(0, 0%, 14.9%);
+  --muted-foreground: hsl(0, 0%, 63.9%);
+  --popover: hsl(0, 0%, 3.9%);
   --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(240, 10%, 3.9%);
+  --card: hsl(0, 0%, 3.9%);
   --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(207, 90%, 54%);
+  --border: hsl(0, 0%, 14.9%);
+  --input: hsl(0, 0%, 14.9%);
+  --primary: hsl(0, 72%, 51%);
   --primary-foreground: hsl(0, 0%, 98%);
-  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary: hsl(0, 0%, 14.9%);
   --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 3.7%, 15.9%);
-  --accent-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(14, 100%, 57%);
+  --accent-foreground: hsl(0, 0%, 9%);
   --destructive: hsl(0, 62.8%, 30.6%);
   --destructive-foreground: hsl(0, 0%, 98%);
   --success: hsl(122, 39%, 49%);
   --success-foreground: hsl(0, 0%, 98%);
   --warning: hsl(38, 92%, 50%);
   --warning-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
-  --radius: 0.5rem;
+  --ring: hsl(0, 72%, 51%);
+  --radius: 0.75rem;
 }
 
 @layer base {
@@ -101,6 +101,78 @@
 
   .shadow-card {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Warm red theme gradients */
+  .gradient-warm {
+    background: linear-gradient(135deg, hsl(0, 72%, 51%) 0%, hsl(14, 100%, 57%) 100%);
+  }
+
+  .gradient-warm-light {
+    background: linear-gradient(135deg, hsl(0, 100%, 97%) 0%, hsl(34, 100%, 97%) 100%);
+  }
+
+  .gradient-card {
+    background: linear-gradient(135deg, hsl(0, 72%, 51%) 0%, hsl(0, 64%, 42%) 100%);
+  }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, hsl(14, 100%, 57%) 0%, hsl(25, 95%, 53%) 100%);
+  }
+
+  /* Icon styling */
+  .icon-primary {
+    color: hsl(0, 72%, 51%);
+  }
+
+  .icon-accent {
+    color: hsl(14, 100%, 57%);
+  }
+
+  .icon-warm {
+    color: hsl(0, 72%, 51%);
+  }
+
+  .icon-success {
+    color: hsl(122, 39%, 49%);
+  }
+
+  .icon-warning {
+    color: hsl(38, 92%, 50%);
+  }
+
+  /* Card hover effects */
+  .card-hover {
+    transition: all 0.3s ease;
+    border: 1px solid hsl(0, 20%, 95%);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
+    border-color: hsl(0, 72%, 51%);
+  }
+
+  /* Background patterns */
+  .bg-warm-pattern {
+    background-image: radial-gradient(circle at 20% 50%, hsl(0, 100%, 97%) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, hsl(14, 100%, 97%) 0%, transparent 50%);
+  }
+
+  /* Stats card styling */
+  .stats-card {
+    background: linear-gradient(135deg, hsl(0, 72%, 51%) 0%, hsl(0, 64%, 42%) 100%);
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
+  }
+
+  .stats-card-accent {
+    background: linear-gradient(135deg, hsl(14, 100%, 57%) 0%, hsl(25, 95%, 53%) 100%);
+    box-shadow: 0 4px 20px rgba(255, 107, 0, 0.3);
+  }
+
+  .stats-card-success {
+    background: linear-gradient(135deg, hsl(122, 39%, 49%) 0%, hsl(122, 39%, 39%) 100%);
+    box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
   }
 
   .shadow-fab {

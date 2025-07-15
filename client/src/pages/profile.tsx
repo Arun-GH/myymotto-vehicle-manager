@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, Save, ArrowLeft } from "lucide-react";
+import { User, Save, ArrowLeft, Heart, MapPin, Phone } from "lucide-react";
 import { insertUserProfileSchema, type InsertUserProfile, type UserProfile } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -135,29 +135,33 @@ export default function Profile() {
     return (
       <div className="min-h-screen bg-background">
         {/* Header */}
-        <header className="bg-primary text-white shadow-lg sticky top-0 z-10">
-          <div className="px-4 py-3">
+        <header className="gradient-warm text-white shadow-lg sticky top-0 z-10">
+          <div className="px-4 py-4">
             <div className="flex items-center space-x-3">
-              <User className="w-6 h-6" />
+              <div className="bg-white/20 p-2 rounded-xl">
+                <User className="w-6 h-6" />
+              </div>
               <div>
                 <h1 className="text-xl font-semibold">Myymotto</h1>
-                <p className="text-xs text-primary-foreground/80">Timely Care for your carrier</p>
+                <p className="text-xs text-white/80">Timely Care for your carrier</p>
               </div>
             </div>
           </div>
         </header>
 
-        <div className="p-4 flex items-center justify-center min-h-[80vh]">
-          <Card className="w-full max-w-md">
+        <div className="p-4 flex items-center justify-center min-h-[80vh] bg-warm-pattern">
+          <Card className="w-full max-w-md card-hover shadow-xl">
             <CardContent className="p-6 text-center">
-              <User className="w-16 h-16 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Welcome to Myymotto!</h2>
-              <p className="text-muted-foreground mb-6">
+              <div className="bg-gradient-to-br from-red-500 to-orange-500 p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                <User className="w-10 h-10 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2 text-gray-800">Welcome to Myymotto!</h2>
+              <p className="text-gray-600 mb-6">
                 Let's create your profile to get started with timely care for your carrier.
               </p>
               <Button 
                 onClick={() => setIsEditing(true)}
-                className="w-full"
+                className="w-full gradient-warm text-white border-0 hover:opacity-90"
                 size="lg"
               >
                 Create Profile
@@ -172,24 +176,26 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-primary text-white shadow-lg sticky top-0 z-10">
-        <div className="px-4 py-3">
+      <header className="gradient-warm text-white shadow-lg sticky top-0 z-10">
+        <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               {!profile && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-primary/80"
+                  className="text-white hover:bg-white/20"
                   onClick={() => setIsEditing(false)}
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               )}
-              <User className="w-6 h-6" />
+              <div className="bg-white/20 p-2 rounded-xl">
+                <User className="w-6 h-6" />
+              </div>
               <div>
                 <h1 className="text-xl font-semibold">Myymotto</h1>
-                <p className="text-xs text-primary-foreground/80">
+                <p className="text-xs text-white/80">
                   {profile ? (isEditing ? "Edit Profile" : "Profile") : "Create Profile"}
                 </p>
               </div>
@@ -198,7 +204,7 @@ export default function Profile() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-primary/80"
+                className="text-white hover:bg-white/20"
                 onClick={() => setIsEditing(true)}
               >
                 Edit

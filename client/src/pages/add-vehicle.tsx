@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Car, Save, FileText, Calendar, Camera } from "lucide-react";
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -108,29 +108,35 @@ export default function AddVehicle() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-primary text-white shadow-lg sticky top-0 z-10">
-        <div className="px-4 py-3">
+      <header className="gradient-warm text-white shadow-lg sticky top-0 z-10">
+        <div className="px-4 py-4">
           <div className="flex items-center space-x-3">
             <Button
               variant="ghost"
               size="icon"
-              className="text-white hover:bg-primary/80"
+              className="text-white hover:bg-white/20"
               onClick={() => setLocation("/")}
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
+            <div className="bg-white/20 p-2 rounded-xl">
+              <Car className="w-6 h-6" />
+            </div>
             <div>
               <h1 className="text-xl font-semibold">Myymotto</h1>
-              <p className="text-xs text-primary-foreground/80">Add Vehicle</p>
+              <p className="text-xs text-white/80">Add Vehicle</p>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="p-4 pb-20">
-        <Card>
-          <CardHeader>
-            <CardTitle>Vehicle Details</CardTitle>
+      <div className="p-4 pb-20 bg-warm-pattern">
+        <Card className="card-hover shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-red-50 to-orange-50 rounded-t-lg">
+            <CardTitle className="flex items-center space-x-2 text-gray-800">
+              <Car className="w-5 h-5 text-red-600" />
+              <span>Vehicle Details</span>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>
