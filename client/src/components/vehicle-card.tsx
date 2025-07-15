@@ -121,11 +121,17 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
         </div>
         
-        <div className="mt-3 flex justify-between items-center">
+        <div className="mt-3">
           <div className="flex items-center space-x-3 text-sm">
             <Link href={`/vehicle/${vehicle.id}/documents`}>
               <Button variant="ghost" size="sm" className="text-primary p-0 h-auto hover:underline">
-                View Documents
+                Documents
+              </Button>
+            </Link>
+            <span className="text-gray-300">|</span>
+            <Link href={`/vehicle/${vehicle.id}/documents`}>
+              <Button variant="ghost" size="sm" className="text-primary p-0 h-auto hover:underline">
+                View
               </Button>
             </Link>
             <span className="text-gray-300">|</span>
@@ -143,9 +149,6 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               </Button>
             </Link>
           </div>
-          <Button variant="ghost" size="sm" className="text-muted-foreground p-0 h-auto cursor-default">
-            {overallStatus === "unknown" ? "Missing Info" : "Records Updated"}
-          </Button>
         </div>
       </CardContent>
     </Card>
