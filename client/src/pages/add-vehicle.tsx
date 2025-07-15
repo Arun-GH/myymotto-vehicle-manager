@@ -328,7 +328,7 @@ export default function AddVehicle() {
                     name="chassisNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Chassis Number</FormLabel>
+                        <FormLabel>Chassis Number (Optional)</FormLabel>
                         <FormControl>
                           <Input placeholder="MAT123456789" {...field} />
                         </FormControl>
@@ -341,7 +341,7 @@ export default function AddVehicle() {
                     name="engineNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Engine Number</FormLabel>
+                        <FormLabel>Engine Number (Optional)</FormLabel>
                         <FormControl>
                           <Input placeholder="ENG987654321" {...field} />
                         </FormControl>

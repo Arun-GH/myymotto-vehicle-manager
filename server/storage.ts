@@ -175,6 +175,8 @@ export class MemStorage implements IStorage {
     const id = this.currentVehicleId++;
     const vehicle: Vehicle = { 
       ...insertVehicle,
+      chassisNumber: insertVehicle.chassisNumber || null,
+      engineNumber: insertVehicle.engineNumber || null,
       ownerPhone: insertVehicle.ownerPhone || null,
       thumbnailPath: insertVehicle.thumbnailPath || null,
       insuranceExpiry: insertVehicle.insuranceExpiry || null,

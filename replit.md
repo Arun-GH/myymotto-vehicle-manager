@@ -52,6 +52,8 @@ Preferred communication style: Simple, everyday language.
 - Updated all instances of "Myymotto" across Dashboard, Documents, Profile, and Sign-in pages
 - Applied consistent colorful branding throughout the application headers and welcome messages
 - Enhanced visual identity with multi-colored logo display while maintaining brand recognition
+- Made chassis and engine numbers optional fields with validation warnings displayed on dashboard when missing
+- Updated form labels to indicate optional fields and provide user guidance
 
 **January 15, 2025**: Migrated authentication system to PostgreSQL database
 - Fixed critical OTP verification issues by migrating from in-memory to database storage
