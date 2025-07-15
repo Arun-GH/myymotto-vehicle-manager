@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 type AuthStep = "signin" | "verify-otp" | "register";
@@ -184,7 +185,7 @@ export default function SignIn() {
                 className="w-16 h-16 rounded-full"
               />
             </div>
-            <CardTitle className="text-2xl font-bold gradient-text">Welcome to Myymotto!</CardTitle>
+            <CardTitle className="text-2xl font-bold gradient-text">Welcome to <ColorfulLogo className="inline" />!</CardTitle>
             <p className="text-gray-600">Complete your registration to continue</p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -327,7 +328,7 @@ export default function SignIn() {
               className="w-16 h-16 rounded-full"
             />
           </div>
-          <CardTitle className="text-2xl font-bold gradient-text">Welcome to Myymotto</CardTitle>
+          <CardTitle className="text-2xl font-bold gradient-text">Welcome to <ColorfulLogo className="inline" /></CardTitle>
           <p className="text-gray-600">Timely Care for your carrier</p>
         </CardHeader>
         <CardContent>

@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 // Authentication is now handled via localStorage
@@ -151,7 +152,7 @@ export default function Profile() {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-semibold">Myymotto</h1>
+                <ColorfulLogo />
                 <p className="text-xs text-white/80">Timely Care for your carrier</p>
               </div>
             </div>
@@ -168,7 +169,7 @@ export default function Profile() {
                   className="w-16 h-16 rounded-full"
                 />
               </div>
-              <h2 className="text-2xl font-bold mb-2 text-gray-800">Welcome to Myymotto!</h2>
+              <h2 className="text-2xl font-bold mb-2 text-gray-800">Welcome to <ColorfulLogo className="inline" />!</h2>
               <p className="text-gray-600 mb-6">
                 Let's create your profile to get started with timely care for your carrier.
               </p>
@@ -211,7 +212,7 @@ export default function Profile() {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-semibold">Myymotto</h1>
+                <ColorfulLogo />
                 <p className="text-xs text-white/80">
                   {profile ? (isEditing ? "Edit Profile" : "Profile") : "Create Profile"}
                 </p>

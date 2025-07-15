@@ -6,6 +6,7 @@ import BottomNav from "@/components/bottom-nav";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import ColorfulLogo from "@/components/colorful-logo";
 
 export default function Documents() {
   const { data: vehicles = [], isLoading: vehiclesLoading } = useQuery<Vehicle[]>({
@@ -27,7 +28,7 @@ export default function Documents() {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-semibold">Myymotto</h1>
+                <ColorfulLogo />
                 <p className="text-xs text-white/80">Documents</p>
               </div>
             </div>

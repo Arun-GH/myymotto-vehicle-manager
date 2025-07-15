@@ -7,6 +7,7 @@ import StatsOverview from "@/components/stats-overview";
 import BottomNav from "@/components/bottom-nav";
 import FloatingActionButton from "@/components/floating-action-button";
 import { Button } from "@/components/ui/button";
+import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function Dashboard() {
@@ -29,7 +30,7 @@ export default function Dashboard() {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-semibold">Myymotto</h1>
+                <ColorfulLogo />
                 <p className="text-xs text-white/80">Timely Care for your carrier</p>
               </div>
             </div>
