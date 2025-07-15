@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { FileText, Search, Filter } from "lucide-react";
+import { Link } from "wouter";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { type Vehicle, type Document } from "@shared/schema";
 import BottomNav from "@/components/bottom-nav";
@@ -55,7 +56,9 @@ export default function Documents() {
             <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">No Documents</h2>
             <p className="text-muted-foreground mb-4">Add vehicles to start uploading documents</p>
-            <Button>Add Vehicle</Button>
+            <Link href="/add-vehicle">
+              <Button>Add Vehicle</Button>
+            </Link>
           </div>
         ) : (
           <div className="space-y-4">
@@ -96,7 +99,9 @@ function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
         ) : documents.length === 0 ? (
           <div className="text-center py-4">
             <p className="text-sm text-muted-foreground mb-2">No documents uploaded</p>
-            <Button variant="outline" size="sm">Upload Documents</Button>
+            <Link href={`/vehicle/${vehicle.id}/upload`}>
+              <Button variant="outline" size="sm">Upload Documents</Button>
+            </Link>
           </div>
         ) : (
           <div className="space-y-2">
@@ -107,13 +112,17 @@ function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
                   <p className="text-sm font-medium truncate">{doc.fileName}</p>
                   <p className="text-xs text-muted-foreground">{doc.type}</p>
                 </div>
-                <Button variant="ghost" size="sm" className="text-xs">View</Button>
+                <Link href={`/vehicle/${vehicle.id}/documents`}>
+                  <Button variant="ghost" size="sm" className="text-xs">View</Button>
+                </Link>
               </div>
             ))}
             {documents.length > 3 && (
-              <Button variant="ghost" size="sm" className="w-full text-xs">
-                View all {documents.length} documents
-              </Button>
+              <Link href={`/vehicle/${vehicle.id}/documents`}>
+                <Button variant="ghost" size="sm" className="w-full text-xs">
+                  View all {documents.length} documents
+                </Button>
+              </Link>
             )}
           </div>
         )}
