@@ -11,8 +11,10 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes: Latest modifications with dates
 
 **July 15, 2025**: Fixed ResizeObserver runtime errors and updated branding
-- Added error handler in main.tsx to suppress harmless ResizeObserver loop warnings
-- Fixed console errors that were appearing during component resize operations
+- Added comprehensive error handlers in main.tsx to suppress harmless ResizeObserver loop warnings
+- Overrode console.error to filter ResizeObserver warnings from appearing in console
+- Added unhandled rejection handler for promise-based ResizeObserver errors
+- Fixed runtime error overlay issues that were appearing during component resize operations
 - Updated Myymotto branding with colorful letters
 - Created ColorfulLogo component with custom letter colors: M(dark blue), y(yellow), y(yellow), m(dark blue), o(bright green), t(light blue), t(light blue), o(bright green)
 - Updated all instances of "Myymotto" across Dashboard, Documents, Profile, and Sign-in pages
