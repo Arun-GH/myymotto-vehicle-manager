@@ -8,6 +8,15 @@ This is a full-stack web application for managing vehicles and their documents. 
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes: Latest modifications with dates
+
+**January 15, 2025**: Added comprehensive user profile system
+- Created user profile database schema with personal information fields (name, age, address, blood group, state, city, pin code, alternate phone)
+- Implemented profile creation/editing page with form validation using React Hook Form and Zod
+- Added profile-first authentication flow - automatically redirects to profile setup on first visit
+- Integrated profile management with existing vehicle management system
+- Added profile route to navigation system
+
 ## System Architecture
 
 ### Frontend Architecture
@@ -37,14 +46,17 @@ Preferred communication style: Simple, everyday language.
 ### Database Schema
 - **Vehicles Table**: Stores vehicle information including make, model, year, owner details, and expiry dates
 - **Documents Table**: Stores uploaded files with metadata and vehicle associations
-- **User System**: Basic user management structure (partially implemented)
+- **User Profiles Table**: Complete user profile management with personal information (name, age, address, blood group, state, city, pin code, alternate phone)
+- **User System**: Basic user management structure with profile integration
 
 ### API Endpoints
 - **Vehicle CRUD**: Complete create, read, update, delete operations for vehicles
 - **Document Management**: Upload, retrieve, and delete vehicle documents
+- **User Profile Management**: Create, read, and update user profile information
 - **File Storage**: Local file system storage with configurable limits
 
 ### Frontend Pages
+- **Profile**: User profile creation and editing (first page after sign-in)
 - **Dashboard**: Overview with statistics and vehicle list
 - **Add Vehicle**: Form for creating new vehicle records
 - **Vehicle Details**: Detailed view with document management

@@ -1,10 +1,15 @@
-import { vehicles, documents, users, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile } from "@shared/schema";
 
 export interface IStorage {
   // User methods
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  
+  // User Profile methods
+  getUserProfile(userId: number): Promise<UserProfile | undefined>;
+  createUserProfile(profile: InsertUserProfile & { userId: number }): Promise<UserProfile>;
+  updateUserProfile(userId: number, profile: Partial<InsertUserProfile>): Promise<UserProfile | undefined>;
   
   // Vehicle methods
   getVehicles(): Promise<Vehicle[]>;
@@ -22,17 +27,21 @@ export interface IStorage {
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
+  private userProfiles: Map<number, UserProfile>;
   private vehicles: Map<number, Vehicle>;
   private documents: Map<number, Document>;
   private currentUserId: number;
+  private currentUserProfileId: number;
   private currentVehicleId: number;
   private currentDocumentId: number;
 
   constructor() {
     this.users = new Map();
+    this.userProfiles = new Map();
     this.vehicles = new Map();
     this.documents = new Map();
     this.currentUserId = 1;
+    this.currentUserProfileId = 1;
     this.currentVehicleId = 1;
     this.currentDocumentId = 1;
   }
@@ -54,6 +63,38 @@ export class MemStorage implements IStorage {
     return user;
   }
 
+  async getUserProfile(userId: number): Promise<UserProfile | undefined> {
+    return Array.from(this.userProfiles.values()).find(
+      (profile) => profile.userId === userId
+    );
+  }
+
+  async createUserProfile(insertProfile: InsertUserProfile & { userId: number }): Promise<UserProfile> {
+    const id = this.currentUserProfileId++;
+    const profile: UserProfile = {
+      ...insertProfile,
+      alternatePhone: insertProfile.alternatePhone || null,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.userProfiles.set(id, profile);
+    return profile;
+  }
+
+  async updateUserProfile(userId: number, profileUpdate: Partial<InsertUserProfile>): Promise<UserProfile | undefined> {
+    const existing = await this.getUserProfile(userId);
+    if (!existing) return undefined;
+    
+    const updated: UserProfile = { 
+      ...existing, 
+      ...profileUpdate,
+      updatedAt: new Date(),
+    };
+    this.userProfiles.set(existing.id, updated);
+    return updated;
+  }
+
   async getVehicles(): Promise<Vehicle[]> {
     return Array.from(this.vehicles.values()).sort((a, b) => 
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -67,7 +108,11 @@ export class MemStorage implements IStorage {
   async createVehicle(insertVehicle: InsertVehicle): Promise<Vehicle> {
     const id = this.currentVehicleId++;
     const vehicle: Vehicle = { 
-      ...insertVehicle, 
+      ...insertVehicle,
+      ownerPhone: insertVehicle.ownerPhone || null,
+      insuranceExpiry: insertVehicle.insuranceExpiry || null,
+      emissionExpiry: insertVehicle.emissionExpiry || null,
+      rcExpiry: insertVehicle.rcExpiry || null,
       id, 
       createdAt: new Date() 
     };

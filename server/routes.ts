@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertVehicleSchema, insertDocumentSchema } from "@shared/schema";
+import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -29,6 +29,57 @@ const upload = multer({
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // User Profile routes
+  app.get("/api/profile/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getUserProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch profile" });
+    }
+  });
+
+  app.post("/api/profile/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const validatedData = insertUserProfileSchema.parse(req.body);
+      const profile = await storage.createUserProfile({ ...validatedData, userId });
+      res.status(201).json(profile);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Failed to create profile" });
+      }
+    }
+  });
+
+  app.put("/api/profile/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const validatedData = insertUserProfileSchema.partial().parse(req.body);
+      const profile = await storage.updateUserProfile(userId, validatedData);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Failed to update profile" });
+      }
+    }
+  });
+
   // Vehicle routes
   app.get("/api/vehicles", async (req, res) => {
     try {

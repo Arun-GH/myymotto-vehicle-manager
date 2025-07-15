@@ -56,10 +56,43 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
 });
 
+export const userProfiles = pgTable("user_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  name: text("name").notNull(),
+  age: integer("age").notNull(),
+  address: text("address").notNull(),
+  bloodGroup: text("blood_group").notNull(),
+  state: text("state").notNull(),
+  city: text("city").notNull(),
+  pinCode: text("pin_code").notNull(),
+  alternatePhone: text("alternate_phone"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
 });
 
+export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
+  id: true,
+  userId: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  name: z.string().min(1, "Name is required"),
+  age: z.number().min(1, "Age must be greater than 0").max(120, "Age must be reasonable"),
+  address: z.string().min(1, "Address is required"),
+  bloodGroup: z.string().min(1, "Blood group is required"),
+  state: z.string().min(1, "State is required"),
+  city: z.string().min(1, "City is required"),
+  pinCode: z.string().min(6, "Pin code must be at least 6 digits").max(6, "Pin code must be 6 digits"),
+  alternatePhone: z.string().optional(),
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+export type UserProfile = typeof userProfiles.$inferSelect;
+export type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
