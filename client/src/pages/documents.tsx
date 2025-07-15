@@ -24,12 +24,12 @@ export default function Documents() {
                 <img 
                   src={logoImage} 
                   alt="Myymotto Logo" 
-                  className="w-8 h-8 rounded-lg"
+                  className="w-10 h-10 rounded-lg"
                 />
               </div>
               <div>
                 <ColorfulLogo />
-                <p className="text-xs text-white/80">Documents</p>
+                <p className="text-sm text-white/80">Documents</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">

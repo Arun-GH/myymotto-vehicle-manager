@@ -148,7 +148,7 @@ export default function Profile() {
                 <img 
                   src={logoImage} 
                   alt="Myymotto Logo" 
-                  className="w-8 h-8 rounded-lg"
+                  className="w-10 h-10 rounded-lg"
                 />
               </div>
               <div>
@@ -208,12 +208,12 @@ export default function Profile() {
                 <img 
                   src={logoImage} 
                   alt="Myymotto Logo" 
-                  className="w-8 h-8 rounded-lg"
+                  className="w-10 h-10 rounded-lg"
                 />
               </div>
               <div>
                 <ColorfulLogo />
-                <p className="text-xs text-white/80">
+                <p className="text-sm text-white/80">
                   {profile ? (isEditing ? "Edit Profile" : "Profile") : "Create Profile"}
                 </p>
               </div>

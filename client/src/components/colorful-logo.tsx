@@ -2,7 +2,7 @@ interface ColorfulLogoProps {
   className?: string;
 }
 
-export default function ColorfulLogo({ className = "text-xl font-semibold" }: ColorfulLogoProps) {
+export default function ColorfulLogo({ className = "text-2xl font-bold" }: ColorfulLogoProps) {
   return (
     <span className={className}>
       <span style={{ color: '#1e3a8a' }}>M</span>
