@@ -1,4 +1,6 @@
 import { vehicles, documents, users, userProfiles, otpVerifications, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, gt } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -230,4 +232,113 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async getUserByIdentifier(identifier: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(
+      eq(users.username, identifier)
+    );
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+
+  async updateUser(id: number, userUpdate: Partial<User>): Promise<User | undefined> {
+    const [user] = await db.update(users).set(userUpdate).where(eq(users.id, id)).returning();
+    return user || undefined;
+  }
+
+  async createOtpVerification(insertOtp: InsertOtpVerification): Promise<OtpVerification> {
+    const [otp] = await db.insert(otpVerifications).values(insertOtp).returning();
+    return otp;
+  }
+
+  async getValidOtp(identifier: string, otpCode: string): Promise<OtpVerification | undefined> {
+    const [otp] = await db.select().from(otpVerifications)
+      .where(
+        and(
+          eq(otpVerifications.identifier, identifier),
+          eq(otpVerifications.otp, otpCode),
+          eq(otpVerifications.isUsed, false),
+          gt(otpVerifications.expiresAt, new Date())
+        )
+      );
+    return otp || undefined;
+  }
+
+  async markOtpAsUsed(id: number): Promise<void> {
+    await db.update(otpVerifications).set({ isUsed: true }).where(eq(otpVerifications.id, id));
+  }
+
+  async getUserProfile(userId: number): Promise<UserProfile | undefined> {
+    const [profile] = await db.select().from(userProfiles).where(eq(userProfiles.userId, userId));
+    return profile || undefined;
+  }
+
+  async createUserProfile(insertProfile: InsertUserProfile & { userId: number }): Promise<UserProfile> {
+    const [profile] = await db.insert(userProfiles).values(insertProfile).returning();
+    return profile;
+  }
+
+  async updateUserProfile(userId: number, profileUpdate: Partial<InsertUserProfile>): Promise<UserProfile | undefined> {
+    const [profile] = await db.update(userProfiles).set(profileUpdate).where(eq(userProfiles.userId, userId)).returning();
+    return profile || undefined;
+  }
+
+  async getVehicles(): Promise<Vehicle[]> {
+    return await db.select().from(vehicles);
+  }
+
+  async getVehicle(id: number): Promise<Vehicle | undefined> {
+    const [vehicle] = await db.select().from(vehicles).where(eq(vehicles.id, id));
+    return vehicle || undefined;
+  }
+
+  async createVehicle(insertVehicle: InsertVehicle): Promise<Vehicle> {
+    const [vehicle] = await db.insert(vehicles).values(insertVehicle).returning();
+    return vehicle;
+  }
+
+  async updateVehicle(id: number, vehicleUpdate: Partial<InsertVehicle>): Promise<Vehicle | undefined> {
+    const [vehicle] = await db.update(vehicles).set(vehicleUpdate).where(eq(vehicles.id, id)).returning();
+    return vehicle || undefined;
+  }
+
+  async deleteVehicle(id: number): Promise<boolean> {
+    const result = await db.delete(vehicles).where(eq(vehicles.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async getDocumentsByVehicle(vehicleId: number): Promise<Document[]> {
+    return await db.select().from(documents).where(eq(documents.vehicleId, vehicleId));
+  }
+
+  async getDocument(id: number): Promise<Document | undefined> {
+    const [document] = await db.select().from(documents).where(eq(documents.id, id));
+    return document || undefined;
+  }
+
+  async createDocument(insertDocument: InsertDocument): Promise<Document> {
+    const [document] = await db.insert(documents).values(insertDocument).returning();
+    return document;
+  }
+
+  async deleteDocument(id: number): Promise<boolean> {
+    const result = await db.delete(documents).where(eq(documents.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+}
+
+export const storage = new DatabaseStorage();
