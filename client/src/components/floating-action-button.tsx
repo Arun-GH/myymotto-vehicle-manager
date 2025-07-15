@@ -16,8 +16,8 @@ export default function FloatingActionButton() {
 
   const { data: notifications = [] } = useQuery<Notification[]>({
     queryKey: ["/api/notifications"],
-    queryFn: () => apiRequest("/api/notifications").then(res => res.json()),
-    refetchInterval: 30000 // Check every 30 seconds
+    refetchInterval: 30000, // Check every 30 seconds
+    staleTime: 10000 // Consider data stale after 10 seconds
   });
 
   const unreadCount = notifications.filter(n => !n.isRead).length;

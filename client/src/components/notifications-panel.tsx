@@ -25,23 +25,18 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
   const queryClient = useQueryClient();
 
   const { data: notifications = [], isLoading } = useQuery<Notification[]>({
-    queryKey: ["/api/notifications"],
-    queryFn: () => apiRequest("/api/notifications").then(res => res.json())
+    queryKey: ["/api/notifications"]
   });
 
   const markAsReadMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/notifications/${id}/read`, {
-      method: "PUT"
-    }),
+    mutationFn: (id: number) => apiRequest("PUT", `/api/notifications/${id}/read`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
     }
   });
 
   const generateNotificationsMutation = useMutation({
-    mutationFn: () => apiRequest("/api/notifications/generate", {
-      method: "POST"
-    }),
+    mutationFn: () => apiRequest("POST", "/api/notifications/generate"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
     }
