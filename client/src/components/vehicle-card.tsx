@@ -64,7 +64,9 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 </div>
               )}
               <div>
-                <h3 className="font-semibold text-gray-800">{vehicle.make} {vehicle.model}</h3>
+                <h3 className="font-semibold text-gray-800">
+                  {vehicle.make}{vehicle.model ? ` ${vehicle.model}` : ''} {vehicle.year && `(${vehicle.year})`}
+                </h3>
                 <p className="text-sm text-gray-600">{vehicle.licensePlate}</p>
               </div>
             </div>
