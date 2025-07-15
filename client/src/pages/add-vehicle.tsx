@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import VehicleDocumentSection from "@/components/vehicle-document-section";
 import CameraCapture from "@/components/camera-capture";
+import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function AddVehicle() {
@@ -183,7 +184,7 @@ export default function AddVehicle() {
               />
             </div>
             <div>
-              <h1 className="text-xl font-semibold">Myymotto</h1>
+              <ColorfulLogo className="text-xl font-semibold" />
               <p className="text-xs text-white/80">Add Vehicle</p>
             </div>
           </div>
