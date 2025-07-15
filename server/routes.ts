@@ -83,7 +83,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       // In a real app, you would send the OTP via SMS/Email here
-      console.log(`OTP for ${identifier}: ${otp}`); // For demo purposes
+      console.log(`🔐 OTP for ${identifier}: ${otp}`); // For demo purposes
       
       res.json({
         exists: !!existingUser,
@@ -161,7 +161,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       // In a real app, you would send the OTP via SMS/Email here
-      console.log(`New OTP for ${identifier}: ${otp}`); // For demo purposes
+      console.log(`🔐 New OTP for ${identifier}: ${otp}`); // For demo purposes
       
       res.json({
         message: `New OTP sent to ${maskIdentifier(identifier)}`

@@ -236,9 +236,12 @@ export default function SignIn() {
                   <Badge variant="outline" className="mb-4">
                     Code sent to: {identifier}
                   </Badge>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                    <p className="text-sm text-yellow-800">
-                      <strong>For testing:</strong> Check the console logs or server logs for the latest OTP code.
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-blue-800">
+                      <strong>Development Mode:</strong> Look for 🔐 OTP messages in the server console/logs. Use the LATEST OTP shown (current: check server logs).
+                    </p>
+                    <p className="text-xs text-blue-600 mt-1">
+                      If OTP fails, click "Resend OTP" to get a fresh code.
                     </p>
                   </div>
                 </div>
