@@ -10,6 +10,7 @@ import { type UserProfile } from "@shared/schema";
 import Dashboard from "@/pages/dashboard";
 import AddVehicle from "@/pages/add-vehicle";
 import EditVehicle from "@/pages/edit-vehicle";
+import UploadDocuments from "@/pages/upload-documents";
 import VehicleDetails from "@/pages/vehicle-details";
 import ServiceCenters from "@/pages/service-centers";
 import Documents from "@/pages/documents";
@@ -56,6 +57,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/add-vehicle" component={AddVehicle} />
       <Route path="/vehicle/:id/edit" component={EditVehicle} />
+      <Route path="/vehicle/:id/upload" component={UploadDocuments} />
       <Route path="/vehicle/:id" component={VehicleDetails} />
       <Route path="/service-centers" component={ServiceCenters} />
       <Route path="/documents" component={Documents} />

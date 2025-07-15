@@ -10,7 +10,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 15, 2025**: Added service center search and vehicle editing functionality
+**July 15, 2025**: Added document upload system and service center search
+- Created document upload page for vehicle-specific documents (/vehicle/:id/upload)
+- Added support for uploading emission certificates, insurance copies, service invoices, and RC book copies
+- Integrated camera capture functionality for document photography
+- Document types with expiry date tracking and file management
+- Multiple file upload support with file preview and removal capabilities
 - Created service center search page with location-based results and map integration
 - Added search icon functionality to navigate to service centers (/service-centers)
 - Implemented geolocation to find nearby automotive service centers
