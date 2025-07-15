@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function VehicleDetails() {
@@ -119,7 +120,7 @@ export default function VehicleDetails() {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-semibold">Myymotto</h1>
+                <ColorfulLogo className="text-xl font-semibold" />
                 <p className="text-xs text-white/80">Vehicle Details</p>
               </div>
             </div>
