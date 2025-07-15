@@ -1,8 +1,8 @@
-# Vehicle Management System
+# Myymotto - Vehicle Management System
 
 ## Overview
 
-This is a full-stack web application for managing vehicles and their documents. It's built with a React frontend, Express.js backend, and PostgreSQL database, designed specifically for mobile-first usage. The application allows users to add vehicles, upload documents, and track important dates like insurance and emission expiry.
+Myymotto is a full-stack web application for managing vehicles and their documents with the tagline "Timely Care for your carrier". It's built with a React frontend, Express.js backend, and PostgreSQL database, designed specifically for mobile-first usage. The application allows users to add vehicles, upload documents, and track important dates like insurance and emission expiry.
 
 ## User Preferences
 
@@ -16,6 +16,14 @@ Preferred communication style: Simple, everyday language.
 - Added profile-first authentication flow - automatically redirects to profile setup on first visit
 - Integrated profile management with existing vehicle management system
 - Added profile route to navigation system
+
+**January 15, 2025**: Updated vehicle form and app branding
+- Replaced VIN number with chassis number and engine number fields
+- Added comprehensive vehicle make/model dropdown selections for Indian market
+- Created separate document upload sections for Emission Certificate, RC Book Copy, Insurance Copy, and Service Invoice
+- Added date fields for document expiry tracking with integrated camera and file upload
+- Rebranded application as "Myymotto" with tagline "Timely Care for your carrier"
+- Updated all headers and welcome messages with new branding
 
 ## System Architecture
 

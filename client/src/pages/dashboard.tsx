@@ -21,7 +21,10 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Car className="w-6 h-6" />
-              <h1 className="text-xl font-semibold">Vehicle Manager</h1>
+              <div>
+                <h1 className="text-xl font-semibold">Myymotto</h1>
+                <p className="text-xs text-primary-foreground/80">Timely Care for your carrier</p>
+              </div>
             </div>
             <div className="flex items-center space-x-2">
               <Button variant="ghost" size="icon" className="text-white hover:bg-primary/80">

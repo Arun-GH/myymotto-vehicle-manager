@@ -119,7 +119,10 @@ export default function AddVehicle() {
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <h1 className="text-xl font-semibold">Add Vehicle</h1>
+            <div>
+              <h1 className="text-xl font-semibold">Myymotto</h1>
+              <p className="text-xs text-primary-foreground/80">Add Vehicle</p>
+            </div>
           </div>
         </div>
       </header>

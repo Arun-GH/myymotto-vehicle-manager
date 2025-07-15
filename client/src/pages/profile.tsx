@@ -139,7 +139,10 @@ export default function Profile() {
           <div className="px-4 py-3">
             <div className="flex items-center space-x-3">
               <User className="w-6 h-6" />
-              <h1 className="text-xl font-semibold">Create Profile</h1>
+              <div>
+                <h1 className="text-xl font-semibold">Myymotto</h1>
+                <p className="text-xs text-primary-foreground/80">Timely Care for your carrier</p>
+              </div>
             </div>
           </div>
         </header>
@@ -148,9 +151,9 @@ export default function Profile() {
           <Card className="w-full max-w-md">
             <CardContent className="p-6 text-center">
               <User className="w-16 h-16 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Welcome!</h2>
+              <h2 className="text-2xl font-bold mb-2">Welcome to Myymotto!</h2>
               <p className="text-muted-foreground mb-6">
-                Let's create your profile to get started with managing your vehicles.
+                Let's create your profile to get started with timely care for your carrier.
               </p>
               <Button 
                 onClick={() => setIsEditing(true)}
@@ -184,9 +187,12 @@ export default function Profile() {
                 </Button>
               )}
               <User className="w-6 h-6" />
-              <h1 className="text-xl font-semibold">
-                {profile ? (isEditing ? "Edit Profile" : "Profile") : "Create Profile"}
-              </h1>
+              <div>
+                <h1 className="text-xl font-semibold">Myymotto</h1>
+                <p className="text-xs text-primary-foreground/80">
+                  {profile ? (isEditing ? "Edit Profile" : "Profile") : "Create Profile"}
+                </p>
+              </div>
             </div>
             {profile && !isEditing && (
               <Button
