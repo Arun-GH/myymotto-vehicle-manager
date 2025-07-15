@@ -418,13 +418,23 @@ export default function AddVehicle() {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full"
-                  disabled={createVehicleMutation.isPending}
-                >
-                  {createVehicleMutation.isPending ? "Adding..." : "Add Vehicle"}
-                </Button>
+                <div className="flex space-x-3">
+                  <Button 
+                    type="button" 
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setLocation("/")}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    className="flex-1"
+                    disabled={createVehicleMutation.isPending}
+                  >
+                    {createVehicleMutation.isPending ? "Adding..." : "Add Vehicle"}
+                  </Button>
+                </div>
               </form>
             </Form>
           </CardContent>

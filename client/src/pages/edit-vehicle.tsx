@@ -489,14 +489,24 @@ export default function EditVehicle() {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full"
-                  disabled={updateVehicleMutation.isPending}
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  {updateVehicleMutation.isPending ? "Updating..." : "Update Vehicle"}
-                </Button>
+                <div className="flex space-x-3">
+                  <Button 
+                    type="button" 
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setLocation(`/vehicle/${vehicleId}`)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    className="flex-1"
+                    disabled={updateVehicleMutation.isPending}
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    {updateVehicleMutation.isPending ? "Updating..." : "Update Vehicle"}
+                  </Button>
+                </div>
               </form>
             </Form>
           </CardContent>

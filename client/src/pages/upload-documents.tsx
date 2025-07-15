@@ -317,24 +317,34 @@ export default function UploadDocuments() {
               </div>
             )}
 
-            {/* Upload Button */}
-            <Button 
-              onClick={handleUpload}
-              disabled={selectedFiles.length === 0 || uploadDocuments.isPending}
-              className="w-full"
-            >
-              {uploadDocuments.isPending ? (
-                <>
-                  <Upload className="w-4 h-4 mr-2 animate-spin" />
-                  Uploading...
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="w-4 h-4 mr-2" />
-                  Upload {selectedFiles.length} Document{selectedFiles.length !== 1 ? 's' : ''}
-                </>
-              )}
-            </Button>
+            {/* Action Buttons */}
+            <div className="flex space-x-3">
+              <Button 
+                type="button" 
+                variant="outline"
+                className="flex-1"
+                onClick={() => setLocation(`/vehicle/${vehicleId}`)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleUpload}
+                disabled={selectedFiles.length === 0 || uploadDocuments.isPending}
+                className="flex-1"
+              >
+                {uploadDocuments.isPending ? (
+                  <>
+                    <Upload className="w-4 h-4 mr-2 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Upload {selectedFiles.length} Document{selectedFiles.length !== 1 ? 's' : ''}
+                  </>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
