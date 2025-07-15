@@ -47,7 +47,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   }[overallStatus];
 
   return (
-    <Card className="card-hover shadow-lg bg-white">
+    <Card className="card-hover shadow-orange-dark bg-white">
       <CardContent className="p-4">
         <Link href={`/vehicle/${vehicle.id}`}>
           <div className="flex items-start justify-between mb-3 cursor-pointer">
