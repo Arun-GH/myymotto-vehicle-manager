@@ -123,12 +123,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         
         <div className="mt-3">
           <div className="flex items-center space-x-3 text-sm">
-            <Link href={`/vehicle/${vehicle.id}/documents`}>
-              <Button variant="ghost" size="sm" className="text-primary p-0 h-auto hover:underline">
-                Documents
-              </Button>
-            </Link>
-            <span className="text-gray-300">|</span>
+            <span className="text-gray-600 font-medium">Documents:</span>
             <Link href={`/vehicle/${vehicle.id}/documents`}>
               <Button variant="ghost" size="sm" className="text-primary p-0 h-auto hover:underline">
                 View
