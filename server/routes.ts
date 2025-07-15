@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema } from "@shared/schema";
+import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, insertUserSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -27,7 +27,149 @@ const upload = multer({
   }
 });
 
+// Utility functions for OTP generation and validation
+function generateOTP(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+function getOTPExpiry(): Date {
+  const expiry = new Date();
+  expiry.setMinutes(expiry.getMinutes() + 10); // 10 minutes expiry
+  return expiry;
+}
+
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+function isValidMobile(mobile: string): boolean {
+  const cleanMobile = mobile.replace(/\D/g, '');
+  return cleanMobile.length >= 10;
+}
+
+function maskIdentifier(identifier: string): string {
+  if (isValidEmail(identifier)) {
+    const [username, domain] = identifier.split('@');
+    const maskedUsername = username.slice(0, 2) + '*'.repeat(username.length - 2);
+    return `${maskedUsername}@${domain}`;
+  } else {
+    const cleanMobile = identifier.replace(/\D/g, '');
+    return cleanMobile.slice(0, 2) + '*'.repeat(cleanMobile.length - 4) + cleanMobile.slice(-2);
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // Authentication routes
+  app.post("/api/auth/signin", async (req, res) => {
+    try {
+      const validatedData = signInSchema.parse(req.body);
+      const { identifier } = validatedData;
+      
+      // Check if user exists
+      const existingUser = await storage.getUserByIdentifier(identifier);
+      
+      // Generate and store OTP
+      const otp = generateOTP();
+      const type = isValidEmail(identifier) ? 'email' : 'mobile';
+      
+      await storage.createOtpVerification({
+        identifier,
+        otp,
+        type,
+        expiresAt: getOTPExpiry(),
+        isUsed: false,
+      });
+      
+      // In a real app, you would send the OTP via SMS/Email here
+      console.log(`OTP for ${identifier}: ${otp}`); // For demo purposes
+      
+      res.json({
+        exists: !!existingUser,
+        maskedIdentifier: maskIdentifier(identifier),
+        message: `OTP sent to ${maskIdentifier(identifier)}`
+      });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Invalid request" });
+    }
+  });
+
+  app.post("/api/auth/verify-otp", async (req, res) => {
+    try {
+      const validatedData = verifyOtpSchema.parse(req.body);
+      const { identifier, otp } = validatedData;
+      
+      // Verify OTP
+      const validOtp = await storage.getValidOtp(identifier, otp);
+      if (!validOtp) {
+        return res.status(400).json({ message: "Invalid or expired OTP" });
+      }
+      
+      // Mark OTP as used
+      await storage.markOtpAsUsed(validOtp.id);
+      
+      // Check if user exists
+      let user = await storage.getUserByIdentifier(identifier);
+      
+      if (!user) {
+        // Create new user
+        const userData: InsertUser = {
+          username: identifier,
+          password: "temp", // In real app, this would be handled differently
+          email: isValidEmail(identifier) ? identifier : undefined,
+          mobile: isValidMobile(identifier) ? identifier : undefined,
+        };
+        user = await storage.createUser(userData);
+      }
+      
+      // Mark user as verified
+      await storage.updateUser(user.id, { isVerified: true });
+      
+      // Check if user has profile
+      const profile = await storage.getUserProfile(user.id);
+      
+      res.json({
+        success: true,
+        userId: user.id,
+        hasProfile: !!profile,
+        message: "Authentication successful"
+      });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Verification failed" });
+    }
+  });
+
+  app.post("/api/auth/resend-otp", async (req, res) => {
+    try {
+      const { identifier } = req.body;
+      
+      if (!identifier) {
+        return res.status(400).json({ message: "Identifier is required" });
+      }
+      
+      // Generate new OTP
+      const otp = generateOTP();
+      const type = isValidEmail(identifier) ? 'email' : 'mobile';
+      
+      await storage.createOtpVerification({
+        identifier,
+        otp,
+        type,
+        expiresAt: getOTPExpiry(),
+        isUsed: false,
+      });
+      
+      // In a real app, you would send the OTP via SMS/Email here
+      console.log(`New OTP for ${identifier}: ${otp}`); // For demo purposes
+      
+      res.json({
+        message: `New OTP sent to ${maskIdentifier(identifier)}`
+      });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Failed to resend OTP" });
+    }
+  });
   
   // User Profile routes
   app.get("/api/profile/:userId", async (req, res) => {

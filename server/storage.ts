@@ -1,10 +1,17 @@
-import { vehicles, documents, users, userProfiles, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification } from "@shared/schema";
 
 export interface IStorage {
   // User methods
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByIdentifier(identifier: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, user: Partial<User>): Promise<User | undefined>;
+  
+  // OTP methods
+  createOtpVerification(otp: InsertOtpVerification): Promise<OtpVerification>;
+  getValidOtp(identifier: string, otp: string): Promise<OtpVerification | undefined>;
+  markOtpAsUsed(id: number): Promise<void>;
   
   // User Profile methods
   getUserProfile(userId: number): Promise<UserProfile | undefined>;
@@ -30,20 +37,24 @@ export class MemStorage implements IStorage {
   private userProfiles: Map<number, UserProfile>;
   private vehicles: Map<number, Vehicle>;
   private documents: Map<number, Document>;
+  private otpVerifications: Map<number, OtpVerification>;
   private currentUserId: number;
   private currentUserProfileId: number;
   private currentVehicleId: number;
   private currentDocumentId: number;
+  private currentOtpId: number;
 
   constructor() {
     this.users = new Map();
     this.userProfiles = new Map();
     this.vehicles = new Map();
     this.documents = new Map();
+    this.otpVerifications = new Map();
     this.currentUserId = 1;
     this.currentUserProfileId = 1;
     this.currentVehicleId = 1;
     this.currentDocumentId = 1;
+    this.currentOtpId = 1;
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -58,9 +69,62 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id, 
+      email: insertUser.email || null,
+      mobile: insertUser.mobile || null,
+      isVerified: false,
+      createdAt: new Date()
+    };
     this.users.set(id, user);
     return user;
+  }
+
+  async getUserByIdentifier(identifier: string): Promise<User | undefined> {
+    const users = Array.from(this.users.values());
+    return users.find(user => 
+      user.email === identifier || user.mobile === identifier || user.username === identifier
+    );
+  }
+
+  async updateUser(id: number, userUpdate: Partial<User>): Promise<User | undefined> {
+    const existing = this.users.get(id);
+    if (!existing) return undefined;
+    
+    const updated: User = { ...existing, ...userUpdate };
+    this.users.set(id, updated);
+    return updated;
+  }
+
+  async createOtpVerification(insertOtp: InsertOtpVerification): Promise<OtpVerification> {
+    const id = this.currentOtpId++;
+    const otp: OtpVerification = {
+      ...insertOtp,
+      id,
+      isUsed: insertOtp.isUsed || false,
+      createdAt: new Date()
+    };
+    this.otpVerifications.set(id, otp);
+    return otp;
+  }
+
+  async getValidOtp(identifier: string, otpCode: string): Promise<OtpVerification | undefined> {
+    const otps = Array.from(this.otpVerifications.values());
+    return otps.find(otp => 
+      otp.identifier === identifier && 
+      otp.otp === otpCode && 
+      !otp.isUsed && 
+      otp.expiresAt > new Date()
+    );
+  }
+
+  async markOtpAsUsed(id: number): Promise<void> {
+    const otp = this.otpVerifications.get(id);
+    if (otp) {
+      otp.isUsed = true;
+      this.otpVerifications.set(id, otp);
+    }
   }
 
   async getUserProfile(userId: number): Promise<UserProfile | undefined> {

@@ -15,8 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
-// For demo purposes, we'll use a hardcoded userId. In a real app, this would come from authentication
-const DEMO_USER_ID = 1;
+// Authentication is now handled via localStorage
 
 const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 const states = [
@@ -32,12 +31,14 @@ export default function Profile() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
+  const currentUserId = localStorage.getItem("currentUserId");
 
   const { data: profile, isLoading } = useQuery<UserProfile>({
-    queryKey: ["/api/profile", DEMO_USER_ID],
+    queryKey: ["/api/profile", currentUserId],
     queryFn: async () => {
+      if (!currentUserId) return null;
       try {
-        const response = await apiRequest("GET", `/api/profile/${DEMO_USER_ID}`);
+        const response = await apiRequest("GET", `/api/profile/${currentUserId}`);
         return response.json();
       } catch (error: any) {
         if (error.message?.includes('404')) {
@@ -46,6 +47,7 @@ export default function Profile() {
         throw error;
       }
     },
+    enabled: !!currentUserId,
   });
 
   const form = useForm<InsertUserProfile>({
@@ -80,11 +82,12 @@ export default function Profile() {
 
   const createProfileMutation = useMutation({
     mutationFn: async (data: InsertUserProfile) => {
-      const response = await apiRequest("POST", `/api/profile/${DEMO_USER_ID}`, data);
+      if (!currentUserId) throw new Error("Not authenticated");
+      const response = await apiRequest("POST", `/api/profile/${currentUserId}`, data);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/profile", DEMO_USER_ID] });
+      queryClient.invalidateQueries({ queryKey: ["/api/profile", currentUserId] });
       toast({
         title: "Profile Created",
         description: "Your profile has been successfully created.",
@@ -103,11 +106,12 @@ export default function Profile() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: InsertUserProfile) => {
-      const response = await apiRequest("PUT", `/api/profile/${DEMO_USER_ID}`, data);
+      if (!currentUserId) throw new Error("Not authenticated");
+      const response = await apiRequest("PUT", `/api/profile/${currentUserId}`, data);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/profile", DEMO_USER_ID] });
+      queryClient.invalidateQueries({ queryKey: ["/api/profile", currentUserId] });
       toast({
         title: "Profile Updated",
         description: "Your profile has been successfully updated.",

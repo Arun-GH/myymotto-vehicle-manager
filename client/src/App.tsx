@@ -12,19 +12,22 @@ import AddVehicle from "@/pages/add-vehicle";
 import VehicleDetails from "@/pages/vehicle-details";
 import Documents from "@/pages/documents";
 import Profile from "@/pages/profile";
+import SignIn from "@/pages/sign-in";
 import NotFound from "@/pages/not-found";
-
-// For demo purposes, we'll use a hardcoded userId. In a real app, this would come from authentication
-const DEMO_USER_ID = 1;
 
 function Router() {
   const [location, setLocation] = useLocation();
   
+  // Check if user is authenticated (in a real app, this would come from session/token)
+  const currentUserId = localStorage.getItem("currentUserId");
+  const isAuthenticated = !!currentUserId;
+  
   const { data: profile, isLoading } = useQuery<UserProfile>({
-    queryKey: ["/api/profile", DEMO_USER_ID],
+    queryKey: ["/api/profile", currentUserId],
     queryFn: async () => {
+      if (!currentUserId) return null;
       try {
-        const response = await apiRequest("GET", `/api/profile/${DEMO_USER_ID}`);
+        const response = await apiRequest("GET", `/api/profile/${currentUserId}`);
         return response.json();
       } catch (error: any) {
         if (error.message?.includes('404')) {
@@ -33,17 +36,21 @@ function Router() {
         throw error;
       }
     },
+    enabled: isAuthenticated,
   });
 
-  // Redirect to profile if no profile exists and not already on profile page
+  // Authentication and routing logic
   useEffect(() => {
-    if (!isLoading && !profile && location !== "/profile") {
+    if (!isAuthenticated && location !== "/signin") {
+      setLocation("/signin");
+    } else if (isAuthenticated && !isLoading && !profile && location !== "/profile") {
       setLocation("/profile");
     }
-  }, [isLoading, profile, location, setLocation]);
+  }, [isAuthenticated, isLoading, profile, location, setLocation]);
 
   return (
     <Switch>
+      <Route path="/signin" component={SignIn} />
       <Route path="/" component={Dashboard} />
       <Route path="/add-vehicle" component={AddVehicle} />
       <Route path="/vehicle/:id" component={VehicleDetails} />

@@ -57,6 +57,20 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  email: text("email"),
+  mobile: text("mobile"),
+  isVerified: boolean("is_verified").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const otpVerifications = pgTable("otp_verifications", {
+  id: serial("id").primaryKey(),
+  identifier: text("identifier").notNull(), // mobile or email
+  otp: text("otp").notNull(),
+  type: text("type").notNull(), // 'mobile' or 'email'
+  expiresAt: timestamp("expires_at").notNull(),
+  isUsed: boolean("is_used").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const userProfiles = pgTable("user_profiles", {
@@ -77,6 +91,22 @@ export const userProfiles = pgTable("user_profiles", {
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
+  email: true,
+  mobile: true,
+});
+
+export const signInSchema = z.object({
+  identifier: z.string().min(1, "Mobile number or email is required"),
+});
+
+export const verifyOtpSchema = z.object({
+  identifier: z.string().min(1, "Mobile number or email is required"),
+  otp: z.string().length(6, "OTP must be 6 digits"),
+});
+
+export const insertOtpSchema = createInsertSchema(otpVerifications).omit({
+  id: true,
+  createdAt: true,
 });
 
 export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
@@ -99,3 +129,7 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type UserProfile = typeof userProfiles.$inferSelect;
 export type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
+export type SignInData = z.infer<typeof signInSchema>;
+export type VerifyOtpData = z.infer<typeof verifyOtpSchema>;
+export type OtpVerification = typeof otpVerifications.$inferSelect;
+export type InsertOtpVerification = z.infer<typeof insertOtpSchema>;
