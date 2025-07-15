@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 type AuthStep = "signin" | "verify-otp" | "register";
@@ -86,7 +87,7 @@ export default function SignIn() {
   const verifyOtpMutation = useMutation({
     mutationFn: async (data: VerifyOtpData) => {
       const response = await apiRequest("POST", "/api/auth/verify-otp", data);
-      return response;
+      return response.json();
     },
     onSuccess: (data) => {
       toast({
@@ -152,7 +153,11 @@ export default function SignIn() {
   };
 
   const onOtpSubmit = (data: VerifyOtpData) => {
-    verifyOtpMutation.mutate(data);
+    console.log("OTP Submit data:", { identifier, otp: data.otp });
+    verifyOtpMutation.mutate({
+      identifier,
+      otp: data.otp
+    });
   };
 
   const isEmail = (value: string) => {
@@ -241,12 +246,16 @@ export default function SignIn() {
                         Verification Code
                       </FormLabel>
                       <FormControl>
-                        <Input 
-                          {...field} 
-                          placeholder="Enter 6-digit code"
-                          maxLength={6}
-                          className="text-center text-2xl tracking-widest"
-                        />
+                        <InputOTP maxLength={6} {...field}>
+                          <InputOTPGroup className="gap-2 justify-center">
+                            <InputOTPSlot index={0} className="border-primary/30 focus:border-primary" />
+                            <InputOTPSlot index={1} className="border-primary/30 focus:border-primary" />
+                            <InputOTPSlot index={2} className="border-primary/30 focus:border-primary" />
+                            <InputOTPSlot index={3} className="border-primary/30 focus:border-primary" />
+                            <InputOTPSlot index={4} className="border-primary/30 focus:border-primary" />
+                            <InputOTPSlot index={5} className="border-primary/30 focus:border-primary" />
+                          </InputOTPGroup>
+                        </InputOTP>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
