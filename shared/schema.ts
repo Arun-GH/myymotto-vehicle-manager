@@ -40,6 +40,9 @@ export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   engineNumber: z.string().min(1, "Engine number is required"),
   ownerName: z.string().min(1, "Owner name is required"),
   ownerPhone: z.string().optional(),
+  insuranceExpiry: z.string().optional().nullable(),
+  emissionExpiry: z.string().optional().nullable(),
+  rcExpiry: z.string().optional().nullable(),
 });
 
 export const insertDocumentSchema = createInsertSchema(documents).omit({

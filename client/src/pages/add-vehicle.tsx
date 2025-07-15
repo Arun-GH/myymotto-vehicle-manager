@@ -57,7 +57,14 @@ export default function AddVehicle() {
 
   const createVehicleMutation = useMutation({
     mutationFn: async (data: InsertVehicle) => {
-      const response = await apiRequest("POST", "/api/vehicles", data);
+      // Clean up date fields - convert empty strings to null
+      const cleanedData = {
+        ...data,
+        insuranceExpiry: data.insuranceExpiry?.trim() || null,
+        emissionExpiry: data.emissionExpiry?.trim() || null,
+        rcExpiry: data.rcExpiry?.trim() || null,
+      };
+      const response = await apiRequest("POST", "/api/vehicles", cleanedData);
       return response.json();
     },
     onSuccess: async (vehicle) => {

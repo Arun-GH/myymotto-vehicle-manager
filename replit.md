@@ -10,11 +10,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 15, 2025**: Removed service date field and fixed form errors
-- Removed serviceDate field from vehicle schema and form to fix database errors
-- Updated database schema to remove service_date column
-- Simplified vehicle form by removing last service date input field
-- Fixed "invalid input syntax for type date" errors when adding vehicles
+**July 15, 2025**: Fixed date field validation and form errors
+- Fixed "invalid input syntax for type date" errors by properly handling empty date strings
+- Updated form submission to convert empty date strings to null values for database
+- Added nullable date field validation in Zod schema for RC, insurance, and emission expiry
+- Improved date field handling with trim() function to remove whitespace
+- Removed serviceDate field from vehicle schema and form to simplify the form
 - Fixed ResizeObserver runtime errors and updated branding
 - Implemented comprehensive ResizeObserver polyfill with debounced callbacks to prevent loop errors
 - Created custom DebounceResizeObserver class that replaces native ResizeObserver globally
