@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import VehicleDocumentSection from "@/components/vehicle-document-section";
+import CameraCapture from "@/components/camera-capture";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function AddVehicle() {
@@ -29,6 +30,7 @@ export default function AddVehicle() {
   const [serviceDocuments, setServiceDocuments] = useState<File[]>([]);
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
 
   const form = useForm<InsertVehicle>({
     resolver: zodResolver(insertVehicleSchema),
@@ -146,6 +148,19 @@ export default function AddVehicle() {
     setThumbnailPreview(null);
   };
 
+  const handleCameraCapture = (file: File) => {
+    setThumbnailImage(file);
+    
+    // Create preview URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setThumbnailPreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+    
+    setShowCamera(false);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -214,13 +229,26 @@ export default function AddVehicle() {
                       </div>
                     )}
                     <div className="flex-1">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleThumbnailChange}
-                        className="file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Upload a photo of your vehicle</p>
+                      <div className="flex space-x-2">
+                        <div className="flex-1">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleThumbnailChange}
+                            className="file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setShowCamera(true)}
+                          className="shrink-0"
+                        >
+                          <Camera className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Upload a photo of your vehicle or use camera</p>
                     </div>
                   </div>
                 </div>
@@ -477,6 +505,14 @@ export default function AddVehicle() {
           />
         </div>
       </div>
+
+      {/* Camera Modal */}
+      {showCamera && (
+        <CameraCapture
+          onCapture={handleCameraCapture}
+          onClose={() => setShowCamera(false)}
+        />
+      )}
     </div>
   );
 }
