@@ -79,10 +79,14 @@ export default function SignIn() {
 
   const verifyOtpMutation = useMutation({
     mutationFn: async (data: VerifyOtpData) => {
+      console.log("Sending OTP verification request:", data);
       const response = await apiRequest("POST", "/api/auth/verify-otp", data);
-      return response.json();
+      const result = await response.json();
+      console.log("OTP verification response:", result);
+      return result;
     },
     onSuccess: (data) => {
+      console.log("OTP verification successful:", data);
       toast({
         title: "Success",
         description: "Successfully signed in!",
@@ -101,6 +105,7 @@ export default function SignIn() {
       }
     },
     onError: (error: any) => {
+      console.error("OTP verification error:", error);
       toast({
         title: "Invalid OTP",
         description: error.message || "Please check your OTP and try again",
@@ -231,6 +236,11 @@ export default function SignIn() {
                   <Badge variant="outline" className="mb-4">
                     Code sent to: {identifier}
                   </Badge>
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-yellow-800">
+                      <strong>For testing:</strong> Check the console logs or server logs for the latest OTP code.
+                    </p>
+                  </div>
                 </div>
 
                 <FormField
