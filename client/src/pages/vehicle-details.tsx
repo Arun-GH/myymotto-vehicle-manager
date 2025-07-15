@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useLocation, useParams } from "wouter";
+import { useLocation, useParams, Link } from "wouter";
 import { ArrowLeft, Calendar, FileText, Edit, Trash2 } from "lucide-react";
 import { type Vehicle, type Document } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
@@ -255,9 +255,11 @@ export default function VehicleDetails() {
               <div className="text-center py-6">
                 <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
                 <p className="text-muted-foreground">No documents uploaded</p>
-                <Button variant="outline" size="sm" className="mt-2">
-                  Upload Documents
-                </Button>
+                <Link href={`/vehicle/${vehicleId}/upload`}>
+                  <Button variant="outline" size="sm" className="mt-2">
+                    Upload Documents
+                  </Button>
+                </Link>
               </div>
             ) : (
               <div className="space-y-3">
@@ -270,9 +272,11 @@ export default function VehicleDetails() {
                         {doc.type} • {Math.round(doc.fileSize / 1024)} KB
                       </p>
                     </div>
-                    <Button variant="ghost" size="sm">
-                      View
-                    </Button>
+                    <Link href={`/vehicle/${vehicleId}/documents`}>
+                      <Button variant="ghost" size="sm">
+                        View
+                      </Button>
+                    </Link>
                   </div>
                 ))}
               </div>
