@@ -43,25 +43,18 @@ export default function SignIn() {
   const signInMutation = useMutation({
     mutationFn: async (data: SignInData) => {
       const response = await apiRequest("POST", "/api/auth/signin", data);
-      return response;
+      return response.json();
     },
     onSuccess: (data) => {
       setIdentifier(signInForm.getValues().identifier);
       otpForm.setValue("identifier", signInForm.getValues().identifier);
       
-      if (data.exists) {
-        setStep("verify-otp");
-        toast({
-          title: "OTP Sent",
-          description: `Verification code sent to ${data.maskedIdentifier}`,
-        });
-      } else {
-        setStep("register");
-        toast({
-          title: "New User",
-          description: "Please complete registration with your details",
-        });
-      }
+      // Always go to OTP verification screen regardless of whether user exists
+      setStep("verify-otp");
+      toast({
+        title: "OTP Sent",
+        description: `Verification code sent to ${data.maskedIdentifier}`,
+      });
       
       // Start countdown for resend
       setCountdown(60);
@@ -198,7 +191,11 @@ export default function SignIn() {
                 Your mobile/email: <strong>{identifier}</strong>
               </p>
               <Button 
-                onClick={() => setLocation("/profile")}
+                onClick={() => {
+                  // Store a temporary user ID if needed for registration flow
+                  localStorage.setItem("currentUserId", "temp");
+                  setLocation("/profile");
+                }}
                 className="w-full gradient-warm text-white border-0 hover:opacity-90"
                 size="lg"
               >
