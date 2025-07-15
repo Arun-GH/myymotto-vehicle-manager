@@ -10,7 +10,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 15, 2025**: Fixed ResizeObserver runtime errors and updated branding
+**July 15, 2025**: Removed service date field and fixed form errors
+- Removed serviceDate field from vehicle schema and form to fix database errors
+- Updated database schema to remove service_date column
+- Simplified vehicle form by removing last service date input field
+- Fixed "invalid input syntax for type date" errors when adding vehicles
+- Fixed ResizeObserver runtime errors and updated branding
 - Implemented comprehensive ResizeObserver polyfill with debounced callbacks to prevent loop errors
 - Created custom DebounceResizeObserver class that replaces native ResizeObserver globally
 - Added multiple layers of error suppression including console method overrides

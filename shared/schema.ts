@@ -16,7 +16,6 @@ export const vehicles = pgTable("vehicles", {
   insuranceExpiry: date("insurance_expiry"),
   emissionExpiry: date("emission_expiry"),
   rcExpiry: date("rc_expiry"),
-  serviceDate: date("service_date"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

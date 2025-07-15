@@ -43,7 +43,6 @@ export default function AddVehicle() {
       insuranceExpiry: "",
       emissionExpiry: "",
       rcExpiry: "",
-      serviceDate: "",
     },
   });
 
@@ -301,34 +300,19 @@ export default function AddVehicle() {
                   )}
                 />
 
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="rcExpiry"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>RC Expiry</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="serviceDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Last Service Date</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="rcExpiry"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>RC Expiry</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <Button 
                   type="submit" 
