@@ -10,12 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 16, 2025**: Enhanced document viewing with direct file opening
+**July 16, 2025**: Enhanced document viewing with direct file opening and delete functionality
 - Fixed documents page to open files directly when clicked instead of navigating to view page
 - Added click handlers to both document names and View buttons for instant file opening
 - Document files now open in new browser tabs for better user experience
 - Enhanced user experience with cursor pointer styling for clickable document items
 - Both driver's license and vehicle documents now support direct file viewing
+- Added delete button next to view button for easy document removal
+- Implemented confirmation dialog before deleting documents to prevent accidental deletions
+- Added red styling for delete button with hover effects for clear visual distinction
+- Document deletion includes proper cache invalidation and toast notifications for user feedback
 
 **July 16, 2025**: Implemented complete PIN and biometric authentication system
 - Added PIN authentication fields (pin, biometricEnabled) to user database schema

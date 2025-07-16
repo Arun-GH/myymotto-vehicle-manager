@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { FileText, Search, Filter, ArrowLeft, CreditCard, Eye } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { FileText, Search, Filter, ArrowLeft, CreditCard, Eye, Trash2 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { type Vehicle, type Document, type UserProfile } from "@shared/schema";
@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import ColorfulLogo from "@/components/colorful-logo";
+import { useToast } from "@/hooks/use-toast";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 
 function DriversLicenseCard({ profile, profileLoading }: { profile: UserProfile | undefined, profileLoading: boolean }) {
   const [, setLocation] = useLocation();
@@ -200,9 +202,36 @@ export default function Documents() {
 }
 
 function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
+  const { toast } = useToast();
   const { data: documents = [], isLoading } = useQuery<Document[]>({
     queryKey: ["/api/vehicles", vehicle.id, "documents"],
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (docId: number) => {
+      return apiRequest("DELETE", `/api/documents/${docId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/vehicles", vehicle.id, "documents"] });
+      toast({
+        title: "Document deleted",
+        description: "The document has been successfully deleted.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete document",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDelete = (docId: number, fileName: string) => {
+    if (confirm(`Are you sure you want to delete "${fileName}"? This action cannot be undone.`)) {
+      deleteMutation.mutate(docId);
+    }
+  };
 
   return (
     <Card className="shadow-orange">
@@ -237,15 +266,27 @@ function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
                   <p className="text-sm font-medium truncate">{doc.fileName}</p>
                   <p className="text-xs text-muted-foreground">{doc.type}</p>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-xs"
-                  onClick={() => window.open(doc.filePath, '_blank')}
-                >
-                  <Eye className="w-4 h-4 mr-1" />
-                  View
-                </Button>
+                <div className="flex space-x-1">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-xs"
+                    onClick={() => window.open(doc.filePath, '_blank')}
+                  >
+                    <Eye className="w-4 h-4 mr-1" />
+                    View
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-xs text-red-600 hover:text-red-800 hover:bg-red-50"
+                    onClick={() => handleDelete(doc.id, doc.fileName)}
+                    disabled={deleteMutation.isPending}
+                  >
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    Delete
+                  </Button>
+                </div>
               </div>
             ))}
             {documents.length > 3 && (
