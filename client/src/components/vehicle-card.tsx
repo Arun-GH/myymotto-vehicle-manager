@@ -97,19 +97,19 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         <div className="grid grid-cols-2 gap-3 text-xs mb-2">
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-gray-600 font-medium">Insurance Provider:</span>
+              <span className="text-gray-600 font-bold">Insurance Provider:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.insuranceCompany || "Not specified"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-600 font-medium">Insurance Date:</span>
+              <span className="text-gray-600 font-bold">Insurance Date:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.insuranceExpiry ? formatDistanceToNow(new Date(vehicle.insuranceExpiry)) : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-600 font-medium">Emission Date:</span>
+              <span className="text-gray-600 font-bold">Emission Date:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.emissionExpiry ? formatDistanceToNow(new Date(vehicle.emissionExpiry)) : "Not set"}
               </span>
@@ -117,13 +117,13 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-gray-600 font-medium">Service Date:</span>
+              <span className="text-gray-600 font-bold">Service Date:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.lastServiceDate ? formatDistanceToNow(new Date(vehicle.lastServiceDate)) : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-600 font-medium">Next Service Date:</span>
+              <span className="text-gray-600 font-bold">Next Service Date:</span>
               <span className={`text-xs ${
                 nextServiceInfo.status === "overdue" ? "text-red-600" :
                 nextServiceInfo.status === "due_soon" ? "text-orange-600" :
