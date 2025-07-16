@@ -7,7 +7,7 @@ import { type Document, type Vehicle } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
+import ColorfulLogo from "@/components/colorful-logo";
 
 type DocumentCategory = "all" | "insurance" | "emission" | "service" | "rc";
 
@@ -133,31 +133,33 @@ export default function ViewDocuments() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="gradient-warm text-white shadow-lg sticky top-0 z-10">
-        <div className="px-4 py-4">
-          <div className="flex items-center space-x-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/20"
-              onClick={handleBack}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div className="bg-white/20 p-1 rounded-xl">
-              <img 
-                src={logoImage} 
-                alt="Myymotto Logo" 
-                className="w-8 h-8 rounded-lg"
-              />
-            </div>
-            <div>
-              <h1 className="text-xl font-semibold">Myymotto</h1>
-              <p className="text-xs text-white/80">
-                {selectedDocument ? "Document Viewer" :
-                 selectedCategory ? `${documentCategories.find(c => c.key === selectedCategory)?.label} Documents` :
-                 "View Documents"}
-              </p>
+      <header className="bg-white border-t-4 border-b-4 border-orange-400 shadow-lg sticky top-0 z-10">
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 hover:bg-red-50"
+                onClick={handleBack}
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <div className="w-14 h-14 bg-white rounded-lg shadow-md flex items-center justify-center">
+                <img 
+                  src="/attached_assets/Mymotto_Logo_Green_Revised_1752603344750.png" 
+                  alt="Myymotto Logo" 
+                  className="w-12 h-12 object-contain"
+                />
+              </div>
+              <div>
+                <ColorfulLogo className="text-lg font-bold" />
+                <p className="text-sm text-red-600 font-medium">
+                  {selectedDocument ? "Document Viewer" :
+                   selectedCategory ? `${documentCategories.find(c => c.key === selectedCategory)?.label} Documents` :
+                   "View Documents"}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -165,23 +167,23 @@ export default function ViewDocuments() {
 
       <div className="p-4 pb-20 bg-warm-pattern">
         {/* Vehicle Info */}
-        <Card className="mb-4 shadow-orange">
-          <CardContent className="p-4">
+        <Card className="mb-4 shadow-orange border-l-4 border-l-blue-500">
+          <CardContent className="p-3">
             <div className="flex items-center space-x-3">
               {vehicle.thumbnailPath ? (
                 <img 
                   src={vehicle.thumbnailPath} 
                   alt={`${vehicle.make} ${vehicle.model}`}
-                  className="w-12 h-12 object-cover rounded-lg shadow-md"
+                  className="w-10 h-10 object-cover rounded-lg shadow-md"
                 />
               ) : (
-                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center shadow-md">
-                  <FileText className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-md">
+                  <FileText className="w-5 h-5 text-white" />
                 </div>
               )}
               <div>
-                <h3 className="font-semibold text-gray-800">{vehicle.make} {vehicle.model}</h3>
-                <p className="text-sm text-gray-600">{vehicle.licensePlate}</p>
+                <h3 className="font-medium text-gray-800 text-sm">{vehicle.make} {vehicle.model} ({vehicle.year})</h3>
+                <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
               </div>
             </div>
           </CardContent>
@@ -189,8 +191,8 @@ export default function ViewDocuments() {
 
         {/* Category Selection View */}
         {!selectedCategory && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Select Document Category</h2>
+          <div className="space-y-3">
+            <h2 className="text-base font-medium text-gray-800 mb-3">Select Document Category</h2>
             {documentCategories.map((category) => {
               const categoryDocuments = getDocumentsByCategory(category.key);
               const Icon = category.icon;
@@ -198,22 +200,22 @@ export default function ViewDocuments() {
               return (
                 <Card 
                   key={category.key} 
-                  className="card-hover shadow-lg cursor-pointer"
+                  className="card-hover shadow-orange cursor-pointer border-l-4 border-l-gray-300 hover:border-l-orange-400"
                   onClick={() => setSelectedCategory(category.key)}
                 >
-                  <CardContent className="p-4">
+                  <CardContent className="p-3">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-12 h-12 ${category.color} rounded-lg flex items-center justify-center shadow-md`}>
-                          <Icon className="w-6 h-6 text-white" />
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-10 h-10 ${category.color} rounded-lg flex items-center justify-center shadow-md`}>
+                          <Icon className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-gray-800">{category.label}</h3>
-                          <p className="text-sm text-gray-600">{category.description}</p>
+                          <h3 className="font-medium text-gray-800 text-sm">{category.label}</h3>
+                          <p className="text-xs text-gray-600">{category.description}</p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Badge variant="secondary">
+                        <Badge variant="secondary" className="text-xs">
                           {categoryDocuments.length} files
                         </Badge>
                         <ArrowLeft className="w-4 h-4 text-gray-400 rotate-180" />
@@ -230,12 +232,17 @@ export default function ViewDocuments() {
         {selectedCategory && !selectedDocument && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-800">
+              <h2 className="text-base font-medium text-gray-800">
                 {documentCategories.find(c => c.key === selectedCategory)?.label} Documents
               </h2>
-              <Badge variant="outline">
-                {getDocumentsByCategory(selectedCategory).length} files
-              </Badge>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="h-8 text-xs"
+                onClick={() => setSelectedCategory(null)}
+              >
+                Back to Categories
+              </Button>
             </div>
 
             {documentsLoading ? (
@@ -244,31 +251,37 @@ export default function ViewDocuments() {
                 <p className="text-muted-foreground">Loading documents...</p>
               </div>
             ) : getDocumentsByCategory(selectedCategory).length === 0 ? (
-              <Card className="p-8 text-center shadow-orange">
-                <Folder className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">No Documents Found</h3>
-                <p className="text-gray-600 mb-4">
-                  No {documentCategories.find(c => c.key === selectedCategory)?.label.toLowerCase()} documents have been uploaded yet.
-                </p>
-                <Button onClick={() => setLocation(`/vehicle/${vehicleId}/upload`)}>
-                  Upload Documents
-                </Button>
+              <Card className="shadow-orange border-l-4 border-l-gray-300">
+                <CardContent className="p-6 text-center">
+                  <Folder className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <h3 className="font-medium text-gray-800 mb-2 text-sm">No Documents Found</h3>
+                  <p className="text-gray-600 mb-3 text-xs">
+                    No {documentCategories.find(c => c.key === selectedCategory)?.label.toLowerCase()} documents have been uploaded yet.
+                  </p>
+                  <Button 
+                    size="sm" 
+                    className="h-8 text-xs"
+                    onClick={() => setLocation(`/vehicle/${vehicleId}/upload`)}
+                  >
+                    Upload Documents
+                  </Button>
+                </CardContent>
               </Card>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {getDocumentsByCategory(selectedCategory)
                   .sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime())
                   .map((document) => (
-                    <Card key={document.id} className="card-hover shadow-md">
-                      <CardContent className="p-4">
+                    <Card key={document.id} className="card-hover shadow-orange border-l-4 border-l-gray-300 hover:border-l-orange-400">
+                      <CardContent className="p-3">
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                              <FileText className="w-5 h-5 text-gray-600" />
+                          <div className="flex items-center space-x-2">
+                            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                              <FileText className="w-4 h-4 text-white" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="font-medium text-gray-800 truncate">{document.fileName}</h4>
-                              <div className="flex items-center space-x-4 text-sm text-gray-500">
+                              <h4 className="font-medium text-gray-800 truncate text-sm">{document.fileName}</h4>
+                              <div className="flex items-center space-x-3 text-xs text-gray-500">
                                 <span>{formatFileSize(document.fileSize)}</span>
                                 <div className="flex items-center space-x-1">
                                   <Calendar className="w-3 h-3" />
@@ -285,13 +298,14 @@ export default function ViewDocuments() {
                               </div>
                             </div>
                           </div>
-                          <div className="flex space-x-2">
+                          <div className="flex space-x-1">
                             <Button
                               size="sm"
                               variant="outline"
+                              className="h-7 text-xs px-2"
                               onClick={() => openDocument(document)}
                             >
-                              <Eye className="w-4 h-4 mr-1" />
+                              <Eye className="w-3 h-3 mr-1" />
                               View
                             </Button>
                           </div>
