@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import VehicleDocumentSection from "@/components/vehicle-document-section";
+
 import CameraCapture from "@/components/camera-capture";
 import ColorfulLogo from "@/components/colorful-logo";
 import ReferralDialog from "@/components/referral-dialog";
@@ -26,11 +26,6 @@ export default function AddVehicle() {
   const [selectedMake, setSelectedMake] = useState<string>("");
   const [showReferralDialog, setShowReferralDialog] = useState(false);
   
-  // Document states for different types
-  const [emissionDocuments, setEmissionDocuments] = useState<File[]>([]);
-  const [rcDocuments, setRcDocuments] = useState<File[]>([]);
-  const [insuranceDocuments, setInsuranceDocuments] = useState<File[]>([]);
-  const [serviceDocuments, setServiceDocuments] = useState<File[]>([]);
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
@@ -119,31 +114,9 @@ export default function AddVehicle() {
       queryClient.invalidateQueries({ queryKey: ["/api/vehicles"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       
-      // Upload documents by type
-      const documentUploads = [
-        { files: emissionDocuments, type: "emission" },
-        { files: rcDocuments, type: "rc" },
-        { files: insuranceDocuments, type: "insurance" },
-        { files: serviceDocuments, type: "service" }
-      ];
-
-      for (const { files, type } of documentUploads) {
-        for (const file of files) {
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("type", type);
-          
-          try {
-            await apiRequest("POST", `/api/vehicles/${vehicle.id}/documents`, formData);
-          } catch (error) {
-            console.error(`Failed to upload ${type} document:`, error);
-          }
-        }
-      }
-      
       toast({
         title: "Vehicle Added",
-        description: "Your vehicle has been successfully added with all documents.",
+        description: "Your vehicle has been successfully added.",
       });
 
       // Show referral dialog for every vehicle addition
@@ -650,47 +623,6 @@ export default function AddVehicle() {
             </Form>
           </CardContent>
         </Card>
-
-        {/* Document Upload Sections */}
-        <div className="mt-6 space-y-4">
-          <VehicleDocumentSection
-            title="Emission Certificate"
-            documentType="emission"
-            documents={emissionDocuments}
-            onDocumentsChange={setEmissionDocuments}
-            dateValue={form.watch("emissionExpiry")}
-            onDateChange={(date) => form.setValue("emissionExpiry", date)}
-            dateLabel="Latest Emission"
-          />
-
-          <VehicleDocumentSection
-            title="RC Book Copy"
-            documentType="rc"
-            documents={rcDocuments}
-            onDocumentsChange={setRcDocuments}
-          />
-
-          <VehicleDocumentSection
-            title="Insurance Copy"
-            documentType="insurance"
-            documents={insuranceDocuments}
-            onDocumentsChange={setInsuranceDocuments}
-            textValue={form.watch("insuranceCompany")}
-            onTextChange={(company) => form.setValue("insuranceCompany", company)}
-            textLabel="Insurance Company Name"
-            textPlaceholder="e.g., HDFC ERGO, ICICI Lombard, Bajaj Allianz"
-            dateValue={form.watch("insuranceExpiry")}
-            onDateChange={(date) => form.setValue("insuranceExpiry", date)}
-            dateLabel="Insurance Date of Issuance"
-          />
-
-          <VehicleDocumentSection
-            title="Service Invoice/Copy"
-            documentType="service"
-            documents={serviceDocuments}
-            onDocumentsChange={setServiceDocuments}
-          />
-        </div>
       </div>
 
       {/* Camera Modal */}

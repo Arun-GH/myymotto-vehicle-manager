@@ -19,6 +19,12 @@ Preferred communication style: Simple, everyday language.
 - Visual feedback with loading state and button style changes during confirmation
 - Added helpful tooltips for delete and cancel actions
 
+**July 16, 2025**: Streamlined Add Vehicle page by removing document upload sections
+- Removed Emission Certificate, RC Book Copy, Insurance Copy, and Service Invoice document upload tiles
+- Simplified Add Vehicle page to focus only on vehicle details and basic information
+- Documents can now be uploaded separately after vehicle creation through dedicated upload pages
+- Enhanced user experience with cleaner, focused vehicle creation workflow
+
 **July 16, 2025**: Enhanced upload documents page with service invoice functionality
 - Added "Servicing Date" field specifically for service invoice document type
 - Updated vehicle's last service date automatically when service invoice is uploaded
