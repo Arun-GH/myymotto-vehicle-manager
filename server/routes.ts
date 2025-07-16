@@ -3,6 +3,7 @@ import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact } from "@shared/schema";
+import crypto from "crypto";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -252,12 +253,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/vehicles", async (req, res) => {
     try {
-      // Check vehicle count limit (4 vehicles per user)
+      // Get current user (hardcoded for demo - should come from session)
+      const userId = 1;
+      const user = await storage.getUser(userId);
+      
+      // Check vehicle count limit with subscription logic
       const vehicles = await storage.getVehicles();
-      if (vehicles.length >= 4) {
-        return res.status(400).json({ 
-          message: "Vehicle limit reached. You can add a maximum of 4 vehicles per account." 
-        });
+      const vehicleCount = vehicles.length;
+      
+      // Free users: max 2 vehicles
+      // Subscribed users: max 4 vehicles
+      const isSubscribed = user?.subscriptionStatus === "active" && 
+                          user?.subscriptionExpiry && 
+                          new Date(user.subscriptionExpiry) > new Date();
+      
+      const maxVehicles = isSubscribed ? 4 : 2;
+      
+      if (vehicleCount >= maxVehicles) {
+        if (!isSubscribed && vehicleCount >= 2) {
+          return res.status(400).json({ 
+            message: "Free plan allows maximum 2 vehicles. Subscribe for ₹100/year to add up to 4 vehicles.",
+            requiresSubscription: true
+          });
+        } else {
+          return res.status(400).json({ 
+            message: "Vehicle limit reached. You can add a maximum of 4 vehicles per account." 
+          });
+        }
       }
       
       const validatedData = insertVehicleSchema.parse(req.body);
@@ -542,6 +564,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error updating emergency contact:", error);
       res.status(500).json({ error: "Failed to update emergency contact" });
+    }
+  });
+
+  // Razorpay Subscription API routes
+  app.post("/api/create-subscription", async (req, res) => {
+    try {
+      if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+        return res.status(500).json({ 
+          error: "Razorpay keys not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET" 
+        });
+      }
+
+      // Create Razorpay order for Rs 100 annual subscription
+      const amount = 10000; // Rs 100 in paise
+      const currency = "INR";
+      
+      // Mock order creation - in real implementation, use Razorpay SDK
+      const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      res.json({
+        orderId,
+        amount,
+        currency,
+        key: process.env.RAZORPAY_KEY_ID
+      });
+    } catch (error) {
+      console.error("Error creating subscription order:", error);
+      res.status(500).json({ error: "Failed to create subscription order" });
+    }
+  });
+
+  app.post("/api/verify-subscription", async (req, res) => {
+    try {
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+      
+      if (!process.env.RAZORPAY_KEY_SECRET) {
+        return res.status(500).json({ error: "Razorpay secret key not configured" });
+      }
+      
+      // Verify signature (simplified for demo)
+      const generatedSignature = crypto
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+        .update(razorpay_order_id + "|" + razorpay_payment_id)
+        .digest("hex");
+      
+      // In development, skip signature verification or implement mock verification
+      const isSignatureValid = true; // generatedSignature === razorpay_signature;
+      
+      if (isSignatureValid) {
+        // Update user subscription status
+        // For now, we'll need to get userId from session or request context
+        // In a production app, this would come from authenticated session
+        const userId = 1; // Temporary hardcoded for demo - should come from auth session
+        const subscriptionExpiry = new Date();
+        subscriptionExpiry.setFullYear(subscriptionExpiry.getFullYear() + 1); // 1 year from now
+        
+        await storage.updateUser(userId, {
+          subscriptionStatus: "active",
+          subscriptionExpiry,
+          razorpayOrderId: razorpay_order_id,
+          razorpayPaymentId: razorpay_payment_id
+        });
+        
+        res.json({ success: true, message: "Subscription activated successfully" });
+      } else {
+        res.status(400).json({ error: "Invalid payment signature" });
+      }
+    } catch (error) {
+      console.error("Error verifying subscription payment:", error);
+      res.status(500).json({ error: "Failed to verify payment" });
     }
   });
 

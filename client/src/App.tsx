@@ -17,6 +17,7 @@ import ServiceCenters from "@/pages/service-centers";
 import Documents from "@/pages/documents";
 import Profile from "@/pages/profile";
 import EmergencyContacts from "@/pages/emergency-contacts";
+import Subscribe from "@/pages/subscribe";
 import SignIn from "@/pages/sign-in";
 import NotFound from "@/pages/not-found";
 
@@ -65,6 +66,7 @@ function Router() {
       <Route path="/service-centers" component={ServiceCenters} />
       <Route path="/documents" component={Documents} />
       <Route path="/emergency-contacts" component={EmergencyContacts} />
+      <Route path="/subscribe" component={Subscribe} />
       <Route path="/profile" component={Profile} />
       <Route component={NotFound} />
     </Switch>

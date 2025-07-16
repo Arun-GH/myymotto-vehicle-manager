@@ -74,6 +74,10 @@ export const users = pgTable("users", {
   email: text("email"),
   mobile: text("mobile"),
   isVerified: boolean("is_verified").default(false).notNull(),
+  subscriptionStatus: text("subscription_status").default("free"), // free, active, expired
+  subscriptionExpiry: timestamp("subscription_expiry"),
+  razorpayOrderId: text("razorpay_order_id"),
+  razorpayPaymentId: text("razorpay_payment_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

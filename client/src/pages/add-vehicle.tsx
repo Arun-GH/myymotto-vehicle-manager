@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Car, Save, FileText, Calendar, Camera, Settings } from "lucide-react";
+import { ArrowLeft, Car, Save, FileText, Calendar, Camera, Settings, AlertTriangle } from "lucide-react";
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -41,8 +41,9 @@ export default function AddVehicle() {
     queryFn: () => apiRequest("GET", "/api/vehicles").then(res => res.json()),
   });
 
-  // Check if vehicle limit (4) is reached
+  // Check vehicle limits and subscription requirements
   const vehicleLimitReached = vehicles.length >= 4;
+  const needsSubscription = vehicles.length >= 2; // Need subscription for 3rd and 4th vehicle
 
   const form = useForm<InsertVehicle>({
     resolver: zodResolver(insertVehicleSchema),
@@ -104,6 +105,13 @@ export default function AddVehicle() {
         serviceIntervalMonths: data.serviceIntervalMonths || null,
       };
       const response = await apiRequest("POST", "/api/vehicles", cleanedData);
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.requiresSubscription) {
+          throw new Error(errorData.message);
+        }
+        throw new Error(errorData.message || "Failed to add vehicle");
+      }
       return response.json();
     },
     onSuccess: async (vehicle) => {
@@ -141,11 +149,29 @@ export default function AddVehicle() {
       setShowReferralDialog(true);
     },
     onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to add vehicle",
-        variant: "destructive",
-      });
+      // Check if it's a subscription error
+      if (error.message.includes("Subscribe for ₹100/year")) {
+        toast({
+          title: "Subscription Required",
+          description: error.message,
+          variant: "destructive",
+          action: (
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => setLocation("/subscribe")}
+            >
+              Subscribe Now
+            </Button>
+          ),
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to add vehicle",
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -230,6 +256,26 @@ export default function AddVehicle() {
                   <div>
                     <p className="text-sm font-medium text-red-800">Vehicle Limit Reached</p>
                     <p className="text-xs text-red-700">You can add a maximum of 4 vehicles per account.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {needsSubscription && !vehicleLimitReached && (
+              <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <AlertTriangle className="w-5 h-5 text-orange-600" />
+                  <div>
+                    <p className="text-sm font-medium text-orange-800">Subscription Required</p>
+                    <p className="text-xs text-orange-700">To add more than 2 vehicles, you need to pay ₹100/year subscription.</p>
+                    <Button 
+                      type="button" 
+                      size="sm" 
+                      className="mt-2 bg-orange-600 hover:bg-orange-700 text-white"
+                      onClick={() => setLocation("/subscribe")}
+                    >
+                      Subscribe Now - ₹100/year
+                    </Button>
                   </div>
                 </div>
               </div>
