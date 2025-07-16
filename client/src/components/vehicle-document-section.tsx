@@ -70,7 +70,7 @@ export default function VehicleDocumentSection({
               id={`${documentType}-text`}
               type="text"
               value={textValue || ""}
-              onChange={(e) => onTextChange(e.target.value)}
+              onChange={(e) => onTextChange(e.target.value.toUpperCase())}
               placeholder={textPlaceholder}
               className="h-9"
             />

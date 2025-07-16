@@ -341,6 +341,7 @@ export default function AddVehicle() {
                               placeholder="Enter make manually" 
                               className="h-9" 
                               {...field}
+                              onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                             />
                           ) : (
                             <Select onValueChange={handleMakeChange} value={selectedMake}>
@@ -389,6 +390,7 @@ export default function AddVehicle() {
                               placeholder="Enter model manually" 
                               className="h-9" 
                               {...field}
+                              onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                             />
                           ) : (
                             <Select onValueChange={handleModelChange} value={field.value} disabled={!watchedMake && !isCustomMake}>
@@ -438,7 +440,7 @@ export default function AddVehicle() {
                             type="number" 
                             className="h-9"
                             {...field} 
-                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : "")}
                           />
                         </FormControl>
                         <FormMessage />
@@ -452,7 +454,7 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-sm font-medium">Color</FormLabel>
                         <FormControl>
-                          <Input placeholder="Red" className="h-9" {...field} />
+                          <Input placeholder="Red" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -465,7 +467,7 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-sm font-medium">License Plate *</FormLabel>
                         <FormControl>
-                          <Input placeholder="DL 01 AB 1234" className="h-9" {...field} />
+                          <Input placeholder="DL 01 AB 1234" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -481,7 +483,7 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-sm font-medium">Chassis Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="MAT123456789" className="h-9" {...field} />
+                          <Input placeholder="MAT123456789" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -494,7 +496,7 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-sm font-medium">Engine Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="ENG987654321" className="h-9" {...field} />
+                          <Input placeholder="ENG987654321" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -510,7 +512,7 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-sm font-medium">Owner Name *</FormLabel>
                         <FormControl>
-                          <Input placeholder="John Doe" className="h-9" {...field} />
+                          <Input placeholder="John Doe" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -523,7 +525,7 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-sm font-medium">Phone Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="+91 98765 43210" className="h-9" {...field} />
+                          <Input placeholder="+91 98765 43210" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

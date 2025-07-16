@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Implemented manual make/model entry and auto-capitalization functionality
+- Added "Other (Enter manually)" option to both make and model dropdowns in Add Vehicle and Edit Vehicle pages
+- Custom text input fields appear when "Other" is selected with "Back to dropdown" navigation links
+- Auto-capitalization implemented for ALL text input fields on Add Vehicle page (make, model, color, license plate, chassis, engine, owner name, phone, insurance company)
+- Fixed NaN error in year input field by properly handling empty values
+- Auto-detection of custom make/model values when editing existing vehicles with non-dropdown values
+- Enhanced user flexibility for vehicles not in predefined lists while maintaining data consistency
+
 **July 16, 2025**: Added vehicle deletion functionality to dashboard vehicle tiles
 - Added delete button (trash icon only) positioned in top right corner of each vehicle card
 - Implemented confirmation flow: click trash icon → shows highlighted state → click again to delete
