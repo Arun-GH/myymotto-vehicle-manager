@@ -10,10 +10,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 16, 2025**: Updated emission certificate field labeling in upload documents page
+**July 16, 2025**: Updated document field labeling in upload documents page
 - Changed "Expiry Date" label to "Emission certificate issue date" when emission certificate document type is selected
+- Changed "Expiry Date" label to "Date of Insurance issuance" when insurance document type is selected
 - Improved user experience with contextually appropriate field labels for different document types
-- Other document types still show "Expiry Date" label as appropriate
+- Other document types (service and RC) still show "Expiry Date" label as appropriate
 
 **July 16, 2025**: Removed Vehicle Details page completely from application flow
 - Eliminated intermediate vehicle details page to streamline navigation

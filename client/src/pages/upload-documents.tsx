@@ -255,7 +255,8 @@ export default function UploadDocuments() {
                   <div className="flex items-center space-x-2">
                     <Calendar className="w-4 h-4" />
                     <span>
-                      {selectedType === "emission" ? "Emission certificate issue date" : "Expiry Date"}
+                      {selectedType === "emission" ? "Emission certificate issue date" : 
+                       selectedType === "insurance" ? "Date of Insurance issuance" : "Expiry Date"}
                     </span>
                   </div>
                 </Label>
