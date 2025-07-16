@@ -117,7 +117,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-gray-600 font-bold">Service Date:</span>
+              <span className="text-gray-600 font-bold">Latest Service Date:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.lastServiceDate ? formatDistanceToNow(new Date(vehicle.lastServiceDate)) : "Not set"}
               </span>
