@@ -20,6 +20,7 @@ Preferred communication style: Simple, everyday language.
 - Implemented confirmation dialog before deleting documents to prevent accidental deletions
 - Added red styling for delete button with hover effects for clear visual distinction
 - Document deletion includes proper cache invalidation and toast notifications for user feedback
+- Fixed brand logo display issue on view documents page by using proper imported logo image instead of incorrect asset path
 
 **July 16, 2025**: Implemented complete PIN and biometric authentication system
 - Added PIN authentication fields (pin, biometricEnabled) to user database schema

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import ColorfulLogo from "@/components/colorful-logo";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 type DocumentCategory = "all" | "insurance" | "emission" | "service" | "rc";
 
@@ -145,13 +146,11 @@ export default function ViewDocuments() {
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <div className="w-14 h-14 bg-white rounded-lg shadow-md flex items-center justify-center">
-                <img 
-                  src="/attached_assets/Mymotto_Logo_Green_Revised_1752603344750.png" 
-                  alt="Myymotto Logo" 
-                  className="w-12 h-12 object-contain"
-                />
-              </div>
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-14 h-14 rounded-lg"
+              />
               <div>
                 <ColorfulLogo className="text-lg font-bold" />
                 <p className="text-sm text-red-600 font-medium">
