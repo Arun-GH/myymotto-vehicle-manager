@@ -281,31 +281,55 @@ export class MemStorage implements IStorage {
     const vehicles = await this.getVehicles();
     
     for (const vehicle of vehicles) {
-      // Check insurance expiry
+      // Check insurance renewal (when 10 months or more have passed since issuance)
       if (vehicle.insuranceExpiry) {
-        const insuranceDate = new Date(vehicle.insuranceExpiry);
-        if (insuranceDate > currentDate && insuranceDate <= oneMonthFromNow) {
+        const insuranceIssuanceDate = new Date(vehicle.insuranceExpiry);
+        const tenMonthsFromIssuance = new Date(insuranceIssuanceDate);
+        tenMonthsFromIssuance.setMonth(tenMonthsFromIssuance.getMonth() + 10);
+        
+        if (currentDate >= tenMonthsFromIssuance) {
           await this.createNotification({
             vehicleId: vehicle.id,
             type: 'insurance',
             title: `Insurance Renewal Due - ${vehicle.make} ${vehicle.model}`,
-            message: `Your insurance expires on ${insuranceDate.toLocaleDateString()}. Renew now to avoid penalties.`,
+            message: `Insurance for your ${vehicle.make} ${vehicle.model} was issued on ${insuranceIssuanceDate.toLocaleDateString()}. Time to renew!`,
             dueDate: vehicle.insuranceExpiry,
             isRead: false
           });
         }
       }
 
-      // Check emission certificate expiry
+      // Check emission renewal (when 5 months or more have passed since emission date)
       if (vehicle.emissionExpiry) {
         const emissionDate = new Date(vehicle.emissionExpiry);
-        if (emissionDate > currentDate && emissionDate <= oneMonthFromNow) {
+        const fiveMonthsFromEmission = new Date(emissionDate);
+        fiveMonthsFromEmission.setMonth(fiveMonthsFromEmission.getMonth() + 5);
+        
+        if (currentDate >= fiveMonthsFromEmission) {
           await this.createNotification({
             vehicleId: vehicle.id,
             type: 'emission',
             title: `Emission Certificate Renewal Due - ${vehicle.make} ${vehicle.model}`,
-            message: `Your emission certificate expires on ${emissionDate.toLocaleDateString()}. Get it renewed soon.`,
+            message: `Latest emission certificate for your ${vehicle.make} ${vehicle.model} was from ${emissionDate.toLocaleDateString()}. Time to renew!`,
             dueDate: vehicle.emissionExpiry,
+            isRead: false
+          });
+        }
+      }
+
+      // Check RC expiry (when current date is 4 months and less than RC expiry date)
+      if (vehicle.rcExpiry) {
+        const rcExpiryDate = new Date(vehicle.rcExpiry);
+        const fourMonthsBeforeExpiry = new Date(rcExpiryDate);
+        fourMonthsBeforeExpiry.setMonth(fourMonthsBeforeExpiry.getMonth() - 4);
+        
+        if (currentDate >= fourMonthsBeforeExpiry && currentDate < rcExpiryDate) {
+          await this.createNotification({
+            vehicleId: vehicle.id,
+            type: 'rc',
+            title: `RC Renewal Due - ${vehicle.make} ${vehicle.model}`,
+            message: `Your RC expires on ${rcExpiryDate.toLocaleDateString()}. Renew it before expiry to avoid penalties.`,
+            dueDate: vehicle.rcExpiry,
             isRead: false
           });
         }
@@ -487,13 +511,13 @@ export class DatabaseStorage implements IStorage {
     const today = new Date();
     
     for (const vehicle of allVehicles) {
-      // Check insurance expiry (1 month before)
+      // Check insurance renewal (when 10 months or more have passed since issuance)
       if (vehicle.insuranceExpiry) {
-        const insuranceDate = new Date(vehicle.insuranceExpiry);
-        const notifyDate = new Date(insuranceDate);
-        notifyDate.setMonth(notifyDate.getMonth() - 1);
+        const insuranceIssuanceDate = new Date(vehicle.insuranceExpiry);
+        const tenMonthsFromIssuance = new Date(insuranceIssuanceDate);
+        tenMonthsFromIssuance.setMonth(tenMonthsFromIssuance.getMonth() + 10);
         
-        if (notifyDate <= today && insuranceDate > today) {
+        if (today >= tenMonthsFromIssuance) {
           // Check if notification already exists
           const existingNotifications = await db.select()
             .from(notifications)
@@ -508,7 +532,7 @@ export class DatabaseStorage implements IStorage {
               vehicleId: vehicle.id,
               type: 'insurance',
               title: 'Insurance Renewal Due',
-              message: `Insurance for your ${vehicle.make} ${vehicle.model} expires soon!`,
+              message: `Insurance for your ${vehicle.make} ${vehicle.model} was issued on ${insuranceIssuanceDate.toLocaleDateString()}. Time to renew!`,
               dueDate: vehicle.insuranceExpiry,
               isRead: false
             });
@@ -516,13 +540,13 @@ export class DatabaseStorage implements IStorage {
         }
       }
       
-      // Check emission expiry (1 month before)
+      // Check emission renewal (when 5 months or more have passed since emission date)
       if (vehicle.emissionExpiry) {
         const emissionDate = new Date(vehicle.emissionExpiry);
-        const notifyDate = new Date(emissionDate);
-        notifyDate.setMonth(notifyDate.getMonth() - 1);
+        const fiveMonthsFromEmission = new Date(emissionDate);
+        fiveMonthsFromEmission.setMonth(fiveMonthsFromEmission.getMonth() + 5);
         
-        if (notifyDate <= today && emissionDate > today) {
+        if (today >= fiveMonthsFromEmission) {
           // Check if notification already exists
           const existingNotifications = await db.select()
             .from(notifications)
@@ -537,8 +561,37 @@ export class DatabaseStorage implements IStorage {
               vehicleId: vehicle.id,
               type: 'emission',
               title: 'Emission Certificate Renewal Due',
-              message: `Emission certificate for your ${vehicle.make} ${vehicle.model} expires soon!`,
+              message: `Latest emission certificate for your ${vehicle.make} ${vehicle.model} was from ${emissionDate.toLocaleDateString()}. Time to renew!`,
               dueDate: vehicle.emissionExpiry,
+              isRead: false
+            });
+          }
+        }
+      }
+
+      // Check RC expiry (when current date is 4 months and less than RC expiry date)
+      if (vehicle.rcExpiry) {
+        const rcExpiryDate = new Date(vehicle.rcExpiry);
+        const fourMonthsBeforeExpiry = new Date(rcExpiryDate);
+        fourMonthsBeforeExpiry.setMonth(fourMonthsBeforeExpiry.getMonth() - 4);
+        
+        if (today >= fourMonthsBeforeExpiry && today < rcExpiryDate) {
+          // Check if notification already exists
+          const existingNotifications = await db.select()
+            .from(notifications)
+            .where(and(
+              eq(notifications.vehicleId, vehicle.id),
+              eq(notifications.type, 'rc'),
+              eq(notifications.dueDate, vehicle.rcExpiry)
+            ));
+            
+          if (existingNotifications.length === 0) {
+            await this.createNotification({
+              vehicleId: vehicle.id,
+              type: 'rc',
+              title: 'RC Renewal Due',
+              message: `Your RC expires on ${rcExpiryDate.toLocaleDateString()}. Renew it before expiry to avoid penalties.`,
+              dueDate: vehicle.rcExpiry,
               isRead: false
             });
           }

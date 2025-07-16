@@ -10,6 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Enhanced notification system with improved timing logic
+- Updated insurance notifications to trigger when 10+ months have passed since issuance date
+- Updated emission notifications to trigger when 5+ months have passed since emission date  
+- Added RC expiry notifications to trigger when current date is within 4 months of RC expiry
+- Enhanced notification messages to clearly show dates and renewal requirements
+- Improved notification timing to be more relevant to actual renewal periods
+
 **July 16, 2025**: Updated vehicle card date display to show actual dates instead of relative time
 - Changed insurance, emission, and service dates from "X days ago" format to actual calendar dates (MM/DD/YYYY)
 - Enhanced user experience with precise date information on vehicle tiles
