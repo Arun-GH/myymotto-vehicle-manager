@@ -10,6 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Updated emission certificate field labeling in upload documents page
+- Changed "Expiry Date" label to "Emission certificate issue date" when emission certificate document type is selected
+- Improved user experience with contextually appropriate field labels for different document types
+- Other document types still show "Expiry Date" label as appropriate
+
+**July 16, 2025**: Removed Vehicle Details page completely from application flow
+- Eliminated intermediate vehicle details page to streamline navigation
+- Updated all vehicle card navigation to go directly to dashboard instead of details page
+- Fixed edit and upload page navigation to redirect to dashboard after completion
+- Removed vehicle-details.tsx file and cleaned up all related imports and routing
+- Simplified app flow: Dashboard → Edit/Upload/Documents actions → Back to Dashboard
+
 **July 16, 2025**: Enhanced document viewing with direct file opening and delete functionality
 - Fixed documents page to open files directly when clicked instead of navigating to view page
 - Added click handlers to both document names and View buttons for instant file opening

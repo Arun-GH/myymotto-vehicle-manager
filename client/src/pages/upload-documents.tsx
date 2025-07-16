@@ -254,7 +254,9 @@ export default function UploadDocuments() {
                 <Label htmlFor="expiry-date" className="text-sm font-medium">
                   <div className="flex items-center space-x-2">
                     <Calendar className="w-4 h-4" />
-                    <span>Expiry Date</span>
+                    <span>
+                      {selectedType === "emission" ? "Emission certificate issue date" : "Expiry Date"}
+                    </span>
                   </div>
                 </Label>
                 <Input
