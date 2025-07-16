@@ -9,6 +9,9 @@ export interface IStorage {
   getUserByIdentifier(identifier: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<User>): Promise<User | undefined>;
+  verifyPin(identifier: string, pin: string): Promise<User | undefined>;
+  updateUserPin(id: number, pin: string): Promise<User | undefined>;
+  updateBiometricSetting(id: number, enabled: boolean): Promise<User | undefined>;
   
   // OTP methods
   createOtpVerification(otp: InsertOtpVerification): Promise<OtpVerification>;
@@ -107,6 +110,33 @@ export class MemStorage implements IStorage {
     if (!existing) return undefined;
     
     const updated: User = { ...existing, ...userUpdate };
+    this.users.set(id, updated);
+    return updated;
+  }
+
+  async verifyPin(identifier: string, pin: string): Promise<User | undefined> {
+    for (const user of this.users.values()) {
+      if ((user.mobile === identifier || user.email === identifier) && user.pin === pin) {
+        return user;
+      }
+    }
+    return undefined;
+  }
+
+  async updateUserPin(id: number, pin: string): Promise<User | undefined> {
+    const existing = this.users.get(id);
+    if (!existing) return undefined;
+    
+    const updated: User = { ...existing, pin };
+    this.users.set(id, updated);
+    return updated;
+  }
+
+  async updateBiometricSetting(id: number, enabled: boolean): Promise<User | undefined> {
+    const existing = this.users.get(id);
+    if (!existing) return undefined;
+    
+    const updated: User = { ...existing, biometricEnabled: enabled };
     this.users.set(id, updated);
     return updated;
   }
@@ -381,6 +411,34 @@ export class DatabaseStorage implements IStorage {
 
   async updateUser(id: number, userUpdate: Partial<User>): Promise<User | undefined> {
     const [user] = await db.update(users).set(userUpdate).where(eq(users.id, id)).returning();
+    return user || undefined;
+  }
+
+  async verifyPin(identifier: string, pin: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(
+      and(
+        eq(users.username, identifier),
+        eq(users.pin, pin)
+      )
+    );
+    return user || undefined;
+  }
+
+  async updateUserPin(id: number, pin: string): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ pin })
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+
+  async updateBiometricSetting(id: number, enabled: boolean): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ biometricEnabled: enabled })
+      .where(eq(users.id, id))
+      .returning();
     return user || undefined;
   }
 

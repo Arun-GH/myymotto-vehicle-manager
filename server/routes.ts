@@ -2,7 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact } from "@shared/schema";
+import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact } from "@shared/schema";
 import crypto from "crypto";
 import multer from "multer";
 import path from "path";
@@ -172,6 +172,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error: any) {
       res.status(400).json({ message: error.message || "Failed to resend OTP" });
+    }
+  });
+
+  // PIN Authentication Routes
+  app.post("/api/auth/pin-login", async (req, res) => {
+    try {
+      const validatedData = pinLoginSchema.parse(req.body);
+      const { identifier, pin } = validatedData;
+      
+      // Verify PIN
+      const user = await storage.verifyPin(identifier, pin);
+      if (!user) {
+        return res.status(400).json({ message: "Invalid PIN or user not found" });
+      }
+      
+      // Check if user has profile
+      const profile = await storage.getUserProfile(user.id);
+      
+      res.json({
+        success: true,
+        userId: user.id,
+        hasProfile: !!profile,
+        message: "PIN authentication successful"
+      });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "PIN login failed" });
+    }
+  });
+
+  app.post("/api/auth/set-pin", async (req, res) => {
+    try {
+      const validatedData = setPinSchema.parse(req.body);
+      const { pin } = validatedData;
+      const userId = req.body.userId;
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      // Update user's PIN
+      const updatedUser = await storage.updateUserPin(userId, pin);
+      if (!updatedUser) {
+        return res.status(400).json({ message: "Failed to set PIN" });
+      }
+      
+      res.json({
+        success: true,
+        message: "PIN set successfully"
+      });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Failed to set PIN" });
+    }
+  });
+
+  app.post("/api/auth/biometric-setup", async (req, res) => {
+    try {
+      const validatedData = biometricSetupSchema.parse(req.body);
+      const { enabled } = validatedData;
+      const userId = req.body.userId;
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      // Update user's biometric setting
+      const updatedUser = await storage.updateBiometricSetting(userId, enabled);
+      if (!updatedUser) {
+        return res.status(400).json({ message: "Failed to update biometric setting" });
+      }
+      
+      res.json({
+        success: true,
+        message: `Biometric authentication ${enabled ? 'enabled' : 'disabled'} successfully`
+      });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Failed to update biometric setting" });
+    }
+  });
+
+  app.get("/api/auth/user/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Return user info without sensitive data
+      res.json({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        mobile: user.mobile,
+        hasPin: !!user.pin,
+        biometricEnabled: user.biometricEnabled,
+        subscriptionStatus: user.subscriptionStatus,
+        subscriptionExpiry: user.subscriptionExpiry
+      });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Failed to fetch user" });
     }
   });
   

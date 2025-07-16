@@ -76,6 +76,8 @@ export const users = pgTable("users", {
   email: text("email"),
   mobile: text("mobile"),
   isVerified: boolean("is_verified").default(false).notNull(),
+  pin: text("pin"), // 4-6 digit PIN for quick login
+  biometricEnabled: boolean("biometric_enabled").default(false).notNull(),
   subscriptionStatus: text("subscription_status").default("free"), // free, active, expired
   subscriptionExpiry: timestamp("subscription_expiry"),
   razorpayOrderId: text("razorpay_order_id"),
@@ -126,6 +128,23 @@ export const signInSchema = z.object({
 export const verifyOtpSchema = z.object({
   identifier: z.string().min(1, "Mobile number or email is required"),
   otp: z.string().length(6, "OTP must be 6 digits"),
+});
+
+export const setPinSchema = z.object({
+  pin: z.string().regex(/^\d{4,6}$/, "PIN must be 4-6 digits"),
+  confirmPin: z.string().regex(/^\d{4,6}$/, "PIN must be 4-6 digits"),
+}).refine(data => data.pin === data.confirmPin, {
+  message: "PINs don't match",
+  path: ["confirmPin"],
+});
+
+export const pinLoginSchema = z.object({
+  identifier: z.string().min(1, "Mobile number or email is required"),
+  pin: z.string().regex(/^\d{4,6}$/, "PIN must be 4-6 digits"),
+});
+
+export const biometricSetupSchema = z.object({
+  enabled: z.boolean(),
 });
 
 export const insertOtpSchema = createInsertSchema(otpVerifications).omit({

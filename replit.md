@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Implemented PIN and biometric authentication system for existing users
+- Added PIN authentication fields (pin, biometricEnabled) to user database schema
+- Created PIN/biometric authentication API routes for existing users
+- New users still use OTP authentication, existing users can use PIN or biometric login
+- Added PIN setup, PIN login, and biometric toggle functionality
+- Enhanced security with fingerprint authentication for mobile devices
+- Database schema updated and pushed with new authentication fields
+
 **July 16, 2025**: Enhanced notification system with improved timing logic
 - Updated insurance notifications to trigger when 10+ months have passed since issuance date
 - Updated emission notifications to trigger when 5+ months have passed since emission date  
