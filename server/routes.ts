@@ -287,6 +287,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/vehicles/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid vehicle ID" });
+      }
+      
       const deleted = await storage.deleteVehicle(id);
       
       if (!deleted) {
@@ -295,6 +300,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(204).send();
     } catch (error) {
+      console.error("Delete vehicle error:", error);
       res.status(500).json({ message: "Failed to delete vehicle" });
     }
   });
