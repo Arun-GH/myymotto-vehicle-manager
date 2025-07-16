@@ -35,11 +35,14 @@ export default function AddVehicle() {
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
 
-  // Get current vehicle count to check if this will be the second vehicle
+  // Get current vehicle count to check vehicle limit and referral trigger
   const { data: vehicles = [] } = useQuery({
     queryKey: ["/api/vehicles"],
     queryFn: () => apiRequest("GET", "/api/vehicles").then(res => res.json()),
   });
+
+  // Check if vehicle limit (4) is reached
+  const vehicleLimitReached = vehicles.length >= 4;
 
   const form = useForm<InsertVehicle>({
     resolver: zodResolver(insertVehicleSchema),
@@ -220,6 +223,17 @@ export default function AddVehicle() {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {vehicleLimitReached && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <AlertTriangle className="w-5 h-5 text-red-600" />
+                  <div>
+                    <p className="text-sm font-medium text-red-800">Vehicle Limit Reached</p>
+                    <p className="text-xs text-red-700">You can add a maximum of 4 vehicles per account.</p>
+                  </div>
+                </div>
+              </div>
+            )}
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 

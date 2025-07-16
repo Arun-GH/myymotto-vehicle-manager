@@ -252,6 +252,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/vehicles", async (req, res) => {
     try {
+      // Check vehicle count limit (4 vehicles per user)
+      const vehicles = await storage.getVehicles();
+      if (vehicles.length >= 4) {
+        return res.status(400).json({ 
+          message: "Vehicle limit reached. You can add a maximum of 4 vehicles per account." 
+        });
+      }
+      
       const validatedData = insertVehicleSchema.parse(req.body);
       const vehicle = await storage.createVehicle(validatedData);
       res.status(201).json(vehicle);
