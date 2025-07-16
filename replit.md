@@ -10,11 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 16, 2025**: Updated document field labeling in upload documents page
+**July 16, 2025**: Enhanced upload documents page with service invoice functionality
+- Added "Servicing Date" field specifically for service invoice document type
+- Updated vehicle's last service date automatically when service invoice is uploaded
 - Changed "Expiry Date" label to "Emission certificate issue date" when emission certificate document type is selected
 - Changed "Expiry Date" label to "Date of Insurance issuance" when insurance document type is selected
 - Improved user experience with contextually appropriate field labels for different document types
-- Other document types (service and RC) still show "Expiry Date" label as appropriate
+- Service invoice now captures both document and updates vehicle service history
+- Other document types (RC) still show "Expiry Date" label as appropriate
 
 **July 16, 2025**: Removed Vehicle Details page completely from application flow
 - Eliminated intermediate vehicle details page to streamline navigation

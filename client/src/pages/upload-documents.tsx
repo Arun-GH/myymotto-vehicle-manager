@@ -31,6 +31,7 @@ export default function UploadDocuments() {
   const [selectedType, setSelectedType] = useState<DocumentType>("emission");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [expiryDate, setExpiryDate] = useState<string>("");
+  const [servicingDate, setServicingDate] = useState<string>("");
   const [showCamera, setShowCamera] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -108,6 +109,16 @@ export default function UploadDocuments() {
         uploadedDocuments.push(document);
       }
 
+      // If uploading service invoice, update vehicle's last service date
+      if (selectedType === "service" && servicingDate) {
+        const updateVehicleResponse = await apiRequest("PATCH", `/api/vehicles/${vehicleId}`, {
+          lastServiceDate: servicingDate,
+        });
+        if (!updateVehicleResponse.ok) {
+          console.warn("Failed to update vehicle last service date");
+        }
+      }
+
       return uploadedDocuments;
     },
     onSuccess: () => {
@@ -123,6 +134,7 @@ export default function UploadDocuments() {
       // Reset form
       setSelectedFiles([]);
       setExpiryDate("");
+      setServicingDate("");
       setLocation("/");
     },
     onError: (error) => {
@@ -267,6 +279,26 @@ export default function UploadDocuments() {
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
                   placeholder="Select expiry date"
+                />
+              </div>
+            )}
+
+            {/* Servicing Date (for service invoice) */}
+            {selectedType === "service" && (
+              <div className="space-y-2">
+                <Label htmlFor="servicing-date" className="text-sm font-medium">
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>Servicing Date</span>
+                  </div>
+                </Label>
+                <Input
+                  id="servicing-date"
+                  type="date"
+                  className="h-9"
+                  value={servicingDate}
+                  onChange={(e) => setServicingDate(e.target.value)}
+                  placeholder="Select servicing date"
                 />
               </div>
             )}
