@@ -68,6 +68,27 @@
 }
 
 @layer utilities {
+  .header-gradient-border {
+    position: relative;
+    background: white;
+  }
+  
+  .header-gradient-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, 
+      hsl(0, 60%, 50%) 0%, 
+      transparent 20%, 
+      transparent 80%, 
+      hsl(0, 60%, 50%) 100%);
+    border-radius: inherit;
+    z-index: -1;
+  }
+
   .safe-area-inset {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
