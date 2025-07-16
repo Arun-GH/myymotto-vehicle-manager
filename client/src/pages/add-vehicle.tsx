@@ -57,6 +57,7 @@ export default function AddVehicle() {
       engineNumber: "",
       ownerName: "",
       ownerPhone: "",
+      insuranceCompany: "",
       insuranceExpiry: "",
       emissionExpiry: "",
       rcExpiry: "",
@@ -674,6 +675,10 @@ export default function AddVehicle() {
             documentType="insurance"
             documents={insuranceDocuments}
             onDocumentsChange={setInsuranceDocuments}
+            textValue={form.watch("insuranceCompany")}
+            onTextChange={(company) => form.setValue("insuranceCompany", company)}
+            textLabel="Insurance Company Name"
+            textPlaceholder="e.g., HDFC ERGO, ICICI Lombard, Bajaj Allianz"
             dateValue={form.watch("insuranceExpiry")}
             onDateChange={(date) => form.setValue("insuranceExpiry", date)}
             dateLabel="Insurance Expiry Date"

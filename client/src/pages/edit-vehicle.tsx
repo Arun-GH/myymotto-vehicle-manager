@@ -430,6 +430,26 @@ export default function EditVehicle() {
                   )}
                 />
 
+                <FormField
+                  control={form.control}
+                  name="insuranceCompany"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Insurance Company Name</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="text" 
+                          {...field} 
+                          value={field.value || ""} 
+                          placeholder="e.g., HDFC ERGO, ICICI Lombard, Bajaj Allianz"
+                          className="h-9"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -443,6 +463,7 @@ export default function EditVehicle() {
                             {...field} 
                             value={field.value || ""} 
                             onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                            className="h-9"
                           />
                         </FormControl>
                         <FormMessage />

@@ -14,6 +14,10 @@ interface VehicleDocumentSectionProps {
   dateValue?: string;
   onDateChange?: (date: string) => void;
   dateLabel?: string;
+  textValue?: string;
+  onTextChange?: (text: string) => void;
+  textLabel?: string;
+  textPlaceholder?: string;
 }
 
 export default function VehicleDocumentSection({
@@ -23,7 +27,11 @@ export default function VehicleDocumentSection({
   onDocumentsChange,
   dateValue,
   onDateChange,
-  dateLabel
+  dateLabel,
+  textValue,
+  onTextChange,
+  textLabel,
+  textPlaceholder
 }: VehicleDocumentSectionProps) {
   const [showCamera, setShowCamera] = useState(false);
 
@@ -52,10 +60,27 @@ export default function VehicleDocumentSection({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Text Field (if provided) */}
+        {textLabel && onTextChange && (
+          <div className="space-y-2">
+            <Label htmlFor={`${documentType}-text`} className="text-sm font-medium">
+              {textLabel}
+            </Label>
+            <Input
+              id={`${documentType}-text`}
+              type="text"
+              value={textValue || ""}
+              onChange={(e) => onTextChange(e.target.value)}
+              placeholder={textPlaceholder}
+              className="h-9"
+            />
+          </div>
+        )}
+
         {/* Date Field (if provided) */}
         {dateLabel && onDateChange && (
           <div className="space-y-2">
-            <Label htmlFor={`${documentType}-date`} className="flex items-center space-x-2">
+            <Label htmlFor={`${documentType}-date`} className="flex items-center space-x-2 text-sm font-medium">
               <Calendar className="w-4 h-4" />
               <span>{dateLabel}</span>
             </Label>
@@ -64,7 +89,7 @@ export default function VehicleDocumentSection({
               type="date"
               value={dateValue || ""}
               onChange={(e) => onDateChange(e.target.value)}
-              className="w-full"
+              className="h-9"
             />
           </div>
         )}
