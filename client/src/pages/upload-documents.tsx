@@ -186,43 +186,45 @@ export default function UploadDocuments() {
 
       <div className="p-4 pb-20 bg-warm-pattern">
         {/* Vehicle Info */}
-        <Card className="mb-4 shadow-orange">
-          <CardContent className="p-4">
+        <Card className="mb-4 shadow-orange border-l-4 border-l-blue-500">
+          <CardContent className="p-3">
             <div className="flex items-center space-x-3">
               {vehicle.thumbnailPath ? (
                 <img 
                   src={vehicle.thumbnailPath} 
                   alt={`${vehicle.make} ${vehicle.model}`}
-                  className="w-12 h-12 object-cover rounded-lg shadow-md"
+                  className="w-10 h-10 object-cover rounded-lg shadow-md"
                 />
               ) : (
-                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center shadow-md">
-                  <FileText className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-md">
+                  <FileText className="w-5 h-5 text-white" />
                 </div>
               )}
               <div>
-                <h3 className="font-semibold text-gray-800">{vehicle.make} {vehicle.model}</h3>
-                <p className="text-sm text-gray-600">{vehicle.licensePlate}</p>
+                <h3 className="font-medium text-gray-800 text-sm">{vehicle.make} {vehicle.model} ({vehicle.year})</h3>
+                <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Document Upload Form */}
-        <Card className="card-hover shadow-orange">
-          <CardHeader className="bg-gradient-to-r from-red-50 to-orange-50 rounded-t-lg">
-            <CardTitle className="flex items-center space-x-2 text-gray-800">
-              <Upload className="w-5 h-5 text-red-600" />
+        <Card className="card-hover shadow-orange border-l-4 border-l-orange-500">
+          <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50 rounded-t-lg py-3">
+            <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
+              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                <Upload className="w-4 h-4 text-orange-600" />
+              </div>
               <span>Upload Documents</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="p-4 space-y-4">
             
             {/* Document Type Selection */}
             <div className="space-y-2">
-              <Label htmlFor="document-type">Document Type</Label>
+              <Label htmlFor="document-type" className="text-sm font-medium">Document Type</Label>
               <Select value={selectedType} onValueChange={(value: DocumentType) => setSelectedType(value)}>
-                <SelectTrigger>
+                <SelectTrigger className="h-9">
                   <SelectValue placeholder="Select document type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -241,7 +243,7 @@ export default function UploadDocuments() {
             {/* Expiry Date (if required) */}
             {selectedDocumentType?.requiresExpiry && (
               <div className="space-y-2">
-                <Label htmlFor="expiry-date">
+                <Label htmlFor="expiry-date" className="text-sm font-medium">
                   <div className="flex items-center space-x-2">
                     <Calendar className="w-4 h-4" />
                     <span>Expiry Date</span>
@@ -250,6 +252,7 @@ export default function UploadDocuments() {
                 <Input
                   id="expiry-date"
                   type="date"
+                  className="h-9"
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
                   placeholder="Select expiry date"
@@ -258,48 +261,50 @@ export default function UploadDocuments() {
             )}
 
             {/* File Upload Section */}
-            <div className="space-y-4">
-              <Label>Upload Files</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Upload Files</Label>
               
-              <div className="flex space-x-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div className="flex-1">
                   <Input
                     type="file"
                     accept="image/*,application/pdf"
                     multiple
                     onChange={handleFileSelect}
-                    className="file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
+                    className="h-9 file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-medium file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                   />
                 </div>
                 <Button
                   type="button"
                   variant="outline"
-                  size="icon"
                   onClick={() => setShowCamera(true)}
-                  className="shrink-0"
+                  className="h-9 flex items-center justify-center"
                 >
-                  <Camera className="w-4 h-4" />
+                  <Camera className="w-4 h-4 mr-2" />
+                  Camera
                 </Button>
               </div>
               
               <p className="text-xs text-gray-500">
-                Supported formats: JPEG, PNG, WebP, PDF. Max size: 10MB per file.
+                Supported: JPEG, PNG, WebP, PDF • Max: 10MB per file
               </p>
             </div>
 
             {/* Selected Files Preview */}
             {selectedFiles.length > 0 && (
               <div className="space-y-2">
-                <Label>Selected Files ({selectedFiles.length})</Label>
+                <Label className="text-sm font-medium">Selected Files ({selectedFiles.length})</Label>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {selectedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <FileText className="w-4 h-4 text-gray-500" />
-                        <div>
-                          <p className="text-sm font-medium truncate max-w-48">{file.name}</p>
+                    <div key={index} className="flex items-center justify-between p-2 bg-orange-50 border border-orange-100 rounded-lg">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-6 h-6 bg-orange-100 rounded flex items-center justify-center">
+                          <FileText className="w-3 h-3 text-orange-600" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium truncate max-w-[200px]">{file.name}</p>
                           <p className="text-xs text-gray-500">
-                            {(file.size / 1024 / 1024).toFixed(2)} MB
+                            {(file.size / 1024 / 1024).toFixed(1)} MB
                           </p>
                         </div>
                       </div>
@@ -308,7 +313,7 @@ export default function UploadDocuments() {
                         variant="ghost"
                         size="sm"
                         onClick={() => removeFile(index)}
-                        className="text-red-600 hover:text-red-700 h-8 w-8 p-0"
+                        className="text-red-600 hover:text-red-700 h-6 w-6 p-0 shrink-0"
                       >
                         ×
                       </Button>
@@ -319,11 +324,11 @@ export default function UploadDocuments() {
             )}
 
             {/* Action Buttons */}
-            <div className="flex space-x-3">
+            <div className="flex space-x-2 pt-2">
               <Button 
                 type="button" 
                 variant="outline"
-                className="flex-1"
+                className="flex-1 h-9"
                 onClick={() => setLocation(`/vehicle/${vehicleId}`)}
               >
                 Cancel
@@ -331,7 +336,7 @@ export default function UploadDocuments() {
               <Button 
                 onClick={handleUpload}
                 disabled={selectedFiles.length === 0 || uploadDocuments.isPending}
-                className="flex-1"
+                className="flex-1 h-9 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
               >
                 {uploadDocuments.isPending ? (
                   <>
@@ -341,7 +346,7 @@ export default function UploadDocuments() {
                 ) : (
                   <>
                     <CheckCircle className="w-4 h-4 mr-2" />
-                    Upload {selectedFiles.length} Document{selectedFiles.length !== 1 ? 's' : ''}
+                    Upload {selectedFiles.length || ''} {selectedFiles.length === 1 ? 'File' : 'Files'}
                   </>
                 )}
               </Button>
