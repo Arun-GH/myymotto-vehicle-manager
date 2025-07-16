@@ -181,7 +181,7 @@ export default function ViewDocuments() {
                 </div>
               )}
               <div>
-                <h3 className="font-medium text-gray-800 text-sm">{vehicle.make} {vehicle.model} ({vehicle.year})</h3>
+                <h3 className="font-medium text-gray-800 text-sm">{vehicle.make?.toUpperCase()} {vehicle.model} ({vehicle.year})</h3>
                 <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
               </div>
             </div>

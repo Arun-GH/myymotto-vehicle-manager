@@ -206,7 +206,7 @@ export default function TrafficViolations() {
                   className="justify-start h-auto p-3"
                 >
                   <div className="text-left">
-                    <div className="font-semibold">{vehicle.make} {vehicle.model}</div>
+                    <div className="font-semibold">{vehicle.make?.toUpperCase()} {vehicle.model}</div>
                     <div className="text-sm opacity-80">{vehicle.licensePlate}</div>
                   </div>
                 </Button>

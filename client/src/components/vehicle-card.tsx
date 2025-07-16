@@ -69,7 +69,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       toast({
         title: "Vehicle Deleted",
-        description: `${vehicle.make} ${vehicle.model} has been deleted successfully.`,
+        description: `${vehicle.make?.toUpperCase()} ${vehicle.model} has been deleted successfully.`,
       });
     },
     onError: (error) => {
@@ -98,7 +98,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               {vehicle.thumbnailPath ? (
                 <img 
                   src={vehicle.thumbnailPath} 
-                  alt={`${vehicle.make} ${vehicle.model}`}
+                  alt={`${vehicle.make?.toUpperCase()} ${vehicle.model}`}
                   className="w-10 h-10 object-cover rounded-lg shadow-md"
                 />
               ) : (
@@ -108,7 +108,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               )}
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-800 text-sm">
-                  {vehicle.make}{vehicle.model ? ` ${vehicle.model}` : ''} {vehicle.year && `(${vehicle.year})`}
+                  {vehicle.make?.toUpperCase()}{vehicle.model ? ` ${vehicle.model}` : ''} {vehicle.year && `(${vehicle.year})`}
                 </h3>
                 <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
               </div>

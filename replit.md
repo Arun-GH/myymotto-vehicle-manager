@@ -19,6 +19,7 @@ Preferred communication style: Simple, everyday language.
 - Fixed header styling to match consistent design pattern across all pages
 - Added back navigation arrow from traffic violations page to dashboard for improved user flow
 - Changed violations icon from shield to traffic signal (Zap) icon for better visual representation
+- Updated all vehicle make displays throughout the app to show in uppercase (capitals) for consistent branding
 - Ready for official government API integration for real-time violation checking
 
 **July 16, 2025**: Implemented manual make/model entry and auto-capitalization functionality
