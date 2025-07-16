@@ -272,12 +272,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (vehicleCount >= maxVehicles) {
         if (!isSubscribed && vehicleCount >= 2) {
           return res.status(400).json({ 
-            message: "Free plan allows maximum 2 vehicles. Subscribe for ₹100/year to add up to 4 vehicles.",
+            message: "Vehicle limit reached! Free plan allows maximum 2 vehicles. Subscribe for just ₹100/- per year to add up to 4 vehicles.",
             requiresSubscription: true
           });
         } else {
           return res.status(400).json({ 
-            message: "Vehicle limit reached. You can add a maximum of 4 vehicles per account." 
+            message: "Vehicle limit reached. You can add a maximum of 4 vehicles per account. Upgrade your subscription for higher limits." 
           });
         }
       }

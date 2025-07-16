@@ -150,7 +150,7 @@ export default function AddVehicle() {
     },
     onError: (error) => {
       // Check if it's a subscription error
-      if (error.message.includes("Subscribe for ₹100/year")) {
+      if (error.message.includes("Subscribe for just ₹100/-")) {
         toast({
           title: "Subscription Required",
           description: error.message,
@@ -267,14 +267,14 @@ export default function AddVehicle() {
                   <AlertTriangle className="w-5 h-5 text-orange-600" />
                   <div>
                     <p className="text-sm font-medium text-orange-800">Subscription Required</p>
-                    <p className="text-xs text-orange-700">To add more than 2 vehicles, you need to pay ₹100/year subscription.</p>
+                    <p className="text-xs text-orange-700">To add more than 2 vehicles, subscribe for just ₹100/- per year and add up to 4 vehicles.</p>
                     <Button 
                       type="button" 
                       size="sm" 
                       className="mt-2 bg-orange-600 hover:bg-orange-700 text-white"
                       onClick={() => setLocation("/subscribe")}
                     >
-                      Subscribe Now - ₹100/year
+                      Subscribe Now - ₹100/- per year
                     </Button>
                   </div>
                 </div>

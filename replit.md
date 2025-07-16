@@ -10,6 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Fixed runtime errors and implemented complete subscription system
+- Fixed AlertTriangle runtime error in add-vehicle page by adding missing import
+- Fixed ColorfulLogo runtime error in upload-documents page by adding missing import  
+- Implemented subscription system with Rs 100/year payment using Razorpay payment gateway
+- Updated database schema with subscription fields (subscriptionStatus, subscriptionExpiry, razorpayOrderId, razorpayPaymentId)
+- Created comprehensive subscription page with pricing, features list, and Razorpay payment integration
+- Added vehicle limit validation: free users can add 2 vehicles, subscribed users can add up to 4 vehicles
+- Enhanced error handling with subscription prompts showing "Subscribe for just ₹100/- per year" messaging
+- Backend API routes for creating and verifying Razorpay subscription payments
+- Updated vehicle creation validation to check subscription status and enforce limits properly
+- All error messages now clearly display the subscription fee of ₹100/- per year
+
 **July 16, 2025**: Added comprehensive Service Details section to vehicle forms
 - Created separate Service Details section with blue gradient header and Settings icon
 - Added database fields for currentOdometerReading, averageUsagePerMonth, serviceIntervalKms, serviceIntervalMonths
