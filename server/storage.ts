@@ -418,14 +418,20 @@ export class DatabaseStorage implements IStorage {
 
   async deleteVehicle(id: number): Promise<boolean> {
     try {
+      console.log(`Attempting to delete vehicle ${id} and related records`);
+      
       // First delete related notifications
-      await db.delete(notifications).where(eq(notifications.vehicleId, id));
+      const notificationsDeleted = await db.delete(notifications).where(eq(notifications.vehicleId, id));
+      console.log(`Deleted ${notificationsDeleted.rowCount || 0} notifications`);
       
       // Then delete related documents
-      await db.delete(documents).where(eq(documents.vehicleId, id));
+      const documentsDeleted = await db.delete(documents).where(eq(documents.vehicleId, id));
+      console.log(`Deleted ${documentsDeleted.rowCount || 0} documents`);
       
       // Finally delete the vehicle
       const result = await db.delete(vehicles).where(eq(vehicles.id, id));
+      console.log(`Deleted ${result.rowCount || 0} vehicles`);
+      
       return (result.rowCount || 0) > 0;
     } catch (error) {
       console.error('Error deleting vehicle:', error);
