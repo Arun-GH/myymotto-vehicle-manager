@@ -464,18 +464,25 @@ export default function Profile() {
               {(profile.driversLicenseNumber || profile.driversLicenseCopy || profile.driversLicenseValidTill) && (
                 <div className="pt-4 border-t border-gray-200">
                   <h4 className="font-medium text-gray-900 mb-3">Driver's License</h4>
-                  {profile.driversLicenseNumber && (
-                    <div>
-                      <label className="text-sm text-muted-foreground">License Number</label>
-                      <p className="font-medium">{profile.driversLicenseNumber}</p>
+                  
+                  {/* License Number and Valid Till side by side */}
+                  {(profile.driversLicenseNumber || profile.driversLicenseValidTill) && (
+                    <div className="grid grid-cols-2 gap-4">
+                      {profile.driversLicenseNumber && (
+                        <div>
+                          <label className="text-sm text-muted-foreground">License Number</label>
+                          <p className="font-medium">{profile.driversLicenseNumber}</p>
+                        </div>
+                      )}
+                      {profile.driversLicenseValidTill && (
+                        <div>
+                          <label className="text-sm text-muted-foreground">Valid Till</label>
+                          <p className="font-medium">{new Date(profile.driversLicenseValidTill).toLocaleDateString()}</p>
+                        </div>
+                      )}
                     </div>
                   )}
-                  {profile.driversLicenseValidTill && (
-                    <div className="mt-3">
-                      <label className="text-sm text-muted-foreground">Valid Till</label>
-                      <p className="font-medium">{new Date(profile.driversLicenseValidTill).toLocaleDateString()}</p>
-                    </div>
-                  )}
+                  
                   {profile.driversLicenseCopy && (
                     <div className="mt-3">
                       <label className="text-sm text-muted-foreground">License Copy</label>
@@ -725,41 +732,43 @@ export default function Profile() {
                   <div className="pt-4 border-t border-gray-200">
                     <h4 className="font-medium text-gray-900 mb-4">Driver's License (Optional)</h4>
                     
-                    <FormField
-                      control={form.control}
-                      name="driversLicenseNumber"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>License Number</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="e.g., MH12 20220012345" 
-                              className="h-9"
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="driversLicenseNumber"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>License Number</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="e.g., MH12 20220012345" 
+                                className="h-9"
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="driversLicenseValidTill"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>License Valid Till</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="date"
-                              className="h-9"
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name="driversLicenseValidTill"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>License Valid Till</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="date"
+                                className="h-9"
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
                     {/* License Copy Upload Section */}
                     <div className="space-y-4 mt-4">
