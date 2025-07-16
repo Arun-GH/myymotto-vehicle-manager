@@ -10,11 +10,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 16, 2025**: Added insurance company name field to vehicle forms
+**July 16, 2025**: Enhanced vehicle cards and added insurance company field
 - Added insurance company name input field to Insurance Copy tile on Add Vehicle and Edit Vehicle pages
 - Updated database schema with insuranceCompany field and pushed changes to database
 - Enhanced VehicleDocumentSection component to support text input fields with placeholders
 - Insurance company field includes helpful placeholder: "e.g., HDFC ERGO, ICICI Lombard, Bajaj Allianz"
+- Improved vehicle card layout with "Documents:" label followed by "View | Edit | Upload" actions separated by pipes
 - Consistent h-9 input height styling across all form fields for professional appearance
 - Maintained original header design with orange gradient borders for brand consistency
 
