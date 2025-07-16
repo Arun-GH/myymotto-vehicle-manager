@@ -82,6 +82,10 @@ export default function UploadDocuments() {
         formData.append("type", selectedType);
         
         const uploadResponse = await apiRequest("POST", "/api/upload", formData);
+        if (!uploadResponse.ok) {
+          const error = await uploadResponse.json();
+          throw new Error(error.message || "Failed to upload file");
+        }
         const uploadResult = await uploadResponse.json();
 
         // Create document record
@@ -96,6 +100,10 @@ export default function UploadDocuments() {
         };
 
         const documentResponse = await apiRequest("POST", "/api/documents", documentData);
+        if (!documentResponse.ok) {
+          const error = await documentResponse.json();
+          throw new Error(error.message || "Failed to create document record");
+        }
         const document = await documentResponse.json();
         uploadedDocuments.push(document);
       }

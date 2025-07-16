@@ -350,6 +350,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Move file to permanent location with proper name
       fs.renameSync(req.file.path, newPath);
 
+      console.log(`File uploaded successfully: ${req.file.originalname} -> ${fileName}`);
+
       res.json({
         fileName: req.file.originalname,
         filePath: `/uploads/${fileName}`,
@@ -359,11 +361,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Upload error:", error);
-      res.status(500).json({ message: "Failed to upload file" });
+      res.status(500).json({ message: "Failed to upload file", error: error.message });
     }
   });
 
   // Document routes
+  app.post("/api/documents", async (req, res) => {
+    try {
+      const documentData = req.body;
+      console.log("Creating document with data:", documentData);
+      
+      // Verify vehicle exists
+      const vehicle = await storage.getVehicle(documentData.vehicleId);
+      if (!vehicle) {
+        return res.status(404).json({ message: "Vehicle not found" });
+      }
+
+      const validatedData = insertDocumentSchema.parse(documentData);
+      const document = await storage.createDocument(validatedData);
+      
+      console.log("Document created successfully:", document);
+      res.status(201).json(document);
+    } catch (error) {
+      console.error("Error creating document:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Failed to create document" });
+      }
+    }
+  });
+
   app.get("/api/vehicles/:vehicleId/documents", async (req, res) => {
     try {
       const vehicleId = parseInt(req.params.vehicleId);
