@@ -47,8 +47,8 @@ function Router() {
 
   // Authentication and routing logic
   useEffect(() => {
-    if (!isAuthenticated && location !== "/signin") {
-      setLocation("/signin");
+    if (!isAuthenticated && location !== "/sign-in") {
+      setLocation("/sign-in");
     } else if (isAuthenticated && !isLoading && !profile && location !== "/profile") {
       setLocation("/profile");
     }
@@ -56,7 +56,7 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/signin" component={SignIn} />
+      <Route path="/sign-in" component={SignIn} />
       <Route path="/" component={Dashboard} />
       <Route path="/add-vehicle" component={AddVehicle} />
       <Route path="/vehicle/:id/edit" component={EditVehicle} />
