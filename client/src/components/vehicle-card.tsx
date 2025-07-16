@@ -48,48 +48,45 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   }[overallStatus];
 
   return (
-    <Card className="card-hover shadow-orange-dark bg-white">
-      <CardContent className="p-4">
+    <Card className="card-hover shadow-orange-dark bg-gradient-to-r from-white to-gray-50 border-l-4 border-l-blue-500">
+      <CardContent className="p-3">
         <Link href={`/vehicle/${vehicle.id}`}>
-          <div className="flex items-start justify-between mb-3 cursor-pointer">
-            <div className="flex items-center space-x-3">
+          <div className="flex items-center justify-between mb-2 cursor-pointer">
+            <div className="flex items-center space-x-2">
               {vehicle.thumbnailPath ? (
                 <img 
                   src={vehicle.thumbnailPath} 
                   alt={`${vehicle.make} ${vehicle.model}`}
-                  className="w-12 h-12 object-cover rounded-lg shadow-md"
+                  className="w-10 h-10 object-cover rounded-lg shadow-md"
                 />
               ) : (
-                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center shadow-md">
-                  <Car className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
+                  <Car className="w-5 h-5 text-white" />
                 </div>
               )}
-              <div>
-                <h3 className="font-semibold text-gray-800">
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-800 text-sm">
                   {vehicle.make}{vehicle.model ? ` ${vehicle.model}` : ''} {vehicle.year && `(${vehicle.year})`}
                 </h3>
-                <p className="text-sm text-gray-600">{vehicle.licensePlate}</p>
+                <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
               </div>
             </div>
             <div className="flex items-center space-x-1">
-              <div className={`w-3 h-3 rounded-full ${
+              <div className={`w-2 h-2 rounded-full ${
                 overallStatus === "expired" ? "bg-red-500" :
                 overallStatus === "expiring" ? "bg-orange-500" :
                 "bg-green-500"
               } shadow-sm`}></div>
-              <StatusIcon className={`w-4 h-4 ${statusColor}`} />
-              <span className={`text-xs font-medium ${statusColor}`}>
-                {statusText}
-              </span>
+              <StatusIcon className={`w-3 h-3 ${statusColor}`} />
             </div>
           </div>
         </Link>
 
         {/* Missing Details Warning */}
         {missingDetails.length > 0 && (
-          <div className="mb-3 p-2 bg-orange-50 border border-orange-200 rounded-lg">
-            <div className="flex items-center space-x-2">
-              <AlertTriangle className="w-4 h-4 text-orange-600" />
+          <div className="mb-2 p-1.5 bg-orange-50 border border-orange-200 rounded-lg">
+            <div className="flex items-center space-x-1">
+              <AlertTriangle className="w-3 h-3 text-orange-600" />
               <span className="text-xs font-medium text-orange-800">
                 Missing: {missingDetails.join(", ")}
               </span>
@@ -97,70 +94,65 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
         )}
         
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="bg-muted/50 rounded-lg p-2">
-            <div className="flex flex-col">
-              <span className="text-muted-foreground text-xs">Insurance</span>
-              <span className="font-medium text-gray-700">
-                {vehicle.insuranceExpiry ? new Date(vehicle.insuranceExpiry).toLocaleDateString() : "Not set"}
+        <div className="grid grid-cols-4 gap-1 text-xs mb-2">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-1.5 border border-blue-200">
+            <div className="flex flex-col items-center">
+              <span className="text-blue-600 text-xs font-medium">Insurance</span>
+              <span className="text-blue-800 font-semibold text-xs">
+                {vehicle.insuranceExpiry ? formatDistanceToNow(new Date(vehicle.insuranceExpiry)) : "Not set"}
               </span>
             </div>
           </div>
-          <div className="bg-muted/50 rounded-lg p-2">
-            <div className="flex flex-col">
-              <span className="text-muted-foreground text-xs">Emission</span>
-              <span className="font-medium text-gray-700">
-                {vehicle.emissionExpiry ? new Date(vehicle.emissionExpiry).toLocaleDateString() : "Not set"}
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-1.5 border border-green-200">
+            <div className="flex flex-col items-center">
+              <span className="text-green-600 text-xs font-medium">Emission</span>
+              <span className="text-green-800 font-semibold text-xs">
+                {vehicle.emissionExpiry ? formatDistanceToNow(new Date(vehicle.emissionExpiry)) : "Not set"}
               </span>
             </div>
           </div>
-          <div className="bg-muted/50 rounded-lg p-2">
-            <div className="flex flex-col">
-              <span className="text-muted-foreground text-xs">Last Service</span>
-              <span className="font-medium text-gray-700">
-                {vehicle.lastServiceDate ? new Date(vehicle.lastServiceDate).toLocaleDateString() : "Not set"}
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-1.5 border border-purple-200">
+            <div className="flex flex-col items-center">
+              <span className="text-purple-600 text-xs font-medium">Service</span>
+              <span className="text-purple-800 font-semibold text-xs">
+                {vehicle.lastServiceDate ? formatDistanceToNow(new Date(vehicle.lastServiceDate)) : "Not set"}
               </span>
             </div>
           </div>
-          <div className="bg-muted/50 rounded-lg p-2">
-            <div className="flex flex-col">
-              <span className="text-muted-foreground text-xs">Next Service</span>
-              <span className={`font-medium ${
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-1.5 border border-orange-200">
+            <div className="flex flex-col items-center">
+              <span className="text-orange-600 text-xs font-medium">Next</span>
+              <span className={`font-semibold text-xs ${
                 nextServiceInfo.status === "overdue" ? "text-red-600" :
                 nextServiceInfo.status === "due_soon" ? "text-orange-600" :
                 nextServiceInfo.status === "due_month" ? "text-yellow-600" :
-                "text-gray-700"
+                "text-orange-800"
               }`}>
-                {nextServiceInfo.date ? new Date(nextServiceInfo.date).toLocaleDateString() : "Not set"}
+                {nextServiceInfo.date ? formatDistanceToNow(new Date(nextServiceInfo.date)) : "Not set"}
               </span>
             </div>
           </div>
         </div>
         
-        <div className="mt-3">
-          <div className="mb-1">
-            <span className="text-gray-600 font-medium text-sm">Documents:</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <Link href={`/vehicle/${vehicle.id}/documents`}>
-              <Button variant="ghost" size="sm" className="w-full text-primary p-2 h-auto hover:bg-red-50 flex items-center justify-center space-x-1">
-                <Eye className="w-3 h-3" />
-                <span>View</span>
-              </Button>
-            </Link>
-            <Link href={`/vehicle/${vehicle.id}/edit`}>
-              <Button variant="ghost" size="sm" className="w-full text-blue-600 p-2 h-auto hover:bg-blue-50 flex items-center justify-center space-x-1">
-                <Edit className="w-3 h-3" />
-                <span>Edit</span>
-              </Button>
-            </Link>
-            <Link href={`/vehicle/${vehicle.id}/upload`}>
-              <Button variant="ghost" size="sm" className="w-full text-green-600 p-2 h-auto hover:bg-green-50 flex items-center justify-center space-x-1">
-                <Upload className="w-3 h-3" />
-                <span>Upload</span>
-              </Button>
-            </Link>
-          </div>
+        <div className="grid grid-cols-3 gap-1">
+          <Link href={`/vehicle/${vehicle.id}/documents`}>
+            <Button variant="ghost" size="sm" className="w-full text-red-600 p-1.5 h-auto hover:bg-red-50 flex items-center justify-center space-x-1 rounded-lg">
+              <Eye className="w-3 h-3" />
+              <span className="text-xs">View</span>
+            </Button>
+          </Link>
+          <Link href={`/vehicle/${vehicle.id}/edit`}>
+            <Button variant="ghost" size="sm" className="w-full text-blue-600 p-1.5 h-auto hover:bg-blue-50 flex items-center justify-center space-x-1 rounded-lg">
+              <Edit className="w-3 h-3" />
+              <span className="text-xs">Edit</span>
+            </Button>
+          </Link>
+          <Link href={`/vehicle/${vehicle.id}/upload`}>
+            <Button variant="ghost" size="sm" className="w-full text-green-600 p-1.5 h-auto hover:bg-green-50 flex items-center justify-center space-x-1 rounded-lg">
+              <Upload className="w-3 h-3" />
+              <span className="text-xs">Upload</span>
+            </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>
