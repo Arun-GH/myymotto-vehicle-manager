@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, Save, ArrowLeft, Heart, MapPin, Phone } from "lucide-react";
+import { User, Save, ArrowLeft, Heart, MapPin, Phone, Camera, Upload, X } from "lucide-react";
 import { insertUserProfileSchema, type InsertUserProfile, type UserProfile } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import ColorfulLogo from "@/components/colorful-logo";
 import NotificationBell from "@/components/notification-bell";
+import CameraCapture from "@/components/camera-capture";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 // Authentication is now handled via localStorage
@@ -33,6 +34,9 @@ export default function Profile() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const currentUserId = localStorage.getItem("currentUserId");
 
   const { data: profile, isLoading } = useQuery<UserProfile>({
@@ -66,6 +70,32 @@ export default function Profile() {
     },
   });
 
+  // Handle file upload
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setProfileImage(file);
+      const reader = new FileReader();
+      reader.onload = () => setProfileImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Handle camera capture
+  const handleCameraCapture = (file: File) => {
+    setProfileImage(file);
+    const reader = new FileReader();
+    reader.onload = () => setProfileImagePreview(reader.result as string);
+    reader.readAsDataURL(file);
+    setShowCamera(false);
+  };
+
+  // Remove profile image
+  const removeProfileImage = () => {
+    setProfileImage(null);
+    setProfileImagePreview(null);
+  };
+
   // Update form when profile data loads
   useEffect(() => {
     if (profile) {
@@ -79,13 +109,33 @@ export default function Profile() {
         pinCode: profile.pinCode,
         alternatePhone: profile.alternatePhone || "",
       });
+      // Set existing profile picture if available
+      if (profile.profilePicture) {
+        setProfileImagePreview(profile.profilePicture);
+      }
     }
   }, [profile, form]);
 
   const createProfileMutation = useMutation({
     mutationFn: async (data: InsertUserProfile) => {
       if (!currentUserId) throw new Error("Not authenticated");
-      const response = await apiRequest("POST", `/api/profile/${currentUserId}`, data);
+      
+      // Upload profile image first if exists
+      let profilePicturePath = null;
+      if (profileImage) {
+        const formData = new FormData();
+        formData.append('file', profileImage);
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (!uploadResponse.ok) throw new Error('Failed to upload profile image');
+        const uploadResult = await uploadResponse.json();
+        profilePicturePath = uploadResult.path;
+      }
+
+      const profileData = { ...data, profilePicture: profilePicturePath };
+      const response = await apiRequest("POST", `/api/profile/${currentUserId}`, profileData);
       return response.json();
     },
     onSuccess: () => {
@@ -109,7 +159,23 @@ export default function Profile() {
   const updateProfileMutation = useMutation({
     mutationFn: async (data: InsertUserProfile) => {
       if (!currentUserId) throw new Error("Not authenticated");
-      const response = await apiRequest("PUT", `/api/profile/${currentUserId}`, data);
+      
+      // Upload profile image first if a new one exists
+      let profilePicturePath = profile?.profilePicture || null;
+      if (profileImage) {
+        const formData = new FormData();
+        formData.append('file', profileImage);
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (!uploadResponse.ok) throw new Error('Failed to upload profile image');
+        const uploadResult = await uploadResponse.json();
+        profilePicturePath = uploadResult.path;
+      }
+
+      const profileData = { ...data, profilePicture: profilePicturePath };
+      const response = await apiRequest("PUT", `/api/profile/${currentUserId}`, profileData);
       return response.json();
     },
     onSuccess: () => {
@@ -242,6 +308,17 @@ export default function Profile() {
               <CardTitle>Personal Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Profile Picture Display */}
+              {profile.profilePicture && (
+                <div className="flex justify-center">
+                  <img 
+                    src={profile.profilePicture} 
+                    alt="Profile" 
+                    className="w-24 h-24 rounded-full object-cover shadow-md"
+                  />
+                </div>
+              )}
+              
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm text-muted-foreground">Name</label>
@@ -300,6 +377,70 @@ export default function Profile() {
             <CardContent>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  {/* Profile Picture Upload Section */}
+                  <div className="space-y-4">
+                    <label className="text-sm font-medium">Profile Picture</label>
+                    
+                    {/* Profile Picture Preview */}
+                    <div className="flex justify-center">
+                      {profileImagePreview ? (
+                        <div className="relative">
+                          <img 
+                            src={profileImagePreview} 
+                            alt="Profile Preview" 
+                            className="w-24 h-24 rounded-full object-cover shadow-md"
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute -top-2 -right-2 w-6 h-6 rounded-full"
+                            onClick={removeProfileImage}
+                          >
+                            <X className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center">
+                          <User className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Upload Options */}
+                    <div className="flex gap-2 justify-center">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowCamera(true)}
+                        className="flex items-center gap-2"
+                      >
+                        <Camera className="w-4 h-4" />
+                        Camera
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-2"
+                        onClick={() => document.getElementById('profile-upload')?.click()}
+                      >
+                        <Upload className="w-4 h-4" />
+                        Upload
+                      </Button>
+                    </div>
+
+                    {/* Hidden File Input */}
+                    <input
+                      id="profile-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </div>
+
                   <FormField
                     control={form.control}
                     name="name"
@@ -482,6 +623,14 @@ export default function Profile() {
           </Card>
         )}
       </div>
+
+      {/* Camera Modal */}
+      {showCamera && (
+        <CameraCapture
+          onCapture={handleCameraCapture}
+          onClose={() => setShowCamera(false)}
+        />
+      )}
     </div>
   );
 }
