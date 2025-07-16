@@ -19,6 +19,15 @@ Preferred communication style: Simple, everyday language.
 - Visual feedback with loading state and button style changes during confirmation
 - Added helpful tooltips for delete and cancel actions
 
+**July 16, 2025**: Expanded vehicle make and model options for comprehensive coverage
+- Added extensive 2-wheeler options including motorcycles, scooters, and electric vehicles
+- Enhanced 4-wheeler coverage with luxury, premium, and latest models
+- Motorcycle brands: Hero MotoCorp, Honda, Bajaj, TVS, Yamaha, Suzuki, Royal Enfield, KTM
+- Premium bike brands: Harley-Davidson, Kawasaki, Ducati, BMW Motorrad, Triumph
+- Electric vehicle options: Ather, Ola Electric, Revolt, Okinawa, Ampere
+- Updated car brands with latest models and electric variants
+- Comprehensive coverage for Indian market preferences and availability
+
 **July 16, 2025**: Streamlined Add Vehicle page by removing document upload sections
 - Removed Emission Certificate, RC Book Copy, Insurance Copy, and Service Invoice document upload tiles
 - Simplified Add Vehicle page to focus only on vehicle details and basic information
