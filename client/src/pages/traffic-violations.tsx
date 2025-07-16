@@ -8,6 +8,7 @@ import { Loader2, AlertTriangle, Shield, Search, Clock, MapPin } from "lucide-re
 import { useToast } from "@/hooks/use-toast";
 import ColorfulLogo from "@/components/colorful-logo";
 import { format } from "date-fns";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 interface TrafficViolation {
   id: number;
@@ -161,20 +162,24 @@ export default function TrafficViolations() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-t-4 border-orange-400 border-b-4 border-orange-400 shadow-lg mb-6">
-        <div className="max-w-md mx-auto px-4 py-4">
+      <header className="header-gradient-border border-4 border-red-500 shadow-lg relative z-10">
+        <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <ColorfulLogo className="w-14 h-14" />
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-14 h-14 rounded-lg"
+              />
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Traffic Violations</h1>
+                <ColorfulLogo />
                 <p className="text-sm text-red-600">Timely Care for your carrier</p>
               </div>
             </div>
-            <Shield className="w-6 h-6 text-orange-600" />
+            <Shield className="w-8 h-8 text-blue-800 font-bold" />
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="max-w-md mx-auto px-4 pb-20">
         {/* Vehicle Selection */}
