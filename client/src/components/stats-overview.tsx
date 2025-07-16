@@ -29,39 +29,47 @@ export default function StatsOverview() {
   }
 
   return (
-    <section className="px-4 py-3">
-      <div className="grid grid-cols-3 gap-2">
-        <Card className="stats-card border-none text-white shadow-orange">
-          <CardContent className="p-2 text-center">
-            <div className="flex justify-center mb-1">
-              <Car className="w-4 h-4" />
+    <section className="px-4 py-2">
+      <div className="grid grid-cols-3 gap-3">
+        <Card className="bg-white border border-blue-200 shadow-sm">
+          <CardContent className="p-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-blue-600">{stats?.totalVehicles || 0}</div>
+                <div className="text-xs text-gray-600 font-medium">Total</div>
+              </div>
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <Car className="w-4 h-4 text-blue-600" />
+              </div>
             </div>
-            <div className="text-lg font-bold">{stats?.totalVehicles || 0}</div>
-            <div className="text-xs opacity-90">Total Vehicles</div>
           </CardContent>
         </Card>
         
-        <Card className="stats-card-accent border-none text-white shadow-orange">
-          <CardContent className="p-2 text-center">
-            <div className="flex justify-center mb-1">
-              <Clock className="w-4 h-4" />
+        <Card className="bg-white border border-orange-200 shadow-sm">
+          <CardContent className="p-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-orange-600">{stats?.expiringSoon || 0}</div>
+                <div className="text-xs text-gray-600 font-medium">Expiring</div>
+              </div>
+              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                <Clock className="w-4 h-4 text-orange-600" />
+              </div>
             </div>
-            <div className="text-lg font-bold">
-              {stats?.expiringSoon || 0}
-            </div>
-            <div className="text-xs opacity-90">Expiring Soon</div>
           </CardContent>
         </Card>
         
-        <Card className="bg-gradient-to-br from-orange-600 to-orange-700 border-none text-white shadow-orange">
-          <CardContent className="p-2 text-center">
-            <div className="flex justify-center mb-1">
-              <AlertTriangle className="w-4 h-4" />
+        <Card className="bg-white border border-red-200 shadow-sm">
+          <CardContent className="p-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-red-600">{stats?.expired || 0}</div>
+                <div className="text-xs text-gray-600 font-medium">Expired</div>
+              </div>
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-4 h-4 text-red-600" />
+              </div>
             </div>
-            <div className="text-lg font-bold">
-              {stats?.expired || 0}
-            </div>
-            <div className="text-xs opacity-90">Expired</div>
           </CardContent>
         </Card>
       </div>
