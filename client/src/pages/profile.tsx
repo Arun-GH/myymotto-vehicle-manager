@@ -192,10 +192,16 @@ export default function Profile() {
         driversLicenseCopy: licenseCopyPath,
         // Ensure required fields have proper types
         age: typeof data.age === 'number' ? data.age : parseInt(String(data.age)) || 25,
-        // Remove undefined values by setting to empty string
-        alternatePhone: data.alternatePhone || '',
-        driversLicenseNumber: data.driversLicenseNumber || '',
+        // Handle optional fields properly - send undefined for empty strings
+        alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
+        driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
       };
+      // Remove undefined values to avoid validation issues
+      Object.keys(profileData).forEach(key => {
+        if (profileData[key] === undefined) {
+          delete profileData[key];
+        }
+      });
       const response = await apiRequest("POST", `/api/profile/${currentUserId}`, profileData);
       return response.json();
     },
@@ -256,10 +262,16 @@ export default function Profile() {
         driversLicenseCopy: licenseCopyPath,
         // Ensure required fields have proper types
         age: typeof data.age === 'number' ? data.age : parseInt(String(data.age)) || 25,
-        // Remove undefined values by setting to empty string
-        alternatePhone: data.alternatePhone || '',
-        driversLicenseNumber: data.driversLicenseNumber || '',
+        // Handle optional fields properly - send undefined for empty strings
+        alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
+        driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
       };
+      // Remove undefined values to avoid validation issues
+      Object.keys(profileData).forEach(key => {
+        if (profileData[key] === undefined) {
+          delete profileData[key];
+        }
+      });
       const response = await apiRequest("PUT", `/api/profile/${currentUserId}`, profileData);
       return response.json();
     },

@@ -209,6 +209,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/profile/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
+      console.log("Profile update request body:", JSON.stringify(req.body, null, 2));
       const validatedData = insertUserProfileSchema.partial().parse(req.body);
       const profile = await storage.updateUserProfile(userId, validatedData);
       
@@ -218,6 +219,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(profile);
     } catch (error) {
+      console.error("Profile update error:", error);
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
       } else {
