@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Removed title bar borders and added insurance company name field
+- Removed orange gradient borders from all page headers for cleaner, professional appearance
+- Added insurance company name input field to Insurance Copy tile on Add Vehicle and Edit Vehicle pages
+- Updated database schema with insuranceCompany field and pushed changes to database
+- Enhanced VehicleDocumentSection component to support text input fields with placeholders
+- Insurance company field includes helpful placeholder: "e.g., HDFC ERGO, ICICI Lombard, Bajaj Allianz"
+- Consistent h-9 input height styling across all form fields for professional appearance
+- Headers now use clean white background with shadow instead of colored borders
+
 **July 16, 2025**: Fixed runtime errors and implemented complete subscription system
 - Fixed AlertTriangle runtime error in add-vehicle page by adding missing import
 - Fixed ColorfulLogo runtime error in upload-documents page by adding missing import  

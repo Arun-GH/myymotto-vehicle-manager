@@ -133,7 +133,7 @@ export default function ViewDocuments() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white border-t-4 border-b-4 border-orange-400 shadow-lg sticky top-0 z-10">
+      <header className="bg-white shadow-lg sticky top-0 z-10">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">

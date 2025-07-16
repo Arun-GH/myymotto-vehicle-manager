@@ -123,7 +123,7 @@ export default function EmergencyContacts() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <header className="header-gradient-border border-4 border-red-500 shadow-lg relative z-10">
+        <header className="bg-white shadow-lg relative z-10">
           <div className="px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -162,7 +162,7 @@ export default function EmergencyContacts() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="header-gradient-border border-4 border-red-500 shadow-lg relative z-10">
+      <header className="bg-white shadow-lg relative z-10">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
