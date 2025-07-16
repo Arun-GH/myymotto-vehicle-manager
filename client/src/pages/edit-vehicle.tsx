@@ -577,7 +577,7 @@ export default function EditVehicle() {
                         name="serviceIntervalMonths"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Service Interval (months)</FormLabel>
+                            <FormLabel>Service Interval (mths)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
