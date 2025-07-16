@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Added profile picture upload/capture functionality with camera and file upload options
+- Implemented complete photo upload system for user profile pages with camera capture and file selection
+- Added profile picture display as circular images with remove functionality
+- Updated database schema with profilePicture field for storing image paths
+- Enhanced profile forms with photo upload UI including Camera and Upload buttons
+- Profile pictures display in both view and edit modes with proper image handling
+- Integrated with existing file upload API for seamless image storage and retrieval
+
 **July 16, 2025**: Enhanced referral system to trigger on every vehicle addition  
 - Updated referral prompt to appear for every vehicle addition instead of just the second vehicle
 - Modified dialog messaging to be appropriate for all users regardless of vehicle count
