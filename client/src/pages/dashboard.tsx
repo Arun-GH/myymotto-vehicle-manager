@@ -19,7 +19,7 @@ export default function Dashboard() {
   return (
     <>
       {/* Header */}
-      <header className="bg-white border-4 border-red-500 shadow-lg relative z-10">
+      <header className="bg-gradient-to-b from-red-500 via-white to-red-500 border-4 border-red-500 shadow-lg relative z-10">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
