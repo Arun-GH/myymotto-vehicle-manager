@@ -241,14 +241,16 @@ export default function AddVehicle() {
       </header>
 
       <div className="p-4 pb-20 bg-warm-pattern">
-        <Card className="card-hover shadow-orange">
-          <CardHeader className="bg-gradient-to-r from-red-50 to-orange-50 rounded-t-lg">
-            <CardTitle className="flex items-center space-x-2 text-gray-800">
-              <Car className="w-5 h-5 text-red-600" />
+        <Card className="card-hover shadow-orange border-l-4 border-l-red-500">
+          <CardHeader className="bg-gradient-to-r from-red-50 to-orange-50 rounded-t-lg py-3">
+            <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                <Car className="w-4 h-4 text-red-600" />
+              </div>
               <span>Vehicle Details</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4">
             {vehicleLimitReached && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <div className="flex items-center space-x-2">
@@ -333,16 +335,16 @@ export default function AddVehicle() {
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <FormField
                     control={form.control}
                     name="make"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Make *</FormLabel>
+                        <FormLabel className="text-sm font-medium">Make *</FormLabel>
                         <FormControl>
                           <Select onValueChange={handleMakeChange} value={field.value}>
-                            <SelectTrigger>
+                            <SelectTrigger className="h-9">
                               <SelectValue placeholder="Select make" />
                             </SelectTrigger>
                             <SelectContent>
@@ -363,10 +365,10 @@ export default function AddVehicle() {
                     name="model"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Model *</FormLabel>
+                        <FormLabel className="text-sm font-medium">Model *</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value} disabled={!watchedMake}>
-                            <SelectTrigger>
+                            <SelectTrigger className="h-9">
                               <SelectValue placeholder="Select model" />
                             </SelectTrigger>
                             <SelectContent>
@@ -384,16 +386,17 @@ export default function AddVehicle() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <FormField
                     control={form.control}
                     name="year"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Year *</FormLabel>
+                        <FormLabel className="text-sm font-medium">Year *</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
+                            className="h-9"
                             {...field} 
                             onChange={(e) => field.onChange(parseInt(e.target.value))}
                           />
@@ -407,9 +410,22 @@ export default function AddVehicle() {
                     name="color"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Color *</FormLabel>
+                        <FormLabel className="text-sm font-medium">Color</FormLabel>
                         <FormControl>
-                          <Input placeholder="Red" {...field} />
+                          <Input placeholder="Red" className="h-9" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="licensePlate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">License Plate *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="DL 01 AB 1234" className="h-9" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -417,29 +433,15 @@ export default function AddVehicle() {
                   />
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="licensePlate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>License Plate *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="DL 01 AB 1234" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <FormField
                     control={form.control}
                     name="chassisNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Chassis Number</FormLabel>
+                        <FormLabel className="text-sm font-medium">Chassis Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="MAT123456789" {...field} />
+                          <Input placeholder="MAT123456789" className="h-9" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -450,9 +452,9 @@ export default function AddVehicle() {
                     name="engineNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Engine Number</FormLabel>
+                        <FormLabel className="text-sm font-medium">Engine Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="ENG987654321" {...field} />
+                          <Input placeholder="ENG987654321" className="h-9" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -460,44 +462,46 @@ export default function AddVehicle() {
                   />
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="ownerName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Owner Name *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John Doe" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="ownerName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">Owner Name *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="John Doe" className="h-9" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="ownerPhone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">Phone Number</FormLabel>
+                        <FormControl>
+                          <Input placeholder="+91 98765 43210" className="h-9" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-                <FormField
-                  control={form.control}
-                  name="ownerPhone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="+1 234 567 8900" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <FormField
                     control={form.control}
                     name="rcExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>RC Expiry</FormLabel>
+                        <FormLabel className="text-sm font-medium">RC Expiry</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
+                            className="h-9"
                             {...field} 
                             value={field.value || ""} 
                             onChange={(e) => field.onChange(e.target.value.trim() || null)}
@@ -512,10 +516,11 @@ export default function AddVehicle() {
                     name="lastServiceDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Last Service Date</FormLabel>
+                        <FormLabel className="text-sm font-medium">Last Service Date</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
+                            className="h-9"
                             {...field} 
                             value={field.value || ""} 
                             onChange={(e) => field.onChange(e.target.value.trim() || null)}
@@ -528,25 +533,28 @@ export default function AddVehicle() {
                 </div>
 
                 {/* Service Details Section */}
-                <Card className="mt-6">
-                  <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-t-lg">
-                    <CardTitle className="flex items-center space-x-2 text-gray-800">
-                      <Settings className="w-5 h-5 text-blue-600" />
+                <Card className="mt-4 shadow-orange border-l-4 border-l-blue-500">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-t-lg py-3">
+                    <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <Settings className="w-4 h-4 text-blue-600" />
+                      </div>
                       <span>Service Details</span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-6">
-                    <div className="grid grid-cols-2 gap-4">
+                  <CardContent className="pt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <FormField
                         control={form.control}
                         name="currentOdometerReading"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Current Odometer Reading (km)</FormLabel>
+                            <FormLabel className="text-sm font-medium">Current Odometer (km)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
                                 placeholder="85000" 
+                                className="h-9"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
@@ -561,11 +569,12 @@ export default function AddVehicle() {
                         name="averageUsagePerMonth"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Average Usage per Month (km)</FormLabel>
+                            <FormLabel className="text-sm font-medium">Monthly Usage (km)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
                                 placeholder="1200" 
+                                className="h-9"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
@@ -580,11 +589,12 @@ export default function AddVehicle() {
                         name="serviceIntervalKms"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Service Interval (km)</FormLabel>
+                            <FormLabel className="text-sm font-medium">Service Interval (km)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
                                 placeholder="10000" 
+                                className="h-9"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
@@ -599,11 +609,12 @@ export default function AddVehicle() {
                         name="serviceIntervalMonths"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Service Interval (mths)</FormLabel>
+                            <FormLabel className="text-sm font-medium">Service Interval (mths)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
                                 placeholder="6" 
+                                className="h-9"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
@@ -617,18 +628,18 @@ export default function AddVehicle() {
                   </CardContent>
                 </Card>
 
-                <div className="flex space-x-3">
+                <div className="flex space-x-2 pt-2">
                   <Button 
                     type="button" 
                     variant="outline"
-                    className="flex-1"
+                    className="flex-1 h-9"
                     onClick={() => setLocation("/")}
                   >
                     Cancel
                   </Button>
                   <Button 
                     type="submit" 
-                    className="flex-1"
+                    className="flex-1 h-9 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
                     disabled={createVehicleMutation.isPending}
                   >
                     {createVehicleMutation.isPending ? "Adding..." : "Add Vehicle"}
