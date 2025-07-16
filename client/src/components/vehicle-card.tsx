@@ -105,13 +105,13 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             <div className="flex flex-col">
               <span className="text-gray-600 font-bold">Insurance Date of Issuance:</span>
               <span className="text-gray-800 text-xs">
-                {vehicle.insuranceExpiry ? formatDistanceToNow(new Date(vehicle.insuranceExpiry)) : "Not set"}
+                {vehicle.insuranceExpiry ? new Date(vehicle.insuranceExpiry).toLocaleDateString() : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-gray-600 font-bold">Latest Emission:</span>
               <span className="text-gray-800 text-xs">
-                {vehicle.emissionExpiry ? formatDistanceToNow(new Date(vehicle.emissionExpiry)) : "Not set"}
+                {vehicle.emissionExpiry ? new Date(vehicle.emissionExpiry).toLocaleDateString() : "Not set"}
               </span>
             </div>
           </div>
@@ -119,7 +119,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             <div className="flex flex-col">
               <span className="text-gray-600 font-bold">Latest Service Date:</span>
               <span className="text-gray-800 text-xs">
-                {vehicle.lastServiceDate ? formatDistanceToNow(new Date(vehicle.lastServiceDate)) : "Not set"}
+                {vehicle.lastServiceDate ? new Date(vehicle.lastServiceDate).toLocaleDateString() : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
@@ -130,7 +130,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 nextServiceInfo.status === "due_month" ? "text-yellow-600" :
                 "text-gray-800"
               }`}>
-                {nextServiceInfo.date ? formatDistanceToNow(new Date(nextServiceInfo.date)) : "Not set"}
+                {nextServiceInfo.date ? new Date(nextServiceInfo.date).toLocaleDateString() : "Not set"}
               </span>
             </div>
           </div>

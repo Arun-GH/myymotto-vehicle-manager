@@ -10,6 +10,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Updated vehicle card date display to show actual dates instead of relative time
+- Changed insurance, emission, and service dates from "X days ago" format to actual calendar dates (MM/DD/YYYY)
+- Enhanced user experience with precise date information on vehicle tiles
+- Maintained color-coded status indicators for next service date
+
 **July 16, 2025**: Updated document field labels for better clarity
 - Changed "Insurance Expiry" to "Insurance Date of Issuance" across all forms and displays
 - Changed "Emission Expiry" to "Latest Emission" across all forms and displays
