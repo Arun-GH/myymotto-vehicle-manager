@@ -31,7 +31,7 @@ export default function StatsOverview() {
   return (
     <section className="px-4 py-2">
       <div className="grid grid-cols-3 gap-3">
-        <Card className="bg-white border border-blue-200 shadow-sm">
+        <Card className="bg-white border border-blue-200 shadow-orange">
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
@@ -45,7 +45,7 @@ export default function StatsOverview() {
           </CardContent>
         </Card>
         
-        <Card className="bg-white border border-orange-200 shadow-sm">
+        <Card className="bg-white border border-orange-200 shadow-orange">
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
@@ -59,7 +59,7 @@ export default function StatsOverview() {
           </CardContent>
         </Card>
         
-        <Card className="bg-white border border-red-200 shadow-sm">
+        <Card className="bg-white border border-red-200 shadow-orange">
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
