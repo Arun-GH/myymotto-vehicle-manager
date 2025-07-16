@@ -37,6 +37,9 @@ export default function Profile() {
   const [showCamera, setShowCamera] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const [showLicenseCamera, setShowLicenseCamera] = useState(false);
+  const [licenseImage, setLicenseImage] = useState<File | null>(null);
+  const [licenseImagePreview, setLicenseImagePreview] = useState<string | null>(null);
   const currentUserId = localStorage.getItem("currentUserId");
 
   const { data: profile, isLoading } = useQuery<UserProfile>({
@@ -67,6 +70,8 @@ export default function Profile() {
       city: "",
       pinCode: "",
       alternatePhone: "",
+      driversLicenseNumber: "",
+      driversLicenseCopy: "",
     },
   });
 
@@ -96,6 +101,32 @@ export default function Profile() {
     setProfileImagePreview(null);
   };
 
+  // Handle license file upload
+  const handleLicenseFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setLicenseImage(file);
+      const reader = new FileReader();
+      reader.onload = () => setLicenseImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Handle license camera capture
+  const handleLicenseCameraCapture = (file: File) => {
+    setLicenseImage(file);
+    const reader = new FileReader();
+    reader.onload = () => setLicenseImagePreview(reader.result as string);
+    reader.readAsDataURL(file);
+    setShowLicenseCamera(false);
+  };
+
+  // Remove license image
+  const removeLicenseImage = () => {
+    setLicenseImage(null);
+    setLicenseImagePreview(null);
+  };
+
   // Update form when profile data loads
   useEffect(() => {
     if (profile) {
@@ -108,10 +139,16 @@ export default function Profile() {
         city: profile.city,
         pinCode: profile.pinCode,
         alternatePhone: profile.alternatePhone || "",
+        driversLicenseNumber: profile.driversLicenseNumber || "",
+        driversLicenseCopy: profile.driversLicenseCopy || "",
       });
       // Set existing profile picture if available
       if (profile.profilePicture) {
         setProfileImagePreview(profile.profilePicture);
+      }
+      // Set existing license copy if available
+      if (profile.driversLicenseCopy) {
+        setLicenseImagePreview(profile.driversLicenseCopy);
       }
     }
   }, [profile, form]);
@@ -134,7 +171,25 @@ export default function Profile() {
         profilePicturePath = uploadResult.path;
       }
 
-      const profileData = { ...data, profilePicture: profilePicturePath };
+      // Upload license image if exists
+      let licenseCopyPath = null;
+      if (licenseImage) {
+        const formData = new FormData();
+        formData.append('file', licenseImage);
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (!uploadResponse.ok) throw new Error('Failed to upload license copy');
+        const uploadResult = await uploadResponse.json();
+        licenseCopyPath = uploadResult.path;
+      }
+
+      const profileData = { 
+        ...data, 
+        profilePicture: profilePicturePath,
+        driversLicenseCopy: licenseCopyPath 
+      };
       const response = await apiRequest("POST", `/api/profile/${currentUserId}`, profileData);
       return response.json();
     },
@@ -174,7 +229,25 @@ export default function Profile() {
         profilePicturePath = uploadResult.path;
       }
 
-      const profileData = { ...data, profilePicture: profilePicturePath };
+      // Upload license image if a new one exists
+      let licenseCopyPath = profile?.driversLicenseCopy || null;
+      if (licenseImage) {
+        const formData = new FormData();
+        formData.append('file', licenseImage);
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (!uploadResponse.ok) throw new Error('Failed to upload license copy');
+        const uploadResult = await uploadResponse.json();
+        licenseCopyPath = uploadResult.path;
+      }
+
+      const profileData = { 
+        ...data, 
+        profilePicture: profilePicturePath,
+        driversLicenseCopy: licenseCopyPath 
+      };
       const response = await apiRequest("PUT", `/api/profile/${currentUserId}`, profileData);
       return response.json();
     },
@@ -358,6 +431,31 @@ export default function Profile() {
                 <div>
                   <label className="text-sm text-muted-foreground">Alternate Phone</label>
                   <p className="font-medium">{profile.alternatePhone}</p>
+                </div>
+              )}
+
+              {/* Driver's License Information */}
+              {(profile.driversLicenseNumber || profile.driversLicenseCopy) && (
+                <div className="pt-4 border-t border-gray-200">
+                  <h4 className="font-medium text-gray-900 mb-3">Driver's License</h4>
+                  {profile.driversLicenseNumber && (
+                    <div>
+                      <label className="text-sm text-muted-foreground">License Number</label>
+                      <p className="font-medium">{profile.driversLicenseNumber}</p>
+                    </div>
+                  )}
+                  {profile.driversLicenseCopy && (
+                    <div className="mt-3">
+                      <label className="text-sm text-muted-foreground">License Copy</label>
+                      <div className="mt-2">
+                        <img 
+                          src={profile.driversLicenseCopy} 
+                          alt="Driver's License" 
+                          className="w-full max-w-sm rounded-lg object-cover shadow-md"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
               
@@ -588,6 +686,90 @@ export default function Profile() {
                     )}
                   />
 
+                  {/* Driver's License Section */}
+                  <div className="pt-4 border-t border-gray-200">
+                    <h4 className="font-medium text-gray-900 mb-4">Driver's License (Optional)</h4>
+                    
+                    <FormField
+                      control={form.control}
+                      name="driversLicenseNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>License Number</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="e.g., MH12 20220012345" 
+                              className="h-9"
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* License Copy Upload Section */}
+                    <div className="space-y-4 mt-4">
+                      <label className="text-sm font-medium">License Copy (Optional)</label>
+                      
+                      {/* License Image Preview */}
+                      <div className="flex justify-center">
+                        {licenseImagePreview ? (
+                          <div className="relative">
+                            <img 
+                              src={licenseImagePreview} 
+                              alt="License Preview" 
+                              className="w-full max-w-sm rounded-lg object-cover shadow-md"
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              className="absolute -top-2 -right-2 w-6 h-6 rounded-full"
+                              onClick={removeLicenseImage}
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                            <div className="flex flex-col items-center space-y-2">
+                              <Camera className="w-8 h-8 text-gray-400" />
+                              <p className="text-sm text-gray-500">No license copy uploaded</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* License Upload Buttons */}
+                      <div className="flex space-x-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="flex-1"
+                          onClick={() => setShowLicenseCamera(true)}
+                        >
+                          <Camera className="w-4 h-4 mr-2" />
+                          Camera
+                        </Button>
+                        <label className="flex-1">
+                          <Button type="button" variant="outline" className="w-full" asChild>
+                            <div>
+                              <Upload className="w-4 h-4 mr-2" />
+                              Upload
+                            </div>
+                          </Button>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleLicenseFileUpload}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="flex space-x-3 pt-4">
                     {profile && (
                       <Button 
@@ -629,6 +811,14 @@ export default function Profile() {
         <CameraCapture
           onCapture={handleCameraCapture}
           onClose={() => setShowCamera(false)}
+        />
+      )}
+
+      {/* License Camera Modal */}
+      {showLicenseCamera && (
+        <CameraCapture
+          onCapture={handleLicenseCameraCapture}
+          onClose={() => setShowLicenseCamera(false)}
         />
       )}
     </div>

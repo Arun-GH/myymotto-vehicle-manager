@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Added driver's license functionality to user profile
+- Integrated driver's license number input field with Indian license format placeholder
+- Added driver's license copy photo upload and camera capture functionality
+- Enhanced user profile display to show license information when available
+- Updated database schema with driversLicenseNumber and driversLicenseCopy fields and pushed changes
+- Driver's license section appears in dedicated section with clear optional labeling
+- Complete photo management with upload, camera capture, preview, and removal capabilities
+- Professional form layout with consistent h-9 input styling and proper validation
+
 **July 16, 2025**: Enhanced vehicle cards and added insurance company field
 - Added insurance company name input field to Insurance Copy tile on Add Vehicle and Edit Vehicle pages
 - Updated database schema with insuranceCompany field and pushed changes to database

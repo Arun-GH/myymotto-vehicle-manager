@@ -105,6 +105,8 @@ export const userProfiles = pgTable("user_profiles", {
   pinCode: text("pin_code").notNull(),
   alternatePhone: text("alternate_phone"),
   profilePicture: text("profile_picture"),
+  driversLicenseNumber: text("drivers_license_number"),
+  driversLicenseCopy: text("drivers_license_copy"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -145,6 +147,8 @@ export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
   pinCode: z.string().min(6, "Pin code must be at least 6 digits").max(6, "Pin code must be 6 digits"),
   alternatePhone: z.string().optional(),
   profilePicture: z.string().optional(),
+  driversLicenseNumber: z.string().optional(),
+  driversLicenseCopy: z.string().optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
