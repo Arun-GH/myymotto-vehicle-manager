@@ -113,13 +113,42 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
               </div>
             </div>
-            <div className="flex items-center space-x-1">
-              <div className={`w-2 h-2 rounded-full ${
-                overallStatus === "expired" ? "bg-red-500" :
-                overallStatus === "expiring" ? "bg-orange-500" :
-                "bg-green-500"
-              } shadow-sm`}></div>
-              <StatusIcon className={`w-3 h-3 ${statusColor}`} />
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1">
+                <div className={`w-2 h-2 rounded-full ${
+                  overallStatus === "expired" ? "bg-red-500" :
+                  overallStatus === "expiring" ? "bg-orange-500" :
+                  "bg-green-500"
+                } shadow-sm`}></div>
+                <StatusIcon className={`w-3 h-3 ${statusColor}`} />
+              </div>
+              <div className="flex items-center space-x-1">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className={`p-1 h-auto w-auto ${
+                    showDeleteConfirm 
+                      ? "text-red-700 bg-red-100 hover:bg-red-200" 
+                      : "text-red-600 hover:bg-red-50"
+                  }`}
+                  onClick={handleDelete}
+                  disabled={deleteVehicle.isPending}
+                  title={showDeleteConfirm ? "Click to confirm deletion" : "Delete vehicle"}
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+                {showDeleteConfirm && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-600 p-1 h-auto w-auto hover:bg-gray-50"
+                    onClick={() => setShowDeleteConfirm(false)}
+                    title="Cancel deletion"
+                  >
+                    <span className="text-xs">✕</span>
+                  </Button>
+                )}
+              </div>
             </div>
         </div>
 
@@ -200,33 +229,6 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 <span className="text-xs">Upload</span>
               </Button>
             </Link>
-            <span className="text-gray-400 text-xs">|</span>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={`p-1 h-auto flex items-center space-x-1 ${
-                showDeleteConfirm 
-                  ? "text-red-700 bg-red-100 hover:bg-red-200" 
-                  : "text-red-600 hover:bg-red-50"
-              }`}
-              onClick={handleDelete}
-              disabled={deleteVehicle.isPending}
-            >
-              <Trash2 className="w-3 h-3" />
-              <span className="text-xs">
-                {deleteVehicle.isPending ? "Deleting..." : showDeleteConfirm ? "Confirm?" : "Delete"}
-              </span>
-            </Button>
-            {showDeleteConfirm && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-gray-600 p-1 h-auto hover:bg-gray-50 flex items-center space-x-1"
-                onClick={() => setShowDeleteConfirm(false)}
-              >
-                <span className="text-xs">Cancel</span>
-              </Button>
-            )}
           </div>
         </div>
       </CardContent>
