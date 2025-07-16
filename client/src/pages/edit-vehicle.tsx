@@ -23,6 +23,8 @@ export default function EditVehicle() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedMake, setSelectedMake] = useState<string>("");
+  const [isCustomMake, setIsCustomMake] = useState(false);
+  const [isCustomModel, setIsCustomModel] = useState(false);
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
 
@@ -81,7 +83,26 @@ export default function EditVehicle() {
         serviceIntervalKms: vehicle.serviceIntervalKms || null,
         serviceIntervalMonths: vehicle.serviceIntervalMonths || null,
       });
-      setSelectedMake(vehicle.make || "");
+      
+      // Check if make or model are custom (not in dropdown)
+      const availableMakes = getAllMakes();
+      const vehicleMake = vehicle.make || "";
+      const vehicleModel = vehicle.model || "";
+      
+      if (vehicleMake && !availableMakes.includes(vehicleMake)) {
+        setIsCustomMake(true);
+        setSelectedMake("");
+      } else {
+        setIsCustomMake(false);
+        setSelectedMake(vehicleMake);
+      }
+      
+      if (vehicleModel && vehicleMake && !getModelsForMake(vehicleMake).includes(vehicleModel)) {
+        setIsCustomModel(true);
+      } else {
+        setIsCustomModel(false);
+      }
+      
       if (vehicle.thumbnailPath) {
         setThumbnailPreview(vehicle.thumbnailPath);
       }
@@ -93,8 +114,25 @@ export default function EditVehicle() {
   // Reset model when make changes
   const handleMakeChange = (make: string) => {
     setSelectedMake(make);
-    form.setValue("make", make);
+    if (make === "Other") {
+      setIsCustomMake(true);
+      form.setValue("make", "");
+    } else {
+      setIsCustomMake(false);
+      form.setValue("make", make);
+    }
     form.setValue("model", ""); // Reset model when make changes
+    setIsCustomModel(false);
+  };
+
+  const handleModelChange = (model: string) => {
+    if (model === "Other") {
+      setIsCustomModel(true);
+      form.setValue("model", "");
+    } else {
+      setIsCustomModel(false);
+      form.setValue("model", model);
+    }
   };
 
   const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -282,19 +320,43 @@ export default function EditVehicle() {
                       <FormItem>
                         <FormLabel>Make *</FormLabel>
                         <FormControl>
-                          <Select onValueChange={handleMakeChange} value={field.value}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select make" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {getAllMakes().map((make) => (
-                                <SelectItem key={make} value={make}>
-                                  {make}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          {isCustomMake ? (
+                            <Input 
+                              placeholder="Enter make manually" 
+                              className="h-9" 
+                              {...field}
+                            />
+                          ) : (
+                            <Select onValueChange={handleMakeChange} value={selectedMake}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select make" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {getAllMakes().map((make) => (
+                                  <SelectItem key={make} value={make}>
+                                    {make}
+                                  </SelectItem>
+                                ))}
+                                <SelectItem value="Other">Other (Enter manually)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
                         </FormControl>
+                        {isCustomMake && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            <button 
+                              type="button" 
+                              onClick={() => {
+                                setIsCustomMake(false);
+                                setSelectedMake("");
+                                form.setValue("make", "");
+                              }}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              ← Back to dropdown
+                            </button>
+                          </p>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -306,19 +368,42 @@ export default function EditVehicle() {
                       <FormItem>
                         <FormLabel>Model *</FormLabel>
                         <FormControl>
-                          <Select onValueChange={field.onChange} value={field.value} disabled={!watchedMake}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select model" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {watchedMake && getModelsForMake(watchedMake).map((model) => (
-                                <SelectItem key={model} value={model}>
-                                  {model}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          {isCustomModel ? (
+                            <Input 
+                              placeholder="Enter model manually" 
+                              className="h-9" 
+                              {...field}
+                            />
+                          ) : (
+                            <Select onValueChange={handleModelChange} value={field.value} disabled={!watchedMake && !isCustomMake}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select model" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {watchedMake && getModelsForMake(watchedMake).map((model) => (
+                                  <SelectItem key={model} value={model}>
+                                    {model}
+                                  </SelectItem>
+                                ))}
+                                <SelectItem value="Other">Other (Enter manually)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
                         </FormControl>
+                        {isCustomModel && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            <button 
+                              type="button" 
+                              onClick={() => {
+                                setIsCustomModel(false);
+                                form.setValue("model", "");
+                              }}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              ← Back to dropdown
+                            </button>
+                          </p>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}

@@ -24,6 +24,8 @@ export default function AddVehicle() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedMake, setSelectedMake] = useState<string>("");
+  const [isCustomMake, setIsCustomMake] = useState(false);
+  const [isCustomModel, setIsCustomModel] = useState(false);
   const [showReferralDialog, setShowReferralDialog] = useState(false);
   
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
@@ -69,8 +71,25 @@ export default function AddVehicle() {
   // Reset model when make changes
   const handleMakeChange = (make: string) => {
     setSelectedMake(make);
-    form.setValue("make", make);
+    if (make === "Other") {
+      setIsCustomMake(true);
+      form.setValue("make", "");
+    } else {
+      setIsCustomMake(false);
+      form.setValue("make", make);
+    }
     form.setValue("model", ""); // Reset model when make changes
+    setIsCustomModel(false);
+  };
+
+  const handleModelChange = (model: string) => {
+    if (model === "Other") {
+      setIsCustomModel(true);
+      form.setValue("model", "");
+    } else {
+      setIsCustomModel(false);
+      form.setValue("model", model);
+    }
   };
 
   const createVehicleMutation = useMutation({
@@ -317,19 +336,43 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-sm font-medium">Make *</FormLabel>
                         <FormControl>
-                          <Select onValueChange={handleMakeChange} value={field.value}>
-                            <SelectTrigger className="h-9">
-                              <SelectValue placeholder="Select make" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {getAllMakes().map((make) => (
-                                <SelectItem key={make} value={make}>
-                                  {make}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          {isCustomMake ? (
+                            <Input 
+                              placeholder="Enter make manually" 
+                              className="h-9" 
+                              {...field}
+                            />
+                          ) : (
+                            <Select onValueChange={handleMakeChange} value={selectedMake}>
+                              <SelectTrigger className="h-9">
+                                <SelectValue placeholder="Select make" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {getAllMakes().map((make) => (
+                                  <SelectItem key={make} value={make}>
+                                    {make}
+                                  </SelectItem>
+                                ))}
+                                <SelectItem value="Other">Other (Enter manually)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
                         </FormControl>
+                        {isCustomMake && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            <button 
+                              type="button" 
+                              onClick={() => {
+                                setIsCustomMake(false);
+                                setSelectedMake("");
+                                form.setValue("make", "");
+                              }}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              ← Back to dropdown
+                            </button>
+                          </p>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -341,19 +384,42 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-sm font-medium">Model *</FormLabel>
                         <FormControl>
-                          <Select onValueChange={field.onChange} value={field.value} disabled={!watchedMake}>
-                            <SelectTrigger className="h-9">
-                              <SelectValue placeholder="Select model" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {getModelsForMake(watchedMake).map((model) => (
-                                <SelectItem key={model} value={model}>
-                                  {model}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          {isCustomModel ? (
+                            <Input 
+                              placeholder="Enter model manually" 
+                              className="h-9" 
+                              {...field}
+                            />
+                          ) : (
+                            <Select onValueChange={handleModelChange} value={field.value} disabled={!watchedMake && !isCustomMake}>
+                              <SelectTrigger className="h-9">
+                                <SelectValue placeholder="Select model" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {getModelsForMake(watchedMake).map((model) => (
+                                  <SelectItem key={model} value={model}>
+                                    {model}
+                                  </SelectItem>
+                                ))}
+                                <SelectItem value="Other">Other (Enter manually)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
                         </FormControl>
+                        {isCustomModel && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            <button 
+                              type="button" 
+                              onClick={() => {
+                                setIsCustomModel(false);
+                                form.setValue("model", "");
+                              }}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              ← Back to dropdown
+                            </button>
+                          </p>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}
