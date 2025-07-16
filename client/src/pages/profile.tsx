@@ -185,10 +185,16 @@ export default function Profile() {
         licenseCopyPath = uploadResult.path;
       }
 
+      // Clean up data to remove undefined values for creation
       const profileData = { 
         ...data, 
         profilePicture: profilePicturePath,
-        driversLicenseCopy: licenseCopyPath 
+        driversLicenseCopy: licenseCopyPath,
+        // Ensure required fields have proper types
+        age: typeof data.age === 'number' ? data.age : parseInt(String(data.age)) || 25,
+        // Remove undefined values by setting to empty string
+        alternatePhone: data.alternatePhone || '',
+        driversLicenseNumber: data.driversLicenseNumber || '',
       };
       const response = await apiRequest("POST", `/api/profile/${currentUserId}`, profileData);
       return response.json();
@@ -243,10 +249,16 @@ export default function Profile() {
         licenseCopyPath = uploadResult.path;
       }
 
+      // Clean up data to remove undefined values for update
       const profileData = { 
         ...data, 
         profilePicture: profilePicturePath,
-        driversLicenseCopy: licenseCopyPath 
+        driversLicenseCopy: licenseCopyPath,
+        // Ensure required fields have proper types
+        age: typeof data.age === 'number' ? data.age : parseInt(String(data.age)) || 25,
+        // Remove undefined values by setting to empty string
+        alternatePhone: data.alternatePhone || '',
+        driversLicenseNumber: data.driversLicenseNumber || '',
       };
       const response = await apiRequest("PUT", `/api/profile/${currentUserId}`, profileData);
       return response.json();
@@ -564,7 +576,10 @@ export default function Profile() {
                             <Input 
                               type="number" 
                               {...field} 
-                              onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                field.onChange(value === '' ? 0 : parseInt(value) || 0);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
