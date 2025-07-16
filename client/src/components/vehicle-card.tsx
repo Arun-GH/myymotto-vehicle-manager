@@ -102,7 +102,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             <div className="flex flex-col">
               <span className="text-muted-foreground text-xs">Insurance</span>
               <span className="font-medium text-gray-700">
-                {insuranceStatus.shortText}
+                {vehicle.insuranceExpiry ? new Date(vehicle.insuranceExpiry).toLocaleDateString() : "Not set"}
               </span>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             <div className="flex flex-col">
               <span className="text-muted-foreground text-xs">Emission</span>
               <span className="font-medium text-gray-700">
-                {emissionStatus.shortText}
+                {vehicle.emissionExpiry ? new Date(vehicle.emissionExpiry).toLocaleDateString() : "Not set"}
               </span>
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             <div className="flex flex-col">
               <span className="text-muted-foreground text-xs">Last Service</span>
               <span className="font-medium text-gray-700">
-                {serviceStatus.shortText}
+                {vehicle.lastServiceDate ? new Date(vehicle.lastServiceDate).toLocaleDateString() : "Not set"}
               </span>
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 nextServiceInfo.status === "due_month" ? "text-yellow-600" :
                 "text-gray-700"
               }`}>
-                {nextServiceInfo.shortText}
+                {nextServiceInfo.date ? new Date(nextServiceInfo.date).toLocaleDateString() : "Not set"}
               </span>
             </div>
           </div>
