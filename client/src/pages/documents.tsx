@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { FileText, Search, Filter, ArrowLeft } from "lucide-react";
+import { FileText, Search, Filter, ArrowLeft, CreditCard, Eye } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
-import { type Vehicle, type Document } from "@shared/schema";
+import { type Vehicle, type Document, type UserProfile } from "@shared/schema";
 import BottomNav from "@/components/bottom-nav";
 import NotificationBell from "@/components/notification-bell";
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,125 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import ColorfulLogo from "@/components/colorful-logo";
 
+function DriversLicenseCard({ profile, profileLoading }: { profile: UserProfile | undefined, profileLoading: boolean }) {
+  const [, setLocation] = useLocation();
+
+  if (profileLoading) {
+    return (
+      <Card className="shadow-orange">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center text-base">
+            <CreditCard className="w-5 h-5 mr-2" />
+            Driver's License
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-16 bg-muted rounded animate-pulse"></div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!profile || (!profile.driversLicenseNumber && !profile.driversLicenseCopy)) {
+    return (
+      <Card className="shadow-orange">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center text-base">
+            <CreditCard className="w-5 h-5 mr-2" />
+            Driver's License
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-4">
+            <p className="text-sm text-muted-foreground mb-2">No driver's license uploaded</p>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setLocation("/profile")}
+            >
+              Upload License
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="shadow-orange">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center justify-between text-base">
+          <div className="flex items-center">
+            <CreditCard className="w-5 h-5 mr-2" />
+            Driver's License
+          </div>
+          <Badge variant="outline" className="text-xs">
+            Personal Document
+          </Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          {/* License Number and Valid Till */}
+          <div className="grid grid-cols-2 gap-4">
+            {profile.driversLicenseNumber && (
+              <div>
+                <p className="text-xs text-muted-foreground">License Number</p>
+                <p className="text-sm font-medium">{profile.driversLicenseNumber}</p>
+              </div>
+            )}
+            {profile.driversLicenseValidTill && (
+              <div>
+                <p className="text-xs text-muted-foreground">Valid Till</p>
+                <p className="text-sm font-medium">{new Date(profile.driversLicenseValidTill).toLocaleDateString()}</p>
+              </div>
+            )}
+          </div>
+
+          {/* License Copy */}
+          {profile.driversLicenseCopy && (
+            <div className="border rounded p-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <FileText className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm font-medium">License Copy</p>
+                    <p className="text-xs text-muted-foreground">Image file</p>
+                  </div>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => window.open(profile.driversLicenseCopy, '_blank')}
+                >
+                  <Eye className="w-4 h-4 mr-1" />
+                  View
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function Documents() {
   const [, setLocation] = useLocation();
   const { data: vehicles = [], isLoading: vehiclesLoading } = useQuery<Vehicle[]>({
     queryKey: ["/api/vehicles"],
+  });
+
+  // Fetch user profile for driver's license
+  const { data: profile, isLoading: profileLoading } = useQuery<UserProfile>({
+    queryKey: ["/api/profile", 1], // Using user ID 1 as default
+    queryFn: async () => {
+      const response = await fetch("/api/profile/1");
+      if (!response.ok) {
+        throw new Error("Failed to fetch profile");
+      }
+      return response.json();
+    },
   });
 
   return (
@@ -69,6 +184,9 @@ export default function Documents() {
           </div>
         ) : (
           <div className="space-y-4">
+            {/* Driver's License Document Card */}
+            <DriversLicenseCard profile={profile} profileLoading={profileLoading} />
+            
             {vehicles.map((vehicle) => (
               <VehicleDocumentCard key={vehicle.id} vehicle={vehicle} />
             ))}
