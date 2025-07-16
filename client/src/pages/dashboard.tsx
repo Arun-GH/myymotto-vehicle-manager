@@ -19,20 +19,18 @@ export default function Dashboard() {
   return (
     <>
       {/* Header */}
-      <header className="gradient-warm text-white shadow-lg relative z-10">
+      <header className="bg-white border-4 border-red-500 shadow-lg relative z-10">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="bg-white/20 p-1 rounded-xl">
-                <img 
-                  src={logoImage} 
-                  alt="Myymotto Logo" 
-                  className="w-10 h-10 rounded-lg"
-                />
-              </div>
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-14 h-14 rounded-lg"
+              />
               <div>
                 <ColorfulLogo />
-                <p className="text-sm text-white/80">Timely Care for your carrier</p>
+                <p className="text-sm text-red-600">Timely Care for your carrier</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -65,22 +63,6 @@ export default function Dashboard() {
                   <FileText className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xs font-medium text-gray-800">Documents</span>
-              </div>
-            </Link>
-            <Link href="/emergency-contacts">
-              <div className="card-hover bg-white rounded-xl p-3 flex flex-col items-center space-y-2 cursor-pointer shadow-orange">
-                <div className="bg-gradient-to-br from-blue-500 to-purple-500 p-2 rounded-xl shadow-lg">
-                  <Users className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xs font-medium text-gray-800">Emergency</span>
-              </div>
-            </Link>
-            <Link href="/service-centers">
-              <div className="card-hover bg-white rounded-xl p-3 flex flex-col items-center space-y-2 cursor-pointer shadow-orange">
-                <div className="bg-gradient-to-br from-green-500 to-teal-500 p-2 rounded-xl shadow-lg">
-                  <Search className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xs font-medium text-gray-800">Service</span>
               </div>
             </Link>
           </div>

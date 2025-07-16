@@ -329,7 +329,7 @@ export default function SignIn() {
             />
           </div>
           <CardTitle className="text-2xl font-bold gradient-text">Welcome to <ColorfulLogo className="inline" /></CardTitle>
-          <p className="text-gray-600">Timely Care for your carrier</p>
+          <p className="text-red-600">Timely Care for your carrier</p>
         </CardHeader>
         <CardContent>
           <Form {...signInForm}>

@@ -154,7 +154,7 @@ export default function Profile() {
               </div>
               <div>
                 <ColorfulLogo />
-                <p className="text-xs text-white/80">Timely Care for your carrier</p>
+                <p className="text-xs text-red-300">Timely Care for your carrier</p>
               </div>
             </div>
           </div>

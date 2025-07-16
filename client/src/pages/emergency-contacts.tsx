@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertEmergencyContactSchema, type InsertEmergencyContact, type EmergencyContact } from "@shared/schema";
 import ColorfulLogo from "@/components/colorful-logo";
+import BottomNav from "@/components/bottom-nav";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function EmergencyContacts() {
@@ -122,27 +123,25 @@ export default function EmergencyContacts() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <header className="gradient-warm text-white shadow-lg sticky top-0 z-10">
+        <header className="bg-white border-4 border-red-500 shadow-lg sticky top-0 z-10">
           <div className="px-4 py-4">
             <div className="flex items-center space-x-3">
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20"
+                className="text-gray-600 hover:bg-red-50"
                 onClick={() => setLocation("/")}
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <div className="bg-white/20 p-1 rounded-xl">
-                <img 
-                  src={logoImage} 
-                  alt="Myymotto Logo" 
-                  className="w-8 h-8 rounded-lg"
-                />
-              </div>
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-12 h-12 rounded-lg"
+              />
               <div>
                 <ColorfulLogo className="text-xl font-semibold" />
-                <p className="text-xs text-white/80">Emergency Contacts</p>
+                <p className="text-xs text-gray-600">Emergency Contacts</p>
               </div>
             </div>
           </div>
@@ -161,35 +160,33 @@ export default function EmergencyContacts() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="gradient-warm text-white shadow-lg sticky top-0 z-10">
+      <header className="bg-white border-4 border-red-500 shadow-lg sticky top-0 z-10">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20"
+                className="text-gray-600 hover:bg-red-50"
                 onClick={() => setLocation("/")}
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <div className="bg-white/20 p-1 rounded-xl">
-                <img 
-                  src={logoImage} 
-                  alt="Myymotto Logo" 
-                  className="w-8 h-8 rounded-lg"
-                />
-              </div>
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-12 h-12 rounded-lg"
+              />
               <div>
                 <ColorfulLogo className="text-xl font-semibold" />
-                <p className="text-xs text-white/80">Emergency Contacts</p>
+                <p className="text-xs text-gray-600">Emergency Contacts</p>
               </div>
             </div>
             {hasContacts && !isEditing && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/20"
+                className="text-gray-600 hover:bg-red-50"
                 onClick={() => setIsEditing(true)}
               >
                 Edit
@@ -572,6 +569,8 @@ export default function EmergencyContacts() {
           </Card>
         )}
       </div>
+
+      <BottomNav currentPath="/emergency-contacts" />
     </div>
   );
 }
