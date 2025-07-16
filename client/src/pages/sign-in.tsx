@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Smartphone, Mail, Lock, ArrowRight, Timer } from "lucide-react";
-import { signInSchema, verifyOtpSchema, type SignInData, type VerifyOtpData } from "@shared/schema";
+import { Smartphone, Mail, Lock, ArrowRight, Timer, Fingerprint, Shield, KeyRound } from "lucide-react";
+import { signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, type SignInData, type VerifyOtpData } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -13,16 +13,21 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
-type AuthStep = "signin" | "verify-otp" | "register";
+type AuthStep = "signin" | "verify-otp" | "pin-login" | "set-pin" | "biometric-setup" | "register";
 
 export default function SignIn() {
   const [, setLocation] = useLocation();
   const [step, setStep] = useState<AuthStep>("signin");
   const [identifier, setIdentifier] = useState("");
+  const [userId, setUserId] = useState<number | null>(null);
   const [countdown, setCountdown] = useState(0);
+  const [authTab, setAuthTab] = useState<"otp" | "pin">("otp");
+  const [isExistingUser, setIsExistingUser] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -38,6 +43,29 @@ export default function SignIn() {
     defaultValues: {
       identifier: "",
       otp: "",
+    },
+  });
+
+  const pinForm = useForm<{ identifier: string; pin: string }>({
+    resolver: zodResolver(pinLoginSchema),
+    defaultValues: {
+      identifier: "",
+      pin: "",
+    },
+  });
+
+  const setPinForm = useForm<{ pin: string; confirmPin: string }>({
+    resolver: zodResolver(setPinSchema),
+    defaultValues: {
+      pin: "",
+      confirmPin: "",
+    },
+  });
+
+  const biometricForm = useForm<{ enabled: boolean }>({
+    resolver: zodResolver(biometricSetupSchema),
+    defaultValues: {
+      enabled: false,
     },
   });
 
@@ -78,26 +106,16 @@ export default function SignIn() {
     },
   });
 
-  const verifyOtpMutation = useMutation({
-    mutationFn: async (data: VerifyOtpData) => {
-      console.log("Sending OTP verification request:", data);
-      const response = await apiRequest("POST", "/api/auth/verify-otp", data);
-      const result = await response.json();
-      console.log("OTP verification response:", result);
-      return result;
+  const pinLoginMutation = useMutation({
+    mutationFn: async (data: { identifier: string; pin: string }) => {
+      const response = await apiRequest("POST", "/api/auth/pin-login", data);
+      return response.json();
     },
     onSuccess: (data) => {
-      console.log("OTP verification successful:", data);
-      toast({
-        title: "Success",
-        description: "Successfully signed in!",
-      });
-      
-      // Store user ID for authentication
-      localStorage.setItem("currentUserId", data.userId.toString());
-      
-      // Invalidate auth queries and redirect
-      queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+      setUserId(data.userId);
+      // Store authentication state
+      localStorage.setItem("userId", data.userId.toString());
+      localStorage.setItem("authMethod", "pin");
       
       if (data.hasProfile) {
         setLocation("/");
@@ -106,10 +124,104 @@ export default function SignIn() {
       }
     },
     onError: (error: any) => {
-      console.error("OTP verification error:", error);
       toast({
-        title: "Invalid OTP",
-        description: error.message || "Please check your OTP and try again",
+        title: "PIN Login Failed",
+        description: error.message || "Invalid PIN",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const setPinMutation = useMutation({
+    mutationFn: async (data: { pin: string }) => {
+      const response = await apiRequest("POST", "/api/auth/set-pin", {
+        pin: data.pin,
+        userId: userId,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "PIN Set Successfully",
+        description: "Your PIN has been created for future logins",
+      });
+      setStep("biometric-setup");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to set PIN",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const biometricSetupMutation = useMutation({
+    mutationFn: async (data: { enabled: boolean }) => {
+      const response = await apiRequest("POST", "/api/auth/biometric-setup", {
+        enabled: data.enabled,
+        userId: userId,
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Biometric Setup Complete",
+        description: data.message,
+      });
+      
+      // Store authentication state
+      localStorage.setItem("userId", userId!.toString());
+      localStorage.setItem("authMethod", "biometric");
+      
+      // Check if user has profile
+      const hasProfile = localStorage.getItem("hasProfile") === "true";
+      if (hasProfile) {
+        setLocation("/");
+      } else {
+        setLocation("/profile");
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to setup biometric authentication",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: async (data: VerifyOtpData) => {
+      const response = await apiRequest("POST", "/api/auth/verify-otp", data);
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setUserId(data.userId);
+      localStorage.setItem("hasProfile", data.hasProfile.toString());
+      
+      // For new users, offer PIN setup
+      if (data.userId && !data.hasProfile) {
+        setStep("set-pin");
+        toast({
+          title: "Account Created",
+          description: "Let's set up secure authentication for your account",
+        });
+      } else {
+        // Existing user with profile - proceed to dashboard
+        localStorage.setItem("currentUserId", data.userId.toString());
+        localStorage.setItem("authMethod", "otp");
+        setLocation("/");
+        toast({
+          title: "Authentication Successful",
+          description: "Welcome back to Myymotto!",
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Verification Failed",
+        description: error.message || "Invalid OTP",
         variant: "destructive",
       });
     },
@@ -152,11 +264,53 @@ export default function SignIn() {
   };
 
   const onOtpSubmit = (data: VerifyOtpData) => {
-    console.log("OTP Submit data:", { identifier, otp: data.otp });
     verifyOtpMutation.mutate({
       identifier,
       otp: data.otp
     });
+  };
+
+  const onPinSubmit = (data: { identifier: string; pin: string }) => {
+    pinLoginMutation.mutate({
+      identifier: data.identifier,
+      pin: data.pin
+    });
+  };
+
+  const onSetPinSubmit = (data: { pin: string; confirmPin: string }) => {
+    if (data.pin !== data.confirmPin) {
+      toast({
+        title: "PIN Mismatch",
+        description: "Please ensure both PIN entries match",
+        variant: "destructive",
+      });
+      return;
+    }
+    setPinMutation.mutate({ pin: data.pin });
+  };
+
+  const onBiometricSubmit = (data: { enabled: boolean }) => {
+    biometricSetupMutation.mutate(data);
+  };
+
+  const skipPinSetup = () => {
+    // Store basic authentication state and proceed
+    localStorage.setItem("currentUserId", userId!.toString());
+    localStorage.setItem("authMethod", "otp");
+    setLocation("/profile");
+  };
+
+  const skipBiometricSetup = () => {
+    // Store authentication state and proceed
+    localStorage.setItem("currentUserId", userId!.toString());
+    localStorage.setItem("authMethod", "pin");
+    
+    const hasProfile = localStorage.getItem("hasProfile") === "true";
+    if (hasProfile) {
+      setLocation("/");
+    } else {
+      setLocation("/profile");
+    }
   };
 
   const isEmail = (value: string) => {
@@ -317,9 +471,10 @@ export default function SignIn() {
     );
   }
 
+  // Main Sign-In Screen
   return (
     <div className="min-h-screen bg-background flex items-center justify-center bg-warm-pattern">
-      <Card className="w-full max-w-md card-hover shadow-xl">
+      <Card className="w-full max-w-md card-hover shadow-orange">
         <CardHeader className="text-center">
           <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
             <img 
@@ -328,55 +483,296 @@ export default function SignIn() {
               className="w-16 h-16 rounded-full"
             />
           </div>
-          <CardTitle className="text-2xl font-bold gradient-text">Welcome to <ColorfulLogo className="inline" /></CardTitle>
-          <p className="text-red-600">Timely Care for your carrier</p>
+          <CardTitle className="text-2xl font-bold gradient-text">Welcome to <ColorfulLogo className="inline" />!</CardTitle>
+          <p className="text-red-600 font-medium">Timely Care for your carrier</p>
         </CardHeader>
         <CardContent>
-          <Form {...signInForm}>
-            <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-6">
-              <FormField
-                control={signInForm.control}
-                name="identifier"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center">
-                      {getIdentifierType(field.value) === "email" ? (
-                        <Mail className="w-4 h-4 mr-2" />
-                      ) : (
-                        <Smartphone className="w-4 h-4 mr-2" />
-                      )}
-                      Mobile Number or Email
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        placeholder="Enter mobile number or email"
-                        type={getIdentifierType(field.value) === "email" ? "email" : "tel"}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <Tabs value={authTab} onValueChange={(value) => setAuthTab(value as "otp" | "pin")}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="otp" className="flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                OTP Login
+              </TabsTrigger>
+              <TabsTrigger value="pin" className="flex items-center gap-2">
+                <KeyRound className="w-4 h-4" />
+                PIN Login
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="otp" className="mt-6">
+              <Form {...signInForm}>
+                <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-6">
+                  <FormField
+                    control={signInForm.control}
+                    name="identifier"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700">Email or Mobile Number</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            {field.value && (
+                              <div className="absolute left-3 top-3 z-10">
+                                {isEmail(field.value) ? (
+                                  <Mail className="w-4 h-4 text-gray-400" />
+                                ) : (
+                                  <Smartphone className="w-4 h-4 text-gray-400" />
+                                )}
+                              </div>
+                            )}
+                            <Input
+                              {...field}
+                              placeholder="Enter your email or mobile number"
+                              className={`h-12 ${field.value ? 'pl-10' : 'pl-4'} border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary`}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <Button 
-                type="submit" 
-                className="w-full gradient-warm text-white border-0 hover:opacity-90"
-                disabled={signInMutation.isPending}
-                size="lg"
-              >
-                {signInMutation.isPending ? "Sending OTP..." : "Continue with OTP"}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 gradient-warm text-white border-0 hover:opacity-90"
+                    size="lg"
+                    disabled={signInMutation.isPending}
+                  >
+                    {signInMutation.isPending ? "Sending..." : "Send OTP"}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </form>
+              </Form>
+            </TabsContent>
+            
+            <TabsContent value="pin" className="mt-6">
+              <Form {...pinForm}>
+                <form onSubmit={pinForm.handleSubmit(onPinSubmit)} className="space-y-6">
+                  <FormField
+                    control={pinForm.control}
+                    name="identifier"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700">Email or Mobile Number</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            {field.value && (
+                              <div className="absolute left-3 top-3 z-10">
+                                {isEmail(field.value) ? (
+                                  <Mail className="w-4 h-4 text-gray-400" />
+                                ) : (
+                                  <Smartphone className="w-4 h-4 text-gray-400" />
+                                )}
+                              </div>
+                            )}
+                            <Input
+                              {...field}
+                              placeholder="Enter your email or mobile number"
+                              className={`h-12 ${field.value ? 'pl-10' : 'pl-4'} border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary`}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <div className="text-center text-sm text-gray-500">
-                <p>We'll send you a verification code</p>
-                <p className="mt-1">New users will be guided through registration</p>
-              </div>
-            </form>
-          </Form>
+                  <FormField
+                    control={pinForm.control}
+                    name="pin"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700">PIN</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                            <Input
+                              {...field}
+                              type="password"
+                              placeholder="Enter your 4-digit PIN"
+                              maxLength={4}
+                              className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 gradient-warm text-white border-0 hover:opacity-90"
+                    size="lg"
+                    disabled={pinLoginMutation.isPending}
+                  >
+                    {pinLoginMutation.isPending ? "Verifying..." : "Sign In with PIN"}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </form>
+              </Form>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>
   );
+
+  // PIN Setup Screen
+  if (step === "set-pin") {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center bg-warm-pattern">
+        <Card className="w-full max-w-md card-hover shadow-orange">
+          <CardHeader className="text-center">
+            <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
+              <Shield className="w-12 h-12 text-primary" />
+            </div>
+            <CardTitle className="text-2xl font-bold gradient-text">Setup PIN</CardTitle>
+            <p className="text-gray-600">Create a 4-digit PIN for quick access</p>
+          </CardHeader>
+          <CardContent>
+            <Form {...setPinForm}>
+              <form onSubmit={setPinForm.handleSubmit(onSetPinSubmit)} className="space-y-6">
+                <FormField
+                  control={setPinForm.control}
+                  name="pin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-700">Create PIN</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                          <Input
+                            {...field}
+                            type="password"
+                            placeholder="Enter 4-digit PIN"
+                            maxLength={4}
+                            className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={setPinForm.control}
+                  name="confirmPin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-700">Confirm PIN</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                          <Input
+                            {...field}
+                            type="password"
+                            placeholder="Confirm your PIN"
+                            maxLength={4}
+                            className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex gap-4">
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    onClick={skipPinSetup}
+                    className="flex-1 h-12"
+                  >
+                    Skip for Now
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    className="flex-1 h-12 gradient-warm text-white border-0 hover:opacity-90"
+                    disabled={setPinMutation.isPending}
+                  >
+                    {setPinMutation.isPending ? "Setting up..." : "Set PIN"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Biometric Setup Screen
+  if (step === "biometric-setup") {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center bg-warm-pattern">
+        <Card className="w-full max-w-md card-hover shadow-orange">
+          <CardHeader className="text-center">
+            <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
+              <Fingerprint className="w-12 h-12 text-primary" />
+            </div>
+            <CardTitle className="text-2xl font-bold gradient-text">Biometric Authentication</CardTitle>
+            <p className="text-gray-600">Use your fingerprint for secure access</p>
+          </CardHeader>
+          <CardContent>
+            <Form {...biometricForm}>
+              <form onSubmit={biometricForm.handleSubmit(onBiometricSubmit)} className="space-y-6">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h3 className="font-semibold text-blue-800 mb-2">Enhanced Security</h3>
+                  <p className="text-sm text-blue-700">
+                    Enable biometric authentication for quick and secure access to your account using your device's fingerprint sensor.
+                  </p>
+                </div>
+
+                <FormField
+                  control={biometricForm.control}
+                  name="enabled"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base font-medium">
+                          Enable Biometric Login
+                        </FormLabel>
+                        <div className="text-sm text-gray-600">
+                          Use fingerprint authentication for future logins
+                        </div>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex gap-4">
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    onClick={skipBiometricSetup}
+                    className="flex-1 h-12"
+                  >
+                    Skip for Now
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    className="flex-1 h-12 gradient-warm text-white border-0 hover:opacity-90"
+                    disabled={biometricSetupMutation.isPending}
+                  >
+                    {biometricSetupMutation.isPending ? "Setting up..." : "Continue"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Default return - shouldn't reach here
+  return null;
 }
