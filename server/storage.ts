@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte } from "drizzle-orm";
 
@@ -47,6 +47,12 @@ export interface IStorage {
   getEmergencyContact(userId: number): Promise<EmergencyContact | undefined>;
   createEmergencyContact(contact: InsertEmergencyContact & { userId: number }): Promise<EmergencyContact>;
   updateEmergencyContact(userId: number, contact: Partial<InsertEmergencyContact>): Promise<EmergencyContact | undefined>;
+  
+  // Traffic Violation methods
+  getTrafficViolations(vehicleId: number): Promise<TrafficViolation[]>;
+  createTrafficViolation(violation: InsertTrafficViolation): Promise<TrafficViolation>;
+  updateTrafficViolationStatus(violationId: number, status: string, paymentDate?: string): Promise<TrafficViolation | undefined>;
+  deleteTrafficViolation(violationId: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -678,6 +684,43 @@ export class DatabaseStorage implements IStorage {
       .where(eq(emergencyContacts.userId, userId))
       .returning();
     return contact || undefined;
+  }
+
+  // Traffic Violation methods
+  async getTrafficViolations(vehicleId: number): Promise<TrafficViolation[]> {
+    return await db
+      .select()
+      .from(trafficViolations)
+      .where(eq(trafficViolations.vehicleId, vehicleId))
+      .orderBy(trafficViolations.violationDate);
+  }
+
+  async createTrafficViolation(violation: InsertTrafficViolation): Promise<TrafficViolation> {
+    const [newViolation] = await db
+      .insert(trafficViolations)
+      .values(violation)
+      .returning();
+    return newViolation;
+  }
+
+  async updateTrafficViolationStatus(violationId: number, status: string, paymentDate?: string): Promise<TrafficViolation | undefined> {
+    const [updated] = await db
+      .update(trafficViolations)
+      .set({ 
+        status, 
+        paymentDate: paymentDate ? new Date(paymentDate) : null,
+        lastChecked: new Date()
+      })
+      .where(eq(trafficViolations.id, violationId))
+      .returning();
+    return updated;
+  }
+
+  async deleteTrafficViolation(violationId: number): Promise<boolean> {
+    const result = await db
+      .delete(trafficViolations)
+      .where(eq(trafficViolations.id, violationId));
+    return result.rowCount !== null && result.rowCount > 0;
   }
 }
 

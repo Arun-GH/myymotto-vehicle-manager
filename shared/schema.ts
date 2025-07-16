@@ -231,3 +231,26 @@ export const insertEmergencyContactSchema = createInsertSchema(emergencyContacts
 
 export type EmergencyContact = typeof emergencyContacts.$inferSelect;
 export type InsertEmergencyContact = z.infer<typeof insertEmergencyContactSchema>;
+
+// Traffic violations schema
+export const trafficViolations = pgTable("traffic_violations", {
+  id: serial("id").primaryKey(),
+  vehicleId: integer("vehicle_id").references(() => vehicles.id).notNull(),
+  challanNumber: text("challan_number").notNull(),
+  offense: text("offense").notNull(),
+  fineAmount: integer("fine_amount").notNull(),
+  violationDate: date("violation_date").notNull(),
+  location: text("location").notNull(),
+  status: text("status").notNull(), // 'paid', 'unpaid', 'pending'
+  paymentDate: date("payment_date"),
+  lastChecked: timestamp("last_checked").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertTrafficViolationSchema = createInsertSchema(trafficViolations).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type TrafficViolation = typeof trafficViolations.$inferSelect;
+export type InsertTrafficViolation = z.infer<typeof insertTrafficViolationSchema>;
