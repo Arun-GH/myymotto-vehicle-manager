@@ -17,6 +17,9 @@ Preferred communication style: Simple, everyday language.
 - Service section captures current odometer reading, monthly usage patterns, and service interval preferences
 - Enhanced vehicle management with detailed service tracking capabilities for better maintenance planning
 - Updated database schema and form mutations to handle new service-related fields
+- Added "Next Service Date" to vehicle tiles that calculates date by adding service interval months to last service date
+- Next service date displays with color-coded status: red (overdue), orange (due soon), yellow (due this month), gray (future)
+- Changed "months" to "mths" in service interval field labels for better mobile display
 
 **July 16, 2025**: Added profile picture upload/capture functionality with camera and file upload options
 - Implemented complete photo upload system for user profile pages with camera capture and file selection

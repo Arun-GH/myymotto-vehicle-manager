@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye } from "lucide-react";
 import { type Vehicle } from "@shared/schema";
-import { formatDistanceToNow, getExpiryStatus, getServiceStatus } from "@/lib/date-utils";
+import { formatDistanceToNow, getExpiryStatus, getServiceStatus, calculateNextServiceDate } from "@/lib/date-utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   const insuranceStatus = getExpiryStatus(vehicle.insuranceExpiry);
   const emissionStatus = getExpiryStatus(vehicle.emissionExpiry);
   const serviceStatus = getServiceStatus(vehicle.lastServiceDate);
+  const nextServiceInfo = calculateNextServiceDate(vehicle.lastServiceDate, vehicle.serviceIntervalMonths);
 
   // Check for missing details
   const missingDetails = [];
@@ -96,7 +97,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
         )}
         
-        <div className="grid grid-cols-3 gap-2 text-sm">
+        <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="bg-muted/50 rounded-lg p-2">
             <div className="flex flex-col">
               <span className="text-muted-foreground text-xs">Insurance</span>
@@ -118,6 +119,19 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               <span className="text-muted-foreground text-xs">Last Service</span>
               <span className="font-medium text-gray-700">
                 {serviceStatus.shortText}
+              </span>
+            </div>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-2">
+            <div className="flex flex-col">
+              <span className="text-muted-foreground text-xs">Next Service</span>
+              <span className={`font-medium ${
+                nextServiceInfo.status === "overdue" ? "text-red-600" :
+                nextServiceInfo.status === "due_soon" ? "text-orange-600" :
+                nextServiceInfo.status === "due_month" ? "text-yellow-600" :
+                "text-gray-700"
+              }`}>
+                {nextServiceInfo.shortText}
               </span>
             </div>
           </div>

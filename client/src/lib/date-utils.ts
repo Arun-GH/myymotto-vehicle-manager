@@ -138,3 +138,58 @@ export function getServiceStatus(lastServiceDate: string | null) {
     }
   }
 }
+
+export function calculateNextServiceDate(lastServiceDate: string | null, serviceIntervalMonths: number | null): { date: Date | null, status: string, text: string, shortText: string } {
+  if (!lastServiceDate || !serviceIntervalMonths) {
+    return {
+      date: null,
+      status: "unknown",
+      text: "Service info not available",
+      shortText: "Not set"
+    };
+  }
+
+  const lastService = new Date(lastServiceDate);
+  const nextService = new Date(lastService);
+  nextService.setMonth(nextService.getMonth() + serviceIntervalMonths);
+
+  const today = new Date();
+  const timeDiff = nextService.getTime() - today.getTime();
+  const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+  if (daysDiff < 0) {
+    // Overdue
+    const daysOverdue = Math.abs(daysDiff);
+    return {
+      date: nextService,
+      status: "overdue",
+      text: `Service overdue by ${daysOverdue} day${daysOverdue === 1 ? '' : 's'}`,
+      shortText: `${daysOverdue}d overdue`
+    };
+  } else if (daysDiff <= 7) {
+    // Due soon
+    return {
+      date: nextService,
+      status: "due_soon",
+      text: `Service due in ${daysDiff} day${daysDiff === 1 ? '' : 's'}`,
+      shortText: `${daysDiff}d left`
+    };
+  } else if (daysDiff <= 30) {
+    // Due this month
+    return {
+      date: nextService,
+      status: "due_month",
+      text: `Service due in ${daysDiff} day${daysDiff === 1 ? '' : 's'}`,
+      shortText: `${daysDiff}d left`
+    };
+  } else {
+    // Future
+    const monthsLeft = Math.floor(daysDiff / 30);
+    return {
+      date: nextService,
+      status: "future",
+      text: `Service due in ${monthsLeft} month${monthsLeft === 1 ? '' : 's'}`,
+      shortText: `${monthsLeft}m left`
+    };
+  }
+}
