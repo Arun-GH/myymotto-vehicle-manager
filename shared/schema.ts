@@ -18,6 +18,10 @@ export const vehicles = pgTable("vehicles", {
   emissionExpiry: date("emission_expiry"),
   rcExpiry: date("rc_expiry"),
   lastServiceDate: date("last_service_date"),
+  currentOdometerReading: integer("current_odometer_reading"),
+  averageUsagePerMonth: integer("average_usage_per_month"),
+  serviceIntervalKms: integer("service_interval_kms"),
+  serviceIntervalMonths: integer("service_interval_months"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -47,6 +51,10 @@ export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   emissionExpiry: z.string().optional().nullable(),
   rcExpiry: z.string().optional().nullable(),
   lastServiceDate: z.string().optional().nullable(),
+  currentOdometerReading: z.number().optional().nullable(),
+  averageUsagePerMonth: z.number().optional().nullable(),
+  serviceIntervalKms: z.number().optional().nullable(),
+  serviceIntervalMonths: z.number().optional().nullable(),
 });
 
 export const insertDocumentSchema = createInsertSchema(documents).omit({

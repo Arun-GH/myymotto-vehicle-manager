@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Added comprehensive Service Details section to vehicle forms
+- Created separate Service Details section with blue gradient header and Settings icon
+- Added database fields for currentOdometerReading, averageUsagePerMonth, serviceIntervalKms, serviceIntervalMonths
+- Updated vehicle forms (Add and Edit) to include service tracking inputs with proper validation
+- Service section captures current odometer reading, monthly usage patterns, and service interval preferences
+- Enhanced vehicle management with detailed service tracking capabilities for better maintenance planning
+- Updated database schema and form mutations to handle new service-related fields
+
 **July 16, 2025**: Added profile picture upload/capture functionality with camera and file upload options
 - Implemented complete photo upload system for user profile pages with camera capture and file selection
 - Added profile picture display as circular images with remove functionality

@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Car, Save, FileText, Calendar, Camera } from "lucide-react";
+import { ArrowLeft, Car, Save, FileText, Calendar, Camera, Settings } from "lucide-react";
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -56,6 +56,11 @@ export default function AddVehicle() {
       insuranceExpiry: "",
       emissionExpiry: "",
       rcExpiry: "",
+      lastServiceDate: "",
+      currentOdometerReading: null,
+      averageUsagePerMonth: null,
+      serviceIntervalKms: null,
+      serviceIntervalMonths: null,
     },
   });
 
@@ -89,6 +94,11 @@ export default function AddVehicle() {
         insuranceExpiry: data.insuranceExpiry?.trim() || null,
         emissionExpiry: data.emissionExpiry?.trim() || null,
         rcExpiry: data.rcExpiry?.trim() || null,
+        lastServiceDate: data.lastServiceDate?.trim() || null,
+        currentOdometerReading: data.currentOdometerReading || null,
+        averageUsagePerMonth: data.averageUsagePerMonth || null,
+        serviceIntervalKms: data.serviceIntervalKms || null,
+        serviceIntervalMonths: data.serviceIntervalMonths || null,
       };
       const response = await apiRequest("POST", "/api/vehicles", cleanedData);
       return response.json();
@@ -456,6 +466,96 @@ export default function AddVehicle() {
                     )}
                   />
                 </div>
+
+                {/* Service Details Section */}
+                <Card className="mt-6">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-t-lg">
+                    <CardTitle className="flex items-center space-x-2 text-gray-800">
+                      <Settings className="w-5 h-5 text-blue-600" />
+                      <span>Service Details</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="currentOdometerReading"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Current Odometer Reading (km)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                placeholder="85000" 
+                                {...field} 
+                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
+                                value={field.value || ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="averageUsagePerMonth"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Average Usage per Month (km)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                placeholder="1200" 
+                                {...field} 
+                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
+                                value={field.value || ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="serviceIntervalKms"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Service Interval (km)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                placeholder="10000" 
+                                {...field} 
+                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
+                                value={field.value || ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="serviceIntervalMonths"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Service Interval (months)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                placeholder="6" 
+                                {...field} 
+                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
+                                value={field.value || ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
 
                 <div className="flex space-x-3">
                   <Button 
