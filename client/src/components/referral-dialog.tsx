@@ -68,7 +68,7 @@ Try it out: ${window.location.origin}`;
             </div>
           </div>
           <DialogDescription>
-            You're managing multiple vehicles like a pro! 🎉 Help a friend get organized too.
+            Great job adding your vehicle! Help a friend get organized with their vehicles too.
           </DialogDescription>
         </DialogHeader>
 

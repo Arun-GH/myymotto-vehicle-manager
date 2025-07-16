@@ -124,12 +124,8 @@ export default function AddVehicle() {
         description: "Your vehicle has been successfully added with all documents.",
       });
 
-      // Check if this is the second vehicle and show referral dialog
-      if (vehicles.length === 1) { // After adding, it will be 2 vehicles total
-        setShowReferralDialog(true);
-      } else {
-        setLocation("/");
-      }
+      // Show referral dialog for every vehicle addition
+      setShowReferralDialog(true);
     },
     onError: (error) => {
       toast({
