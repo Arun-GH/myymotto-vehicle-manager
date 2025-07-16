@@ -16,6 +16,7 @@ import VehicleDetails from "@/pages/vehicle-details";
 import ServiceCenters from "@/pages/service-centers";
 import Documents from "@/pages/documents";
 import Profile from "@/pages/profile";
+import EmergencyContacts from "@/pages/emergency-contacts";
 import SignIn from "@/pages/sign-in";
 import NotFound from "@/pages/not-found";
 
@@ -63,6 +64,7 @@ function Router() {
       <Route path="/vehicle/:id" component={VehicleDetails} />
       <Route path="/service-centers" component={ServiceCenters} />
       <Route path="/documents" component={Documents} />
+      <Route path="/emergency-contacts" component={EmergencyContacts} />
       <Route path="/profile" component={Profile} />
       <Route component={NotFound} />
     </Switch>

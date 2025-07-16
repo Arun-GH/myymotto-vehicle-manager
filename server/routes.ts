@@ -2,7 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, insertUserSchema, insertNotificationSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification } from "@shared/schema";
+import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -488,6 +488,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error marking notification as read:", error);
       res.status(500).json({ error: "Failed to mark notification as read" });
+    }
+  });
+
+  // Emergency Contacts API
+  app.get("/api/emergency-contacts/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const contact = await storage.getEmergencyContact(userId);
+      res.json(contact || {});
+    } catch (error: any) {
+      console.error("Error fetching emergency contact:", error);
+      res.status(500).json({ error: "Failed to fetch emergency contact" });
+    }
+  });
+
+  app.post("/api/emergency-contacts/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const contactData = insertEmergencyContactSchema.parse(req.body);
+      const contact = await storage.createEmergencyContact({ ...contactData, userId });
+      res.json(contact);
+    } catch (error: any) {
+      console.error("Error creating emergency contact:", error);
+      res.status(500).json({ error: "Failed to create emergency contact" });
+    }
+  });
+
+  app.put("/api/emergency-contacts/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const contactData = insertEmergencyContactSchema.partial().parse(req.body);
+      const contact = await storage.updateEmergencyContact(userId, contactData);
+      if (contact) {
+        res.json(contact);
+      } else {
+        res.status(404).json({ error: "Emergency contact not found" });
+      }
+    } catch (error: any) {
+      console.error("Error updating emergency contact:", error);
+      res.status(500).json({ error: "Failed to update emergency contact" });
     }
   });
 

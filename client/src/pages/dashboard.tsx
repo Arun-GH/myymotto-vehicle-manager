@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users } from "lucide-react";
 import { Link } from "wouter";
 import { type Vehicle } from "@shared/schema";
 import VehicleCard from "@/components/vehicle-card";
@@ -65,6 +65,22 @@ export default function Dashboard() {
                   <FileText className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xs font-medium text-gray-800">Documents</span>
+              </div>
+            </Link>
+            <Link href="/emergency-contacts">
+              <div className="card-hover bg-white rounded-xl p-3 flex flex-col items-center space-y-2 cursor-pointer shadow-orange">
+                <div className="bg-gradient-to-br from-blue-500 to-purple-500 p-2 rounded-xl shadow-lg">
+                  <Users className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xs font-medium text-gray-800">Emergency</span>
+              </div>
+            </Link>
+            <Link href="/service-centers">
+              <div className="card-hover bg-white rounded-xl p-3 flex flex-col items-center space-y-2 cursor-pointer shadow-orange">
+                <div className="bg-gradient-to-br from-green-500 to-teal-500 p-2 rounded-xl shadow-lg">
+                  <Search className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xs font-medium text-gray-800">Service</span>
               </div>
             </Link>
           </div>

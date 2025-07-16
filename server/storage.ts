@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte } from "drizzle-orm";
 
@@ -39,6 +39,11 @@ export interface IStorage {
   createNotification(notification: InsertNotification): Promise<Notification>;
   markNotificationAsRead(id: number): Promise<void>;
   generateRenewalNotifications(): Promise<void>;
+  
+  // Emergency Contact methods
+  getEmergencyContact(userId: number): Promise<EmergencyContact | undefined>;
+  createEmergencyContact(contact: InsertEmergencyContact & { userId: number }): Promise<EmergencyContact>;
+  updateEmergencyContact(userId: number, contact: Partial<InsertEmergencyContact>): Promise<EmergencyContact | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -522,6 +527,28 @@ export class DatabaseStorage implements IStorage {
         }
       }
     }
+  }
+
+  async getEmergencyContact(userId: number): Promise<EmergencyContact | undefined> {
+    const [contact] = await db.select().from(emergencyContacts).where(eq(emergencyContacts.userId, userId));
+    return contact || undefined;
+  }
+
+  async createEmergencyContact(insertContact: InsertEmergencyContact & { userId: number }): Promise<EmergencyContact> {
+    const [contact] = await db
+      .insert(emergencyContacts)
+      .values(insertContact)
+      .returning();
+    return contact;
+  }
+
+  async updateEmergencyContact(userId: number, contactUpdate: Partial<InsertEmergencyContact>): Promise<EmergencyContact | undefined> {
+    const [contact] = await db
+      .update(emergencyContacts)
+      .set({ ...contactUpdate, updatedAt: new Date() })
+      .where(eq(emergencyContacts.userId, userId))
+      .returning();
+    return contact || undefined;
   }
 }
 

@@ -158,3 +158,35 @@ export const insertNotificationSchema = createInsertSchema(notifications).omit({
 
 export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+
+// Emergency Contacts table
+export const emergencyContacts = pgTable("emergency_contacts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  // Emergency Contact
+  emergencyName: text("emergency_name"),
+  emergencyPhone: text("emergency_phone"),
+  // Insurance Company
+  insuranceName: text("insurance_name"),
+  insurancePhone: text("insurance_phone"),
+  // Roadside Assistance
+  roadsidePhone: text("roadside_phone"),
+  // Service Centre
+  serviceCentreName: text("service_centre_name"),
+  serviceCentrePhone: text("service_centre_phone"),
+  // Spare Parts Provider
+  sparePartsName: text("spare_parts_name"),
+  sparePartsPhone: text("spare_parts_phone"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertEmergencyContactSchema = createInsertSchema(emergencyContacts).omit({
+  id: true,
+  userId: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type EmergencyContact = typeof emergencyContacts.$inferSelect;
+export type InsertEmergencyContact = z.infer<typeof insertEmergencyContactSchema>;
