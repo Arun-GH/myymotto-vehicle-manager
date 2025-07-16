@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Shield } from "lucide-react";
+import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap } from "lucide-react";
 import { Link } from "wouter";
 import { type Vehicle } from "@shared/schema";
 import VehicleCard from "@/components/vehicle-card";
@@ -68,7 +68,7 @@ export default function Dashboard() {
             <Link href="/traffic-violations">
               <div className="card-hover bg-white rounded-lg p-2.5 flex items-center space-x-2 cursor-pointer shadow-orange border border-gray-200 hover:border-blue-300 transition-colors">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-white" />
+                  <Zap className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-xs font-medium text-gray-800">Violations</span>
               </div>

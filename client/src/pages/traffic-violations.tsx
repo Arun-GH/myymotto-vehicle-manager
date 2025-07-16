@@ -5,7 +5,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, AlertTriangle, Shield, Search, Clock, MapPin, ArrowLeft } from "lucide-react";
+import { Loader2, AlertTriangle, Zap, Search, Clock, MapPin, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import ColorfulLogo from "@/components/colorful-logo";
 import { format } from "date-fns";
@@ -182,7 +182,7 @@ export default function TrafficViolations() {
                 <p className="text-sm text-red-600">Timely Care for your carrier</p>
               </div>
             </div>
-            <Shield className="w-8 h-8 text-blue-800 font-bold" />
+            <Zap className="w-8 h-8 text-blue-800 font-bold" />
           </div>
         </div>
       </header>
