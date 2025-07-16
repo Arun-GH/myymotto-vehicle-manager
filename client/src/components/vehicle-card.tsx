@@ -167,19 +167,19 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         <div className="grid grid-cols-2 gap-3 text-xs mb-2">
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-gray-600 font-bold">Insurance Provider:</span>
+              <span className="text-amber-800 font-bold">Insurance Provider:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.insuranceCompany || "Not specified"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-600 font-bold">Insurance Date of Issuance:</span>
+              <span className="text-amber-800 font-bold">Insurance Date of Issuance:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.insuranceExpiry ? new Date(vehicle.insuranceExpiry).toLocaleDateString() : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-600 font-bold">Latest Emission:</span>
+              <span className="text-amber-800 font-bold">Latest Emission:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.emissionExpiry ? new Date(vehicle.emissionExpiry).toLocaleDateString() : "Not set"}
               </span>
@@ -187,13 +187,13 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-gray-600 font-bold">Latest Service Date:</span>
+              <span className="text-amber-800 font-bold">Latest Service Date:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.lastServiceDate ? new Date(vehicle.lastServiceDate).toLocaleDateString() : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-600 font-bold">Next Service Date:</span>
+              <span className="text-amber-800 font-bold">Next Service Date:</span>
               <span className={`text-xs ${
                 nextServiceInfo.status === "overdue" ? "text-red-600" :
                 nextServiceInfo.status === "due_soon" ? "text-orange-600" :
