@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, AlertTriangle, Shield, Search, Clock, MapPin } from "lucide-react";
+import { Loader2, AlertTriangle, Shield, Search, Clock, MapPin, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import ColorfulLogo from "@/components/colorful-logo";
 import { format } from "date-fns";
@@ -166,6 +167,11 @@ export default function TrafficViolations() {
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
+              <Link href="/">
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 p-2">
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+              </Link>
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
