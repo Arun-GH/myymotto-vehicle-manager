@@ -12,7 +12,7 @@ import AddVehicle from "@/pages/add-vehicle";
 import EditVehicle from "@/pages/edit-vehicle";
 import UploadDocuments from "@/pages/upload-documents";
 import ViewDocuments from "@/pages/view-documents";
-import VehicleDetails from "@/pages/vehicle-details";
+
 import ServiceCenters from "@/pages/service-centers";
 import Documents from "@/pages/documents";
 import Profile from "@/pages/profile";
@@ -62,7 +62,7 @@ function Router() {
       <Route path="/vehicle/:id/edit" component={EditVehicle} />
       <Route path="/vehicle/:id/upload" component={UploadDocuments} />
       <Route path="/vehicle/:id/documents" component={ViewDocuments} />
-      <Route path="/vehicle/:id" component={VehicleDetails} />
+
       <Route path="/service-centers" component={ServiceCenters} />
       <Route path="/documents" component={Documents} />
       <Route path="/emergency-contacts" component={EmergencyContacts} />

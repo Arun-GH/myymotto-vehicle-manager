@@ -123,7 +123,7 @@ export default function UploadDocuments() {
       // Reset form
       setSelectedFiles([]);
       setExpiryDate("");
-      setLocation(`/vehicle/${vehicleId}`);
+      setLocation("/");
     },
     onError: (error) => {
       toast({
@@ -174,7 +174,7 @@ export default function UploadDocuments() {
                 variant="ghost"
                 size="icon"
                 className="text-gray-600 hover:bg-red-50"
-                onClick={() => setLocation(`/vehicle/${vehicleId}`)}
+                onClick={() => setLocation("/")}
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
@@ -337,7 +337,7 @@ export default function UploadDocuments() {
                 type="button" 
                 variant="outline"
                 className="flex-1 h-9"
-                onClick={() => setLocation(`/vehicle/${vehicleId}`)}
+                onClick={() => setLocation("/")}
               >
                 Cancel
               </Button>

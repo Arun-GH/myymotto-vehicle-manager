@@ -102,7 +102,7 @@ export default function ViewDocuments() {
     } else if (selectedCategory) {
       setSelectedCategory(null);
     } else {
-      setLocation(`/vehicle/${vehicleId}`);
+      setLocation("/");
     }
   };
 

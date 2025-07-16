@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+
 import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye } from "lucide-react";
 import { type Vehicle } from "@shared/schema";
 import { formatDistanceToNow, getExpiryStatus, getServiceStatus, calculateNextServiceDate } from "@/lib/date-utils";
@@ -50,8 +50,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   return (
     <Card className="card-hover shadow-orange-dark bg-gradient-to-r from-white to-gray-50 border-l-4 border-l-blue-500">
       <CardContent className="p-3">
-        <Link href={`/vehicle/${vehicle.id}`}>
-          <div className="flex items-center justify-between mb-2 cursor-pointer">
+        <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
               {vehicle.thumbnailPath ? (
                 <img 
@@ -79,8 +78,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               } shadow-sm`}></div>
               <StatusIcon className={`w-3 h-3 ${statusColor}`} />
             </div>
-          </div>
-        </Link>
+        </div>
 
         {/* Missing Details Warning */}
         {missingDetails.length > 0 && (

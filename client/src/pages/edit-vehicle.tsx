@@ -621,7 +621,7 @@ export default function EditVehicle() {
                     type="button" 
                     variant="outline"
                     className="flex-1"
-                    onClick={() => setLocation(`/vehicle/${vehicleId}`)}
+                    onClick={() => setLocation("/")}
                   >
                     Cancel
                   </Button>
