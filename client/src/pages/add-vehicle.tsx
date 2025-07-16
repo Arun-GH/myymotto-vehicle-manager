@@ -351,7 +351,7 @@ export default function AddVehicle() {
                               <SelectContent>
                                 {getAllMakes().map((make) => (
                                   <SelectItem key={make} value={make}>
-                                    {make}
+                                    {make.toUpperCase()}
                                   </SelectItem>
                                 ))}
                                 <SelectItem value="Other">Other (Enter manually)</SelectItem>

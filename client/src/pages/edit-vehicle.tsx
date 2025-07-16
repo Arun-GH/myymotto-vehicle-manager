@@ -325,6 +325,7 @@ export default function EditVehicle() {
                               placeholder="Enter make manually" 
                               className="h-9" 
                               {...field}
+                              onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                             />
                           ) : (
                             <Select onValueChange={handleMakeChange} value={selectedMake}>
@@ -334,7 +335,7 @@ export default function EditVehicle() {
                               <SelectContent>
                                 {getAllMakes().map((make) => (
                                   <SelectItem key={make} value={make}>
-                                    {make}
+                                    {make.toUpperCase()}
                                   </SelectItem>
                                 ))}
                                 <SelectItem value="Other">Other (Enter manually)</SelectItem>
