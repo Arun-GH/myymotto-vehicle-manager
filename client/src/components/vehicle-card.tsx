@@ -138,19 +138,19 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           <Link href={`/vehicle/${vehicle.id}/documents`}>
             <Button variant="ghost" size="sm" className="w-full text-red-600 p-1.5 h-auto hover:bg-red-50 flex items-center justify-center space-x-1 rounded-lg">
               <Eye className="w-3 h-3" />
-              <span className="text-xs">View</span>
+              <span className="text-xs">Document View</span>
             </Button>
           </Link>
           <Link href={`/vehicle/${vehicle.id}/edit`}>
             <Button variant="ghost" size="sm" className="w-full text-blue-600 p-1.5 h-auto hover:bg-blue-50 flex items-center justify-center space-x-1 rounded-lg">
               <Edit className="w-3 h-3" />
-              <span className="text-xs">Edit</span>
+              <span className="text-xs">Document Edit</span>
             </Button>
           </Link>
           <Link href={`/vehicle/${vehicle.id}/upload`}>
             <Button variant="ghost" size="sm" className="w-full text-green-600 p-1.5 h-auto hover:bg-green-50 flex items-center justify-center space-x-1 rounded-lg">
               <Upload className="w-3 h-3" />
-              <span className="text-xs">Upload</span>
+              <span className="text-xs">Document Upload</span>
             </Button>
           </Link>
         </div>
