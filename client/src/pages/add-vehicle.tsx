@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import VehicleDocumentSection from "@/components/vehicle-document-section";
 import CameraCapture from "@/components/camera-capture";
 import ColorfulLogo from "@/components/colorful-logo";
+import ReferralDialog from "@/components/referral-dialog";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function AddVehicle() {
@@ -23,6 +24,7 @@ export default function AddVehicle() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedMake, setSelectedMake] = useState<string>("");
+  const [showReferralDialog, setShowReferralDialog] = useState(false);
   
   // Document states for different types
   const [emissionDocuments, setEmissionDocuments] = useState<File[]>([]);
@@ -32,6 +34,12 @@ export default function AddVehicle() {
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
+
+  // Get current vehicle count to check if this will be the second vehicle
+  const { data: vehicles = [] } = useQuery({
+    queryKey: ["/api/vehicles"],
+    queryFn: () => apiRequest("GET", "/api/vehicles").then(res => res.json()),
+  });
 
   const form = useForm<InsertVehicle>({
     resolver: zodResolver(insertVehicleSchema),
@@ -115,7 +123,13 @@ export default function AddVehicle() {
         title: "Vehicle Added",
         description: "Your vehicle has been successfully added with all documents.",
       });
-      setLocation("/");
+
+      // Check if this is the second vehicle and show referral dialog
+      if (vehicles.length === 1) { // After adding, it will be 2 vehicles total
+        setShowReferralDialog(true);
+      } else {
+        setLocation("/");
+      }
     },
     onError: (error) => {
       toast({
@@ -514,6 +528,17 @@ export default function AddVehicle() {
           onClose={() => setShowCamera(false)}
         />
       )}
+
+      {/* Referral Dialog */}
+      <ReferralDialog 
+        open={showReferralDialog} 
+        onOpenChange={(open) => {
+          setShowReferralDialog(open);
+          if (!open) {
+            setLocation("/");
+          }
+        }} 
+      />
     </div>
   );
 }
