@@ -1,6 +1,10 @@
 
-import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye } from "lucide-react";
+import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye, Trash2 } from "lucide-react";
 import { Link } from "wouter";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import { type Vehicle } from "@shared/schema";
 import { formatDistanceToNow, getExpiryStatus, getServiceStatus, calculateNextServiceDate } from "@/lib/date-utils";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,6 +16,10 @@ interface VehicleCardProps {
 }
 
 export default function VehicleCard({ vehicle }: VehicleCardProps) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const insuranceStatus = getExpiryStatus(vehicle.insuranceExpiry);
   const emissionStatus = getExpiryStatus(vehicle.emissionExpiry);
   const serviceStatus = getServiceStatus(vehicle.lastServiceDate);
@@ -47,6 +55,40 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
     valid: "All Valid",
     unknown: "Check Required",
   }[overallStatus];
+
+  const deleteVehicle = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("DELETE", `/api/vehicles/${vehicle.id}`);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to delete vehicle");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/vehicles"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      toast({
+        title: "Vehicle Deleted",
+        description: `${vehicle.make} ${vehicle.model} has been deleted successfully.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Delete Failed",
+        description: error.message || "Failed to delete vehicle",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDelete = () => {
+    if (showDeleteConfirm) {
+      deleteVehicle.mutate();
+      setShowDeleteConfirm(false);
+    } else {
+      setShowDeleteConfirm(true);
+    }
+  };
 
   return (
     <Card className="card-hover shadow-orange-dark bg-gradient-to-r from-white to-gray-50 border-l-4 border-l-blue-500">
@@ -158,6 +200,33 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 <span className="text-xs">Upload</span>
               </Button>
             </Link>
+            <span className="text-gray-400 text-xs">|</span>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={`p-1 h-auto flex items-center space-x-1 ${
+                showDeleteConfirm 
+                  ? "text-red-700 bg-red-100 hover:bg-red-200" 
+                  : "text-red-600 hover:bg-red-50"
+              }`}
+              onClick={handleDelete}
+              disabled={deleteVehicle.isPending}
+            >
+              <Trash2 className="w-3 h-3" />
+              <span className="text-xs">
+                {deleteVehicle.isPending ? "Deleting..." : showDeleteConfirm ? "Confirm?" : "Delete"}
+              </span>
+            </Button>
+            {showDeleteConfirm && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-600 p-1 h-auto hover:bg-gray-50 flex items-center space-x-1"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                <span className="text-xs">Cancel</span>
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>

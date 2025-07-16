@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Added vehicle deletion functionality to dashboard vehicle tiles
+- Added delete button to each vehicle card in the documents action section
+- Implemented confirmation flow: click "Delete" → shows "Confirm?" → click again to delete
+- Added cancel option when in confirmation mode
+- Proper error handling and toast notifications for deletion success/failure
+- Automatic cache invalidation to update dashboard after deletion
+- Visual feedback with loading state and button style changes during confirmation
+
 **July 16, 2025**: Enhanced upload documents page with service invoice functionality
 - Added "Servicing Date" field specifically for service invoice document type
 - Updated vehicle's last service date automatically when service invoice is uploaded
