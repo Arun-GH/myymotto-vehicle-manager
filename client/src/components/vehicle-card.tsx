@@ -134,25 +134,30 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
         </div>
         
-        <div className="grid grid-cols-3 gap-1">
-          <Link href={`/vehicle/${vehicle.id}/documents`}>
-            <Button variant="ghost" size="sm" className="w-full text-red-600 p-1.5 h-auto hover:bg-red-50 flex items-center justify-center space-x-1 rounded-lg">
-              <Eye className="w-3 h-3" />
-              <span className="text-xs">Document View</span>
-            </Button>
-          </Link>
-          <Link href={`/vehicle/${vehicle.id}/edit`}>
-            <Button variant="ghost" size="sm" className="w-full text-blue-600 p-1.5 h-auto hover:bg-blue-50 flex items-center justify-center space-x-1 rounded-lg">
-              <Edit className="w-3 h-3" />
-              <span className="text-xs">Document Edit</span>
-            </Button>
-          </Link>
-          <Link href={`/vehicle/${vehicle.id}/upload`}>
-            <Button variant="ghost" size="sm" className="w-full text-green-600 p-1.5 h-auto hover:bg-green-50 flex items-center justify-center space-x-1 rounded-lg">
-              <Upload className="w-3 h-3" />
-              <span className="text-xs">Document Upload</span>
-            </Button>
-          </Link>
+        <div className="flex items-center space-x-2">
+          <span className="text-xs font-medium text-gray-600">Documents:</span>
+          <div className="flex items-center space-x-1">
+            <Link href={`/vehicle/${vehicle.id}/documents`}>
+              <Button variant="ghost" size="sm" className="text-red-600 p-1 h-auto hover:bg-red-50 flex items-center space-x-1">
+                <Eye className="w-3 h-3" />
+                <span className="text-xs">View</span>
+              </Button>
+            </Link>
+            <span className="text-gray-400 text-xs">|</span>
+            <Link href={`/vehicle/${vehicle.id}/edit`}>
+              <Button variant="ghost" size="sm" className="text-blue-600 p-1 h-auto hover:bg-blue-50 flex items-center space-x-1">
+                <Edit className="w-3 h-3" />
+                <span className="text-xs">Edit</span>
+              </Button>
+            </Link>
+            <span className="text-gray-400 text-xs">|</span>
+            <Link href={`/vehicle/${vehicle.id}/upload`}>
+              <Button variant="ghost" size="sm" className="text-green-600 p-1 h-auto hover:bg-green-50 flex items-center space-x-1">
+                <Upload className="w-3 h-3" />
+                <span className="text-xs">Upload</span>
+              </Button>
+            </Link>
+          </div>
         </div>
       </CardContent>
     </Card>
