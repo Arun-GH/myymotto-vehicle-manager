@@ -10,7 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 16, 2025**: Added driver's license functionality to user profile
+**July 16, 2025**: Enhanced driver's license functionality with validity date field
+- Added driversLicenseValidTill field to user profile database schema
+- Updated profile form to include "License Valid Till" date input field
+- Enhanced profile display to show license validity date with formatted date display
+- Fixed profile update validation issues with proper optional field handling
+- Complete license management now includes number, validity date, and photo upload
+- Database schema updated and pushed with new validity date field
 - Integrated driver's license number input field with Indian license format placeholder
 - Added driver's license copy photo upload and camera capture functionality
 - Enhanced user profile display to show license information when available

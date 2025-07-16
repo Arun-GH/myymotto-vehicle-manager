@@ -195,6 +195,7 @@ export default function Profile() {
         // Handle optional fields properly - send undefined for empty strings
         alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
         driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
+        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? data.driversLicenseValidTill : undefined,
       };
       // Remove undefined values to avoid validation issues
       Object.keys(profileData).forEach(key => {
@@ -265,6 +266,7 @@ export default function Profile() {
         // Handle optional fields properly - send undefined for empty strings
         alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
         driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
+        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? data.driversLicenseValidTill : undefined,
       };
       // Remove undefined values to avoid validation issues
       Object.keys(profileData).forEach(key => {
@@ -459,13 +461,19 @@ export default function Profile() {
               )}
 
               {/* Driver's License Information */}
-              {(profile.driversLicenseNumber || profile.driversLicenseCopy) && (
+              {(profile.driversLicenseNumber || profile.driversLicenseCopy || profile.driversLicenseValidTill) && (
                 <div className="pt-4 border-t border-gray-200">
                   <h4 className="font-medium text-gray-900 mb-3">Driver's License</h4>
                   {profile.driversLicenseNumber && (
                     <div>
                       <label className="text-sm text-muted-foreground">License Number</label>
                       <p className="font-medium">{profile.driversLicenseNumber}</p>
+                    </div>
+                  )}
+                  {profile.driversLicenseValidTill && (
+                    <div className="mt-3">
+                      <label className="text-sm text-muted-foreground">Valid Till</label>
+                      <p className="font-medium">{new Date(profile.driversLicenseValidTill).toLocaleDateString()}</p>
                     </div>
                   )}
                   {profile.driversLicenseCopy && (
@@ -726,6 +734,24 @@ export default function Profile() {
                           <FormControl>
                             <Input 
                               placeholder="e.g., MH12 20220012345" 
+                              className="h-9"
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="driversLicenseValidTill"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>License Valid Till</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="date"
                               className="h-9"
                               {...field} 
                             />

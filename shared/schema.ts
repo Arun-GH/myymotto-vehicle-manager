@@ -107,6 +107,7 @@ export const userProfiles = pgTable("user_profiles", {
   profilePicture: text("profile_picture"),
   driversLicenseNumber: text("drivers_license_number"),
   driversLicenseCopy: text("drivers_license_copy"),
+  driversLicenseValidTill: date("drivers_license_valid_till"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -149,6 +150,7 @@ export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
   profilePicture: z.string().optional(),
   driversLicenseNumber: z.string().optional(),
   driversLicenseCopy: z.string().optional(),
+  driversLicenseValidTill: z.string().optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
