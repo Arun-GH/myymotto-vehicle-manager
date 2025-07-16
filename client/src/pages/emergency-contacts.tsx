@@ -200,88 +200,83 @@ export default function EmergencyContacts() {
 
       <div className="p-4 pb-20 bg-warm-pattern">
         {!isEditing && hasContacts ? (
-          // Display Mode
-          <div className="space-y-4">
+          // Display Mode - Compact Tiles
+          <div className="grid grid-cols-1 gap-3">
             {/* Emergency Contact */}
             {(contacts.emergencyName || contacts.emergencyPhone) && (
-              <Card className="shadow-orange">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center space-x-2 text-red-600">
-                    <AlertTriangle className="w-5 h-5" />
-                    <span>Emergency Contact</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {contacts.emergencyName && (
-                    <div className="mb-2">
-                      <label className="text-sm text-muted-foreground">Name</label>
-                      <p className="font-medium">{contacts.emergencyName}</p>
+              <Card className="shadow-orange border-l-4 border-l-red-500">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                        <AlertTriangle className="w-5 h-5 text-red-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-800 text-sm">Emergency Contact</h3>
+                        {contacts.emergencyName && (
+                          <p className="text-xs text-gray-600">{contacts.emergencyName}</p>
+                        )}
+                      </div>
                     </div>
-                  )}
-                  {contacts.emergencyPhone && (
-                    <div>
-                      <label className="text-sm text-muted-foreground">Phone</label>
-                      <p className="font-medium flex items-center space-x-2">
-                        <Phone className="w-4 h-4" />
-                        <a href={`tel:${contacts.emergencyPhone}`} className="text-blue-600">
-                          {contacts.emergencyPhone}
-                        </a>
-                      </p>
-                    </div>
-                  )}
+                    {contacts.emergencyPhone && (
+                      <a href={`tel:${contacts.emergencyPhone}`} 
+                         className="flex items-center space-x-1 bg-red-50 px-3 py-1 rounded-full text-red-600 hover:bg-red-100 transition-colors">
+                        <Phone className="w-3 h-3" />
+                        <span className="text-xs font-medium">{contacts.emergencyPhone}</span>
+                      </a>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}
 
             {/* Insurance Company */}
             {(contacts.insuranceName || contacts.insurancePhone) && (
-              <Card className="shadow-orange">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center space-x-2 text-blue-600">
-                    <Shield className="w-5 h-5" />
-                    <span>Insurance Company</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {contacts.insuranceName && (
-                    <div className="mb-2">
-                      <label className="text-sm text-muted-foreground">Company Name</label>
-                      <p className="font-medium">{contacts.insuranceName}</p>
+              <Card className="shadow-orange border-l-4 border-l-blue-500">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <Shield className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-800 text-sm">Insurance Company</h3>
+                        {contacts.insuranceName && (
+                          <p className="text-xs text-gray-600">{contacts.insuranceName}</p>
+                        )}
+                      </div>
                     </div>
-                  )}
-                  {contacts.insurancePhone && (
-                    <div>
-                      <label className="text-sm text-muted-foreground">Phone</label>
-                      <p className="font-medium flex items-center space-x-2">
-                        <Phone className="w-4 h-4" />
-                        <a href={`tel:${contacts.insurancePhone}`} className="text-blue-600">
-                          {contacts.insurancePhone}
-                        </a>
-                      </p>
-                    </div>
-                  )}
+                    {contacts.insurancePhone && (
+                      <a href={`tel:${contacts.insurancePhone}`} 
+                         className="flex items-center space-x-1 bg-blue-50 px-3 py-1 rounded-full text-blue-600 hover:bg-blue-100 transition-colors">
+                        <Phone className="w-3 h-3" />
+                        <span className="text-xs font-medium">{contacts.insurancePhone}</span>
+                      </a>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}
 
             {/* Roadside Assistance */}
             {contacts.roadsidePhone && (
-              <Card className="shadow-orange">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center space-x-2 text-yellow-600">
-                    <Settings className="w-5 h-5" />
-                    <span>Roadside Assistance</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div>
-                    <label className="text-sm text-muted-foreground">Phone</label>
-                    <p className="font-medium flex items-center space-x-2">
-                      <Phone className="w-4 h-4" />
-                      <a href={`tel:${contacts.roadsidePhone}`} className="text-blue-600">
-                        {contacts.roadsidePhone}
-                      </a>
-                    </p>
+              <Card className="shadow-orange border-l-4 border-l-orange-500">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                        <Settings className="w-5 h-5 text-orange-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-800 text-sm">Roadside Assistance</h3>
+                        <p className="text-xs text-gray-600">24/7 Emergency Help</p>
+                      </div>
+                    </div>
+                    <a href={`tel:${contacts.roadsidePhone}`} 
+                       className="flex items-center space-x-1 bg-orange-50 px-3 py-1 rounded-full text-orange-600 hover:bg-orange-100 transition-colors">
+                      <Phone className="w-3 h-3" />
+                      <span className="text-xs font-medium">{contacts.roadsidePhone}</span>
+                    </a>
                   </div>
                 </CardContent>
               </Card>
@@ -289,62 +284,56 @@ export default function EmergencyContacts() {
 
             {/* Service Centre */}
             {(contacts.serviceCentreName || contacts.serviceCentrePhone) && (
-              <Card className="shadow-orange">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center space-x-2 text-green-600">
-                    <Wrench className="w-5 h-5" />
-                    <span>Service Centre</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {contacts.serviceCentreName && (
-                    <div className="mb-2">
-                      <label className="text-sm text-muted-foreground">Centre Name</label>
-                      <p className="font-medium">{contacts.serviceCentreName}</p>
+              <Card className="shadow-orange border-l-4 border-l-green-500">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <Wrench className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-800 text-sm">Service Centre</h3>
+                        {contacts.serviceCentreName && (
+                          <p className="text-xs text-gray-600">{contacts.serviceCentreName}</p>
+                        )}
+                      </div>
                     </div>
-                  )}
-                  {contacts.serviceCentrePhone && (
-                    <div>
-                      <label className="text-sm text-muted-foreground">Phone</label>
-                      <p className="font-medium flex items-center space-x-2">
-                        <Phone className="w-4 h-4" />
-                        <a href={`tel:${contacts.serviceCentrePhone}`} className="text-blue-600">
-                          {contacts.serviceCentrePhone}
-                        </a>
-                      </p>
-                    </div>
-                  )}
+                    {contacts.serviceCentrePhone && (
+                      <a href={`tel:${contacts.serviceCentrePhone}`} 
+                         className="flex items-center space-x-1 bg-green-50 px-3 py-1 rounded-full text-green-600 hover:bg-green-100 transition-colors">
+                        <Phone className="w-3 h-3" />
+                        <span className="text-xs font-medium">{contacts.serviceCentrePhone}</span>
+                      </a>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}
 
             {/* Spare Parts Provider */}
             {(contacts.sparePartsName || contacts.sparePartsPhone) && (
-              <Card className="shadow-orange">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center space-x-2 text-purple-600">
-                    <Settings className="w-5 h-5" />
-                    <span>Spare Parts Provider</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {contacts.sparePartsName && (
-                    <div className="mb-2">
-                      <label className="text-sm text-muted-foreground">Provider Name</label>
-                      <p className="font-medium">{contacts.sparePartsName}</p>
+              <Card className="shadow-orange border-l-4 border-l-purple-500">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                        <Package className="w-5 h-5 text-purple-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-800 text-sm">Spare Parts Provider</h3>
+                        {contacts.sparePartsName && (
+                          <p className="text-xs text-gray-600">{contacts.sparePartsName}</p>
+                        )}
+                      </div>
                     </div>
-                  )}
-                  {contacts.sparePartsPhone && (
-                    <div>
-                      <label className="text-sm text-muted-foreground">Phone</label>
-                      <p className="font-medium flex items-center space-x-2">
-                        <Phone className="w-4 h-4" />
-                        <a href={`tel:${contacts.sparePartsPhone}`} className="text-blue-600">
-                          {contacts.sparePartsPhone}
-                        </a>
-                      </p>
-                    </div>
-                  )}
+                    {contacts.sparePartsPhone && (
+                      <a href={`tel:${contacts.sparePartsPhone}`} 
+                         className="flex items-center space-x-1 bg-purple-50 px-3 py-1 rounded-full text-purple-600 hover:bg-purple-100 transition-colors">
+                        <Phone className="w-3 h-3" />
+                        <span className="text-xs font-medium">{contacts.sparePartsPhone}</span>
+                      </a>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}
