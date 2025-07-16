@@ -456,7 +456,7 @@ export default function EditVehicle() {
                     name="insuranceExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Insurance Expiry</FormLabel>
+                        <FormLabel>Insurance Date of Issuance</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
@@ -475,7 +475,7 @@ export default function EditVehicle() {
                     name="emissionExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Emission Expiry</FormLabel>
+                        <FormLabel>Latest Emission</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 

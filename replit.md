@@ -10,6 +10,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Updated document field labels for better clarity
+- Changed "Insurance Expiry" to "Insurance Date of Issuance" across all forms and displays
+- Changed "Emission Expiry" to "Latest Emission" across all forms and displays
+- Updated vehicle card labels to match new terminology
+- Enhanced user understanding of document date fields with clearer labeling
+
 **July 16, 2025**: Enhanced driver's license functionality with validity date field
 - Added driversLicenseValidTill field to user profile database schema
 - Updated profile form to include "License Valid Till" date input field

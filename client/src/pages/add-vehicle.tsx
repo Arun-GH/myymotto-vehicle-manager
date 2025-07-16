@@ -660,7 +660,7 @@ export default function AddVehicle() {
             onDocumentsChange={setEmissionDocuments}
             dateValue={form.watch("emissionExpiry")}
             onDateChange={(date) => form.setValue("emissionExpiry", date)}
-            dateLabel="Emission Expiry Date"
+            dateLabel="Latest Emission"
           />
 
           <VehicleDocumentSection
@@ -681,7 +681,7 @@ export default function AddVehicle() {
             textPlaceholder="e.g., HDFC ERGO, ICICI Lombard, Bajaj Allianz"
             dateValue={form.watch("insuranceExpiry")}
             onDateChange={(date) => form.setValue("insuranceExpiry", date)}
-            dateLabel="Insurance Expiry Date"
+            dateLabel="Insurance Date of Issuance"
           />
 
           <VehicleDocumentSection

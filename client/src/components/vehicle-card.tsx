@@ -103,13 +103,13 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-600 font-bold">Insurance Date:</span>
+              <span className="text-gray-600 font-bold">Insurance Date of Issuance:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.insuranceExpiry ? formatDistanceToNow(new Date(vehicle.insuranceExpiry)) : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-600 font-bold">Emission Date:</span>
+              <span className="text-gray-600 font-bold">Latest Emission:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.emissionExpiry ? formatDistanceToNow(new Date(vehicle.emissionExpiry)) : "Not set"}
               </span>
