@@ -233,13 +233,19 @@ function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
             {documents.slice(0, 3).map((doc) => (
               <div key={doc.id} className="flex items-center space-x-3 p-2 border rounded">
                 <FileText className="w-4 h-4 text-muted-foreground" />
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 cursor-pointer" onClick={() => window.open(doc.filePath, '_blank')}>
                   <p className="text-sm font-medium truncate">{doc.fileName}</p>
                   <p className="text-xs text-muted-foreground">{doc.type}</p>
                 </div>
-                <Link href={`/vehicle/${vehicle.id}/documents`}>
-                  <Button variant="ghost" size="sm" className="text-xs">View</Button>
-                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-xs"
+                  onClick={() => window.open(doc.filePath, '_blank')}
+                >
+                  <Eye className="w-4 h-4 mr-1" />
+                  View
+                </Button>
               </div>
             ))}
             {documents.length > 3 && (

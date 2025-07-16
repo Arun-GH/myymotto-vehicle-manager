@@ -10,6 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 16, 2025**: Enhanced document viewing with direct file opening
+- Fixed documents page to open files directly when clicked instead of navigating to view page
+- Added click handlers to both document names and View buttons for instant file opening
+- Document files now open in new browser tabs for better user experience
+- Enhanced user experience with cursor pointer styling for clickable document items
+- Both driver's license and vehicle documents now support direct file viewing
+
 **July 16, 2025**: Implemented complete PIN and biometric authentication system
 - Added PIN authentication fields (pin, biometricEnabled) to user database schema
 - Created comprehensive PIN/biometric authentication API routes for existing users  
