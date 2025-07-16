@@ -265,7 +265,7 @@ export default function EditVehicle() {
                     name="make"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Make</FormLabel>
+                        <FormLabel>Make *</FormLabel>
                         <FormControl>
                           <Select onValueChange={handleMakeChange} value={field.value}>
                             <SelectTrigger>
@@ -289,7 +289,7 @@ export default function EditVehicle() {
                     name="model"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Model</FormLabel>
+                        <FormLabel>Model *</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value} disabled={!watchedMake}>
                             <SelectTrigger>
@@ -316,7 +316,7 @@ export default function EditVehicle() {
                     name="year"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Year</FormLabel>
+                        <FormLabel>Year *</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
@@ -334,7 +334,7 @@ export default function EditVehicle() {
                     name="color"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Color</FormLabel>
+                        <FormLabel>Color *</FormLabel>
                         <FormControl>
                           <Input placeholder="Red" {...field} />
                         </FormControl>
@@ -349,7 +349,7 @@ export default function EditVehicle() {
                   name="licensePlate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>License Plate</FormLabel>
+                      <FormLabel>License Plate *</FormLabel>
                       <FormControl>
                         <Input placeholder="DL 01 AB 1234" {...field} />
                       </FormControl>
@@ -364,7 +364,7 @@ export default function EditVehicle() {
                     name="chassisNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Chassis Number (Optional)</FormLabel>
+                        <FormLabel>Chassis Number</FormLabel>
                         <FormControl>
                           <Input placeholder="MAT123456789" {...field} />
                         </FormControl>
@@ -377,7 +377,7 @@ export default function EditVehicle() {
                     name="engineNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Engine Number (Optional)</FormLabel>
+                        <FormLabel>Engine Number</FormLabel>
                         <FormControl>
                           <Input placeholder="ENG987654321" {...field} />
                         </FormControl>
@@ -392,7 +392,7 @@ export default function EditVehicle() {
                   name="ownerName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Owner Name</FormLabel>
+                      <FormLabel>Owner Name *</FormLabel>
                       <FormControl>
                         <Input placeholder="John Doe" {...field} />
                       </FormControl>
@@ -406,7 +406,7 @@ export default function EditVehicle() {
                   name="ownerPhone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number (Optional)</FormLabel>
+                      <FormLabel>Phone Number</FormLabel>
                       <FormControl>
                         <Input placeholder="+1 234 567 8900" {...field} />
                       </FormControl>
@@ -421,7 +421,7 @@ export default function EditVehicle() {
                     name="insuranceExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Insurance Expiry (Optional)</FormLabel>
+                        <FormLabel>Insurance Expiry</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
@@ -439,7 +439,7 @@ export default function EditVehicle() {
                     name="emissionExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Emission Expiry (Optional)</FormLabel>
+                        <FormLabel>Emission Expiry</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
@@ -457,7 +457,7 @@ export default function EditVehicle() {
                     name="rcExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>RC Expiry (Optional)</FormLabel>
+                        <FormLabel>RC Expiry</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
@@ -475,7 +475,7 @@ export default function EditVehicle() {
                     name="lastServiceDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Last Service Date (Optional)</FormLabel>
+                        <FormLabel>Last Service Date</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
