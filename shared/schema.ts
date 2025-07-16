@@ -147,9 +147,9 @@ export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
   city: z.string().min(1, "City is required"),
   pinCode: z.string().min(6, "Pin code must be at least 6 digits").max(6, "Pin code must be 6 digits"),
   alternatePhone: z.string().optional(),
-  profilePicture: z.string().optional(),
+  profilePicture: z.string().optional().nullable(),
   driversLicenseNumber: z.string().optional(),
-  driversLicenseCopy: z.string().optional(),
+  driversLicenseCopy: z.string().optional().nullable(),
   driversLicenseValidTill: z.string().optional(),
 });
 

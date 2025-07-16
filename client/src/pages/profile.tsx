@@ -71,7 +71,7 @@ export default function Profile() {
       pinCode: "",
       alternatePhone: "",
       driversLicenseNumber: "",
-      driversLicenseCopy: "",
+      driversLicenseValidTill: "",
     },
   });
 
@@ -140,7 +140,7 @@ export default function Profile() {
         pinCode: profile.pinCode,
         alternatePhone: profile.alternatePhone || "",
         driversLicenseNumber: profile.driversLicenseNumber || "",
-        driversLicenseCopy: profile.driversLicenseCopy || "",
+        driversLicenseValidTill: profile.driversLicenseValidTill || "",
       });
       // Set existing profile picture if available
       if (profile.profilePicture) {
@@ -158,7 +158,7 @@ export default function Profile() {
       if (!currentUserId) throw new Error("Not authenticated");
       
       // Upload profile image first if exists
-      let profilePicturePath = null;
+      let profilePicturePath = undefined;
       if (profileImage) {
         const formData = new FormData();
         formData.append('file', profileImage);
@@ -172,7 +172,7 @@ export default function Profile() {
       }
 
       // Upload license image if exists
-      let licenseCopyPath = null;
+      let licenseCopyPath = undefined;
       if (licenseImage) {
         const formData = new FormData();
         formData.append('file', licenseImage);
@@ -229,7 +229,7 @@ export default function Profile() {
       if (!currentUserId) throw new Error("Not authenticated");
       
       // Upload profile image first if a new one exists
-      let profilePicturePath = profile?.profilePicture || null;
+      let profilePicturePath = profile?.profilePicture || undefined;
       if (profileImage) {
         const formData = new FormData();
         formData.append('file', profileImage);
@@ -243,7 +243,7 @@ export default function Profile() {
       }
 
       // Upload license image if a new one exists
-      let licenseCopyPath = profile?.driversLicenseCopy || null;
+      let licenseCopyPath = profile?.driversLicenseCopy || undefined;
       if (licenseImage) {
         const formData = new FormData();
         formData.append('file', licenseImage);
