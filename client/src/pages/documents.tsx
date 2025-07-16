@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { FileText, Search, Filter } from "lucide-react";
-import { Link } from "wouter";
+import { FileText, Search, Filter, ArrowLeft } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { type Vehicle, type Document } from "@shared/schema";
 import BottomNav from "@/components/bottom-nav";
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import ColorfulLogo from "@/components/colorful-logo";
 
 export default function Documents() {
+  const [, setLocation] = useLocation();
   const { data: vehicles = [], isLoading: vehiclesLoading } = useQuery<Vehicle[]>({
     queryKey: ["/api/vehicles"],
   });
@@ -22,6 +23,14 @@ export default function Documents() {
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 hover:bg-red-50"
+                onClick={() => setLocation("/")}
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
