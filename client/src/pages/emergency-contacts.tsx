@@ -123,25 +123,27 @@ export default function EmergencyContacts() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <header className="header-gradient-border border-4 border-red-500 shadow-lg sticky top-0 z-10">
+        <header className="header-gradient-border border-4 border-red-500 shadow-lg relative z-10">
           <div className="px-4 py-4">
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-600 hover:bg-red-50"
-                onClick={() => setLocation("/")}
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <img 
-                src={logoImage} 
-                alt="Myymotto Logo" 
-                className="w-12 h-12 rounded-lg"
-              />
-              <div>
-                <ColorfulLogo className="text-xl font-semibold" />
-                <p className="text-xs text-gray-600">Emergency Contacts</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-600 hover:bg-red-50"
+                  onClick={() => setLocation("/")}
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+                <img 
+                  src={logoImage} 
+                  alt="Myymotto Logo" 
+                  className="w-14 h-14 rounded-lg"
+                />
+                <div>
+                  <ColorfulLogo />
+                  <p className="text-sm text-red-600">Emergency Contacts</p>
+                </div>
               </div>
             </div>
           </div>
@@ -160,7 +162,7 @@ export default function EmergencyContacts() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="header-gradient-border border-4 border-red-500 shadow-lg sticky top-0 z-10">
+      <header className="header-gradient-border border-4 border-red-500 shadow-lg relative z-10">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -175,11 +177,11 @@ export default function EmergencyContacts() {
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-12 h-12 rounded-lg"
+                className="w-14 h-14 rounded-lg"
               />
               <div>
-                <ColorfulLogo className="text-xl font-semibold" />
-                <p className="text-xs text-gray-600">Emergency Contacts</p>
+                <ColorfulLogo />
+                <p className="text-sm text-red-600">Emergency Contacts</p>
               </div>
             </div>
             {hasContacts && !isEditing && (

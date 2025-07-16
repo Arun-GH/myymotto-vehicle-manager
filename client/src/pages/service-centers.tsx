@@ -163,27 +163,27 @@ export default function ServiceCenters() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="gradient-warm text-white shadow-lg sticky top-0 z-10">
+      <header className="header-gradient-border border-4 border-red-500 shadow-lg relative z-10">
         <div className="px-4 py-4">
-          <div className="flex items-center space-x-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/20"
-              onClick={() => setLocation("/")}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div className="bg-white/20 p-1 rounded-xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 hover:bg-red-50"
+                onClick={() => setLocation("/")}
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-8 h-8 rounded-lg"
+                className="w-14 h-14 rounded-lg"
               />
-            </div>
-            <div>
-              <h1 className="text-xl font-semibold">Myymotto</h1>
-              <p className="text-xs text-white/80">Service Centers</p>
+              <div>
+                <ColorfulLogo />
+                <p className="text-sm text-red-600">Service Centers</p>
+              </div>
             </div>
           </div>
         </div>

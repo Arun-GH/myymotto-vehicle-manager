@@ -100,39 +100,37 @@ export default function VehicleDetails() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="gradient-warm text-white shadow-lg sticky top-0 z-10">
+      <header className="header-gradient-border border-4 border-red-500 shadow-lg relative z-10">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20"
+                className="text-gray-600 hover:bg-red-50"
                 onClick={() => setLocation("/")}
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <div className="bg-white/20 p-1 rounded-xl">
-                <img 
-                  src={logoImage} 
-                  alt="Myymotto Logo" 
-                  className="w-8 h-8 rounded-lg"
-                />
-              </div>
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-14 h-14 rounded-lg"
+              />
               <div>
-                <ColorfulLogo className="text-xl font-semibold" />
-                <p className="text-xs text-white/80">Vehicle Details</p>
+                <ColorfulLogo />
+                <p className="text-sm text-red-600">Vehicle Details</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
               <Link href={`/vehicle/${vehicleId}/edit`}>
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
                   <Edit className="w-5 h-5" />
                 </Button>
               </Link>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+                  <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
                     <Trash2 className="w-5 h-5" />
                   </Button>
                 </AlertDialogTrigger>
