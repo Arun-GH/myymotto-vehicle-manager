@@ -20,6 +20,7 @@ import EmergencyContacts from "@/pages/emergency-contacts";
 import Subscribe from "@/pages/subscribe";
 import SignIn from "@/pages/sign-in";
 import TrafficViolations from "@/pages/traffic-violations";
+import InsuranceRenewals from "@/pages/insurance-renewals";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -70,6 +71,7 @@ function Router() {
       <Route path="/subscribe" component={Subscribe} />
       <Route path="/profile" component={Profile} />
       <Route path="/traffic-violations" component={TrafficViolations} />
+      <Route path="/insurance-renewals" component={InsuranceRenewals} />
       <Route component={NotFound} />
     </Switch>
   );

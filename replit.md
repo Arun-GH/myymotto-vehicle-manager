@@ -20,6 +20,8 @@ Preferred communication style: Simple, everyday language.
 - Added back navigation arrow from traffic violations page to dashboard for improved user flow
 - Changed violations icon from shield to traffic signal (Zap) icon for better visual representation
 - Updated all vehicle make displays throughout the app to show in uppercase (capitals) for consistent branding
+- Added comprehensive insurance renewals page with PolicyBazar-like functionality and multiple provider options
+- Integrated insurance renewals as quick action on dashboard with 2x2 grid layout for better organization
 - Ready for official government API integration for real-time violation checking
 
 **July 16, 2025**: Implemented manual make/model entry and auto-capitalization functionality
