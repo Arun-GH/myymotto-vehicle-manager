@@ -8,6 +8,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { apiRequest } from "@/lib/queryClient";
 import { type UserProfile } from "@shared/schema";
 import SplashScreen from "@/components/splash-screen";
+import PermissionsScreen from "@/components/permissions-screen";
 import Dashboard from "@/pages/dashboard";
 import AddVehicle from "@/pages/add-vehicle";
 import EditVehicle from "@/pages/edit-vehicle";
@@ -27,10 +28,26 @@ import NotFound from "@/pages/not-found";
 function Router() {
   const [location, setLocation] = useLocation();
   const [showSplash, setShowSplash] = useState(true);
+  const [showPermissions, setShowPermissions] = useState(false);
   
   // Check if user is authenticated (in a real app, this would come from session/token)
   const currentUserId = localStorage.getItem("currentUserId");
   const isAuthenticated = !!currentUserId;
+
+  // Handle splash screen completion
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+    // Check if permissions have been requested before
+    const existingPermissions = localStorage.getItem('appPermissions');
+    if (!existingPermissions) {
+      setShowPermissions(true);
+    }
+  };
+
+  // Handle permissions completion
+  const handlePermissionsComplete = () => {
+    setShowPermissions(false);
+  };
   
   const { data: profile, isLoading } = useQuery<UserProfile>({
     queryKey: ["/api/profile", currentUserId],
@@ -60,7 +77,12 @@ function Router() {
 
   // Show splash screen for 2 seconds on app start
   if (showSplash) {
-    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
+
+  // Show permissions screen
+  if (showPermissions) {
+    return <PermissionsScreen onComplete={handlePermissionsComplete} />;
   }
 
   return (
