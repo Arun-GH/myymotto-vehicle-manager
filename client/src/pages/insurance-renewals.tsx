@@ -3,14 +3,16 @@ import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ExternalLink, Calendar, AlertTriangle, Shield, Clock } from "lucide-react";
+import { ArrowLeft, ExternalLink, Calendar, AlertTriangle, Shield, Clock, Building2 } from "lucide-react";
 import { type Vehicle } from "@shared/schema";
 import { getExpiryStatus } from "@/lib/date-utils";
 import { format } from "date-fns";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
+import { useToast } from "@/hooks/use-toast";
 
 export default function InsuranceRenewals() {
+  const { toast } = useToast();
   const { data: vehicles = [], isLoading } = useQuery<Vehicle[]>({
     queryKey: ["/api/vehicles"],
   });
@@ -46,6 +48,32 @@ export default function InsuranceRenewals() {
 
   const handleOtherInsuranceClick = () => {
     window.open('https://www.acko.com/car-insurance/', '_blank');
+  };
+
+  const getInsuranceCompanyWebsite = (companyName: string): string => {
+    const websites: { [key: string]: string } = {
+      'HDFC ERGO': 'https://www.hdfcergo.com/motor-insurance',
+      'ICICI LOMBARD': 'https://www.icicilombard.com/motor-insurance/car-insurance',
+      'BAJAJ ALLIANZ': 'https://www.bajajallianz.com/motor-insurance/car-insurance.html',
+      'TATA AIG': 'https://www.tataaig.com/motor-insurance/car-insurance',
+      'NEW INDIA ASSURANCE': 'https://www.newindia.co.in/motor-insurance',
+      'RELIANCE GENERAL': 'https://www.reliancegeneral.co.in/Insurance/Motor-Insurance/Car-Insurance.aspx',
+      'ORIENTAL INSURANCE': 'https://www.orientalinsurance.org.in/motor-insurance',
+      'UNITED INDIA': 'https://www.uiic.co.in/motor-insurance',
+      'NATIONAL INSURANCE': 'https://www.nationalinsurance.nic.co.in/motor-insurance',
+      'SBI GENERAL': 'https://www.sbigeneral.in/motor-insurance/car-insurance',
+      'IFFCO TOKIO': 'https://www.iffcotokio.co.in/motor-insurance/car-insurance',
+      'ROYAL SUNDARAM': 'https://www.royalsundaram.in/motor-insurance/car-insurance',
+      'CHOLAMANDALAM': 'https://www.cholamandalam.com/motor-insurance/car-insurance.aspx',
+      'LIBERTY GENERAL': 'https://www.libertyinsurance.in/motor-insurance/car-insurance',
+      'FUTURE GENERALI': 'https://www.futuregenerali.in/motor-insurance/car-insurance',
+      'DIGIT INSURANCE': 'https://www.godigit.com/motor-insurance/car-insurance',
+      'ACKO': 'https://www.acko.com/car-insurance/',
+      'BHARTI AXA': 'https://www.bharti-axagi.co.in/motor-insurance/car-insurance'
+    };
+    
+    const normalizedName = companyName?.toUpperCase().trim();
+    return websites[normalizedName] || `https://www.google.com/search?q=${encodeURIComponent(companyName + ' car insurance')}`;
   };
 
   return (
@@ -164,6 +192,27 @@ export default function InsuranceRenewals() {
                       <div className="space-y-3">
                         <h4 className="font-medium text-gray-800">Compare & Renew Insurance</h4>
                         
+                        {/* Current Insurer Direct Renewal */}
+                        {vehicle.insuranceCompany && (
+                          <div className="mb-4">
+                            <h5 className="text-sm font-medium text-gray-700 mb-2">Renew with Current Provider</h5>
+                            <Button
+                              onClick={() => window.open(getInsuranceCompanyWebsite(vehicle.insuranceCompany!), '_blank')}
+                              variant="outline"
+                              className="w-full border-green-200 bg-green-50 hover:bg-green-100 text-green-800 flex items-center justify-between p-3 h-auto"
+                            >
+                              <div className="flex items-center">
+                                <Building2 className="w-4 h-4 mr-2" />
+                                <div className="text-left">
+                                  <div className="font-medium">{vehicle.insuranceCompany}</div>
+                                  <div className="text-xs opacity-80">Visit official website</div>
+                                </div>
+                              </div>
+                              <ExternalLink className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        )}
+
                         <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg">
                           💡 <strong>Smart Feature:</strong> Vehicle number ({vehicle.licensePlate}) will be copied automatically - just paste it on PolicyBazar for instant quotes!
                         </div>
