@@ -51,19 +51,18 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pb-20 bg-warm-pattern">
-        {/* Hill Climb Game Button */}
+        {/* Vehicle Count Label */}
         <div className="px-4 py-3">
-          <Link href="/climbing-game">
-            <div className="card-hover bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg p-3 flex items-center justify-center space-x-3 cursor-pointer shadow-orange border border-gray-200 hover:border-purple-300 transition-all">
-              <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                <Gamepad2 className="w-6 h-6 text-white" />
-              </div>
-              <div className="text-center">
-                <h2 className="text-sm font-bold text-white">Hill Climb Racing</h2>
-                <p className="text-xs text-purple-100">Play the climbing game!</p>
-              </div>
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-medium text-gray-600">
+              {vehicles.length > 0 ? `${vehicles.length} Vehicle${vehicles.length > 1 ? 's' : ''}` : 'Vehicle Management'}
+            </h2>
+            <div className="text-xs text-gray-500">
+              <Link href="/climbing-game" className="text-purple-600 hover:text-purple-800 underline">
+                Hill Climb Game
+              </Link>
             </div>
-          </Link>
+          </div>
         </div>
 
         {/* Quick Actions */}

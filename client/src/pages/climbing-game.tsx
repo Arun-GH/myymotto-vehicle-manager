@@ -7,96 +7,16 @@ import BottomNav from "@/components/bottom-nav";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
-interface Car {
-  x: number;
-  y: number;
-  angle: number;
-  speed: number;
-  fuel: number;
-}
-
-interface Hill {
-  points: { x: number; y: number }[];
-}
-
 export default function ClimbingGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gameState, setGameState] = useState<'playing' | 'paused' | 'gameOver'>('paused');
   const [score, setScore] = useState(0);
-  const [car, setCar] = useState<Car>({ x: 50, y: 300, angle: 0, speed: 0, fuel: 100 });
+  const [carX, setCarX] = useState(50);
+  const [carY, setCarY] = useState(250);
+  const [fuel, setFuel] = useState(100);
   const [keys, setKeys] = useState({ left: false, right: false, up: false });
-  const animationRef = useRef<number>();
 
-  // Generate hill terrain
-  const generateHill = (): Hill => {
-    const points = [];
-    for (let x = 0; x <= 800; x += 20) {
-      const y = 350 + Math.sin(x * 0.01) * 50 + Math.sin(x * 0.005) * 30;
-      points.push({ x, y });
-    }
-    return { points };
-  };
-
-  const [hill] = useState<Hill>(generateHill());
-
-  // Game physics
-  const updateGame = () => {
-    if (gameState !== 'playing') return;
-
-    setCar(prevCar => {
-      let newCar = { ...prevCar };
-
-      // Handle input
-      if (keys.up && newCar.fuel > 0) {
-        newCar.speed += 0.3;
-        newCar.fuel -= 0.5;
-      }
-      if (keys.left) {
-        newCar.angle -= 2;
-      }
-      if (keys.right) {
-        newCar.angle += 2;
-      }
-
-      // Apply physics
-      newCar.speed *= 0.98; // friction
-      newCar.x += Math.cos(newCar.angle * Math.PI / 180) * newCar.speed;
-      newCar.y += Math.sin(newCar.angle * Math.PI / 180) * newCar.speed;
-
-      // Gravity
-      newCar.y += 2;
-
-      // Collision with ground
-      const groundY = getGroundHeight(newCar.x);
-      if (newCar.y >= groundY) {
-        newCar.y = groundY;
-        newCar.speed *= 0.7;
-        if (Math.abs(newCar.angle) > 45) {
-          setGameState('gameOver');
-        }
-      }
-
-      // Boundary checks
-      if (newCar.x < 0) newCar.x = 0;
-      if (newCar.fuel <= 0) {
-        newCar.fuel = 0;
-        newCar.speed *= 0.95;
-      }
-
-      return newCar;
-    });
-
-    setScore(prev => prev + 1);
-  };
-
-  const getGroundHeight = (x: number): number => {
-    const point1 = hill.points.find(p => p.x >= x);
-    const point2 = hill.points.find(p => p.x <= x);
-    if (!point1 || !point2) return 350;
-    return point1.y;
-  };
-
-  // Render game
+  // Simple render function
   const render = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -104,94 +24,118 @@ export default function ClimbingGame() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
+    // Clear canvas with sky blue
     ctx.fillStyle = '#87CEEB';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, 400, 300);
 
     // Draw ground
     ctx.fillStyle = '#8B4513';
-    ctx.beginPath();
-    ctx.moveTo(0, canvas.height);
-    hill.points.forEach(point => {
-      ctx.lineTo(point.x, point.y);
-    });
-    ctx.lineTo(canvas.width, canvas.height);
-    ctx.closePath();
-    ctx.fill();
+    ctx.fillRect(0, 280, 400, 20);
 
     // Draw grass
     ctx.fillStyle = '#228B22';
+    ctx.fillRect(0, 275, 400, 5);
+
+    // Draw hills (simple triangles)
+    ctx.fillStyle = '#654321';
     ctx.beginPath();
-    ctx.moveTo(0, canvas.height);
-    hill.points.forEach(point => {
-      ctx.lineTo(point.x, point.y - 5);
-    });
-    ctx.lineTo(canvas.width, canvas.height);
+    ctx.moveTo(100, 280);
+    ctx.lineTo(150, 220);
+    ctx.lineTo(200, 280);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(250, 280);
+    ctx.lineTo(300, 200);
+    ctx.lineTo(350, 280);
     ctx.closePath();
     ctx.fill();
 
     // Draw car
-    ctx.save();
-    ctx.translate(car.x, car.y);
-    ctx.rotate(car.angle * Math.PI / 180);
-    
-    // Car body
     ctx.fillStyle = '#FF6B35';
-    ctx.fillRect(-15, -8, 30, 16);
+    ctx.fillRect(carX - 15, carY - 8, 30, 16);
     
     // Car windows
     ctx.fillStyle = '#87CEEB';
-    ctx.fillRect(-10, -6, 20, 8);
+    ctx.fillRect(carX - 10, carY - 6, 20, 8);
     
     // Wheels
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.arc(-10, 8, 6, 0, Math.PI * 2);
-    ctx.arc(10, 8, 6, 0, Math.PI * 2);
+    ctx.arc(carX - 10, carY + 8, 6, 0, Math.PI * 2);
+    ctx.arc(carX + 10, carY + 8, 6, 0, Math.PI * 2);
     ctx.fill();
-    
-    ctx.restore();
+
+    // Draw clouds
+    ctx.fillStyle = '#FFF';
+    ctx.beginPath();
+    ctx.arc(100, 50, 20, 0, Math.PI * 2);
+    ctx.arc(120, 50, 25, 0, Math.PI * 2);
+    ctx.arc(140, 50, 20, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(300, 80, 15, 0, Math.PI * 2);
+    ctx.arc(315, 80, 20, 0, Math.PI * 2);
+    ctx.arc(330, 80, 15, 0, Math.PI * 2);
+    ctx.fill();
+  };
+
+  // Game update function
+  const updateGame = () => {
+    if (gameState !== 'playing') return;
+
+    // Handle input
+    if (keys.left && carX > 20) {
+      setCarX(prev => prev - 3);
+    }
+    if (keys.right && carX < 380) {
+      setCarX(prev => prev + 3);
+    }
+    if (keys.up && fuel > 0) {
+      setCarY(prev => Math.max(prev - 2, 50));
+      setFuel(prev => Math.max(prev - 0.5, 0));
+    } else {
+      // Gravity
+      setCarY(prev => Math.min(prev + 1, 250));
+    }
+
+    setScore(prev => prev + 1);
+    render();
   };
 
   // Game loop
   useEffect(() => {
-    const gameLoop = () => {
-      updateGame();
-      render();
-      animationRef.current = requestAnimationFrame(gameLoop);
-    };
-
+    let interval: number;
     if (gameState === 'playing') {
-      gameLoop();
+      interval = setInterval(updateGame, 50);
     } else {
       render();
     }
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      if (interval) clearInterval(interval);
     };
-  }, [gameState, car, keys]);
+  }, [gameState, keys, carX, carY, fuel]);
+
+  // Initial render
+  useEffect(() => {
+    render();
+  }, []);
 
   // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      setKeys(prev => ({
-        ...prev,
-        left: e.key === 'ArrowLeft' || prev.left,
-        right: e.key === 'ArrowRight' || prev.right,
-        up: e.key === 'ArrowUp' || e.key === ' ' || prev.up
-      }));
+      if (e.key === 'ArrowLeft') setKeys(prev => ({ ...prev, left: true }));
+      if (e.key === 'ArrowRight') setKeys(prev => ({ ...prev, right: true }));
+      if (e.key === 'ArrowUp' || e.key === ' ') setKeys(prev => ({ ...prev, up: true }));
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      setKeys(prev => ({
-        ...prev,
-        left: e.key === 'ArrowLeft' ? false : prev.left,
-        right: e.key === 'ArrowRight' ? false : prev.right,
-        up: (e.key === 'ArrowUp' || e.key === ' ') ? false : prev.up
-      }));
+      if (e.key === 'ArrowLeft') setKeys(prev => ({ ...prev, left: false }));
+      if (e.key === 'ArrowRight') setKeys(prev => ({ ...prev, right: false }));
+      if (e.key === 'ArrowUp' || e.key === ' ') setKeys(prev => ({ ...prev, up: false }));
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -204,13 +148,20 @@ export default function ClimbingGame() {
   }, []);
 
   const resetGame = () => {
-    setCar({ x: 50, y: 300, angle: 0, speed: 0, fuel: 100 });
+    setCarX(50);
+    setCarY(250);
     setScore(0);
+    setFuel(100);
     setGameState('paused');
+    render();
   };
 
   const toggleGame = () => {
-    setGameState(prev => prev === 'playing' ? 'paused' : 'playing');
+    if (fuel <= 0 && gameState !== 'paused') {
+      setGameState('gameOver');
+    } else {
+      setGameState(prev => prev === 'playing' ? 'paused' : 'playing');
+    }
   };
 
   return (
@@ -255,13 +206,13 @@ export default function ClimbingGame() {
           <Card className="shadow-orange">
             <CardContent className="p-3 text-center">
               <p className="text-sm text-gray-600">Fuel</p>
-              <p className="text-lg font-bold text-blue-600">{Math.round(car.fuel)}%</p>
+              <p className="text-lg font-bold text-blue-600">{Math.round(fuel)}%</p>
             </CardContent>
           </Card>
           <Card className="shadow-orange">
             <CardContent className="p-3 text-center">
-              <p className="text-sm text-gray-600">Speed</p>
-              <p className="text-lg font-bold text-green-600">{Math.round(car.speed)}</p>
+              <p className="text-sm text-gray-600">Position</p>
+              <p className="text-lg font-bold text-green-600">{Math.round(carX)}</p>
             </CardContent>
           </Card>
         </div>
@@ -274,7 +225,6 @@ export default function ClimbingGame() {
               width={400}
               height={300}
               className="w-full h-auto border-2 border-orange-200 rounded-lg"
-              style={{ background: '#87CEEB' }}
             />
           </CardContent>
         </Card>
@@ -284,17 +234,19 @@ export default function ClimbingGame() {
           <Button
             onClick={toggleGame}
             className="gradient-warm text-white"
-            disabled={gameState === 'gameOver'}
+            disabled={fuel <= 0 && gameState !== 'paused'}
           >
             {gameState === 'playing' ? (
               <>
                 <Pause className="w-4 h-4 mr-2" />
                 Pause
               </>
+            ) : fuel <= 0 ? (
+              'Out of Fuel'
             ) : (
               <>
                 <Play className="w-4 h-4 mr-2" />
-                {gameState === 'gameOver' ? 'Game Over' : 'Start'}
+                Start
               </>
             )}
           </Button>
@@ -311,7 +263,7 @@ export default function ClimbingGame() {
         {/* Mobile Controls */}
         <Card className="shadow-orange">
           <CardHeader>
-            <CardTitle className="text-center text-sm">Mobile Controls</CardTitle>
+            <CardTitle className="text-center text-sm">Controls</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-2">
@@ -323,7 +275,7 @@ export default function ClimbingGame() {
                 onMouseDown={() => setKeys(prev => ({ ...prev, left: true }))}
                 onMouseUp={() => setKeys(prev => ({ ...prev, left: false }))}
               >
-                ←
+                ← Left
               </Button>
               <Button
                 variant="outline"
@@ -333,7 +285,7 @@ export default function ClimbingGame() {
                 onMouseDown={() => setKeys(prev => ({ ...prev, up: true }))}
                 onMouseUp={() => setKeys(prev => ({ ...prev, up: false }))}
               >
-                GAS
+                ↑ Jump
               </Button>
               <Button
                 variant="outline"
@@ -343,7 +295,7 @@ export default function ClimbingGame() {
                 onMouseDown={() => setKeys(prev => ({ ...prev, right: true }))}
                 onMouseUp={() => setKeys(prev => ({ ...prev, right: false }))}
               >
-                →
+                Right →
               </Button>
             </div>
             <p className="text-xs text-gray-600 text-center mt-2">
@@ -352,10 +304,10 @@ export default function ClimbingGame() {
           </CardContent>
         </Card>
 
-        {gameState === 'gameOver' && (
+        {fuel <= 0 && (
           <Card className="shadow-orange mt-4 bg-red-50 border-red-200">
             <CardContent className="p-4 text-center">
-              <h3 className="text-lg font-bold text-red-700 mb-2">Game Over!</h3>
+              <h3 className="text-lg font-bold text-red-700 mb-2">Out of Fuel!</h3>
               <p className="text-sm text-red-600 mb-3">Final Score: {score}</p>
               <Button
                 onClick={resetGame}
