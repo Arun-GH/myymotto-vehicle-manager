@@ -72,10 +72,27 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-        <Card className="w-full max-w-md mx-4 shadow-orange">
+      <div 
+        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
+      >
+        <Card className="w-full max-w-md shadow-orange">
           <CardHeader>
-            <CardTitle>Loading Notifications...</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Loading Notifications...</CardTitle>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={onClose}
+                className="text-gray-600 hover:text-gray-700 hover:bg-gray-100"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
           </CardHeader>
         </Card>
       </div>
@@ -83,34 +100,49 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl max-h-[80vh] overflow-hidden shadow-orange">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="flex items-center space-x-2">
-            <Bell className="w-5 h-5" />
-            <span>Notifications</span>
-            {unreadCount > 0 && (
-              <Badge variant="destructive" className="ml-2">
-                {unreadCount} new
-              </Badge>
-            )}
-          </CardTitle>
-          <div className="flex items-center space-x-2">
+    <div 
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <Card className="w-full max-w-md max-h-[90vh] overflow-hidden shadow-orange">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between mb-3">
+            <CardTitle className="flex items-center space-x-2">
+              <Bell className="w-5 h-5" />
+              <span>Notifications</span>
+              {unreadCount > 0 && (
+                <Badge variant="destructive" className="bg-red-500">
+                  {unreadCount}
+                </Badge>
+              )}
+            </CardTitle>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onClose}
+              className="text-gray-600 hover:text-gray-700 hover:bg-gray-100 shrink-0"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          </div>
+          <div className="flex justify-center">
             <Button
               variant="outline"
               size="sm"
               onClick={() => generateNotificationsMutation.mutate()}
               disabled={generateNotificationsMutation.isPending}
+              className="text-blue-600 hover:text-blue-700 border-blue-300"
             >
               {generateNotificationsMutation.isPending ? "Checking..." : "Check Renewals"}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="w-4 h-4" />
             </Button>
           </div>
         </CardHeader>
         
-        <CardContent className="max-h-96 overflow-y-auto space-y-3">
+        <CardContent className="max-h-[60vh] overflow-y-auto space-y-3 px-4">
           {notifications.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
