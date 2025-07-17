@@ -318,7 +318,7 @@ export default function TrafficViolations() {
           <Card className="shadow-lg shadow-orange-100">
             <CardContent className="pt-6">
               <div className="text-center py-8">
-                <Shield className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                <Zap className="w-16 h-16 text-green-600 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">No Violations Found</h3>
                 <p className="text-gray-600">
                   {selectedVehicle?.licensePlate} has no traffic violations on record.
