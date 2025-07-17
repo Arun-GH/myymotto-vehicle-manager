@@ -23,15 +23,18 @@ export default function InsuranceRenewals() {
   });
 
   const handlePolicyBazarClick = (vehicle: Vehicle) => {
-    // Construct PolicyBazar URL with vehicle details
+    // Construct PolicyBazar URL with vehicle details for auto-population
     const searchParams = new URLSearchParams({
-      make: vehicle.make || '',
-      model: vehicle.model || '',
-      year: vehicle.year?.toString() || '',
-      registrationNumber: vehicle.licensePlate || ''
+      'vehicle-number': vehicle.licensePlate || '',
+      'vehicle-make': vehicle.make || '',
+      'vehicle-model': vehicle.model || '',
+      'manufacturing-year': vehicle.year?.toString() || '',
+      'fuel-type': 'petrol', // Default, can be enhanced later
+      'rto-code': vehicle.licensePlate?.substring(0, 4) || '', // Extract RTO from license plate
     });
     
-    const policyBazarUrl = `https://www.policybazaar.com/motor-insurance/?${searchParams.toString()}`;
+    // PolicyBazar car insurance URL with pre-filled vehicle details
+    const policyBazarUrl = `https://www.policybazaar.com/motor-insurance/car-insurance/?${searchParams.toString()}`;
     window.open(policyBazarUrl, '_blank');
   };
 
@@ -166,7 +169,7 @@ export default function InsuranceRenewals() {
                             </div>
                             <div className="text-left">
                               <div className="font-semibold">PolicyBazar</div>
-                              <div className="text-xs opacity-90">Compare 20+ insurers</div>
+                              <div className="text-xs opacity-90">Auto-filled quotes from 20+ insurers</div>
                             </div>
                           </div>
                           <ExternalLink className="w-4 h-4" />
