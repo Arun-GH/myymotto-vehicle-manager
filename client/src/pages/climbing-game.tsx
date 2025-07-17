@@ -148,120 +148,8 @@ export default function ClimbingGame() {
     ctx.restore();
   };
 
-  // Ferrari Logo - Prancing Horse Shield
+  // Ferrari Logo - Realistic Prancing Horse Shield
   const drawFerrariLogo = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
-    // Calculate the complete logo coordinates (300x300 canvas)
-    const logoStartX = 0;
-    const logoStartY = 0;
-    const logoWidth = 300;
-    const logoHeight = 300;
-    
-    // Yellow background for this piece
-    ctx.fillStyle = '#FFE135';
-    ctx.fillRect(x, y, 100, 100);
-    
-    // Draw the portion of the Ferrari shield that belongs to this piece
-    ctx.fillStyle = '#DC143C';
-    
-    // Calculate shield boundaries
-    const shieldCenterX = logoStartX + logoWidth / 2;
-    const shieldCenterY = logoStartY + logoHeight / 2;
-    const shieldWidth = 180;
-    const shieldHeight = 200;
-    
-    // Draw shield portion for this piece
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(x, y, 100, 100); // Clip to this piece
-    ctx.clip();
-    
-    // Draw complete shield
-    ctx.fillStyle = '#DC143C';
-    ctx.beginPath();
-    ctx.moveTo(shieldCenterX, shieldCenterY - shieldHeight/2);
-    ctx.lineTo(shieldCenterX - shieldWidth/2, shieldCenterY - shieldHeight/2 + 40);
-    ctx.lineTo(shieldCenterX - shieldWidth/2, shieldCenterY + shieldHeight/2 - 60);
-    ctx.quadraticCurveTo(shieldCenterX, shieldCenterY + shieldHeight/2, shieldCenterX + shieldWidth/2, shieldCenterY + shieldHeight/2 - 60);
-    ctx.lineTo(shieldCenterX + shieldWidth/2, shieldCenterY - shieldHeight/2 + 40);
-    ctx.closePath();
-    ctx.fill();
-    
-    // Prancing horse silhouette
-    ctx.fillStyle = '#000';
-    ctx.beginPath();
-    ctx.moveTo(shieldCenterX - 30, shieldCenterY);
-    ctx.quadraticCurveTo(shieldCenterX - 10, shieldCenterY - 30, shieldCenterX + 10, shieldCenterY);
-    ctx.quadraticCurveTo(shieldCenterX + 30, shieldCenterY + 10, shieldCenterX, shieldCenterY + 40);
-    ctx.lineTo(shieldCenterX - 40, shieldCenterY + 40);
-    ctx.closePath();
-    ctx.fill();
-    
-    // Ferrari text
-    ctx.fillStyle = '#000';
-    ctx.font = 'bold 16px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('FERRARI', shieldCenterX, shieldCenterY + shieldHeight/2 - 20);
-    
-    ctx.restore();
-    ctx.textAlign = 'left'; // Reset
-  };
-
-  // Lamborghini Logo - Bull Shield
-  const drawLamborghiniLogo = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
-    // Black background
-    ctx.fillStyle = '#000';
-    ctx.fillRect(x, y, 100, 100);
-    
-    const shieldCenterX = 150;
-    const shieldCenterY = 150;
-    const shieldWidth = 160;
-    const shieldHeight = 180;
-    
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(x, y, 100, 100);
-    ctx.clip();
-    
-    // Gold shield
-    ctx.fillStyle = '#FFD700';
-    ctx.beginPath();
-    ctx.moveTo(shieldCenterX, shieldCenterY - shieldHeight/2);
-    ctx.lineTo(shieldCenterX - shieldWidth/2, shieldCenterY - shieldHeight/2 + 30);
-    ctx.lineTo(shieldCenterX - shieldWidth/2, shieldCenterY + shieldHeight/2 - 50);
-    ctx.quadraticCurveTo(shieldCenterX, shieldCenterY + shieldHeight/2, shieldCenterX + shieldWidth/2, shieldCenterY + shieldHeight/2 - 50);
-    ctx.lineTo(shieldCenterX + shieldWidth/2, shieldCenterY - shieldHeight/2 + 30);
-    ctx.closePath();
-    ctx.fill();
-    
-    // Bull head with horns
-    ctx.fillStyle = '#000';
-    ctx.beginPath();
-    ctx.moveTo(shieldCenterX - 20, shieldCenterY - 10);
-    ctx.lineTo(shieldCenterX - 35, shieldCenterY - 25); // Left horn
-    ctx.lineTo(shieldCenterX - 25, shieldCenterY - 15);
-    ctx.lineTo(shieldCenterX, shieldCenterY + 5);
-    ctx.lineTo(shieldCenterX + 25, shieldCenterY - 15);
-    ctx.lineTo(shieldCenterX + 35, shieldCenterY - 25); // Right horn
-    ctx.lineTo(shieldCenterX + 20, shieldCenterY - 10);
-    ctx.quadraticCurveTo(shieldCenterX, shieldCenterY + 30, shieldCenterX - 20, shieldCenterY - 10);
-    ctx.fill();
-    
-    // Lamborghini text
-    ctx.fillStyle = '#FFD700';
-    ctx.font = 'bold 12px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('LAMBORGHINI', shieldCenterX, shieldCenterY + shieldHeight/2 - 15);
-    
-    ctx.restore();
-    ctx.textAlign = 'left';
-  };
-
-  // McLaren Logo - Orange Swoosh
-  const drawMcLarenLogo = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
-    // White background
-    ctx.fillStyle = '#FFF';
-    ctx.fillRect(x, y, 100, 100);
-    
     const centerX = 150;
     const centerY = 150;
     
@@ -270,29 +158,211 @@ export default function ClimbingGame() {
     ctx.rect(x, y, 100, 100);
     ctx.clip();
     
-    // Orange swoosh - McLaren's signature element
-    ctx.fillStyle = '#FF8000';
+    // Classic Ferrari yellow background
+    ctx.fillStyle = '#FFEF00';
+    ctx.fillRect(0, 0, 300, 300);
+    
+    // Ferrari shield shape - authentic proportions
+    ctx.fillStyle = '#DC143C';
     ctx.beginPath();
-    ctx.moveTo(centerX - 80, centerY);
-    ctx.quadraticCurveTo(centerX - 40, centerY - 60, centerX, centerY - 20);
-    ctx.quadraticCurveTo(centerX + 40, centerY + 10, centerX + 80, centerY - 10);
-    ctx.quadraticCurveTo(centerX + 60, centerY + 20, centerX + 20, centerY + 20);
-    ctx.quadraticCurveTo(centerX - 20, centerY + 40, centerX - 80, centerY);
+    ctx.moveTo(centerX, centerY - 80);
+    ctx.lineTo(centerX - 50, centerY - 60);
+    ctx.lineTo(centerX - 50, centerY + 40);
+    ctx.quadraticCurveTo(centerX - 50, centerY + 70, centerX - 30, centerY + 80);
+    ctx.quadraticCurveTo(centerX, centerY + 90, centerX + 30, centerY + 80);
+    ctx.quadraticCurveTo(centerX + 50, centerY + 70, centerX + 50, centerY + 40);
+    ctx.lineTo(centerX + 50, centerY - 60);
+    ctx.closePath();
     ctx.fill();
     
-    // McLaren text
+    // Realistic prancing horse - detailed silhouette
     ctx.fillStyle = '#000';
-    ctx.font = 'bold 20px sans-serif';
+    ctx.beginPath();
+    // Horse head and neck
+    ctx.moveTo(centerX - 25, centerY - 20);
+    ctx.quadraticCurveTo(centerX - 30, centerY - 35, centerX - 15, centerY - 40);
+    ctx.quadraticCurveTo(centerX - 5, centerY - 45, centerX + 5, centerY - 35);
+    // Horse body
+    ctx.quadraticCurveTo(centerX + 15, centerY - 25, centerX + 20, centerY - 10);
+    ctx.lineTo(centerX + 25, centerY + 5);
+    // Back legs
+    ctx.lineTo(centerX + 15, centerY + 20);
+    ctx.lineTo(centerX + 20, centerY + 35);
+    ctx.lineTo(centerX + 10, centerY + 35);
+    ctx.lineTo(centerX + 5, centerY + 20);
+    // Front legs
+    ctx.lineTo(centerX - 5, centerY + 35);
+    ctx.lineTo(centerX - 15, centerY + 35);
+    ctx.lineTo(centerX - 10, centerY + 20);
+    ctx.lineTo(centerX - 20, centerY + 5);
+    // Tail
+    ctx.quadraticCurveTo(centerX - 30, centerY - 5, centerX - 25, centerY - 20);
+    ctx.fill();
+    
+    // Ferrari text - authentic styling
+    ctx.fillStyle = '#000';
+    ctx.font = 'bold 14px "Times New Roman", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('FERRARI', centerX, centerY + 65);
+    
+    // Italian flag colors at top
+    ctx.fillStyle = '#009246'; // Green
+    ctx.fillRect(centerX - 15, centerY - 75, 10, 8);
+    ctx.fillStyle = '#FFF'; // White  
+    ctx.fillRect(centerX - 5, centerY - 75, 10, 8);
+    ctx.fillStyle = '#CE2B37'; // Red
+    ctx.fillRect(centerX + 5, centerY - 75, 10, 8);
+    
+    ctx.restore();
+    ctx.textAlign = 'left';
+  };
+
+  // Lamborghini Logo - Realistic Raging Bull
+  const drawLamborghiniLogo = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
+    const centerX = 150;
+    const centerY = 150;
+    
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, 100, 100);
+    ctx.clip();
+    
+    // Classic Lamborghini black background
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, 300, 300);
+    
+    // Gold shield outline - authentic Lamborghini style
+    ctx.strokeStyle = '#D4AF37';
+    ctx.lineWidth = 4;
+    ctx.fillStyle = '#D4AF37';
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY - 85);
+    ctx.lineTo(centerX - 55, centerY - 65);
+    ctx.lineTo(centerX - 55, centerY + 35);
+    ctx.quadraticCurveTo(centerX - 55, centerY + 65, centerX - 35, centerY + 75);
+    ctx.quadraticCurveTo(centerX, centerY + 85, centerX + 35, centerY + 75);
+    ctx.quadraticCurveTo(centerX + 55, centerY + 65, centerX + 55, centerY + 35);
+    ctx.lineTo(centerX + 55, centerY - 65);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Inner black area
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY - 75);
+    ctx.lineTo(centerX - 45, centerY - 55);
+    ctx.lineTo(centerX - 45, centerY + 25);
+    ctx.quadraticCurveTo(centerX - 45, centerY + 55, centerX - 25, centerY + 65);
+    ctx.quadraticCurveTo(centerX, centerY + 75, centerX + 25, centerY + 65);
+    ctx.quadraticCurveTo(centerX + 45, centerY + 55, centerX + 45, centerY + 25);
+    ctx.lineTo(centerX + 45, centerY - 55);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Realistic raging bull head - detailed and fierce
+    ctx.fillStyle = '#D4AF37';
+    ctx.beginPath();
+    // Bull's head outline
+    ctx.moveTo(centerX - 25, centerY - 15);
+    // Left horn - curved and sharp
+    ctx.lineTo(centerX - 35, centerY - 35);
+    ctx.quadraticCurveTo(centerX - 30, centerY - 40, centerX - 25, centerY - 30);
+    // Head top
+    ctx.lineTo(centerX - 15, centerY - 25);
+    ctx.lineTo(centerX - 5, centerY - 30);
+    ctx.lineTo(centerX + 5, centerY - 30);
+    ctx.lineTo(centerX + 15, centerY - 25);
+    // Right horn - curved and sharp
+    ctx.lineTo(centerX + 25, centerY - 30);
+    ctx.quadraticCurveTo(centerX + 30, centerY - 40, centerX + 35, centerY - 35);
+    ctx.lineTo(centerX + 25, centerY - 15);
+    // Right side of head
+    ctx.lineTo(centerX + 20, centerY);
+    ctx.lineTo(centerX + 15, centerY + 10);
+    // Nose/snout
+    ctx.lineTo(centerX + 8, centerY + 15);
+    ctx.lineTo(centerX - 8, centerY + 15);
+    // Left side of head
+    ctx.lineTo(centerX - 15, centerY + 10);
+    ctx.lineTo(centerX - 20, centerY);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Bull's eyes - fierce expression
+    ctx.fillStyle = '#FF0000';
+    ctx.beginPath();
+    ctx.arc(centerX - 12, centerY - 10, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(centerX + 12, centerY - 10, 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // LAMBORGHINI text - authentic font
+    ctx.fillStyle = '#D4AF37';
+    ctx.font = 'bold 11px "Arial", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('LAMBORGHINI', centerX, centerY + 55);
+    
+    ctx.restore();
+    ctx.textAlign = 'left';
+  };
+
+  // McLaren Logo - Realistic Speedmark
+  const drawMcLarenLogo = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
+    const centerX = 150;
+    const centerY = 150;
+    
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, 100, 100);
+    ctx.clip();
+    
+    // McLaren signature white background
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, 300, 300);
+    
+    // McLaren orange speedmark - authentic design
+    const gradient = ctx.createLinearGradient(centerX - 80, centerY - 40, centerX + 80, centerY + 40);
+    gradient.addColorStop(0, '#FF8000');
+    gradient.addColorStop(0.5, '#FF6600');
+    gradient.addColorStop(1, '#FF4500');
+    ctx.fillStyle = gradient;
+    
+    // Iconic McLaren speedmark swoosh
+    ctx.beginPath();
+    ctx.moveTo(centerX - 75, centerY + 10);
+    ctx.quadraticCurveTo(centerX - 40, centerY - 50, centerX + 10, centerY - 30);
+    ctx.quadraticCurveTo(centerX + 50, centerY - 15, centerX + 80, centerY + 5);
+    ctx.quadraticCurveTo(centerX + 70, centerY + 25, centerX + 40, centerY + 20);
+    ctx.quadraticCurveTo(centerX, centerY + 15, centerX - 30, centerY + 25);
+    ctx.quadraticCurveTo(centerX - 60, centerY + 30, centerX - 75, centerY + 10);
+    ctx.fill();
+    
+    // Additional speedmark elements for depth
+    ctx.fillStyle = '#FF4500';
+    ctx.beginPath();
+    ctx.moveTo(centerX - 65, centerY + 5);
+    ctx.quadraticCurveTo(centerX - 30, centerY - 40, centerX + 20, centerY - 25);
+    ctx.quadraticCurveTo(centerX + 60, centerY - 10, centerX + 70, centerY);
+    ctx.quadraticCurveTo(centerX + 60, centerY + 15, centerX + 30, centerY + 10);
+    ctx.quadraticCurveTo(centerX - 10, centerY + 5, centerX - 40, centerY + 15);
+    ctx.quadraticCurveTo(centerX - 55, centerY + 20, centerX - 65, centerY + 5);
+    ctx.fill();
+    
+    // McLaren text - official styling
+    ctx.fillStyle = '#000000';
+    ctx.font = 'bold 18px "Arial", sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('McLaren', centerX, centerY + 60);
     
-    // Speed marks (racing elements)
+    // Racing heritage elements
     ctx.strokeStyle = '#FF8000';
-    ctx.lineWidth = 3;
-    for (let i = 0; i < 3; i++) {
+    ctx.lineWidth = 2;
+    // Speed lines
+    for (let i = 0; i < 5; i++) {
       ctx.beginPath();
-      ctx.moveTo(centerX - 60 + i * 15, centerY - 40);
-      ctx.lineTo(centerX - 40 + i * 15, centerY - 50);
+      ctx.moveTo(centerX - 70 + i * 8, centerY - 60 + i * 2);
+      ctx.lineTo(centerX - 60 + i * 8, centerY - 50 + i * 2);
       ctx.stroke();
     }
     
@@ -300,12 +370,8 @@ export default function ClimbingGame() {
     ctx.textAlign = 'left';
   };
 
-  // Porsche Logo - Coat of Arms
+  // Porsche Logo - Realistic Coat of Arms
   const drawPorscheLogo = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
-    // Cream background
-    ctx.fillStyle = '#F5F5DC';
-    ctx.fillRect(x, y, 100, 100);
-    
     const centerX = 150;
     const centerY = 150;
     
@@ -314,53 +380,94 @@ export default function ClimbingGame() {
     ctx.rect(x, y, 100, 100);
     ctx.clip();
     
-    // Outer circle (traditional Porsche crest)
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, 80, 0, Math.PI * 2);
-    ctx.stroke();
+    // Porsche cream/beige background
+    ctx.fillStyle = '#F4F1E8';
+    ctx.fillRect(0, 0, 300, 300);
     
-    // Inner shield sections
-    // Top section - Württemberg coat of arms
-    ctx.fillStyle = '#FFD700';
+    // Outer circle - authentic Porsche crest
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 3;
+    ctx.fillStyle = '#F4F1E8';
     ctx.beginPath();
     ctx.arc(centerX, centerY, 75, 0, Math.PI * 2);
     ctx.fill();
+    ctx.stroke();
     
-    // Stuttgart horse in center
-    ctx.fillStyle = '#000';
+    // Inner circle border
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(centerX - 25, centerY - 10);
-    ctx.quadraticCurveTo(centerX - 10, centerY - 30, centerX + 10, centerY - 10);
-    ctx.quadraticCurveTo(centerX + 25, centerY, centerX + 15, centerY + 25);
-    ctx.lineTo(centerX - 15, centerY + 25);
-    ctx.quadraticCurveTo(centerX - 25, centerY, centerX - 25, centerY - 10);
+    ctx.arc(centerX, centerY, 70, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    // Top section - Württemberg coat of arms (red and black)
+    ctx.fillStyle = '#DC143C'; // Red
+    ctx.beginPath();
+    ctx.arc(centerX, centerY - 20, 50, Math.PI, 0, false);
+    ctx.closePath();
     ctx.fill();
     
-    // Porsche text
-    ctx.fillStyle = '#000';
-    ctx.font = 'bold 16px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('PORSCHE', centerX, centerY + 65);
-    
-    // Red stripes (Württemberg colors)
-    ctx.fillStyle = '#DC143C';
+    // Black stripes on red (Württemberg pattern)
+    ctx.fillStyle = '#000000';
     for (let i = 0; i < 3; i++) {
-      ctx.fillRect(centerX - 70 + i * 25, centerY - 60, 8, 40);
-      ctx.fillRect(centerX - 70 + i * 25, centerY + 20, 8, 40);
+      ctx.fillRect(centerX - 40 + i * 25, centerY - 65, 10, 45);
     }
+    
+    // Bottom section - Stuttgart coat of arms (yellow with black horse)
+    ctx.fillStyle = '#FFD700'; // Gold/Yellow
+    ctx.beginPath();
+    ctx.arc(centerX, centerY + 20, 50, 0, Math.PI, false);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Stuttgart horse - detailed and realistic
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    // Horse head and neck
+    ctx.moveTo(centerX - 20, centerY + 10);
+    ctx.quadraticCurveTo(centerX - 25, centerY - 5, centerX - 15, centerY - 10);
+    ctx.quadraticCurveTo(centerX - 5, centerY - 15, centerX + 5, centerY - 10);
+    ctx.quadraticCurveTo(centerX + 15, centerY - 5, centerX + 20, centerY + 10);
+    // Horse body
+    ctx.lineTo(centerX + 15, centerY + 25);
+    ctx.lineTo(centerX + 10, centerY + 40);
+    ctx.lineTo(centerX + 5, centerY + 40);
+    ctx.lineTo(centerX, centerY + 25);
+    ctx.lineTo(centerX - 5, centerY + 40);
+    ctx.lineTo(centerX - 10, centerY + 40);
+    ctx.lineTo(centerX - 15, centerY + 25);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Horse mane details
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(centerX - 8, centerY - 8);
+    ctx.lineTo(centerX - 12, centerY - 5);
+    ctx.moveTo(centerX - 5, centerY - 12);
+    ctx.lineTo(centerX - 8, centerY - 8);
+    ctx.moveTo(centerX + 5, centerY - 12);
+    ctx.lineTo(centerX + 8, centerY - 8);
+    ctx.moveTo(centerX + 8, centerY - 8);
+    ctx.lineTo(centerX + 12, centerY - 5);
+    ctx.stroke();
+    
+    // PORSCHE text - official styling
+    ctx.fillStyle = '#000000';
+    ctx.font = 'bold 14px "Times New Roman", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('PORSCHE', centerX, centerY + 90);
+    
+    // Stuttgart text (smaller)
+    ctx.font = '10px "Times New Roman", serif';
+    ctx.fillText('STUTTGART', centerX, centerY + 60);
     
     ctx.restore();
     ctx.textAlign = 'left';
   };
 
-  // Bugatti Logo - EB Oval
+  // Bugatti Logo - Realistic EB Oval
   const drawBugattiLogo = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
-    // Deep red background
-    ctx.fillStyle = '#8B0000';
-    ctx.fillRect(x, y, 100, 100);
-    
     const centerX = 150;
     const centerY = 150;
     
@@ -369,41 +476,69 @@ export default function ClimbingGame() {
     ctx.rect(x, y, 100, 100);
     ctx.clip();
     
-    // Main white oval
-    ctx.fillStyle = '#FFF';
+    // Bugatti signature deep red background
+    ctx.fillStyle = '#8B0000';
+    ctx.fillRect(0, 0, 300, 300);
+    
+    // Main white oval - authentic Bugatti proportions
+    ctx.fillStyle = '#FFFFFF';
     ctx.beginPath();
-    ctx.ellipse(centerX, centerY, 70, 50, 0, 0, Math.PI * 2);
+    ctx.ellipse(centerX, centerY, 70, 45, 0, 0, Math.PI * 2);
     ctx.fill();
     
-    // Red oval border
+    // Red oval border - elegant and thick
     ctx.strokeStyle = '#8B0000';
-    ctx.lineWidth = 6;
+    ctx.lineWidth = 8;
     ctx.beginPath();
-    ctx.ellipse(centerX, centerY, 70, 50, 0, 0, Math.PI * 2);
+    ctx.ellipse(centerX, centerY, 70, 45, 0, 0, Math.PI * 2);
     ctx.stroke();
     
-    // EB letters
-    ctx.fillStyle = '#8B0000';
-    ctx.font = 'bold 40px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('EB', centerX, centerY + 15);
+    // Inner border detail
+    ctx.strokeStyle = '#666666';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(centerX, centerY, 62, 37, 0, 0, Math.PI * 2);
+    ctx.stroke();
     
-    // Signature pearl dots around the border
-    ctx.fillStyle = '#FFF';
-    const numDots = 60;
+    // EB letters - classic Bugatti style
+    ctx.fillStyle = '#8B0000';
+    ctx.font = 'bold 36px "Times New Roman", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('EB', centerX, centerY + 12);
+    
+    // Signature pearl/dot border - authentic Bugatti detail
+    ctx.fillStyle = '#FFFFFF';
+    const numDots = 52; // Authentic number of pearls
     for (let i = 0; i < numDots; i++) {
       const angle = (i / numDots) * Math.PI * 2;
-      const dotX = centerX + Math.cos(angle) * 85;
-      const dotY = centerY + Math.sin(angle) * 60;
+      const dotX = centerX + Math.cos(angle) * 82;
+      const dotY = centerY + Math.sin(angle) * 57;
       ctx.beginPath();
-      ctx.arc(dotX, dotY, 2, 0, Math.PI * 2);
+      ctx.arc(dotX, dotY, 3, 0, Math.PI * 2);
       ctx.fill();
+      // Pearl highlight
+      ctx.fillStyle = '#F5F5F5';
+      ctx.beginPath();
+      ctx.arc(dotX - 1, dotY - 1, 1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
     }
     
-    // Bugatti text
-    ctx.fillStyle = '#FFF';
-    ctx.font = 'bold 12px serif';
+    // BUGATTI text - official styling
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 12px "Arial", sans-serif';
+    ctx.textAlign = 'center';
     ctx.fillText('BUGATTI', centerX, centerY + 75);
+    
+    // Ettore Bugatti signature elements (small decorative lines)
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(centerX - 30, centerY - 55);
+    ctx.lineTo(centerX + 30, centerY - 55);
+    ctx.moveTo(centerX - 30, centerY + 55);
+    ctx.lineTo(centerX + 30, centerY + 55);
+    ctx.stroke();
     
     ctx.restore();
     ctx.textAlign = 'left';
