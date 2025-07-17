@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +13,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { insertEmergencyContactSchema, type InsertEmergencyContact, type EmergencyContact } from "@shared/schema";
 import ColorfulLogo from "@/components/colorful-logo";
 import BottomNav from "@/components/bottom-nav";
+import NotificationBell from "@/components/notification-bell";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function EmergencyContacts() {
@@ -146,6 +147,18 @@ export default function EmergencyContacts() {
                 </div>
               </div>
             </div>
+            <div className="flex items-center space-x-2">
+              <Link href="/settings">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-600 hover:bg-red-50"
+                >
+                  <Settings className="w-6 h-6" />
+                </Button>
+              </Link>
+              <NotificationBell />
+            </div>
           </div>
         </header>
 
@@ -184,16 +197,28 @@ export default function EmergencyContacts() {
                 <p className="text-sm text-red-600">Emergency Contacts</p>
               </div>
             </div>
-            {hasContacts && !isEditing && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-600 hover:bg-red-50"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit
-              </Button>
-            )}
+            <div className="flex items-center space-x-2">
+              {hasContacts && !isEditing && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:bg-red-50"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit
+                </Button>
+              )}
+              <Link href="/settings">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-600 hover:bg-red-50"
+                >
+                  <Settings className="w-6 h-6" />
+                </Button>
+              </Link>
+              <NotificationBell />
+            </div>
           </div>
         </div>
       </header>

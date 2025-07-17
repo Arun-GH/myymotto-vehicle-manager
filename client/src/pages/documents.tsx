@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { FileText, Search, Filter, ArrowLeft, CreditCard, Eye, Trash2 } from "lucide-react";
+import { FileText, Search, Filter, ArrowLeft, CreditCard, Eye, Trash2, Settings } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { type Vehicle, type Document, type UserProfile } from "@shared/schema";
@@ -162,6 +162,15 @@ export default function Documents() {
               <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
                 <Filter className="w-5 h-5" />
               </Button>
+              <Link href="/settings">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-600 hover:bg-red-50"
+                >
+                  <Settings className="w-6 h-6" />
+                </Button>
+              </Link>
               <NotificationBell />
             </div>
           </div>

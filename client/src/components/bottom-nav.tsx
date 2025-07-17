@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Home, Search, Users, Settings } from "lucide-react";
+import { Home, Search, Users, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface BottomNavProps {
@@ -11,7 +11,7 @@ export default function BottomNav({ currentPath }: BottomNavProps) {
     { path: "/", icon: Home, label: "Home" },
     { path: "/service-centers", icon: Search, label: "Search" },
     { path: "/emergency-contacts", icon: Users, label: "Emergency" },
-    { path: "/settings", icon: Settings, label: "Settings" },
+    { path: "/profile", icon: User, label: "Profile" },
   ];
 
   return (

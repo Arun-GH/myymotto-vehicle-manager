@@ -384,25 +384,24 @@ export default function Profile() {
             </div>
             <div className="flex items-center space-x-2">
               {profile && !isEditing && (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-600 hover:bg-red-50"
-                    onClick={() => setLocation("/settings")}
-                  >
-                    <Settings className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-600 hover:bg-red-50"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Edit
-                  </Button>
-                </>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:bg-red-50"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit
+                </Button>
               )}
+              <Link href="/settings">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-600 hover:bg-red-50"
+                >
+                  <Settings className="w-6 h-6" />
+                </Button>
+              </Link>
               <NotificationBell />
             </div>
           </div>

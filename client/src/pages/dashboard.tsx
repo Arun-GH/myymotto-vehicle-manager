@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield } from "lucide-react";
+import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings } from "lucide-react";
 import { Link } from "wouter";
 import { type Vehicle } from "@shared/schema";
 import VehicleCard from "@/components/vehicle-card";
@@ -34,6 +34,15 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              <Link href="/settings">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-600 hover:bg-red-50"
+                >
+                  <Settings className="w-6 h-6" />
+                </Button>
+              </Link>
               <NotificationBell />
             </div>
           </div>
