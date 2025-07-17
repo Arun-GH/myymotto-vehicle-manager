@@ -155,6 +155,8 @@ export default function PermissionsScreen({ onComplete }: PermissionsScreenProps
     }, {} as Record<string, string>);
     
     localStorage.setItem('appPermissions', JSON.stringify(permissionStatus));
+    // Mark permissions as completed so this screen doesn't show again
+    localStorage.setItem('permissionsCompleted', 'true');
     onComplete();
   };
 
@@ -286,9 +288,17 @@ export default function PermissionsScreen({ onComplete }: PermissionsScreenProps
               </Button>
             )}
             
+            <Button
+              onClick={handleContinue}
+              variant="outline"
+              className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
+              Skip for Now
+            </Button>
+            
             {!allRequiredGranted && (
-              <p className="text-center text-sm text-gray-600">
-                Please grant all required permissions to continue
+              <p className="text-center text-sm text-orange-600">
+                Note: Some features may be limited without required permissions
               </p>
             )}
           </div>

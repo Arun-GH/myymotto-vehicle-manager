@@ -37,9 +37,9 @@ function Router() {
   // Handle splash screen completion
   const handleSplashComplete = () => {
     setShowSplash(false);
-    // Check if permissions have been requested before
-    const existingPermissions = localStorage.getItem('appPermissions');
-    if (!existingPermissions) {
+    // Check if permissions have been completed before
+    const permissionsCompleted = localStorage.getItem('permissionsCompleted');
+    if (!permissionsCompleted) {
       setShowPermissions(true);
     }
   };
