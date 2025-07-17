@@ -1205,7 +1205,7 @@ export default function ClimbingGame() {
               />
               <div>
                 <ColorfulLogo />
-                <p className="text-sm text-red-600">Car Puzzle Game</p>
+                <p className="text-sm text-red-600">Logo Puzzle Game</p>
               </div>
             </div>
           </div>
@@ -1217,7 +1217,7 @@ export default function ClimbingGame() {
         <div className="grid grid-cols-3 gap-2 mb-4">
           <Card className="shadow-orange">
             <CardContent className="p-3 text-center">
-              <p className="text-sm text-gray-600">Car</p>
+              <p className="text-sm text-gray-600">Logo</p>
               <p className="text-sm font-bold" style={{ color: currentCar.color }}>
                 {currentCar.name}
               </p>
