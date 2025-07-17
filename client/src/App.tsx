@@ -23,6 +23,7 @@ import Subscribe from "@/pages/subscribe";
 import SignIn from "@/pages/sign-in";
 import TrafficViolations from "@/pages/traffic-violations";
 import InsuranceRenewals from "@/pages/insurance-renewals";
+import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -37,11 +38,8 @@ function Router() {
   // Handle splash screen completion
   const handleSplashComplete = () => {
     setShowSplash(false);
-    // Check if permissions have been completed before
-    const permissionsCompleted = localStorage.getItem('permissionsCompleted');
-    if (!permissionsCompleted) {
-      setShowPermissions(true);
-    }
+    // Don't show permissions automatically after splash
+    // They will be shown after successful login for new users
   };
 
   // Handle permissions completion
@@ -72,8 +70,14 @@ function Router() {
       setLocation("/sign-in");
     } else if (isAuthenticated && !isLoading && !profile && location !== "/profile") {
       setLocation("/profile");
+    } else if (isAuthenticated && !isLoading && profile) {
+      // Check if this is a new user who needs permissions setup
+      const permissionsCompleted = localStorage.getItem(`permissionsCompleted_${currentUserId}`);
+      if (!permissionsCompleted && !showPermissions && !showSplash) {
+        setShowPermissions(true);
+      }
     }
-  }, [isAuthenticated, isLoading, profile, location, setLocation]);
+  }, [isAuthenticated, isLoading, profile, location, setLocation, currentUserId, showPermissions, showSplash]);
 
   // Show splash screen for 2 seconds on app start
   if (showSplash) {
@@ -99,6 +103,7 @@ function Router() {
       <Route path="/emergency-contacts" component={EmergencyContacts} />
       <Route path="/subscribe" component={Subscribe} />
       <Route path="/profile" component={Profile} />
+      <Route path="/settings" component={Settings} />
       <Route path="/traffic-violations" component={TrafficViolations} />
       <Route path="/insurance-renewals" component={InsuranceRenewals} />
       <Route component={NotFound} />

@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, Save, ArrowLeft, Heart, MapPin, Phone, Camera, Upload, X } from "lucide-react";
+import { User, Save, ArrowLeft, Heart, MapPin, Phone, Camera, Upload, X, Settings } from "lucide-react";
 import { insertUserProfileSchema, type InsertUserProfile, type UserProfile } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -384,14 +384,24 @@ export default function Profile() {
             </div>
             <div className="flex items-center space-x-2">
               {profile && !isEditing && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-600 hover:bg-red-50"
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit
-                </Button>
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-600 hover:bg-red-50"
+                    onClick={() => setLocation("/settings")}
+                  >
+                    <Settings className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-600 hover:bg-red-50"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Edit
+                  </Button>
+                </>
               )}
               <NotificationBell />
             </div>

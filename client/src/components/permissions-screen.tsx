@@ -154,9 +154,10 @@ export default function PermissionsScreen({ onComplete }: PermissionsScreenProps
       return acc;
     }, {} as Record<string, string>);
     
+    const currentUserId = localStorage.getItem("currentUserId");
     localStorage.setItem('appPermissions', JSON.stringify(permissionStatus));
-    // Mark permissions as completed so this screen doesn't show again
-    localStorage.setItem('permissionsCompleted', 'true');
+    // Mark permissions as completed for this specific user
+    localStorage.setItem(`permissionsCompleted_${currentUserId}`, 'true');
     onComplete();
   };
 
