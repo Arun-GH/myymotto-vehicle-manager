@@ -1279,6 +1279,27 @@ export default function ClimbingGame() {
           </CardContent>
         </Card>
 
+        {/* Instructions */}
+        <Card className="shadow-orange mb-4">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <h3 className="text-lg font-bold text-gray-800 mb-3">🎯 Target Order</h3>
+              <p className="text-sm text-gray-600 mb-3">Arrange the numbered pieces in this order:</p>
+              <div className="grid grid-cols-3 gap-2 w-32 mx-auto mb-3">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 0].map((num) => (
+                  <div 
+                    key={num} 
+                    className={`w-9 h-9 border-2 ${num === 0 ? 'bg-gray-100 border-gray-300' : 'bg-white border-blue-400'} rounded-lg flex items-center justify-center text-sm font-bold ${num === 0 ? 'text-gray-400' : 'text-blue-700'} shadow-sm`}
+                  >
+                    {num === 0 ? '✨' : num}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500">Numbers 1-8 in sequence, bottom-right space empty</p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Game Controls */}
         <div className="grid grid-cols-2 gap-2 mb-4">
           <Button
