@@ -62,14 +62,25 @@ export default function ClimbingGame() {
   // Initialize puzzle
   const initializePuzzle = () => {
     const newPieces: PuzzlePiece[] = [];
-    for (let i = 0; i < 9; i++) {
+    
+    // Create pieces 0-7 (piece 8 is the empty space)
+    for (let i = 0; i < 8; i++) {
       newPieces.push({
         id: i,
         currentPosition: i,
         correctPosition: i,
-        isEmpty: i === 8
+        isEmpty: false
       });
     }
+    
+    // Add empty piece
+    newPieces.push({
+      id: 8,
+      currentPosition: 8,
+      correctPosition: 8,
+      isEmpty: true
+    });
+    
     shufflePuzzle(newPieces);
     setPieces(newPieces);
     setMoves(0);
@@ -79,22 +90,32 @@ export default function ClimbingGame() {
 
   // Shuffle puzzle pieces
   const shufflePuzzle = (puzzlePieces: PuzzlePiece[]) => {
-    const shuffledPositions = Array.from({ length: 8 }, (_, i) => i);
+    // Create a solvable shuffle by doing random valid moves
+    let currentEmpty = 8;
     
-    // Fisher-Yates shuffle
-    for (let i = shuffledPositions.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledPositions[i], shuffledPositions[j]] = [shuffledPositions[j], shuffledPositions[i]];
+    for (let i = 0; i < 200; i++) {
+      const emptyRow = Math.floor(currentEmpty / 3);
+      const emptyCol = currentEmpty % 3;
+      
+      // Find adjacent positions
+      const adjacentPositions = [];
+      if (emptyRow > 0) adjacentPositions.push(currentEmpty - 3); // Above
+      if (emptyRow < 2) adjacentPositions.push(currentEmpty + 3); // Below
+      if (emptyCol > 0) adjacentPositions.push(currentEmpty - 1); // Left
+      if (emptyCol < 2) adjacentPositions.push(currentEmpty + 1); // Right
+      
+      // Pick random adjacent position to swap with empty
+      const randomAdjacent = adjacentPositions[Math.floor(Math.random() * adjacentPositions.length)];
+      
+      // Find piece at that position and swap with empty
+      const pieceToMove = puzzlePieces.find(p => p.currentPosition === randomAdjacent);
+      if (pieceToMove) {
+        pieceToMove.currentPosition = currentEmpty;
+        currentEmpty = randomAdjacent;
+      }
     }
     
-    // Assign shuffled positions
-    puzzlePieces.forEach((piece, index) => {
-      if (index < 8) {
-        piece.currentPosition = shuffledPositions[index];
-      }
-    });
-    
-    setEmptyPosition(8);
+    setEmptyPosition(currentEmpty);
   };
 
   // Draw realistic sports car based on style
@@ -420,6 +441,9 @@ export default function ClimbingGame() {
   const handlePieceClick = (clickedPosition: number) => {
     if (gameState !== 'playing') return;
 
+    // Don't allow clicking on empty space
+    if (clickedPosition === emptyPosition) return;
+
     const clickedRow = Math.floor(clickedPosition / 3);
     const clickedCol = clickedPosition % 3;
     const emptyRow = Math.floor(emptyPosition / 3);
@@ -430,7 +454,12 @@ export default function ClimbingGame() {
       (Math.abs(clickedRow - emptyRow) === 1 && clickedCol === emptyCol) ||
       (Math.abs(clickedCol - emptyCol) === 1 && clickedRow === emptyRow);
 
-    if (!isAdjacent) return;
+    if (!isAdjacent) {
+      console.log(`Piece at ${clickedPosition} is not adjacent to empty space at ${emptyPosition}`);
+      return;
+    }
+
+    console.log(`Moving piece from ${clickedPosition} to ${emptyPosition}`);
 
     // Move piece to empty position
     const newPieces = pieces.map(piece => {
@@ -456,6 +485,13 @@ export default function ClimbingGame() {
 
   // Handle canvas click
   const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    // Auto-start game on first click
+    if (gameState === 'ready') {
+      setGameState('playing');
+      setTimer(0);
+      setMoves(0);
+    }
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -472,6 +508,8 @@ export default function ClimbingGame() {
     const col = Math.floor(canvasX / 100);
     const row = Math.floor(canvasY / 100);
     const clickedPosition = row * 3 + col;
+
+    console.log(`Canvas clicked at (${x}, ${y}) -> grid position ${clickedPosition}`);
 
     if (clickedPosition >= 0 && clickedPosition < 9) {
       handlePieceClick(clickedPosition);
@@ -584,8 +622,37 @@ export default function ClimbingGame() {
               ref={canvasRef}
               width={300}
               height={300}
-              className="w-full h-auto border-2 border-orange-200 rounded-lg cursor-pointer"
+              className="w-full h-auto border-2 border-orange-200 rounded-lg cursor-pointer touch-manipulation"
               onClick={handleCanvasClick}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                
+                // Auto-start game on first touch
+                if (gameState === 'ready') {
+                  setGameState('playing');
+                  setTimer(0);
+                  setMoves(0);
+                }
+
+                const scaleX = 300 / rect.width;
+                const scaleY = 300 / rect.height;
+                const canvasX = x * scaleX;
+                const canvasY = y * scaleY;
+
+                const col = Math.floor(canvasX / 100);
+                const row = Math.floor(canvasY / 100);
+                const clickedPosition = row * 3 + col;
+
+                console.log(`Touch at (${x}, ${y}) -> grid position ${clickedPosition}`);
+
+                if (clickedPosition >= 0 && clickedPosition < 9) {
+                  handlePieceClick(clickedPosition);
+                }
+              }}
             />
           </CardContent>
         </Card>
