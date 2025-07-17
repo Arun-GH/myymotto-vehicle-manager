@@ -1,5 +1,5 @@
 
-import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye, Trash2 } from "lucide-react";
+import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye, Trash2, Settings } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -227,6 +227,13 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               <Button variant="ghost" size="sm" className="text-green-600 p-1 h-auto hover:bg-green-50 flex items-center space-x-1">
                 <Upload className="w-3 h-3" />
                 <span className="text-xs">Upload</span>
+              </Button>
+            </Link>
+            <span className="text-gray-400 text-xs">|</span>
+            <Link href={`/vehicle/${vehicle.id}/maintenance`}>
+              <Button variant="ghost" size="sm" className="text-purple-600 p-1 h-auto hover:bg-purple-50 flex items-center space-x-1">
+                <Settings className="w-3 h-3" />
+                <span className="text-xs">Maintenance</span>
               </Button>
             </Link>
           </div>

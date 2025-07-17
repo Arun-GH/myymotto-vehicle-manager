@@ -139,6 +139,15 @@ export function getServiceStatus(lastServiceDate: string | null) {
   }
 }
 
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-IN', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
 export function calculateNextServiceDate(lastServiceDate: string | null, serviceIntervalMonths: number | null): { date: Date | null, status: string, text: string, shortText: string } {
   if (!lastServiceDate || !serviceIntervalMonths) {
     return {

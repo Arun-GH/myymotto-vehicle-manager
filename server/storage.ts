@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte } from "drizzle-orm";
 
@@ -53,6 +53,11 @@ export interface IStorage {
   createTrafficViolation(violation: InsertTrafficViolation): Promise<TrafficViolation>;
   updateTrafficViolationStatus(violationId: number, status: string, paymentDate?: string): Promise<TrafficViolation | undefined>;
   deleteTrafficViolation(violationId: number): Promise<boolean>;
+  
+  // Maintenance Schedule methods
+  getMaintenanceSchedule(make: string, model: string, year: number, drivingCondition: string): Promise<MaintenanceSchedule | undefined>;
+  createMaintenanceSchedule(schedule: InsertMaintenanceSchedule): Promise<MaintenanceSchedule>;
+  updateMaintenanceSchedule(id: number, schedule: Partial<InsertMaintenanceSchedule>): Promise<MaintenanceSchedule | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -721,6 +726,41 @@ export class DatabaseStorage implements IStorage {
       .delete(trafficViolations)
       .where(eq(trafficViolations.id, violationId));
     return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  // Maintenance Schedule methods
+  async getMaintenanceSchedule(make: string, model: string, year: number, drivingCondition: string): Promise<MaintenanceSchedule | undefined> {
+    const [schedule] = await db
+      .select()
+      .from(maintenanceSchedules)
+      .where(
+        and(
+          eq(maintenanceSchedules.make, make),
+          eq(maintenanceSchedules.model, model),
+          eq(maintenanceSchedules.year, year),
+          eq(maintenanceSchedules.drivingCondition, drivingCondition)
+        )
+      )
+      .orderBy(maintenanceSchedules.lastUpdated)
+      .limit(1);
+    return schedule;
+  }
+
+  async createMaintenanceSchedule(schedule: InsertMaintenanceSchedule): Promise<MaintenanceSchedule> {
+    const [newSchedule] = await db
+      .insert(maintenanceSchedules)
+      .values(schedule)
+      .returning();
+    return newSchedule;
+  }
+
+  async updateMaintenanceSchedule(id: number, scheduleUpdate: Partial<InsertMaintenanceSchedule>): Promise<MaintenanceSchedule | undefined> {
+    const [updated] = await db
+      .update(maintenanceSchedules)
+      .set({ ...scheduleUpdate, lastUpdated: new Date() })
+      .where(eq(maintenanceSchedules.id, id))
+      .returning();
+    return updated;
   }
 }
 

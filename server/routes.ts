@@ -3,6 +3,7 @@ import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact } from "@shared/schema";
+import { maintenanceService } from "./maintenance-service";
 import crypto from "crypto";
 import multer from "multer";
 import path from "path";
@@ -857,6 +858,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error verifying subscription payment:", error);
       res.status(500).json({ error: "Failed to verify payment" });
+    }
+  });
+
+  // Maintenance Schedule routes
+  app.get("/api/maintenance/schedule", async (req, res) => {
+    try {
+      const { make, model, year, drivingCondition = 'normal' } = req.query;
+      
+      if (!make || !model || !year) {
+        return res.status(400).json({ 
+          message: "Missing required parameters: make, model, year" 
+        });
+      }
+      
+      const schedule = await maintenanceService.getMaintenanceSchedule(
+        make as string,
+        model as string,
+        parseInt(year as string),
+        drivingCondition as 'normal' | 'severe'
+      );
+      
+      if (!schedule) {
+        return res.status(404).json({ 
+          message: "Maintenance schedule not found for this vehicle" 
+        });
+      }
+      
+      res.json(schedule);
+    } catch (error) {
+      console.error("Error fetching maintenance schedule:", error);
+      res.status(500).json({ message: "Failed to fetch maintenance schedule" });
+    }
+  });
+
+  app.get("/api/maintenance/available", async (req, res) => {
+    try {
+      const availableSchedules = maintenanceService.getAvailableMaintenance();
+      res.json(availableSchedules);
+    } catch (error) {
+      console.error("Error fetching available maintenance schedules:", error);
+      res.status(500).json({ message: "Failed to fetch available maintenance schedules" });
     }
   });
 
