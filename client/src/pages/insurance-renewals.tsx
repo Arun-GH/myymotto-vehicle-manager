@@ -23,18 +23,24 @@ export default function InsuranceRenewals() {
   });
 
   const handlePolicyBazarClick = (vehicle: Vehicle) => {
-    // Construct PolicyBazar URL with vehicle details for auto-population
-    const searchParams = new URLSearchParams({
-      'vehicle-number': vehicle.licensePlate || '',
-      'vehicle-make': vehicle.make || '',
-      'vehicle-model': vehicle.model || '',
-      'manufacturing-year': vehicle.year?.toString() || '',
-      'fuel-type': 'petrol', // Default, can be enhanced later
-      'rto-code': vehicle.licensePlate?.substring(0, 4) || '', // Extract RTO from license plate
-    });
+    // Copy vehicle number to clipboard for easy pasting
+    if (vehicle.licensePlate) {
+      navigator.clipboard.writeText(vehicle.licensePlate).then(() => {
+        toast({
+          title: "Vehicle Number Copied!",
+          description: `${vehicle.licensePlate} copied to clipboard. Paste it in PolicyBazar to get quotes.`,
+        });
+      }).catch(() => {
+        // Fallback if clipboard API fails
+        toast({
+          title: "Ready for PolicyBazar",
+          description: `Use vehicle number: ${vehicle.licensePlate}`,
+        });
+      });
+    }
     
-    // PolicyBazar car insurance URL with pre-filled vehicle details
-    const policyBazarUrl = `https://www.policybazaar.com/motor-insurance/car-insurance/?${searchParams.toString()}`;
+    // Open PolicyBazar car insurance page
+    const policyBazarUrl = 'https://www.policybazaar.com/motor-insurance/car-insurance/';
     window.open(policyBazarUrl, '_blank');
   };
 
@@ -158,6 +164,10 @@ export default function InsuranceRenewals() {
                       <div className="space-y-3">
                         <h4 className="font-medium text-gray-800">Compare & Renew Insurance</h4>
                         
+                        <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg">
+                          💡 <strong>Smart Feature:</strong> Vehicle number ({vehicle.licensePlate}) will be copied automatically - just paste it on PolicyBazar for instant quotes!
+                        </div>
+                        
                         {/* PolicyBazar Option */}
                         <Button
                           onClick={() => handlePolicyBazarClick(vehicle)}
@@ -169,7 +179,7 @@ export default function InsuranceRenewals() {
                             </div>
                             <div className="text-left">
                               <div className="font-semibold">PolicyBazar</div>
-                              <div className="text-xs opacity-90">Auto-filled quotes from 20+ insurers</div>
+                              <div className="text-xs opacity-90">Vehicle number copied • Compare 20+ insurers</div>
                             </div>
                           </div>
                           <ExternalLink className="w-4 h-4" />
