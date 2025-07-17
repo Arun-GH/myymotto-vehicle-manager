@@ -23,32 +23,37 @@ export default function ClimbingGame() {
   const [pieces, setPieces] = useState<PuzzlePiece[]>([]);
   const [emptyPosition, setEmptyPosition] = useState(8);
 
-  // Sports car images using CSS gradients and shapes
+  // Sports car designs with realistic styling
   const sportsCars = [
     {
       name: "Ferrari",
       color: "#DC143C",
-      accent: "#8B0000"
+      accent: "#8B0000",
+      style: "supercar" // Low, sleek profile
     },
     {
       name: "Lamborghini", 
       color: "#FFD700",
-      accent: "#FF8C00"
+      accent: "#FF8C00",
+      style: "angular" // Sharp, angular design
     },
     {
       name: "McLaren",
       color: "#FF4500",
-      accent: "#FF6347"
+      accent: "#FF6347",
+      style: "modern" // Smooth, modern curves
     },
     {
       name: "Porsche",
       color: "#32CD32",
-      accent: "#228B22"
+      accent: "#228B22",
+      style: "classic" // Classic sports car profile
     },
     {
       name: "Bugatti",
       color: "#4169E1",
-      accent: "#191970"
+      accent: "#191970",
+      style: "luxury" // Luxury hypercar design
     }
   ];
 
@@ -92,7 +97,254 @@ export default function ClimbingGame() {
     setEmptyPosition(8);
   };
 
-  // Draw sports car on canvas
+  // Draw realistic sports car based on style
+  const drawCarSection = (ctx: CanvasRenderingContext2D, x: number, y: number, correctRow: number, correctCol: number) => {
+    const style = currentCar.style;
+    
+    ctx.save();
+    
+    // Different car styles based on brand
+    switch (style) {
+      case "supercar": // Ferrari - low and sleek
+        drawFerrariSection(ctx, x, y, correctRow, correctCol);
+        break;
+      case "angular": // Lamborghini - sharp edges
+        drawLamborghiniSection(ctx, x, y, correctRow, correctCol);
+        break;
+      case "modern": // McLaren - smooth curves
+        drawMcLarenSection(ctx, x, y, correctRow, correctCol);
+        break;
+      case "classic": // Porsche - classic sports car
+        drawPorscheSection(ctx, x, y, correctRow, correctCol);
+        break;
+      case "luxury": // Bugatti - luxury hypercar
+        drawBugattiSection(ctx, x, y, correctRow, correctCol);
+        break;
+      default:
+        drawFerrariSection(ctx, x, y, correctRow, correctCol);
+    }
+    
+    ctx.restore();
+  };
+
+  // Ferrari - Sleek supercar design
+  const drawFerrariSection = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
+    if (row === 0) { // Top row - front section
+      if (col === 0) { // Front left
+        ctx.fillStyle = currentCar.color;
+        ctx.beginPath();
+        ctx.moveTo(x + 10, y + 80);
+        ctx.quadraticCurveTo(x + 20, y + 20, x + 80, y + 60);
+        ctx.lineTo(x + 100, y + 100);
+        ctx.lineTo(x, y + 100);
+        ctx.closePath();
+        ctx.fill();
+        // Headlight
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(x + 25, y + 70, 8, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (col === 1) { // Front center - hood
+        ctx.fillStyle = currentCar.color;
+        ctx.fillRect(x, y + 60, 100, 40);
+        // Hood lines
+        ctx.strokeStyle = currentCar.accent;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x + 20, y + 70);
+        ctx.lineTo(x + 80, y + 70);
+        ctx.stroke();
+      } else { // Front right
+        ctx.fillStyle = currentCar.color;
+        ctx.beginPath();
+        ctx.moveTo(x + 90, y + 80);
+        ctx.quadraticCurveTo(x + 80, y + 20, x + 20, y + 60);
+        ctx.lineTo(x, y + 100);
+        ctx.lineTo(x + 100, y + 100);
+        ctx.closePath();
+        ctx.fill();
+        // Headlight
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(x + 75, y + 70, 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (row === 1) { // Middle row - cabin
+      if (col === 0) { // Left door
+        ctx.fillStyle = currentCar.color;
+        ctx.fillRect(x, y, 100, 100);
+        ctx.fillStyle = currentCar.accent;
+        ctx.fillRect(x + 10, y + 20, 80, 60);
+        // Door handle
+        ctx.fillStyle = '#C0C0C0';
+        ctx.fillRect(x + 80, y + 45, 8, 15);
+      } else if (col === 1) { // Windshield/roof
+        ctx.fillStyle = currentCar.color;
+        ctx.fillRect(x, y, 100, 100);
+        // Windshield
+        ctx.fillStyle = '#87CEEB';
+        ctx.beginPath();
+        ctx.moveTo(x + 15, y + 10);
+        ctx.lineTo(x + 85, y + 10);
+        ctx.lineTo(x + 75, y + 50);
+        ctx.lineTo(x + 25, y + 50);
+        ctx.closePath();
+        ctx.fill();
+      } else { // Right door
+        ctx.fillStyle = currentCar.color;
+        ctx.fillRect(x, y, 100, 100);
+        ctx.fillStyle = currentCar.accent;
+        ctx.fillRect(x + 10, y + 20, 80, 60);
+        // Door handle
+        ctx.fillStyle = '#C0C0C0';
+        ctx.fillRect(x + 12, y + 45, 8, 15);
+      }
+    } else { // Bottom row - rear section
+      if (col === 0) { // Rear left wheel
+        ctx.fillStyle = currentCar.color;
+        ctx.fillRect(x, y, 100, 60);
+        // Wheel
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(x + 25, y + 80, 18, 0, Math.PI * 2);
+        ctx.fill();
+        // Rim
+        ctx.fillStyle = '#C0C0C0';
+        ctx.beginPath();
+        ctx.arc(x + 25, y + 80, 12, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (col === 1) { // Rear center
+        ctx.fillStyle = currentCar.color;
+        ctx.fillRect(x, y, 100, 60);
+        // Rear spoiler
+        ctx.fillStyle = currentCar.accent;
+        ctx.fillRect(x + 20, y + 10, 60, 8);
+      } else { // Rear right wheel
+        ctx.fillStyle = currentCar.color;
+        ctx.fillRect(x, y, 100, 60);
+        // Wheel
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(x + 75, y + 80, 18, 0, Math.PI * 2);
+        ctx.fill();
+        // Rim
+        ctx.fillStyle = '#C0C0C0';
+        ctx.beginPath();
+        ctx.arc(x + 75, y + 80, 12, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  };
+
+  // Lamborghini - Angular design
+  const drawLamborghiniSection = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
+    if (row === 0) { // Front section - angular nose
+      if (col === 0 || col === 2) {
+        ctx.fillStyle = currentCar.color;
+        ctx.beginPath();
+        ctx.moveTo(x + 10, y + 90);
+        ctx.lineTo(x + 50, y + 30);
+        ctx.lineTo(x + 90, y + 70);
+        ctx.lineTo(x + 90, y + 100);
+        ctx.lineTo(x, y + 100);
+        ctx.closePath();
+        ctx.fill();
+        // Sharp headlight
+        ctx.fillStyle = '#FFFFFF';
+        const hx = col === 0 ? x + 20 : x + 80;
+        ctx.beginPath();
+        ctx.moveTo(hx, y + 70);
+        ctx.lineTo(hx + 15, y + 65);
+        ctx.lineTo(hx + 15, y + 75);
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        ctx.fillStyle = currentCar.color;
+        ctx.beginPath();
+        ctx.moveTo(x, y + 70);
+        ctx.lineTo(x + 30, y + 20);
+        ctx.lineTo(x + 70, y + 20);
+        ctx.lineTo(x + 100, y + 70);
+        ctx.lineTo(x + 100, y + 100);
+        ctx.lineTo(x, y + 100);
+        ctx.closePath();
+        ctx.fill();
+      }
+    } else if (row === 1) {
+      drawFerrariSection(ctx, x, y, row, col); // Similar cabin structure
+    } else {
+      drawFerrariSection(ctx, x, y, row, col); // Similar rear structure
+    }
+  };
+
+  // McLaren - Modern curves
+  const drawMcLarenSection = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
+    if (row === 0) { // Smooth curved front
+      ctx.fillStyle = currentCar.color;
+      ctx.beginPath();
+      ctx.moveTo(x, y + 100);
+      ctx.quadraticCurveTo(x + 50, y + 40, x + 100, y + 100);
+      ctx.lineTo(x, y + 100);
+      ctx.closePath();
+      ctx.fill();
+      if (col === 0 || col === 2) {
+        // Modern LED headlights
+        ctx.fillStyle = '#FFFFFF';
+        const hx = col === 0 ? x + 25 : x + 75;
+        ctx.fillRect(hx - 8, y + 75, 16, 4);
+      }
+    } else {
+      drawFerrariSection(ctx, x, y, row, col);
+    }
+  };
+
+  // Porsche - Classic sports car
+  const drawPorscheSection = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
+    if (row === 0) { // Classic rounded front
+      ctx.fillStyle = currentCar.color;
+      ctx.beginPath();
+      ctx.arc(x + 50, y + 100, 50, Math.PI, 0);
+      ctx.lineTo(x + 100, y + 100);
+      ctx.lineTo(x, y + 100);
+      ctx.closePath();
+      ctx.fill();
+      if (col === 0 || col === 2) {
+        // Round headlights
+        ctx.fillStyle = '#FFFFFF';
+        const hx = col === 0 ? x + 25 : x + 75;
+        ctx.beginPath();
+        ctx.arc(hx, y + 75, 10, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else {
+      drawFerrariSection(ctx, x, y, row, col);
+    }
+  };
+
+  // Bugatti - Luxury hypercar
+  const drawBugattiSection = (ctx: CanvasRenderingContext2D, x: number, y: number, row: number, col: number) => {
+    if (row === 0) { // Distinctive Bugatti horseshoe grille
+      ctx.fillStyle = currentCar.color;
+      if (col === 1) {
+        ctx.fillRect(x, y + 60, 100, 40);
+        // Horseshoe grille
+        ctx.fillStyle = currentCar.accent;
+        ctx.beginPath();
+        ctx.arc(x + 50, y + 100, 30, Math.PI, 0);
+        ctx.fill();
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(x + 50, y + 100, 20, Math.PI, 0);
+        ctx.fill();
+      } else {
+        drawFerrariSection(ctx, x, y, row, col);
+      }
+    } else {
+      drawFerrariSection(ctx, x, y, row, col);
+    }
+  };
+
+  // Main draw function
   const drawSportsCar = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -100,8 +352,12 @@ export default function ClimbingGame() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
-    ctx.fillStyle = '#87CEEB';
+    // Clear canvas with road texture
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, '#87CEEB'); // Sky blue
+    gradient.addColorStop(0.7, '#98FB98'); // Light green
+    gradient.addColorStop(1, '#696969'); // Road gray
+    ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, 300, 300);
 
     const pieceWidth = 100;
@@ -134,72 +390,15 @@ export default function ClimbingGame() {
       const correctRow = Math.floor(piece.correctPosition / 3);
       const correctCol = piece.correctPosition % 3;
 
-      // Draw piece of the car based on correct position
-      ctx.save();
-      ctx.fillStyle = currentCar.color;
-      
-      // Main car body section
-      if (correctRow === 0 && correctCol === 1) {
-        // Top center - roof
-        ctx.fillRect(x + 20, y + 30, 60, 40);
-        ctx.fillStyle = currentCar.accent;
-        ctx.fillRect(x + 25, y + 35, 50, 30);
-      } else if (correctRow === 1) {
-        // Middle row - main body
-        ctx.fillRect(x + 10, y + 20, 80, 60);
-        if (correctCol === 0) {
-          // Left door
-          ctx.fillStyle = currentCar.accent;
-          ctx.fillRect(x + 15, y + 30, 30, 40);
-        } else if (correctCol === 1) {
-          // Center - windshield
-          ctx.fillStyle = '#87CEEB';
-          ctx.fillRect(x + 30, y + 25, 40, 30);
-        } else {
-          // Right door
-          ctx.fillStyle = currentCar.accent;
-          ctx.fillRect(x + 55, y + 30, 30, 40);
-        }
-      } else if (correctRow === 2) {
-        // Bottom row - wheels and bumper
-        ctx.fillRect(x + 5, y + 10, 90, 50);
-        if (correctCol === 0 || correctCol === 2) {
-          // Wheels
-          ctx.fillStyle = '#000';
-          ctx.beginPath();
-          ctx.arc(x + 25, y + 70, 15, 0, Math.PI * 2);
-          ctx.fill();
-          if (correctCol === 2) {
-            ctx.beginPath();
-            ctx.arc(x + 75, y + 70, 15, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        }
-      } else {
-        // Top corners
-        if (correctCol === 0) {
-          // Top left - headlight
-          ctx.fillRect(x + 20, y + 60, 60, 30);
-          ctx.fillStyle = '#FFFF00';
-          ctx.beginPath();
-          ctx.arc(x + 30, y + 75, 10, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          // Top right - headlight
-          ctx.fillRect(x + 20, y + 60, 60, 30);
-          ctx.fillStyle = '#FFFF00';
-          ctx.beginPath();
-          ctx.arc(x + 70, y + 75, 10, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
+      // Draw the car section
+      drawCarSection(ctx, x, y, correctRow, correctCol);
 
-      ctx.restore();
-
-      // Draw piece number for debugging
-      ctx.fillStyle = '#FFF';
+      // Draw piece number
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.fillRect(x + 2, y + 2, 16, 16);
+      ctx.fillStyle = '#000';
       ctx.font = '12px Arial';
-      ctx.fillText(`${piece.correctPosition + 1}`, x + 5, y + 15);
+      ctx.fillText(`${piece.correctPosition + 1}`, x + 6, y + 14);
     });
 
     // Highlight empty space
@@ -208,8 +407,13 @@ export default function ClimbingGame() {
     const emptyX = emptyCol * pieceWidth;
     const emptyY = emptyRow * pieceHeight;
     
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
     ctx.fillRect(emptyX + 2, emptyY + 2, pieceWidth - 4, pieceHeight - 4);
+    ctx.strokeStyle = '#FFF';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([5, 5]);
+    ctx.strokeRect(emptyX + 2, emptyY + 2, pieceWidth - 4, pieceHeight - 4);
+    ctx.setLineDash([]);
   };
 
   // Handle piece click
