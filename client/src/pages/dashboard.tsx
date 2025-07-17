@@ -59,7 +59,7 @@ export default function Dashboard() {
             </h2>
             <div className="text-xs text-gray-500">
               <Link href="/climbing-game" className="text-purple-600 hover:text-purple-800 underline">
-                Hill Climb Game
+                Car Puzzle Game
               </Link>
             </div>
           </div>
