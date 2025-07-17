@@ -1,12 +1,13 @@
 import { Switch, Route, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { apiRequest } from "@/lib/queryClient";
 import { type UserProfile } from "@shared/schema";
+import SplashScreen from "@/components/splash-screen";
 import Dashboard from "@/pages/dashboard";
 import AddVehicle from "@/pages/add-vehicle";
 import EditVehicle from "@/pages/edit-vehicle";
@@ -25,6 +26,7 @@ import NotFound from "@/pages/not-found";
 
 function Router() {
   const [location, setLocation] = useLocation();
+  const [showSplash, setShowSplash] = useState(true);
   
   // Check if user is authenticated (in a real app, this would come from session/token)
   const currentUserId = localStorage.getItem("currentUserId");
@@ -55,6 +57,11 @@ function Router() {
       setLocation("/profile");
     }
   }, [isAuthenticated, isLoading, profile, location, setLocation]);
+
+  // Show splash screen for 2 seconds on app start
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
 
   return (
     <Switch>
