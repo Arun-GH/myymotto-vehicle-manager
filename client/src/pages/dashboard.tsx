@@ -3,7 +3,7 @@ import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, 
 import { Link } from "wouter";
 import { type Vehicle } from "@shared/schema";
 import VehicleCard from "@/components/vehicle-card";
-import StatsOverview from "@/components/stats-overview";
+
 import BottomNav from "@/components/bottom-nav";
 import FloatingActionButton from "@/components/floating-action-button";
 import NotificationBell from "@/components/notification-bell";
@@ -42,8 +42,17 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pb-20 bg-warm-pattern">
-        {/* Stats Overview */}
-        <StatsOverview />
+        {/* Vehicle Count Label */}
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-medium text-gray-600">
+              {vehicles.length > 0 ? `${vehicles.length} Vehicle${vehicles.length > 1 ? 's' : ''}` : 'Vehicle Management'}
+            </h2>
+            <div className="text-xs text-gray-500">
+              {vehicles.length > 0 && 'Manage your vehicles'}
+            </div>
+          </div>
+        </div>
 
         {/* Quick Actions */}
         <section className="px-4 py-2">

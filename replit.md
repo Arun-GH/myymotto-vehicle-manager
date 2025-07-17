@@ -22,6 +22,8 @@ Preferred communication style: Simple, everyday language.
 - Updated all vehicle make displays throughout the app to show in uppercase (capitals) for consistent branding
 - Added comprehensive insurance renewals page with PolicyBazar-like functionality and multiple provider options
 - Integrated insurance renewals as quick action on dashboard with 2x2 grid layout for better organization
+- Enhanced insurance renewal system with direct links to insurer-specific renewal pages and automatic vehicle number clipboard copying
+- Replaced bulky statistics tiles with clean vehicle count label for better mobile space utilization and improved user experience
 - Ready for official government API integration for real-time violation checking
 
 **July 16, 2025**: Implemented manual make/model entry and auto-capitalization functionality
