@@ -50,30 +50,110 @@ export default function InsuranceRenewals() {
     window.open('https://www.acko.com/car-insurance/', '_blank');
   };
 
-  const getInsuranceCompanyWebsite = (companyName: string): string => {
-    const websites: { [key: string]: string } = {
-      'HDFC ERGO': 'https://www.hdfcergo.com/motor-insurance',
-      'ICICI LOMBARD': 'https://www.icicilombard.com/motor-insurance/car-insurance',
-      'BAJAJ ALLIANZ': 'https://www.bajajallianz.com/motor-insurance/car-insurance.html',
-      'TATA AIG': 'https://www.tataaig.com/motor-insurance/car-insurance',
-      'NEW INDIA ASSURANCE': 'https://www.newindia.co.in/motor-insurance',
-      'RELIANCE GENERAL': 'https://www.reliancegeneral.co.in/Insurance/Motor-Insurance/Car-Insurance.aspx',
-      'ORIENTAL INSURANCE': 'https://www.orientalinsurance.org.in/motor-insurance',
-      'UNITED INDIA': 'https://www.uiic.co.in/motor-insurance',
-      'NATIONAL INSURANCE': 'https://www.nationalinsurance.nic.co.in/motor-insurance',
-      'SBI GENERAL': 'https://www.sbigeneral.in/motor-insurance/car-insurance',
-      'IFFCO TOKIO': 'https://www.iffcotokio.co.in/motor-insurance/car-insurance',
-      'ROYAL SUNDARAM': 'https://www.royalsundaram.in/motor-insurance/car-insurance',
-      'CHOLAMANDALAM': 'https://www.cholamandalam.com/motor-insurance/car-insurance.aspx',
-      'LIBERTY GENERAL': 'https://www.libertyinsurance.in/motor-insurance/car-insurance',
-      'FUTURE GENERALI': 'https://www.futuregenerali.in/motor-insurance/car-insurance',
-      'DIGIT INSURANCE': 'https://www.godigit.com/motor-insurance/car-insurance',
-      'ACKO': 'https://www.acko.com/car-insurance/',
-      'BHARTI AXA': 'https://www.bharti-axagi.co.in/motor-insurance/car-insurance'
+  const getInsuranceRenewalInfo = (companyName: string): { url: string; name: string } => {
+    const renewalPages: { [key: string]: { url: string; name: string } } = {
+      'HDFC ERGO': { 
+        url: 'https://www.hdfcergo.com/renew-hdfc-ergo-policy',
+        name: 'HDFC ERGO'
+      },
+      'ICICI LOMBARD': { 
+        url: 'https://www.icicilombard.com/renew-policy-online',
+        name: 'ICICI Lombard'
+      },
+      'BAJAJ ALLIANZ': { 
+        url: 'https://www.bajajallianz.com/quick-renew/',
+        name: 'Bajaj Allianz'
+      },
+      'TATA AIG': { 
+        url: 'https://www.tataaig.com/motor-insurance/renew-car-insurance',
+        name: 'Tata AIG'
+      },
+      'NEW INDIA ASSURANCE': { 
+        url: 'https://www.newindia.co.in/online-renewal',
+        name: 'New India Assurance'
+      },
+      'RELIANCE GENERAL': { 
+        url: 'https://www.reliancegeneral.co.in/Insurance/motor-insurance-renewal.aspx',
+        name: 'Reliance General'
+      },
+      'ORIENTAL INSURANCE': { 
+        url: 'https://www.orientalinsurance.org.in/motor-insurance',
+        name: 'Oriental Insurance'
+      },
+      'UNITED INDIA': { 
+        url: 'https://www.uiic.co.in/renewal',
+        name: 'United India'
+      },
+      'NATIONAL INSURANCE': { 
+        url: 'https://www.nationalinsurance.nic.co.in/motor-insurance',
+        name: 'National Insurance'
+      },
+      'SBI GENERAL': { 
+        url: 'https://www.sbigeneral.in/motor-insurance/car-insurance-renewal',
+        name: 'SBI General'
+      },
+      'IFFCO TOKIO': { 
+        url: 'https://www.iffcotokio.co.in/motor-insurance/car-insurance',
+        name: 'IFFCO Tokio'
+      },
+      'ROYAL SUNDARAM': { 
+        url: 'https://www.royalsundaram.in/motor-insurance/car-insurance',
+        name: 'Royal Sundaram'
+      },
+      'CHOLAMANDALAM': { 
+        url: 'https://www.cholamandalam.com/motor-insurance/car-insurance-renewal.aspx',
+        name: 'Cholamandalam'
+      },
+      'LIBERTY GENERAL': { 
+        url: 'https://www.libertyinsurance.in/motor-insurance/car-insurance',
+        name: 'Liberty General'
+      },
+      'FUTURE GENERALI': { 
+        url: 'https://www.futuregenerali.in/motor-insurance/car-insurance',
+        name: 'Future Generali'
+      },
+      'DIGIT INSURANCE': { 
+        url: 'https://www.godigit.com/motor-insurance/car-insurance-renewal',
+        name: 'Digit Insurance'
+      },
+      'ACKO': { 
+        url: 'https://www.acko.com/car-insurance/',
+        name: 'Acko'
+      },
+      'BHARTI AXA': { 
+        url: 'https://www.bharti-axagi.co.in/motor-insurance/car-insurance',
+        name: 'Bharti AXA'
+      }
     };
     
     const normalizedName = companyName?.toUpperCase().trim();
-    return websites[normalizedName] || `https://www.google.com/search?q=${encodeURIComponent(companyName + ' car insurance')}`;
+    return renewalPages[normalizedName] || { 
+      url: `https://www.google.com/search?q=${encodeURIComponent(companyName + ' car insurance renewal')}`,
+      name: companyName
+    };
+  };
+
+  const handleCurrentInsurerRenewal = (vehicle: Vehicle) => {
+    const renewalInfo = getInsuranceRenewalInfo(vehicle.insuranceCompany!);
+    
+    // Copy vehicle number to clipboard for easy pasting
+    if (vehicle.licensePlate) {
+      navigator.clipboard.writeText(vehicle.licensePlate).then(() => {
+        toast({
+          title: "Vehicle Number Copied!",
+          description: `${vehicle.licensePlate} copied for ${renewalInfo.name} renewal page.`,
+        });
+      }).catch(() => {
+        // Fallback if clipboard API fails
+        toast({
+          title: "Ready for Renewal",
+          description: `Use vehicle number: ${vehicle.licensePlate}`,
+        });
+      });
+    }
+    
+    // Open the specific renewal page
+    window.open(renewalInfo.url, '_blank');
   };
 
   return (
@@ -197,7 +277,7 @@ export default function InsuranceRenewals() {
                           <div className="mb-4">
                             <h5 className="text-sm font-medium text-gray-700 mb-2">Renew with Current Provider</h5>
                             <Button
-                              onClick={() => window.open(getInsuranceCompanyWebsite(vehicle.insuranceCompany!), '_blank')}
+                              onClick={() => handleCurrentInsurerRenewal(vehicle)}
                               variant="outline"
                               className="w-full border-green-200 bg-green-50 hover:bg-green-100 text-green-800 flex items-center justify-between p-3 h-auto"
                             >
@@ -205,7 +285,7 @@ export default function InsuranceRenewals() {
                                 <Building2 className="w-4 h-4 mr-2" />
                                 <div className="text-left">
                                   <div className="font-medium">{vehicle.insuranceCompany}</div>
-                                  <div className="text-xs opacity-80">Visit official website</div>
+                                  <div className="text-xs opacity-80">Vehicle number copied • Direct renewal</div>
                                 </div>
                               </div>
                               <ExternalLink className="w-4 h-4" />
