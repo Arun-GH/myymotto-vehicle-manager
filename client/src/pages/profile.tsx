@@ -360,16 +360,14 @@ export default function Profile() {
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              {!profile && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-gray-600 hover:bg-red-50"
-                  onClick={() => setIsEditing(false)}
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
-              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 hover:bg-red-50"
+                onClick={() => profile ? setLocation("/") : setIsEditing(false)}
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
