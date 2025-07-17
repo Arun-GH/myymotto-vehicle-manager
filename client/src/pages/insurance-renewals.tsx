@@ -29,14 +29,16 @@ export default function InsuranceRenewals() {
     if (vehicle.licensePlate) {
       navigator.clipboard.writeText(vehicle.licensePlate).then(() => {
         toast({
-          title: "Vehicle Number Copied!",
-          description: `${vehicle.licensePlate} copied to clipboard. Paste it in PolicyBazar to get quotes.`,
+          title: "✅ Vehicle Number Copied!",
+          description: `${vehicle.licensePlate} is ready to paste (Ctrl+V / Cmd+V) on PolicyBazar form.`,
+          duration: 5000,
         });
       }).catch(() => {
         // Fallback if clipboard API fails
         toast({
-          title: "Ready for PolicyBazar",
-          description: `Use vehicle number: ${vehicle.licensePlate}`,
+          title: "Manual Entry Required",
+          description: `Please type vehicle number: ${vehicle.licensePlate}`,
+          duration: 5000,
         });
       });
     }
@@ -293,8 +295,8 @@ export default function InsuranceRenewals() {
                           </div>
                         )}
 
-                        <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg">
-                          💡 <strong>Smart Feature:</strong> Vehicle number ({vehicle.licensePlate}) will be copied automatically - just paste it on PolicyBazar for instant quotes!
+                        <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg border border-blue-200">
+                          📋 <strong>How to use:</strong> Click PolicyBazar → Vehicle number ({vehicle.licensePlate}) copied → Paste (Ctrl+V / Cmd+V) in their form → Get quotes!
                         </div>
                         
                         {/* PolicyBazar Option */}
@@ -308,7 +310,7 @@ export default function InsuranceRenewals() {
                             </div>
                             <div className="text-left">
                               <div className="font-semibold">PolicyBazar</div>
-                              <div className="text-xs opacity-90">Vehicle number copied • Compare 20+ insurers</div>
+                              <div className="text-xs opacity-90">Copies number • Paste manually • 20+ insurers</div>
                             </div>
                           </div>
                           <ExternalLink className="w-4 h-4" />
