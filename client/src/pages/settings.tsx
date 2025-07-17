@@ -5,6 +5,8 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
 import ColorfulLogo from "@/components/colorful-logo";
+import BottomNav from "@/components/bottom-nav";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 interface Permission {
   id: string;
@@ -173,31 +175,38 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-t-4 border-b-4 border-orange-400 shadow-lg sticky top-0 z-10">
-        <div className="max-w-md mx-auto px-4 py-3">
+      <header className="header-gradient-border border-4 border-red-500 shadow-lg relative z-10">
+        <div className="px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="p-2 text-gray-600 hover:bg-red-50 rounded-full transition-colors">
-              <ArrowLeft className="w-6 h-6" />
-            </Link>
             <div className="flex items-center space-x-3">
-              <div className="w-14 h-14 rounded-full overflow-hidden">
+              <Link href="/">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-600 hover:bg-red-50"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+              </Link>
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-14 h-14 rounded-lg"
+              />
+              <div>
                 <ColorfulLogo />
+                <p className="text-sm text-red-600">App Settings</p>
               </div>
             </div>
-            <div className="w-10 h-10" /> {/* Spacer for balance */}
-          </div>
-          <div className="text-center mt-2">
-            <h1 className="text-xl font-bold text-gray-800">App Settings</h1>
-            <p className="text-red-600 text-sm font-medium">Manage Your Permissions</p>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-md mx-auto px-4 py-6">
+      <div className="p-4 pb-20 bg-warm-pattern">
         {/* Permissions Card */}
-        <Card className="mb-6 shadow-lg shadow-orange-200/50">
+        <Card className="mb-6 shadow-orange">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Shield className="w-5 h-5 text-blue-600" />
@@ -290,7 +299,7 @@ export default function Settings() {
         </div>
 
         {/* Profile Access */}
-        <Card className="mb-4 shadow-lg shadow-orange-200/50">
+        <Card className="mb-4 shadow-orange">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -325,6 +334,8 @@ export default function Settings() {
           Reset All Permissions
         </Button>
       </div>
+
+      <BottomNav currentPath="/" />
     </div>
   );
 }
