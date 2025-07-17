@@ -339,7 +339,7 @@ export default function SignIn() {
                 className="w-16 h-16 rounded-full"
               />
             </div>
-            <CardTitle className="text-2xl font-bold gradient-text">Welcome to <ColorfulLogo className="inline" />!</CardTitle>
+            <CardTitle className="text-2xl font-bold text-gray-800">Welcome to <ColorfulLogo className="inline" />!</CardTitle>
             <p className="text-gray-600">Complete your registration to continue</p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -483,7 +483,7 @@ export default function SignIn() {
               className="w-16 h-16 rounded-full"
             />
           </div>
-          <CardTitle className="text-2xl font-bold gradient-text">Welcome to <ColorfulLogo className="inline" />!</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-800">Welcome to <ColorfulLogo className="inline" />!</CardTitle>
           <p className="text-red-600 font-medium">Timely Care for your carrier</p>
         </CardHeader>
         <CardContent>
