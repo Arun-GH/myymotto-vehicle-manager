@@ -24,6 +24,7 @@ import SignIn from "@/pages/sign-in";
 import TrafficViolations from "@/pages/traffic-violations";
 import InsuranceRenewals from "@/pages/insurance-renewals";
 import Settings from "@/pages/settings";
+import ClimbingGame from "@/pages/climbing-game";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -104,6 +105,7 @@ function Router() {
       <Route path="/subscribe" component={Subscribe} />
       <Route path="/profile" component={Profile} />
       <Route path="/settings" component={Settings} />
+      <Route path="/climbing-game" component={ClimbingGame} />
       <Route path="/traffic-violations" component={TrafficViolations} />
       <Route path="/insurance-renewals" component={InsuranceRenewals} />
       <Route component={NotFound} />
