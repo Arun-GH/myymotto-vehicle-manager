@@ -14,6 +14,7 @@ import AddVehicle from "@/pages/add-vehicle";
 import EditVehicle from "@/pages/edit-vehicle";
 import UploadDocuments from "@/pages/upload-documents";
 import ViewDocuments from "@/pages/view-documents";
+import LocalDocuments from "@/pages/local-documents";
 
 import ServiceCenters from "@/pages/service-centers";
 import Documents from "@/pages/documents";
@@ -100,6 +101,7 @@ function Router() {
       <Route path="/vehicle/:id/edit" component={EditVehicle} />
       <Route path="/vehicle/:id/upload" component={UploadDocuments} />
       <Route path="/vehicle/:id/documents" component={ViewDocuments} />
+      <Route path="/vehicle/:id/local-documents" component={LocalDocuments} />
       <Route path="/vehicle/:id/maintenance" component={MaintenanceChecklist} />
 
       <Route path="/service-centers" component={ServiceCenters} />

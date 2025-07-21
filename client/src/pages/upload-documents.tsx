@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import CameraCapture from "@/components/camera-capture";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
+import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
 
 type DocumentType = "emission" | "insurance" | "service" | "rc";
 
@@ -76,37 +77,10 @@ export default function UploadDocuments() {
 
       const uploadedDocuments = [];
 
+      // Store documents locally on device instead of server upload
       for (const file of selectedFiles) {
-        // Upload file
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("type", selectedType);
-        
-        const uploadResponse = await apiRequest("POST", "/api/upload", formData);
-        if (!uploadResponse.ok) {
-          const error = await uploadResponse.json();
-          throw new Error(error.message || "Failed to upload file");
-        }
-        const uploadResult = await uploadResponse.json();
-
-        // Create document record
-        const documentData = {
-          vehicleId,
-          type: selectedType,
-          fileName: uploadResult.fileName,
-          filePath: uploadResult.filePath,
-          fileSize: uploadResult.fileSize,
-          mimeType: uploadResult.mimeType,
-          expiryDate: expiryDate || null,
-        };
-
-        const documentResponse = await apiRequest("POST", "/api/documents", documentData);
-        if (!documentResponse.ok) {
-          const error = await documentResponse.json();
-          throw new Error(error.message || "Failed to create document record");
-        }
-        const document = await documentResponse.json();
-        uploadedDocuments.push(document);
+        const localDoc = await localDocumentStorage.storeDocument(vehicleId, selectedType, file);
+        uploadedDocuments.push(localDoc);
       }
 
       // If uploading service invoice, update vehicle's last service date
@@ -122,13 +96,14 @@ export default function UploadDocuments() {
       return uploadedDocuments;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/vehicles", vehicleId, "documents"] });
+      // Invalidate local document queries 
+      queryClient.invalidateQueries({ queryKey: ["local-documents", vehicleId] });
       queryClient.invalidateQueries({ queryKey: ["/api/vehicles"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       
       toast({
-        title: "Documents Uploaded",
-        description: `Successfully uploaded ${selectedFiles.length} ${selectedDocumentType?.label.toLowerCase()} document(s).`,
+        title: "Documents Saved Locally",
+        description: `Successfully saved ${selectedFiles.length} ${selectedDocumentType?.label.toLowerCase()} document(s) on your device.`,
       });
       
       // Reset form
@@ -139,8 +114,8 @@ export default function UploadDocuments() {
     },
     onError: (error) => {
       toast({
-        title: "Upload Failed",
-        description: error.message || "Failed to upload documents",
+        title: "Save Failed",
+        description: error.message || "Failed to save documents locally",
         variant: "destructive",
       });
     },
