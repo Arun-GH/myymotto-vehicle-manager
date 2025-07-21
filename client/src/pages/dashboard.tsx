@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings, Gamepad2 } from "lucide-react";
+import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings, Gamepad2, Puzzle, Newspaper } from "lucide-react";
 import { Link } from "wouter";
 import { type Vehicle } from "@shared/schema";
 import VehicleCard from "@/components/vehicle-card";
@@ -58,12 +58,14 @@ export default function Dashboard() {
               {vehicles.length > 0 ? `${vehicles.length} Vehicle${vehicles.length > 1 ? 's' : ''}` : 'Vehicle Management'}
             </h2>
             <div className="text-xs text-gray-500 flex items-center space-x-3">
-              <Link href="/climbing-game" className="text-purple-600 hover:text-purple-800 underline">
-                Logo Puzzle Game
+              <Link href="/climbing-game" className="text-purple-600 hover:text-purple-800 underline flex items-center space-x-1">
+                <Puzzle className="w-3 h-3" />
+                <span>Logo Puzzle Game</span>
               </Link>
               <span className="text-gray-400">|</span>
-              <Link href="/news-tidbits" className="text-blue-600 hover:text-blue-800 underline">
-                News Bits
+              <Link href="/news-tidbits" className="text-blue-600 hover:text-blue-800 underline flex items-center space-x-1">
+                <Newspaper className="w-3 h-3" />
+                <span>News Bits</span>
               </Link>
             </div>
           </div>

@@ -10,7 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Implemented comprehensive government-only news system with expanded coverage
+**July 21, 2025**: Added icons and enhanced News Bits system with automotive events
+- Added Puzzle icon for Logo Puzzle Game and Newspaper icon for News Bits in dashboard
+- Renamed "News Tidbits" to "News Bits" throughout application for consistency
+- Added 3 automotive events: Auto Expo 2026, ACETECH Delhi 2025, India Auto Show Mumbai 2025
+- Updated stats grid to 4-column layout: Launches, Events, Policies, Total with dynamic counting
+- All data sourced from free APIs: API Setu, Open Government Data India, Ministry sources
+- News order optimized: Vehicle launches → Automotive events → Government policies
 - Migrated News Bits to use only authentic government automotive policy announcements
 - Database-powered system with 24-hour caching for consistent data across all users
 - Replaced external APIs with official government sources: Ministry of Heavy Industries, MoRTH, NITI Aayog, Ministry of Finance
