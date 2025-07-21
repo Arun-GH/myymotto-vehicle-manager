@@ -75,7 +75,7 @@ export default function AddServiceLog() {
         title: "Service Log Added",
         description: "Service log has been added successfully.",
       });
-      setLocation(`/vehicle/${vehicleId}/service-logs`);
+      setLocation("/");
     },
     onError: (error) => {
       toast({
@@ -132,7 +132,7 @@ export default function AddServiceLog() {
       {/* Header */}
       <header className="header-gradient-border shadow-lg relative px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href={`/vehicle/${vehicleId}/service-logs`}>
+          <Link href="/">
             <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 -ml-2">
               <ArrowLeft className="w-5 h-5" />
             </Button>
@@ -140,7 +140,7 @@ export default function AddServiceLog() {
           
           <div className="flex-1 text-center">
             <div className="flex items-center justify-center space-x-2">
-              <ColorfulLogo className="w-14 h-14" />
+              <ColorfulLogo />
               <div>
                 <h1 className="text-xl font-bold text-gray-800">Add Service Log</h1>
                 <p className="text-sm text-red-600">Timely Care for your carrier</p>

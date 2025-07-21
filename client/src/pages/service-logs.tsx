@@ -37,7 +37,7 @@ export default function ServiceLogs() {
       {/* Header */}
       <header className="header-gradient-border shadow-lg relative px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/dashboard">
+          <Link href="/">
             <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 -ml-2">
               <ArrowLeft className="w-5 h-5" />
             </Button>
@@ -45,7 +45,7 @@ export default function ServiceLogs() {
           
           <div className="flex-1 text-center">
             <div className="flex items-center justify-center space-x-2">
-              <ColorfulLogo className="w-14 h-14" />
+              <ColorfulLogo />
               <div>
                 <h1 className="text-xl font-bold text-gray-800">Service Logs</h1>
                 <p className="text-sm text-red-600">Timely Care for your carrier</p>
@@ -140,7 +140,7 @@ export default function ServiceLogs() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => window.open(log.invoicePath!, '_blank')}
+                          onClick={() => window.open(`/${log.invoicePath}`, '_blank')}
                           className="text-green-600 hover:text-green-800 p-1"
                           title="View Invoice"
                         >
