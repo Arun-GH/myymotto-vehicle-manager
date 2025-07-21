@@ -284,7 +284,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             <span className="text-gray-400 text-xs">|</span>
             <Link href={`/vehicle/${vehicle.id}/alerts`}>
               <Button variant="ghost" size="sm" className="text-orange-600 p-1 h-auto hover:bg-orange-50 flex items-center space-x-1">
-                <Bell className="w-3 h-3" />
+                <Calendar className="w-3 h-3" />
                 <span className="text-xs">Set Alert</span>
               </Button>
             </Link>
