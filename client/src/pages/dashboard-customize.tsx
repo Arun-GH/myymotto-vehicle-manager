@@ -96,7 +96,7 @@ export default function DashboardCustomize() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white header-gradient-border shadow-lg">
         <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/dashboard">
+          <Link href="/">
             <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50">
               <ArrowLeft className="w-5 h-5" />
             </Button>
@@ -239,7 +239,7 @@ export default function DashboardCustomize() {
               <p className="text-sm text-gray-600">
                 Return to dashboard to see your customized layout in action.
               </p>
-              <Link href="/dashboard">
+              <Link href="/">
                 <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white">
                   <Eye className="w-4 h-4 mr-2" />
                   View Dashboard
