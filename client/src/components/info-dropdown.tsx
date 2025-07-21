@@ -22,7 +22,7 @@ export default function InfoDropdown() {
   };
 
   const handleContact = () => {
-    window.open("mailto:support@myymotto.app?subject=Myymotto Support Request", "_blank");
+    window.open("mailto:info@arudhihsolutions.com?subject=Myymotto Support Request&body=Hi there,%0D%0A%0D%0APlease get in touch with us at info@arudhihsolutions.com for any support queries.%0D%0A%0D%0AThanks!", "_blank");
   };
 
   const handleFeedback = () => {
