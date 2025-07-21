@@ -302,7 +302,6 @@ export default function MaintenancePage() {
                     <TableHead className="font-semibold">Service</TableHead>
                     <TableHead className="font-semibold">Recommended Timeline</TableHead>
                     <TableHead className="font-semibold text-center">Date Done</TableHead>
-                    <TableHead className="font-semibold text-center">Warranty Cards / Invoices</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -316,10 +315,33 @@ export default function MaintenancePage() {
                         <TableCell className="text-sm text-gray-600">{item.recommendedTimeline}</TableCell>
                         <TableCell className="text-center">
                           {record?.completedDate ? (
-                            <div className="text-sm">
+                            <div className="text-sm flex items-center justify-center space-x-2">
                               <div className="font-medium text-green-700">
                                 {new Date(record.completedDate).toLocaleDateString('en-GB')}
                               </div>
+                              {/* Document view buttons */}
+                              {record?.warrantyCardPath && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => window.open(record.warrantyCardPath!, '_blank')}
+                                  className="text-blue-600 hover:text-blue-800 p-1"
+                                  title="View Warranty Card"
+                                >
+                                  <Eye className="w-3 h-3" />
+                                </Button>
+                              )}
+                              {record?.invoicePath && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => window.open(record.invoicePath!, '_blank')}
+                                  className="text-green-600 hover:text-green-800 p-1"
+                                  title="View Invoice"
+                                >
+                                  <FileText className="w-3 h-3" />
+                                </Button>
+                              )}
                             </div>
                           ) : (
                             <Button
@@ -332,32 +354,6 @@ export default function MaintenancePage() {
                               Add
                             </Button>
                           )}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center space-x-2">
-                            {record?.warrantyCardPath && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => window.open(record.warrantyCardPath!, '_blank')}
-                                className="text-blue-600 hover:text-blue-800"
-                                title="View Warranty Card"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                            )}
-                            {record?.invoicePath && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => window.open(record.invoicePath!, '_blank')}
-                                className="text-green-600 hover:text-green-800"
-                                title="View Invoice"
-                              >
-                                <FileText className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </div>
                         </TableCell>
                       </TableRow>
                     );
