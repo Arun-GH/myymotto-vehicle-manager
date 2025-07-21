@@ -126,7 +126,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   };
 
   return (
-    <Card className="card-hover shadow-orange-dark bg-gradient-to-r from-white to-gray-50 border-l-4 border-l-blue-500">
+    <Card className="card-hover shadow-orange-dark bg-gradient-to-r from-white to-gray-50 border-l-4 border-l-blue-500 border border-orange-300">
       <CardContent className="p-3">
         <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
