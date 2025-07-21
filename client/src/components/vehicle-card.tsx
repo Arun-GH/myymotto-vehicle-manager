@@ -19,11 +19,11 @@ interface VehicleCardProps {
 const getVehicleTypeIcon = (vehicleType: string | null) => {
   switch (vehicleType) {
     case "2-wheeler":
-      return <Bike className="w-3 h-3 text-blue-600" />;
+      return <Bike className="w-4 h-4 text-blue-600" />;
     case "3-wheeler":
-      return <Truck className="w-3 h-3 text-orange-600" />;
+      return <Truck className="w-4 h-4 text-orange-600" />;
     case "4-wheeler":
-      return <Car className="w-3 h-3 text-green-600" />;
+      return <Car className="w-4 h-4 text-green-600" />;
     default:
       return null;
   }
