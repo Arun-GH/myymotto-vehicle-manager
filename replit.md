@@ -58,16 +58,17 @@ Preferred communication style: Simple, everyday language.
 - Rating system replaces external app store links with internal collection for better user feedback management
 - All support and feedback communications standardized to use info@arudhihsolutions.com email address
 
-**July 21, 2025**: Created information dropdown menu with About, Contact, Feedback, and Review sections
-- Added InfoDropdown component with three vertical dots menu next to notification bell
+**July 21, 2025**: Enhanced information dropdown menu with logout functionality and user support options
+- Added InfoDropdown component with three vertical dots menu next to notification bell including logout functionality
 - Created mobile-friendly About dialog popup with compact four-line app description highlighting key features
 - About section shows Myymotto's vehicle management capabilities, document storage, traffic violation checking, and subscription features
 - Contact Support opens email client with info@arudhihsolutions.com and pre-filled support message  
 - Send Feedback shows popup dialog with info@arudhihsolutions.com email address for sharing feedback and suggestions
-- Review option opens external links with platform detection for app stores
+- Review option opens rating system for collecting user feedback and app store reviews
+- Logout option added with red styling that redirects users to /api/logout endpoint for secure sign out
 - Position optimized: Settings → Bell → Three-dot menu for clean header layout
 - Professional dropdown design with icons and compact mobile-friendly dialog popup
-- Available on dashboard and traffic violations pages for easy user access to support information
+- Available on dashboard and traffic violations pages for easy user access to support information and logout
 
 **July 21, 2025**: Completed authentic traffic violation checking with real government API integration
 - Fixed automatic API calling - now only triggers on "Check Traffic Violations" button click, not vehicle selection

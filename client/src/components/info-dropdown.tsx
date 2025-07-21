@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Info, Phone, MessageCircle, Star, ChevronDown, ExternalLink, MoreVertical, X } from "lucide-react";
+import { Info, Phone, MessageCircle, Star, ChevronDown, ExternalLink, MoreVertical, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -78,6 +78,11 @@ export default function InfoDropdown() {
     setShowRating(true);
   };
 
+  const handleLogout = () => {
+    // Redirect to logout API endpoint
+    window.location.href = "/api/logout";
+  };
+
   const handleStarClick = (starValue: number) => {
     form.setValue("rating", starValue);
   };
@@ -115,6 +120,10 @@ export default function InfoDropdown() {
           <DropdownMenuItem onClick={handleReview} className="cursor-pointer">
             <Star className="w-4 h-4 mr-2" />
             Rate & Review
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50">
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
