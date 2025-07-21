@@ -15,9 +15,9 @@ Preferred communication style: Simple, everyday language.
 - Implemented complete rating database schema with user details: rating (1-5 stars), userName, phoneNumber, emailId, feedback
 - Built interactive 5-star rating system with visual feedback and orange star highlighting
 - Added rating API routes for creating, retrieving all ratings, and fetching user-specific ratings
-- Rating form auto-populates user details from database profile data (name from profile, phone from user mobile/alternate, email from profile)
+- Rating form automatically uses user profile data behind the scenes (name, phone, email) without requiring user input
 - Complete form validation with React Hook Form and Zod schema validation for all rating fields
-- Professional rating dialog with user name, phone number, email ID, and optional feedback textarea
+- Streamlined rating dialog with 5-star rating system and optional feedback textarea only
 - Database integration stores all rating submissions with userId association and timestamp tracking
 - Enhanced user experience with loading states, success/error toast notifications, and form reset after submission
 - Users can now provide detailed ratings with personal contact information stored securely in database

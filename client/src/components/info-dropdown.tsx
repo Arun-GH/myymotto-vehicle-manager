@@ -21,6 +21,9 @@ import { insertRatingSchema, type InsertRating } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
+import {
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export default function InfoDropdown() {
   const [showAbout, setShowAbout] = useState(false);
@@ -28,19 +31,17 @@ export default function InfoDropdown() {
   const [showRating, setShowRating] = useState(false);
   const { toast } = useToast();
 
-  const form = useForm<InsertRating>({
-    resolver: zodResolver(insertRatingSchema),
+  const form = useForm<Pick<InsertRating, 'rating' | 'feedback'>>({
+    resolver: zodResolver(insertRatingSchema.pick({ rating: true, feedback: true })),
     defaultValues: {
       rating: 5,
-      userName: "",
-      phoneNumber: "",
-      emailId: "",
       feedback: "",
     },
   });
 
   const ratingMutation = useMutation({
-    mutationFn: async (data: InsertRating) => {
+    mutationFn: async (data: Pick<InsertRating, 'rating' | 'feedback'>) => {
+      // The API will auto-populate user details from profile
       return apiRequest("POST", "/api/ratings", data);
     },
     onSuccess: () => {
@@ -81,7 +82,7 @@ export default function InfoDropdown() {
     form.setValue("rating", starValue);
   };
 
-  const onSubmit = (data: InsertRating) => {
+  const onSubmit = (data: Pick<InsertRating, 'rating' | 'feedback'>) => {
     ratingMutation.mutate(data);
   };
 
@@ -198,11 +199,14 @@ export default function InfoDropdown() {
               <Star className="w-4 h-4" />
               Rate & Review Myymotto
             </DialogTitle>
+            <DialogDescription className="text-center text-xs text-gray-500 mt-1">
+              Your profile information will be used automatically
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* Star Rating */}
             <div className="text-center">
-              <p className="text-sm text-gray-700 mb-2">How would you rate your experience?</p>
+              <p className="text-sm text-gray-700 mb-3">How would you rate your experience?</p>
               <div className="flex justify-center gap-1 mb-3">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
@@ -221,50 +225,17 @@ export default function InfoDropdown() {
               </p>
             </div>
 
-            {/* User Details */}
-            <div className="space-y-3">
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">
-                  Your Name
-                </label>
-                <Input
-                  {...form.register("userName")}
-                  placeholder="Enter your full name"
-                  className="text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">
-                  Phone Number
-                </label>
-                <Input
-                  {...form.register("phoneNumber")}
-                  placeholder="Enter your phone number"
-                  className="text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">
-                  Email ID
-                </label>
-                <Input
-                  {...form.register("emailId")}
-                  type="email"
-                  placeholder="Enter your email address"
-                  className="text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">
-                  Feedback (Optional)
-                </label>
-                <Textarea
-                  {...form.register("feedback")}
-                  placeholder="Tell us what you love about Myymotto or how we can improve..."
-                  rows={3}
-                  className="text-sm resize-none"
-                />
-              </div>
+            {/* Feedback Section */}
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">
+                Tell us more (Optional)
+              </label>
+              <Textarea
+                {...form.register("feedback")}
+                placeholder="What do you love about Myymotto? How can we make it even better for you?"
+                rows={4}
+                className="text-sm resize-none"
+              />
             </div>
 
             {/* Action Buttons */}
