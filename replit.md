@@ -10,6 +10,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 21, 2025**: Completed rating collection system with database integration
+- Created comprehensive rating collection popup accessed through three-dot menu "Rate & Review" option
+- Implemented complete rating database schema with user details: rating (1-5 stars), userName, phoneNumber, emailId, feedback
+- Built interactive 5-star rating system with visual feedback and orange star highlighting
+- Added rating API routes for creating, retrieving all ratings, and fetching user-specific ratings
+- Rating form auto-populates user details from database profile data (name from profile, phone from user mobile/alternate, email from profile)
+- Complete form validation with React Hook Form and Zod schema validation for all rating fields
+- Professional rating dialog with user name, phone number, email ID, and optional feedback textarea
+- Database integration stores all rating submissions with userId association and timestamp tracking
+- Enhanced user experience with loading states, success/error toast notifications, and form reset after submission
+- Users can now provide detailed ratings with personal contact information stored securely in database
+- Rating system replaces external app store links with internal collection for better user feedback management
+- All support and feedback communications standardized to use info@arudhihsolutions.com email address
+
 **July 21, 2025**: Created information dropdown menu with About, Contact, Feedback, and Review sections
 - Added InfoDropdown component with three vertical dots menu next to notification bell
 - Created mobile-friendly About dialog popup with compact four-line app description highlighting key features

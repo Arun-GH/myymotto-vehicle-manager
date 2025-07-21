@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, newsItems, newsUpdateLog, dashboardWidgets, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, newsItems, newsUpdateLog, dashboardWidgets, ratings, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte, desc } from "drizzle-orm";
 
@@ -88,6 +88,11 @@ export interface IStorage {
   updateDashboardWidget(id: number, updates: Partial<InsertDashboardWidget>): Promise<DashboardWidget>;
   deleteDashboardWidget(id: number): Promise<void>;
   initializeDefaultWidgets(userId: number): Promise<DashboardWidget[]>;
+
+  // Rating methods
+  createRating(rating: InsertRating & { userId: number }): Promise<Rating>;
+  getRatings(): Promise<Rating[]>;
+  getUserRatings(userId: number): Promise<Rating[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -965,6 +970,30 @@ export class DatabaseStorage implements IStorage {
 
     const createdWidgets = await db.insert(dashboardWidgets).values(defaultWidgets).returning();
     return createdWidgets;
+  }
+
+  // Rating methods
+  async createRating(rating: InsertRating & { userId: number }): Promise<Rating> {
+    const [newRating] = await db
+      .insert(ratings)
+      .values(rating)
+      .returning();
+    return newRating;
+  }
+
+  async getRatings(): Promise<Rating[]> {
+    return await db
+      .select()
+      .from(ratings)
+      .orderBy(desc(ratings.createdAt));
+  }
+
+  async getUserRatings(userId: number): Promise<Rating[]> {
+    return await db
+      .select()
+      .from(ratings)
+      .where(eq(ratings.userId, userId))
+      .orderBy(desc(ratings.createdAt));
   }
 }
 

@@ -13,10 +13,53 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { insertRatingSchema, type InsertRating } from "@shared/schema";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
 
 export default function InfoDropdown() {
   const [showAbout, setShowAbout] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [showRating, setShowRating] = useState(false);
+  const { toast } = useToast();
+
+  const form = useForm<InsertRating>({
+    resolver: zodResolver(insertRatingSchema),
+    defaultValues: {
+      rating: 5,
+      userName: "",
+      phoneNumber: "",
+      emailId: "",
+      feedback: "",
+    },
+  });
+
+  const ratingMutation = useMutation({
+    mutationFn: async (data: InsertRating) => {
+      return apiRequest("POST", "/api/ratings", data);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Thank you!",
+        description: "Your rating has been submitted successfully.",
+      });
+      setShowRating(false);
+      form.reset();
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to submit rating. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Rating submission error:", error);
+    },
+  });
 
   const handleAbout = () => {
     setShowAbout(true);
@@ -31,16 +74,15 @@ export default function InfoDropdown() {
   };
 
   const handleReview = () => {
-    // Open app store or play store review page
-    const userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.includes("android")) {
-      window.open("https://play.google.com/store/apps/details?id=com.myymotto.app", "_blank");
-    } else if (userAgent.includes("iphone") || userAgent.includes("ipad")) {
-      window.open("https://apps.apple.com/app/myymotto/id123456789", "_blank");
-    } else {
-      // For web users, open general review link
-      window.open("https://reviews.myymotto.app", "_blank");
-    }
+    setShowRating(true);
+  };
+
+  const handleStarClick = (starValue: number) => {
+    form.setValue("rating", starValue);
+  };
+
+  const onSubmit = (data: InsertRating) => {
+    ratingMutation.mutate(data);
   };
 
   return (
@@ -72,7 +114,6 @@ export default function InfoDropdown() {
           <DropdownMenuItem onClick={handleReview} className="cursor-pointer">
             <Star className="w-4 h-4 mr-2" />
             Rate & Review
-            <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -146,6 +187,107 @@ export default function InfoDropdown() {
               Got it
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rating Dialog */}
+      <Dialog open={showRating} onOpenChange={setShowRating}>
+        <DialogContent className="max-w-sm mx-4 sm:mx-auto p-4">
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-center text-base font-semibold text-orange-600 flex items-center justify-center gap-2">
+              <Star className="w-4 h-4" />
+              Rate & Review Myymotto
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Star Rating */}
+            <div className="text-center">
+              <p className="text-sm text-gray-700 mb-2">How would you rate your experience?</p>
+              <div className="flex justify-center gap-1 mb-3">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`w-8 h-8 cursor-pointer transition-colors ${
+                      star <= form.watch("rating")
+                        ? "text-orange-500 fill-orange-500"
+                        : "text-gray-300 hover:text-orange-400"
+                    }`}
+                    onClick={() => handleStarClick(star)}
+                  />
+                ))}
+              </div>
+              <p className="text-xs text-gray-500">
+                {form.watch("rating")} out of 5 stars
+              </p>
+            </div>
+
+            {/* User Details */}
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  Your Name
+                </label>
+                <Input
+                  {...form.register("userName")}
+                  placeholder="Enter your full name"
+                  className="text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  Phone Number
+                </label>
+                <Input
+                  {...form.register("phoneNumber")}
+                  placeholder="Enter your phone number"
+                  className="text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  Email ID
+                </label>
+                <Input
+                  {...form.register("emailId")}
+                  type="email"
+                  placeholder="Enter your email address"
+                  className="text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  Feedback (Optional)
+                </label>
+                <Textarea
+                  {...form.register("feedback")}
+                  placeholder="Tell us what you love about Myymotto or how we can improve..."
+                  rows={3}
+                  className="text-sm resize-none"
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={() => setShowRating(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                className="flex-1"
+                disabled={ratingMutation.isPending}
+              >
+                {ratingMutation.isPending ? "Submitting..." : "Submit Rating"}
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </>

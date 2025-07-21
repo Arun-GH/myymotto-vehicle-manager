@@ -218,6 +218,18 @@ export const dashboardWidgets = pgTable("dashboard_widgets", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Ratings table for user feedback and ratings
+export const ratings = pgTable("ratings", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  userName: text("user_name").notNull(),
+  phoneNumber: text("phone_number").notNull(),
+  emailId: text("email_id").notNull(),
+  rating: integer("rating").notNull(), // 1-5 stars
+  feedback: text("feedback"), // optional feedback text
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -336,6 +348,20 @@ export const insertEmergencyContactSchema = createInsertSchema(emergencyContacts
 
 export type EmergencyContact = typeof emergencyContacts.$inferSelect;
 export type InsertEmergencyContact = z.infer<typeof insertEmergencyContactSchema>;
+
+export const insertRatingSchema = createInsertSchema(ratings, {
+  rating: z.number().min(1).max(5),
+  userName: z.string().min(1, "Name is required"),
+  phoneNumber: z.string().min(10, "Valid phone number is required"),
+  emailId: z.string().email("Valid email is required"),
+  feedback: z.string().optional(),
+}).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type Rating = typeof ratings.$inferSelect;
+export type InsertRating = z.infer<typeof insertRatingSchema>;
 
 // Traffic violations schema
 export const trafficViolations = pgTable("traffic_violations", {

@@ -2,7 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, insertMaintenanceRecordSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact, type InsertMaintenanceRecord } from "@shared/schema";
+import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, insertMaintenanceRecordSchema, insertRatingSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact, type InsertMaintenanceRecord, type Rating } from "@shared/schema";
 import { maintenanceService } from "./maintenance-service";
 import { newsService } from "./news-service";
 import { trafficViolationService } from "./traffic-violation-service";
@@ -1353,6 +1353,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting dashboard widget:", error);
       res.status(500).json({ message: "Failed to delete dashboard widget" });
+    }
+  });
+
+  // Rating routes
+  app.post("/api/ratings", async (req, res) => {
+    try {
+      // Get current user (hardcoded for demo - should come from session)
+      const userId = 1;
+      const user = await storage.getUser(userId);
+      const profile = await storage.getUserProfile(userId);
+      
+      if (!user || !profile) {
+        return res.status(401).json({ message: "User not found" });
+      }
+      
+      // Use profile data to populate rating record
+      const ratingData = {
+        ...req.body,
+        userId: userId,
+        userName: profile.name,
+        phoneNumber: user.mobile || profile.alternatePhone || "",
+        emailId: profile.email,
+      };
+      
+      const validatedData = insertRatingSchema.parse(ratingData);
+      const rating = await storage.createRating(validatedData);
+      res.status(201).json(rating);
+    } catch (error) {
+      console.error("Error creating rating:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Failed to create rating" });
+      }
+    }
+  });
+
+  app.get("/api/ratings", async (req, res) => {
+    try {
+      const ratings = await storage.getRatings();
+      res.json(ratings);
+    } catch (error) {
+      console.error("Error fetching ratings:", error);
+      res.status(500).json({ message: "Failed to fetch ratings" });
+    }
+  });
+
+  app.get("/api/ratings/user/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const ratings = await storage.getUserRatings(userId);
+      res.json(ratings);
+    } catch (error) {
+      console.error("Error fetching user ratings:", error);
+      res.status(500).json({ message: "Failed to fetch user ratings" });
     }
   });
 
