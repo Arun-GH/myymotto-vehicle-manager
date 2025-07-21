@@ -620,7 +620,7 @@ export default function EditVehicle() {
                     name="insuranceExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Insurance Date of Issuance</FormLabel>
+                        <FormLabel>Insured date</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
