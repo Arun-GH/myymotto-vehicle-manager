@@ -24,14 +24,15 @@ export default function NewsTidbits() {
 
   // Fetch news data from API
   const { data: newsItems = [], isLoading, error } = useQuery<NewsItem[]>({
-    queryKey: ["/api/news"],
+    queryKey: ["/api/news", "government-2025"], // Updated key to force refresh
     refetchOnMount: true,
-    staleTime: 1000 * 60 * 30, // 30 minutes
+    staleTime: 0, // Always fetch fresh data
+    cacheTime: 1000 * 60 * 5, // Cache for 5 minutes only
   });
 
   // Fetch cache info
   const { data: cacheInfo } = useQuery({
-    queryKey: ["/api/news/cache-info"],
+    queryKey: ["/api/news/cache-info", "government-2025"], // Updated key to force refresh
     refetchInterval: 1000 * 60, // Refresh every minute
   });
 
@@ -43,7 +44,7 @@ export default function NewsTidbits() {
       queryClient.invalidateQueries({ queryKey: ["/api/news/cache-info"] });
       toast({
         title: "News Refreshed",
-        description: "Latest vehicle news has been updated successfully.",
+        description: "Latest government policy updates loaded successfully.",
       });
     },
     onError: () => {
