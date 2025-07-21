@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 21, 2025**: Completed two-wheeler maintenance page rework with professional table format and file upload system
+- Created comprehensive maintenance table showing 7 essential two-wheeler services with recommended timelines
+- Implemented maintenance record tracking system with database integration and API routes
+- Added dual-function Add button for date entry and warranty/invoice file uploads via camera or file selection
+- Built professional dialog system with date input, file upload, and notes functionality
+- Color-coded completion status with green highlighting for completed services and view buttons for uploaded documents
+- Removed redundant upload buttons in favor of consolidated Add button functionality
+- Enhanced user experience with tooltips and intuitive workflow from table selection to completion tracking
+- Complete maintenance history tracking with warranty card and invoice document management
+
 **July 21, 2025**: Added congratulatory popup for puzzle game completion with WhatsApp sharing functionality
 - Created beautiful congratulations dialog popup with trophy icon and purple gradient styling
 - Added comprehensive game statistics display showing moves count and time taken in MM:SS format

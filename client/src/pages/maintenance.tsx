@@ -341,6 +341,7 @@ export default function MaintenancePage() {
                                 size="sm"
                                 onClick={() => window.open(record.warrantyCardPath!, '_blank')}
                                 className="text-blue-600 hover:text-blue-800"
+                                title="View Warranty Card"
                               >
                                 <Eye className="w-4 h-4" />
                               </Button>
@@ -351,19 +352,9 @@ export default function MaintenancePage() {
                                 size="sm"
                                 onClick={() => window.open(record.invoicePath!, '_blank')}
                                 className="text-green-600 hover:text-green-800"
+                                title="View Invoice"
                               >
                                 <FileText className="w-4 h-4" />
-                              </Button>
-                            )}
-                            {!record && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => openDialog(item)}
-                                className="border-blue-300 text-blue-700 hover:bg-blue-50"
-                              >
-                                <Upload className="w-4 h-4 mr-1" />
-                                Upload
                               </Button>
                             )}
                           </div>
