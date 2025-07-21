@@ -1,5 +1,5 @@
 
-import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye, Trash2, Settings, Bike, Truck } from "lucide-react";
+import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye, Trash2, Settings, Bike, Truck, Zap, Droplets } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -24,6 +24,25 @@ const getVehicleTypeIcon = (vehicleType: string | null) => {
       return <Truck className="w-4 h-4 text-orange-600" />;
     case "4-wheeler":
       return <Car className="w-4 h-4 text-green-600" />;
+    default:
+      return null;
+  }
+};
+
+// Function to get fuel type icon
+const getFuelTypeIcon = (fuelType: string | null) => {
+  switch (fuelType) {
+    case "petrol":
+      return <Fuel className="w-4 h-4 text-red-600" />;
+    case "diesel":
+      return <Droplets className="w-4 h-4 text-amber-600" />;
+    case "electric":
+      return <Zap className="w-4 h-4 text-green-600" />;
+    case "hybrid":
+      return <div className="flex items-center">
+        <Fuel className="w-3 h-3 text-red-500" />
+        <Zap className="w-3 h-3 text-green-500 -ml-1" />
+      </div>;
     default:
       return null;
   }
@@ -127,6 +146,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 <div className="flex items-center space-x-1">
                   <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
                   {getVehicleTypeIcon(vehicle.vehicleType)}
+                  {getFuelTypeIcon(vehicle.fuelType)}
                 </div>
               </div>
             </div>

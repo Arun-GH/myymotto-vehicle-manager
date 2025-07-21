@@ -17,8 +17,10 @@ Preferred communication style: Simple, everyday language.
 - Enhanced Add Vehicle form with dropdown fields for vehicle type and fuel type selection
 - Updated Edit Vehicle form to include vehicle type and fuel type editing capabilities
 - Added vehicle type icons next to license plate: Bike (2-wheeler), Truck (3-wheeler), Car (4-wheeler)
+- Added fuel type icons next to vehicle type icons: Fuel pump (petrol-red), Droplets (diesel-amber), Lightning (electric-green), Combined fuel+lightning (hybrid)
 - Removed verbose vehicle type and fuel type text display from vehicle cards for cleaner interface
 - Color-coded vehicle type icons: blue (2-wheeler), orange (3-wheeler), green (4-wheeler)
+- Color-coded fuel type icons: red (petrol), amber (diesel), green (electric), red+green (hybrid)
 - Pushed database schema changes to production with proper field validation
 - Maintained mobile-first design with responsive dropdown layouts and orange gradient theme
 
