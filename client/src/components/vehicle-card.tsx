@@ -242,7 +242,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         <div className="flex items-center space-x-2">
           <span className="text-xs font-medium text-gray-600">Documents:</span>
           <div className="flex items-center space-x-1">
-            <Link href={`/vehicle/${vehicle.id}/documents`}>
+            <Link href={`/vehicle/${vehicle.id}/local-documents`}>
               <Button variant="ghost" size="sm" className="text-red-600 p-1 h-auto hover:bg-red-50 flex items-center space-x-1">
                 <Eye className="w-3 h-3" />
                 <span className="text-xs">View</span>
