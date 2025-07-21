@@ -193,22 +193,22 @@ export default function InfoDropdown() {
 
       {/* Rating Dialog */}
       <Dialog open={showRating} onOpenChange={setShowRating}>
-        <DialogContent className="max-w-sm mx-4 sm:mx-auto p-4">
-          <DialogHeader className="pb-2">
-            <DialogTitle className="text-center text-base font-semibold text-orange-600 flex items-center justify-center gap-2">
-              <Star className="w-4 h-4" />
-              Rate & Review Myymotto
+        <DialogContent className="max-w-xs mx-3 sm:mx-auto p-3">
+          <DialogHeader className="pb-1">
+            <DialogTitle className="text-center text-sm font-semibold text-orange-600 flex items-center justify-center gap-1">
+              <Star className="w-3 h-3" />
+              Rate Myymotto
             </DialogTitle>
           </DialogHeader>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
             {/* Star Rating */}
             <div className="text-center">
-              <p className="text-sm text-gray-700 mb-3">How would you rate your overall experience and the usefulness of Myymotto?</p>
-              <div className="flex justify-center gap-1 mb-3">
+              <p className="text-xs text-gray-700 mb-2 leading-tight">Rate your overall experience and usefulness of Myymotto</p>
+              <div className="flex justify-center gap-1 mb-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
-                    className={`w-8 h-8 cursor-pointer transition-colors ${
+                    className={`w-7 h-7 cursor-pointer transition-colors ${
                       star <= form.watch("rating")
                         ? "text-orange-500 fill-orange-500"
                         : "text-gray-300 hover:text-orange-400"
@@ -218,30 +218,30 @@ export default function InfoDropdown() {
                 ))}
               </div>
               <p className="text-xs text-gray-500">
-                {form.watch("rating")} out of 5 stars
+                {form.watch("rating")} of 5 stars
               </p>
             </div>
 
             {/* Feedback Section */}
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">
-                Tell us more (Optional)
+              <label className="text-xs font-medium text-gray-700 mb-1 block">
+                Share your thoughts (Optional)
               </label>
               <Textarea
                 {...form.register("feedback")}
-                placeholder="What do you love about Myymotto? How can we make it even better for you?"
-                rows={4}
-                className="text-sm resize-none"
+                placeholder="What do you love? How can we improve?"
+                rows={3}
+                className="text-xs resize-none"
               />
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-1">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                className="flex-1"
+                className="flex-1 h-8 text-xs"
                 onClick={() => setShowRating(false)}
               >
                 Cancel
@@ -249,10 +249,10 @@ export default function InfoDropdown() {
               <Button
                 type="submit"
                 size="sm"
-                className="flex-1"
+                className="flex-1 h-8 text-xs"
                 disabled={ratingMutation.isPending}
               >
-                {ratingMutation.isPending ? "Submitting..." : "Submit Rating"}
+                {ratingMutation.isPending ? "Sending..." : "Submit"}
               </Button>
             </div>
           </form>
