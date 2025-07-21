@@ -103,8 +103,8 @@ function Router() {
       <Route path="/vehicle/:id/upload" component={UploadDocuments} />
       <Route path="/vehicle/:id/local-documents" component={LocalDocuments} />
       <Route path="/vehicle/:id/service" component={CombinedServicePage} />
-      <Route path="/vehicle/:vehicleId/service-logs" component={ServiceLogs} />
-      <Route path="/vehicle/:vehicleId/add-service-log" component={AddServiceLog} />
+      <Route path="/vehicle/:id/service-logs" component={ServiceLogs} />
+      <Route path="/vehicle/:id/add-service-log" component={AddServiceLog} />
 
       <Route path="/service-centers" component={ServiceCenters} />
       <Route path="/emergency-contacts" component={EmergencyContacts} />

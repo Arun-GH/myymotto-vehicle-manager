@@ -11,7 +11,7 @@ import { type ServiceLog, type Vehicle, type MaintenanceRecord } from "@shared/s
 
 
 export default function ServiceLogs() {
-  const { vehicleId } = useParams() as { vehicleId: string };
+  const { id: vehicleId } = useParams() as { id: string };
   const queryClient = useQueryClient();
   const { toast } = useToast();
 

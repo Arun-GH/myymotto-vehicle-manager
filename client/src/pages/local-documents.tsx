@@ -31,7 +31,7 @@ export default function LocalDocuments() {
     enabled: !!vehicleId,
   });
 
-  const documentTypes = {
+  const documentTypes: Record<string, { label: string; color: string }> = {
     emission: { label: "Emission Certificates", color: "bg-green-500" },
     insurance: { label: "Insurance Documents", color: "bg-blue-500" },
     service: { label: "Service Invoices", color: "bg-orange-500" },

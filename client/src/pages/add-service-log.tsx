@@ -25,7 +25,7 @@ const serviceLogSchema = z.object({
 type ServiceLogForm = z.infer<typeof serviceLogSchema>;
 
 export default function AddServiceLog() {
-  const { vehicleId } = useParams() as { vehicleId: string };
+  const { id: vehicleId } = useParams() as { id: string };
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
