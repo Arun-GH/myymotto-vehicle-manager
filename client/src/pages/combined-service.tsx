@@ -626,39 +626,39 @@ export default function CombinedServicePage() {
 
       {/* Maintenance Entry Dialog */}
       <Dialog open={isMaintenanceDialogOpen} onOpenChange={setIsMaintenanceDialogOpen}>
-        <DialogContent className="max-w-md mx-auto">
-          <DialogHeader>
-            <DialogTitle>Update Maintenance Record</DialogTitle>
-            <DialogDescription>
+        <DialogContent className="max-w-sm mx-auto max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-lg">Update Maintenance Record</DialogTitle>
+            <DialogDescription className="text-sm">
               {selectedMaintenance?.service}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {/* Completion Date */}
-            <div className="space-y-2">
-              <Label htmlFor="completedDate">Date Completed</Label>
+            <div className="space-y-1">
+              <Label htmlFor="completedDate" className="text-sm">Date Completed</Label>
               <Input
                 id="completedDate"
                 type="date"
                 value={completedDate}
                 onChange={(e) => setCompletedDate(e.target.value)}
-                className="h-9"
+                className="h-8 text-sm"
               />
             </div>
 
             {/* Warranty Card Upload */}
-            <div className="space-y-2">
-              <Label>Warranty Card</Label>
-              <div className="flex space-x-2">
+            <div className="space-y-1">
+              <Label className="text-sm">Warranty Card</Label>
+              <div className="flex space-x-1">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => triggerCamera('warranty')}
-                  className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
+                  className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50 h-8 text-xs"
                 >
-                  <Camera className="w-4 h-4 mr-2" />
+                  <Camera className="w-3 h-3 mr-1" />
                   Camera
                 </Button>
                 <Button
@@ -666,38 +666,39 @@ export default function CombinedServicePage() {
                   variant="outline"
                   size="sm"
                   onClick={() => triggerFileUpload('warranty')}
-                  className="flex-1 border-green-300 text-green-700 hover:bg-green-50"
+                  className="flex-1 border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs"
                 >
-                  <Upload className="w-4 h-4 mr-2" />
+                  <Upload className="w-3 h-3 mr-1" />
                   Upload
                 </Button>
               </div>
               {warrantyFile && (
-                <div className="text-sm text-green-600 flex items-center justify-between bg-green-50 p-2 rounded">
+                <div className="text-xs text-green-600 flex items-center justify-between bg-green-50 p-1.5 rounded">
                   <span>📄 {warrantyFile.name}</span>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleFileSelect(null, 'warranty')}
+                    className="h-6 w-6 p-0"
                   >
-                    <Trash2 className="w-4 h-4 text-red-500" />
+                    <Trash2 className="w-3 h-3 text-red-500" />
                   </Button>
                 </div>
               )}
             </div>
 
             {/* Invoice Upload */}
-            <div className="space-y-2">
-              <Label>Invoice</Label>
-              <div className="flex space-x-2">
+            <div className="space-y-1">
+              <Label className="text-sm">Invoice</Label>
+              <div className="flex space-x-1">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => triggerCamera('invoice')}
-                  className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
+                  className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50 h-8 text-xs"
                 >
-                  <Camera className="w-4 h-4 mr-2" />
+                  <Camera className="w-3 h-3 mr-1" />
                   Camera
                 </Button>
                 <Button
@@ -705,43 +706,44 @@ export default function CombinedServicePage() {
                   variant="outline"
                   size="sm"
                   onClick={() => triggerFileUpload('invoice')}
-                  className="flex-1 border-green-300 text-green-700 hover:bg-green-50"
+                  className="flex-1 border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs"
                 >
-                  <Upload className="w-4 h-4 mr-2" />
+                  <Upload className="w-3 h-3 mr-1" />
                   Upload
                 </Button>
               </div>
               {invoiceFile && (
-                <div className="text-sm text-green-600 flex items-center justify-between bg-green-50 p-2 rounded">
+                <div className="text-xs text-green-600 flex items-center justify-between bg-green-50 p-1.5 rounded">
                   <span>📄 {invoiceFile.name}</span>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleFileSelect(null, 'invoice')}
+                    className="h-6 w-6 p-0"
                   >
-                    <Trash2 className="w-4 h-4 text-red-500" />
+                    <Trash2 className="w-3 h-3 text-red-500" />
                   </Button>
                 </div>
               )}
             </div>
 
             {/* Notes */}
-            <div className="space-y-2">
-              <Label htmlFor="notes">Notes (Optional)</Label>
+            <div className="space-y-1">
+              <Label htmlFor="notes" className="text-sm">Notes (Optional)</Label>
               <Textarea
                 id="notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Additional notes about this maintenance..."
-                className="min-h-[80px]"
+                className="min-h-[60px] text-sm"
               />
             </div>
 
-            <div className="flex space-x-2 pt-4">
+            <div className="flex space-x-2 pt-2">
               <Button
                 onClick={handleMaintenanceSubmit}
                 disabled={createMaintenanceRecordMutation.isPending}
-                className="flex-1 bg-orange-600 hover:bg-orange-700"
+                className="flex-1 bg-orange-600 hover:bg-orange-700 h-8 text-sm"
               >
                 {createMaintenanceRecordMutation.isPending ? "Saving..." : "Save Record"}
               </Button>
@@ -751,6 +753,7 @@ export default function CombinedServicePage() {
                   setIsMaintenanceDialogOpen(false);
                   resetMaintenanceForm();
                 }}
+                className="h-8 text-sm"
               >
                 Cancel
               </Button>
