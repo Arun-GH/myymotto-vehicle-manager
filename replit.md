@@ -10,21 +10,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Implemented secure file storage system and fixed file viewing issues
-- Created comprehensive secure file storage system using dedicated app_storage directory with documents and temp subdirectories
-- All uploaded files and camera captures are now copied to secure app_storage/documents location with unique naming
-- Files are preserved independently of device storage - originals can be deleted without affecting app functionality
-- When files are deleted from app, they are automatically removed from secure storage to prevent orphaned data
-- Updated all file upload routes (general uploads, documents, service logs, maintenance records) to use secure storage
-- Implemented secureFileStorage() utility function that creates timestamped, randomized file names with proper categorization
-- Added deleteSecureFile() utility function for complete file cleanup when records are deleted
-- Enhanced file serving with proper content-type detection using magic numbers for JPEG, PNG, WebP, and PDF files
-- Legacy uploads directory maintained for backward compatibility with existing files
-- Secure storage system prevents file loss if users delete original photos from device gallery
-- Complete file lifecycle management: upload → secure copy → database reference → deletion cleanup
+**July 21, 2025**: Fixed document viewing system and integrated with local storage architecture
+- Fixed critical document viewing issue by aligning navigation with local storage architecture
+- Documents are stored locally on user's device using IndexedDB, not on server database
+- Updated documents.tsx page to use localDocumentStorage instead of server API calls
+- Changed navigation links from /vehicle/:id/documents to /vehicle/:id/local-documents route
+- Modified VehicleDocumentCard to fetch documents from local IndexedDB storage
 - Fixed file viewing issues by replacing window.open() with reliable anchor element creation method
 - Enhanced file opening mechanism to bypass popup blockers and work consistently across browsers
-- Updated service logs and view documents pages with improved file access functionality
+- Updated service logs page with improved file access functionality using anchor elements
+- Documents now display correctly in the Documents page using local storage system
+- Complete local storage workflow: upload → IndexedDB storage → local viewing/deletion
+- Users can now see their uploaded documents in the Documents page and view them properly
+- Server secure storage system remains for service logs and maintenance records
+- Local document architecture provides privacy and offline access for sensitive documents
 
 **July 21, 2025**: Created unified Service Management page combining Essential Replaces and Service Details
 - Updated Essential Replaces page to display different maintenance schedules based on vehicle type

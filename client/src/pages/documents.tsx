@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import ColorfulLogo from "@/components/colorful-logo";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
 
 function DriversLicenseCard({ profile, profileLoading }: { profile: UserProfile | undefined, profileLoading: boolean }) {
   const [, setLocation] = useLocation();
@@ -212,19 +213,20 @@ export default function Documents() {
 
 function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
   const { toast } = useToast();
-  const { data: documents = [], isLoading } = useQuery<Document[]>({
-    queryKey: ["/api/vehicles", vehicle.id, "documents"],
+  const { data: documents = [], isLoading } = useQuery<LocalDocument[]>({
+    queryKey: ["local-documents", vehicle.id],
+    queryFn: () => localDocumentStorage.getDocumentsByVehicle(vehicle.id),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (docId: number) => {
-      return apiRequest("DELETE", `/api/documents/${docId}`);
+    mutationFn: async (docId: string) => {
+      return localDocumentStorage.deleteDocument(docId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/vehicles", vehicle.id, "documents"] });
+      queryClient.invalidateQueries({ queryKey: ["local-documents", vehicle.id] });
       toast({
         title: "Document deleted",
-        description: "The document has been successfully deleted.",
+        description: "The document has been successfully deleted from your device.",
       });
     },
     onError: (error: any) => {
@@ -236,8 +238,8 @@ function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
     },
   });
 
-  const handleDelete = (docId: number, fileName: string) => {
-    if (confirm(`Are you sure you want to delete "${fileName}"? This action cannot be undone.`)) {
+  const handleDelete = (docId: string, fileName: string) => {
+    if (confirm(`Are you sure you want to delete "${fileName}" from your device? This action cannot be undone.`)) {
       deleteMutation.mutate(docId);
     }
   };
@@ -271,7 +273,16 @@ function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
             {documents.slice(0, 3).map((doc) => (
               <div key={doc.id} className="flex items-center space-x-3 p-2 border rounded">
                 <FileText className="w-4 h-4 text-muted-foreground" />
-                <div className="flex-1 min-w-0 cursor-pointer" onClick={() => window.open(doc.filePath, '_blank')}>
+                <div className="flex-1 min-w-0 cursor-pointer" onClick={() => {
+                  const url = localDocumentStorage.createObjectURL(doc);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.target = '_blank';
+                  link.rel = 'noopener noreferrer';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}>
                   <p className="text-sm font-medium truncate">{doc.fileName}</p>
                   <p className="text-xs text-muted-foreground">{doc.type}</p>
                 </div>
@@ -280,7 +291,16 @@ function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
                     variant="ghost" 
                     size="sm" 
                     className="text-xs"
-                    onClick={() => window.open(doc.filePath, '_blank')}
+                    onClick={() => {
+                      const url = localDocumentStorage.createObjectURL(doc);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.target = '_blank';
+                      link.rel = 'noopener noreferrer';
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}
                   >
                     <Eye className="w-4 h-4 mr-1" />
                     View
@@ -299,7 +319,7 @@ function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
               </div>
             ))}
             {documents.length > 3 && (
-              <Link href={`/vehicle/${vehicle.id}/documents`}>
+              <Link href={`/vehicle/${vehicle.id}/local-documents`}>
                 <Button variant="ghost" size="sm" className="w-full text-xs">
                   View all {documents.length} documents
                 </Button>
