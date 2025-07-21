@@ -159,21 +159,21 @@ export default function NewsTidbits() {
               <AlertTriangle className="w-4 h-4 text-red-600" />
               <span className="text-xs font-bold text-red-800">Policies</span>
             </div>
-            <p className="text-lg font-bold text-red-600">3</p>
+            <p className="text-lg font-bold text-red-600">{newsItems.filter(item => item.category === 'policy').length}</p>
           </Card>
           <Card className="p-3 text-center bg-green-100 shadow-orange-200 shadow-md">
             <div className="flex items-center justify-center space-x-1 mb-1">
               <Zap className="w-4 h-4 text-green-600" />
               <span className="text-xs font-bold text-green-800">Launches</span>
             </div>
-            <p className="text-lg font-bold text-green-600">3</p>
+            <p className="text-lg font-bold text-green-600">{newsItems.filter(item => item.category === 'launch').length}</p>
           </Card>
           <Card className="p-3 text-center bg-orange-100 shadow-orange-200 shadow-md">
             <div className="flex items-center justify-center space-x-1 mb-1">
               <Newspaper className="w-4 h-4 text-orange-600" />
               <span className="text-xs font-bold text-orange-800">Total</span>
             </div>
-            <p className="text-lg font-bold text-orange-600">6</p>
+            <p className="text-lg font-bold text-orange-600">{newsItems.length}</p>
           </Card>
         </div>
 
