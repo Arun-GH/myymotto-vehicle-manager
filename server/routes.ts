@@ -911,6 +911,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/maintenance/records/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteMaintenanceRecord(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Maintenance record not found" });
+      }
+      res.json({ message: "Maintenance record deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting maintenance record:", error);
+      res.status(500).json({ message: "Failed to delete maintenance record" });
+    }
+  });
+
   // Service log routes
   app.get("/api/service-logs/:vehicleId", async (req, res) => {
     try {

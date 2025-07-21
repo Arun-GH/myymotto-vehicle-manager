@@ -1,8 +1,10 @@
 import { useParams, Link } from "wouter";
-import { ArrowLeft, Plus, Eye, FileText, Calendar, MapPin, NotebookPen, Wrench, Settings, Bell } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, Plus, Eye, FileText, Calendar, MapPin, NotebookPen, Wrench, Settings, Bell, Trash2 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 import ColorfulLogo from "@/components/colorful-logo";
 import { type ServiceLog, type Vehicle, type MaintenanceRecord } from "@shared/schema";
@@ -10,6 +12,8 @@ import { type ServiceLog, type Vehicle, type MaintenanceRecord } from "@shared/s
 
 export default function ServiceLogs() {
   const { vehicleId } = useParams() as { vehicleId: string };
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data: vehicle, isLoading: vehicleLoading } = useQuery<Vehicle>({
     queryKey: [`/api/vehicles/${vehicleId}`],
@@ -22,6 +26,58 @@ export default function ServiceLogs() {
   const { data: maintenanceRecords, isLoading: maintenanceLoading } = useQuery<MaintenanceRecord[]>({
     queryKey: [`/api/maintenance/records/${vehicleId}`],
   });
+
+  const deleteServiceLogMutation = useMutation({
+    mutationFn: async (logId: number) => {
+      return apiRequest("DELETE", `/api/service-logs/${logId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/service-logs/${vehicleId}`] });
+      toast({
+        title: "Success",
+        description: "Service log deleted successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete service log",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteMaintenanceRecordMutation = useMutation({
+    mutationFn: async (recordId: number) => {
+      return apiRequest("DELETE", `/api/maintenance/records/${recordId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/maintenance/records/${vehicleId}`] });
+      toast({
+        title: "Success",
+        description: "Maintenance record deleted successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete maintenance record",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteServiceLog = (logId: number) => {
+    if (confirm("Are you sure you want to delete this service log?")) {
+      deleteServiceLogMutation.mutate(logId);
+    }
+  };
+
+  const handleDeleteMaintenanceRecord = (recordId: number) => {
+    if (confirm("Are you sure you want to delete this maintenance record?")) {
+      deleteMaintenanceRecordMutation.mutate(recordId);
+    }
+  };
 
   if (vehicleLoading || logsLoading || maintenanceLoading) {
     return (
@@ -142,25 +198,58 @@ export default function ServiceLogs() {
                     
                     <div className="flex items-center space-x-2">
                       {record.warrantyCardPath && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => window.open(record.warrantyCardPath, '_blank')}
-                          className="text-blue-600 hover:text-blue-800 p-1"
-                          title="View Warranty Card"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open(record.warrantyCardPath, '_blank')}
+                            className="text-blue-600 hover:text-blue-800 p-1"
+                            title="View Warranty Card"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteMaintenanceRecord(record.id)}
+                            className="text-red-600 hover:text-red-800 p-1"
+                            title="Delete Record"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </>
                       )}
-                      {record.invoicePath && (
+                      {record.invoicePath && !record.warrantyCardPath && (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open(record.invoicePath, '_blank')}
+                            className="text-green-600 hover:text-green-800 p-1"
+                            title="View Invoice"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteMaintenanceRecord(record.id)}
+                            className="text-red-600 hover:text-red-800 p-1"
+                            title="Delete Record"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </>
+                      )}
+                      {!record.warrantyCardPath && !record.invoicePath && (
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => window.open(record.invoicePath, '_blank')}
-                          className="text-green-600 hover:text-green-800 p-1"
-                          title="View Invoice"
+                          onClick={() => handleDeleteMaintenanceRecord(record.id)}
+                          className="text-red-600 hover:text-red-800 p-1"
+                          title="Delete Record"
                         >
-                          <Eye className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       )}
                     </div>
@@ -213,6 +302,15 @@ export default function ServiceLogs() {
                           <Eye className="w-4 h-4" />
                         </Button>
                       )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteServiceLog(log.id)}
+                        className="text-red-600 hover:text-red-800 p-1"
+                        title="Delete Service Log"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
                 ))}
