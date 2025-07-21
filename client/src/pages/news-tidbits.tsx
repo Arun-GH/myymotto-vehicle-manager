@@ -144,7 +144,7 @@ export default function NewsTidbits() {
                 day: 'numeric', 
                 month: 'short', 
                 year: 'numeric' 
-              })} • Real-time from free government APIs
+              })} • Latest Updates
             </p>
           </div>
         </div>
