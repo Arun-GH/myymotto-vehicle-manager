@@ -202,7 +202,15 @@ export default function ServiceLogs() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => window.open(record.warrantyCardPath, '_blank')}
+                            onClick={() => {
+                              const link = document.createElement('a');
+                              link.href = record.warrantyCardPath!;
+                              link.target = '_blank';
+                              link.rel = 'noopener noreferrer';
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                            }}
                             className="text-blue-600 hover:text-blue-800 p-1"
                             title="View Warranty Card"
                           >
@@ -224,7 +232,15 @@ export default function ServiceLogs() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => window.open(record.invoicePath, '_blank')}
+                            onClick={() => {
+                              const link = document.createElement('a');
+                              link.href = record.invoicePath!;
+                              link.target = '_blank';
+                              link.rel = 'noopener noreferrer';
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                            }}
                             className="text-green-600 hover:text-green-800 p-1"
                             title="View Invoice"
                           >
@@ -295,7 +311,15 @@ export default function ServiceLogs() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => window.open(log.invoicePath, '_blank')}
+                          onClick={() => {
+                            const link = document.createElement('a');
+                            link.href = log.invoicePath!;
+                            link.target = '_blank';
+                            link.rel = 'noopener noreferrer';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                          }}
                           className="text-green-600 hover:text-green-800 p-1"
                           title="View Invoice"
                         >

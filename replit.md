@@ -10,7 +10,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Implemented secure file storage system with independent file copies and complete file management
+**July 21, 2025**: Implemented secure file storage system and fixed file viewing issues
 - Created comprehensive secure file storage system using dedicated app_storage directory with documents and temp subdirectories
 - All uploaded files and camera captures are now copied to secure app_storage/documents location with unique naming
 - Files are preserved independently of device storage - originals can be deleted without affecting app functionality
@@ -22,6 +22,9 @@ Preferred communication style: Simple, everyday language.
 - Legacy uploads directory maintained for backward compatibility with existing files
 - Secure storage system prevents file loss if users delete original photos from device gallery
 - Complete file lifecycle management: upload → secure copy → database reference → deletion cleanup
+- Fixed file viewing issues by replacing window.open() with reliable anchor element creation method
+- Enhanced file opening mechanism to bypass popup blockers and work consistently across browsers
+- Updated service logs and view documents pages with improved file access functionality
 
 **July 21, 2025**: Created unified Service Management page combining Essential Replaces and Service Details
 - Updated Essential Replaces page to display different maintenance schedules based on vehicle type

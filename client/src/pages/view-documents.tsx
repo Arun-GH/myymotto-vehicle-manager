@@ -92,8 +92,14 @@ export default function ViewDocuments() {
   };
 
   const openDocument = (document: Document) => {
-    // Open the document in a new tab/window
-    window.open(document.filePath, '_blank');
+    // Open the document in a new tab/window using a more reliable method
+    const link = document.createElement('a');
+    link.href = document.filePath;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleBack = () => {
