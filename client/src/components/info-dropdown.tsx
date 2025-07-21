@@ -79,31 +79,32 @@ export default function InfoDropdown() {
 
       {/* About Dialog */}
       <Dialog open={showAbout} onOpenChange={setShowAbout}>
-        <DialogContent className="max-w-md mx-auto">
-          <DialogHeader>
-            <DialogTitle className="text-center text-lg font-semibold text-orange-600 flex items-center justify-center gap-2">
-              <Info className="w-5 h-5" />
+        <DialogContent className="max-w-sm mx-4 sm:mx-auto p-4">
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-center text-base font-semibold text-orange-600 flex items-center justify-center gap-2">
+              <Info className="w-4 h-4" />
               About Myymotto
             </DialogTitle>
           </DialogHeader>
-          <div className="text-center space-y-3 py-4">
-            <p className="text-gray-700 leading-relaxed">
-              <strong>Myymotto</strong> is your complete mobile vehicle management companion with the tagline "Timely Care for your carrier".
+          <div className="text-center space-y-2 py-2">
+            <p className="text-sm text-gray-700 leading-snug">
+              <strong>Myymotto</strong> is your complete mobile vehicle management companion with "Timely Care for your carrier".
             </p>
-            <p className="text-gray-700 leading-relaxed">
-              Store vehicle documents securely on your device, track service schedules, and get renewal reminders for insurance and emissions.
+            <p className="text-sm text-gray-700 leading-snug">
+              Store documents securely, track service schedules, and get renewal reminders for insurance and emissions.
             </p>
-            <p className="text-gray-700 leading-relaxed">
-              Check authentic traffic violations through government APIs, find nearby service centers, and manage emergency contacts effortlessly.
+            <p className="text-sm text-gray-700 leading-snug">
+              Check authentic traffic violations through government APIs and find nearby service centers effortlessly.
             </p>
-            <p className="text-gray-700 leading-relaxed">
-              Features include subscription plans, puzzle games, real-time automotive news, and comprehensive maintenance tracking.
+            <p className="text-sm text-gray-700 leading-snug">
+              Features include subscription plans, puzzle games, automotive news, and comprehensive maintenance tracking.
             </p>
           </div>
-          <div className="flex justify-center pt-2">
+          <div className="flex justify-center pt-3">
             <Button 
               onClick={() => setShowAbout(false)}
-              className="px-6"
+              size="sm"
+              className="px-4"
             >
               Got it
             </Button>
