@@ -57,9 +57,13 @@ export default function Dashboard() {
             <h2 className="text-sm font-medium text-gray-600">
               {vehicles.length > 0 ? `${vehicles.length} Vehicle${vehicles.length > 1 ? 's' : ''}` : 'Vehicle Management'}
             </h2>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500 flex items-center space-x-3">
               <Link href="/climbing-game" className="text-purple-600 hover:text-purple-800 underline">
                 Logo Puzzle Game
+              </Link>
+              <span className="text-gray-400">|</span>
+              <Link href="/news-tidbits" className="text-blue-600 hover:text-blue-800 underline">
+                News Tidbits
               </Link>
             </div>
           </div>

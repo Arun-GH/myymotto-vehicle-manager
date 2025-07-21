@@ -26,6 +26,7 @@ import InsuranceRenewals from "@/pages/insurance-renewals";
 import Settings from "@/pages/settings";
 import ClimbingGame from "@/pages/climbing-game";
 import MaintenanceChecklist from "@/pages/maintenance-checklist";
+import NewsTidbits from "@/pages/news-tidbits";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -108,6 +109,7 @@ function Router() {
       <Route path="/profile" component={Profile} />
       <Route path="/settings" component={Settings} />
       <Route path="/climbing-game" component={ClimbingGame} />
+      <Route path="/news-tidbits" component={NewsTidbits} />
       <Route path="/traffic-violations" component={TrafficViolations} />
       <Route path="/insurance-renewals" component={InsuranceRenewals} />
       <Route component={NotFound} />

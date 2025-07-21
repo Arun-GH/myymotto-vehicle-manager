@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 21, 2025**: Added News Tidbits feature for latest vehicle industry updates
+- Created comprehensive News Tidbits page displaying latest automotive news from authentic sources
+- Integrated real-time government policy updates including new EV policies and import duty changes
+- Added latest vehicle launch information including Tesla Model Y, MG M9 Electric MPV, Honda Transalp XL750
+- Categorized news into Policy, Launch, and General categories with priority indicators
+- Sourced authentic data from Bloomberg, Autocar India, CarDekho, EVreporter, Business Standard
+- Added News Tidbits link next to Logo Puzzle Game on dashboard for easy access
+- Mobile-optimized news cards with external link functionality and category-based color coding
+- Breaking news indicators for high-priority automotive industry updates
+
 **July 17, 2025**: Added vehicle type and fuel type fields with visual indicators
 - Added vehicleType field to capture 2-wheeler, 3-wheeler, 4-wheeler classification
 - Added fuelType field to capture petrol, diesel, electric (EV), hybrid fuel types
