@@ -5,7 +5,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, AlertTriangle, Zap, Search, Clock, MapPin, ArrowLeft } from "lucide-react";
+import { Loader2, AlertTriangle, Zap, Search, Clock, MapPin, ArrowLeft, Bell, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import ColorfulLogo from "@/components/colorful-logo";
 import { format } from "date-fns";
