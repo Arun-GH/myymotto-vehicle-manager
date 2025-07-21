@@ -63,6 +63,8 @@ export default function AddVehicle() {
       averageUsagePerMonth: null,
       serviceIntervalKms: null,
       serviceIntervalMonths: null,
+      vehicleType: "",
+      fuelType: "",
     },
   });
 
@@ -468,6 +470,54 @@ export default function AddVehicle() {
                         <FormLabel className="text-sm font-medium">License Plate *</FormLabel>
                         <FormControl>
                           <Input placeholder="DL 01 AB 1234" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="vehicleType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">Vehicle Type</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className="h-9">
+                              <SelectValue placeholder="Select vehicle type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="2-wheeler">2-Wheeler</SelectItem>
+                              <SelectItem value="3-wheeler">3-Wheeler</SelectItem>
+                              <SelectItem value="4-wheeler">4-Wheeler</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="fuelType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">Fuel Type</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className="h-9">
+                              <SelectValue placeholder="Select fuel type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="petrol">Petrol</SelectItem>
+                              <SelectItem value="diesel">Diesel</SelectItem>
+                              <SelectItem value="electric">Electric (EV)</SelectItem>
+                              <SelectItem value="hybrid">Hybrid</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

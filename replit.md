@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 17, 2025**: Added vehicle type and fuel type fields to vehicle management system
+- Added vehicleType field to capture 2-wheeler, 3-wheeler, 4-wheeler classification
+- Added fuelType field to capture petrol, diesel, electric (EV), hybrid fuel types
+- Updated database schema with new vehicle type and fuel type columns
+- Enhanced Add Vehicle form with dropdown fields for vehicle type and fuel type selection
+- Updated Edit Vehicle form to include vehicle type and fuel type editing capabilities
+- Added vehicle type and fuel type display on vehicle cards for better information visibility
+- Pushed database schema changes to production with proper field validation
+- Maintained mobile-first design with responsive dropdown layouts and orange gradient theme
+
 **July 17, 2025**: Removed border lines from all headers while maintaining gradient design
 - Removed "border-4 border-red-500" classes from all page headers across the entire application
 - Updated headers in Dashboard, Add Vehicle, Edit Vehicle, Profile, Emergency Contacts, Upload Documents, Service Centers, Documents, Logo Puzzle Game, and Settings pages

@@ -58,6 +58,8 @@ export default function EditVehicle() {
       averageUsagePerMonth: null,
       serviceIntervalKms: null,
       serviceIntervalMonths: null,
+      vehicleType: "",
+      fuelType: "",
     },
   });
 
@@ -82,6 +84,8 @@ export default function EditVehicle() {
         averageUsagePerMonth: vehicle.averageUsagePerMonth || null,
         serviceIntervalKms: vehicle.serviceIntervalKms || null,
         serviceIntervalMonths: vehicle.serviceIntervalMonths || null,
+        vehicleType: vehicle.vehicleType || "",
+        fuelType: vehicle.fuelType || "",
       });
       
       // Check if make or model are custom (not in dropdown)
@@ -458,6 +462,54 @@ export default function EditVehicle() {
                     </FormItem>
                   )}
                 />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="vehicleType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Vehicle Type</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select vehicle type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="2-wheeler">2-Wheeler</SelectItem>
+                              <SelectItem value="3-wheeler">3-Wheeler</SelectItem>
+                              <SelectItem value="4-wheeler">4-Wheeler</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="fuelType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Fuel Type</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select fuel type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="petrol">Petrol</SelectItem>
+                              <SelectItem value="diesel">Diesel</SelectItem>
+                              <SelectItem value="electric">Electric (EV)</SelectItem>
+                              <SelectItem value="hybrid">Hybrid</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField

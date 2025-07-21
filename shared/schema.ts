@@ -23,6 +23,8 @@ export const vehicles = pgTable("vehicles", {
   averageUsagePerMonth: integer("average_usage_per_month"),
   serviceIntervalKms: integer("service_interval_kms"),
   serviceIntervalMonths: integer("service_interval_months"),
+  vehicleType: text("vehicle_type"), // "2-wheeler", "3-wheeler", "4-wheeler"
+  fuelType: text("fuel_type"), // "petrol", "diesel", "electric", "hybrid"
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -69,6 +71,8 @@ export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   averageUsagePerMonth: z.number().optional().nullable(),
   serviceIntervalKms: z.number().optional().nullable(),
   serviceIntervalMonths: z.number().optional().nullable(),
+  vehicleType: z.string().optional(),
+  fuelType: z.string().optional(),
 });
 
 export const insertDocumentSchema = createInsertSchema(documents).omit({

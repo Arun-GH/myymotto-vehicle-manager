@@ -167,9 +167,15 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         <div className="grid grid-cols-2 gap-3 text-xs mb-2">
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold">Insurance Provider:</span>
+              <span className="text-amber-800 font-bold">Vehicle Type:</span>
               <span className="text-gray-800 text-xs">
-                {vehicle.insuranceCompany || "Not specified"}
+                {vehicle.vehicleType || "Not specified"}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-amber-800 font-bold">Fuel Type:</span>
+              <span className="text-gray-800 text-xs">
+                {vehicle.fuelType || "Not specified"}
               </span>
             </div>
             <div className="flex flex-col">
