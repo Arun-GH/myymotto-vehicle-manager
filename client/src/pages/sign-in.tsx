@@ -484,7 +484,7 @@ export default function SignIn() {
             />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-800">Welcome to <ColorfulLogo className="inline" />!</CardTitle>
-          <p className="text-red-600 font-medium">Timely Care for your carrier</p>
+          <p className="text-red-600 font-medium">Timely Care For Your Carrier</p>
         </CardHeader>
         <CardContent>
           <Tabs value={authTab} onValueChange={(value) => setAuthTab(value as "otp" | "pin")}>

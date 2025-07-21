@@ -10,7 +10,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Completed comprehensive mobile optimization across all application screens
+**July 21, 2025**: Standardized app tagline to proper case format across application
+- Updated tagline from "Timely Care for your carrier" to "Timely Care For Your Carrier" for consistent branding
+- Applied proper case formatting in dashboard.tsx and sign-in.tsx main tagline displays
+- Maintained consistent red color (#dc2626) and font styling for brand recognition
+- Completed comprehensive mobile optimization across all application screens
 - Optimized essentials replacements page (combined-service.tsx) with compact mobile layout design
 - Reduced header padding from px-4 py-4 to px-3 py-3 and logo sizes from w-14 h-14 to w-10 h-10
 - Updated all icons to mobile-friendly sizes: w-4 h-4 for settings, w-6 h-6 for action buttons
