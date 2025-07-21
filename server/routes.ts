@@ -1124,7 +1124,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/dashboard/widgets", async (req, res) => {
     try {
-      const widget = await storage.createDashboardWidget(req.body);
+      // Get userId from request headers or body
+      const userId = req.headers['x-user-id'] ? parseInt(req.headers['x-user-id'] as string) : req.body.userId;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const widgetData = { ...req.body, userId };
+      const widget = await storage.createDashboardWidget(widgetData);
       res.json(widget);
     } catch (error) {
       console.error("Error creating dashboard widget:", error);
@@ -1135,7 +1142,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/dashboard/widgets/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const widget = await storage.updateDashboardWidget(id, req.body);
+      // Get userId from request headers or body
+      const userId = req.headers['x-user-id'] ? parseInt(req.headers['x-user-id'] as string) : req.body.userId;
+      
+      const updateData = { ...req.body };
+      if (userId) {
+        updateData.userId = userId;
+      }
+      
+      const widget = await storage.updateDashboardWidget(id, updateData);
       res.json(widget);
     } catch (error) {
       console.error("Error updating dashboard widget:", error);

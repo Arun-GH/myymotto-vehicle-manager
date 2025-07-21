@@ -10,6 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 21, 2025**: Completed customizable dashboard widget system with full database integration
+- Fixed critical 404 error in dashboard customization by properly handling userId in API requests
+- Implemented complete customizable dashboard widget layout system with database schema and API routes
+- Created dashboard-customize page with widget management controls for show/hide, resize, and reorder functionality
+- Added "Customize Dashboard" option to settings page with intuitive access via orange-themed card
+- Built widget system supporting stats, quick actions, vehicles, news, and reminders with persistent user preferences
+- All widget customizations stored in database with user-specific settings and real-time updates
+- Fixed userId null constraint issue by including userId in PATCH and POST requests to dashboard widget endpoints
+- Enhanced user experience with visual feedback, position controls, and size selection for each widget type
+- Dashboard customization fully operational with proper route handling at /dashboard/customize
+
 **July 21, 2025**: Completed Service Logs system and renamed Maintenance to Essential Replaces
 - Built complete Service Logs functionality with view and add service log pages
 - Added Service Logs section to vehicle tiles with View and Add buttons positioned next to Essential Replaces

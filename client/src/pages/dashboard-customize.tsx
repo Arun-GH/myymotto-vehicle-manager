@@ -40,7 +40,9 @@ export default function DashboardCustomize() {
 
   const updateWidgetMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: number; updates: Partial<DashboardWidget> }) => {
-      return apiRequest("PATCH", `/api/dashboard/widgets/${id}`, updates);
+      // Include userId in the updates
+      const updatesWithUserId = { ...updates, userId: 1 };
+      return apiRequest("PATCH", `/api/dashboard/widgets/${id}`, updatesWithUserId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/widgets/1"] });
@@ -50,6 +52,7 @@ export default function DashboardCustomize() {
       });
     },
     onError: (error) => {
+      console.error("Widget update error:", error);
       toast({
         title: "Update Failed",
         description: "Failed to update widget settings. Please try again.",
