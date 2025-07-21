@@ -10,7 +10,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Implemented complete Essential Replaces and Service Logs integration system
+**July 21, 2025**: Created unified Service Management page combining Essential Replaces and Service Details
 - Updated Essential Replaces page to display different maintenance schedules based on vehicle type
 - Four-wheeler vehicles show comprehensive 10-item essential replacement table: Engine oil Replacement, Oil and air filters change, Tyres Front/Back change, Battery replacement, Timing Belts, AC regassing, Brake Fluid, Clutch Oil, Wheel Balancing
 - Two-wheeler vehicles show 7-item essential replacement table: Engine oil, Oil and air filters, Tyres Front/Back, Spark plug, Battery, Engine overhauling
@@ -19,11 +19,12 @@ Preferred communication style: Simple, everyday language.
 - Maintenance completion tracking with date entry, warranty card upload, and invoice management
 - Professional table layout with "Date Done" column showing completion status and document access buttons
 - Green highlighting for completed maintenance items with smart detection from existing records
-- Essential Replaces page shows only "Add" and "Add Again" buttons without view options for streamlined maintenance planning
-- Service Logs page displays combined history: Essential Replaces completion entries marked as "(Essential Replace)" plus regular service logs
-- Essential Replaces entries in Service Logs show completion date, notes, and document access (warranty cards and invoices)
-- Clear functional separation: Essential Replaces for adding maintenance, Service Logs for viewing all maintenance history
-- Maintenance records from Essential Replaces automatically appear in Service Logs with green wrench icons for easy identification
+- Created unified Service Management page with two expandable tiles: "Service Details" and "Essential Replacements" 
+- Service Details tile captures regular service information with service type, date, centre, notes, and invoice upload
+- Essential Replacements tile displays maintenance schedule table with vehicle-specific timelines and "Add"/"Add Again" buttons
+- Replaced separate Essential Replaces link in vehicle cards with single "Service" button pointing to combined page
+- Service Logs page continues to display complete history including Essential Replaces entries with "(Essential Replace)" markers
+- Streamlined navigation: one service entry point for all maintenance activities, separate view page for complete history
 
 **July 21, 2025**: Completed customizable dashboard widget system with full database integration
 - Fixed critical 404 error in dashboard customization by properly handling userId in API requests

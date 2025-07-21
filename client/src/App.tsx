@@ -26,7 +26,7 @@ import TrafficViolations from "@/pages/traffic-violations";
 import InsuranceRenewals from "@/pages/insurance-renewals";
 import Settings from "@/pages/settings";
 import ClimbingGame from "@/pages/climbing-game";
-import MaintenancePage from "@/pages/maintenance";
+import CombinedServicePage from "@/pages/combined-service";
 import ServiceLogs from "@/pages/service-logs";
 import AddServiceLog from "@/pages/add-service-log";
 import NewsTidbits from "@/pages/news-tidbits";
@@ -105,7 +105,7 @@ function Router() {
       <Route path="/vehicle/:id/upload" component={UploadDocuments} />
       <Route path="/vehicle/:id/documents" component={ViewDocuments} />
       <Route path="/vehicle/:id/local-documents" component={LocalDocuments} />
-      <Route path="/vehicle/:id/maintenance" component={MaintenancePage} />
+      <Route path="/vehicle/:id/service" component={CombinedServicePage} />
       <Route path="/vehicle/:vehicleId/service-logs" component={ServiceLogs} />
       <Route path="/vehicle/:vehicleId/add-service-log" component={AddServiceLog} />
 
