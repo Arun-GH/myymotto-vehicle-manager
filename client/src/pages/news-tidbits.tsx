@@ -1,7 +1,11 @@
-import { ArrowLeft, ExternalLink, Newspaper, Zap, Car, Truck, Bike, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ExternalLink, Newspaper, Zap, Car, Truck, Bike, AlertTriangle, RefreshCw } from "lucide-react";
 import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import ColorfulLogo from "@/components/colorful-logo";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 interface NewsItem {
   id: string;
@@ -15,69 +19,41 @@ interface NewsItem {
 }
 
 export default function NewsTidbits() {
-  // Latest vehicle news data from authentic sources
-  const newsItems: NewsItem[] = [
-    {
-      id: "1",
-      title: "MG M9 Electric MPV Launches Today at ₹70 Lakh",
-      summary: "India's first all-electric luxury MPV goes on sale today, targeting premium family segment with advanced features and 500km range.",
-      category: "launch",
-      date: "July 21, 2025",
-      source: "Autocar India",
-      link: "https://www.autocarindia.com/car-news/mg-m9-electric-mpv-launch-india-2025",
-      priority: "high"
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Fetch news data from API
+  const { data: newsItems = [], isLoading, error } = useQuery<NewsItem[]>({
+    queryKey: ["/api/news"],
+    refetchOnMount: true,
+    staleTime: 1000 * 60 * 30, // 30 minutes
+  });
+
+  // Fetch cache info
+  const { data: cacheInfo } = useQuery({
+    queryKey: ["/api/news/cache-info"],
+    refetchInterval: 1000 * 60, // Refresh every minute
+  });
+
+  // Refresh news mutation
+  const refreshNewsMutation = useMutation({
+    mutationFn: () => apiRequest("POST", "/api/news/refresh"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/news"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/news/cache-info"] });
+      toast({
+        title: "News Refreshed",
+        description: "Latest vehicle news has been updated successfully.",
+      });
     },
-    {
-      id: "2", 
-      title: "New EV Policy: 15% Import Duty for ₹500M Investment",
-      summary: "Government slashes customs duty to 15% for EVs worth $35,000+ with minimum $500M local investment commitment from manufacturers.",
-      category: "policy",
-      date: "July 21, 2025",
-      source: "Bloomberg",
-      link: "https://www.bloomberg.com/news/articles/2025-06-02/india-to-open-flagship-ev-making-policy-to-lure-global-giants",
-      priority: "high"
+    onError: () => {
+      toast({
+        title: "Refresh Failed",
+        description: "Could not fetch latest news. Showing cached data.",
+        variant: "destructive",
+      });
     },
-    {
-      id: "3",
-      title: "Tesla Model Y India Launch at ₹59.89 Lakh",
-      summary: "Tesla opens first Mumbai showroom with Model Y as debut product. First Tesla car officially launched in India after years of anticipation.",
-      category: "launch", 
-      date: "July 21, 2025",
-      source: "CarDekho",
-      link: "https://www.cardekho.com/tesla/model-y",
-      priority: "high"
-    },
-    {
-      id: "4",
-      title: "Maharashtra EV Policy 2025: 30% Electric by 2030",
-      summary: "₹1,740 crore allocated for EV incentives. 100% motor vehicle tax exemption and toll exemption on expressways for all electric vehicles.",
-      category: "policy",
-      date: "July 20, 2025", 
-      source: "EVreporter",
-      link: "https://evreporter.com/maharashtra-electric-vehicle-policy-2025/",
-      priority: "medium"
-    },
-    {
-      id: "5",
-      title: "Honda Transalp XL750 Adventure Bike at ₹11 Lakh",
-      summary: "Honda launches updated 2025 Transalp XL750 adventure touring motorcycle with enhanced features and improved performance.",
-      category: "launch",
-      date: "July 19, 2025",
-      source: "BikeWale",
-      link: "https://www.bikewale.com/honda-bikes/transalp-xl750/",
-      priority: "medium"
-    },
-    {
-      id: "6",
-      title: "Delhi EV Policy 2.0: 95% EVs by 2027 Target",
-      summary: "Proposed ban on fossil fuel two-wheelers from Aug 2026. Third private car in household must be electric under new policy draft.",
-      category: "policy", 
-      date: "July 18, 2025",
-      source: "Business Standard",
-      link: "https://www.business-standard.com/india-news/delhi-ev-policy-2025-two-wheeler-petrol-cng-ban-auto-125040800428_1.html",
-      priority: "medium"
-    }
-  ];
+  });
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -129,7 +105,15 @@ export default function NewsTidbits() {
           <div className="flex items-center space-x-2">
             <ColorfulLogo />
           </div>
-          <div className="w-6" /> {/* Spacer for alignment */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-gray-600 hover:bg-red-50"
+            onClick={() => refreshNewsMutation.mutate()}
+            disabled={refreshNewsMutation.isPending}
+          >
+            <RefreshCw className={`w-5 h-5 ${refreshNewsMutation.isPending ? 'animate-spin' : ''}`} />
+          </Button>
         </div>
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-1">
@@ -137,6 +121,11 @@ export default function NewsTidbits() {
             <h1 className="text-xl font-bold text-gray-800">News Tidbits</h1>
           </div>
           <p className="text-red-600 text-sm font-medium">Latest Vehicle News & Updates</p>
+          {cacheInfo && (
+            <p className="text-xs text-gray-500 mt-1">
+              Last updated: {cacheInfo.lastUpdated ? new Date(cacheInfo.lastUpdated).toLocaleTimeString() : 'Never'}
+            </p>
+          )}
         </div>
       </div>
 
@@ -168,51 +157,110 @@ export default function NewsTidbits() {
         </div>
 
         {/* News Items */}
-        <div className="space-y-3">
-          {newsItems.map((item) => (
-            <Card key={item.id} className={`p-4 shadow-orange-200 shadow-md ${getPriorityBorder(item.priority)}`}>
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center space-x-2">
-                  {getCategoryIcon(item.category)}
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}>
-                    {item.category.toUpperCase()}
-                  </span>
-                  {item.priority === "high" && (
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-200 text-red-800">
-                      BREAKING
-                    </span>
-                  )}
+        {isLoading ? (
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Card key={i} className="p-4 shadow-orange-200 shadow-md animate-pulse">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 bg-gray-300 rounded"></div>
+                    <div className="w-16 h-5 bg-gray-300 rounded-full"></div>
+                  </div>
+                  <div className="w-4 h-4 bg-gray-300 rounded"></div>
                 </div>
-                <a 
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-orange-600 transition-colors"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              </div>
-              
-              <h3 className="font-semibold text-gray-800 text-sm mb-2">
-                {item.title}
-              </h3>
-              
-              <p className="text-xs text-gray-600 mb-3 leading-relaxed">
-                {item.summary}
-              </p>
-              
-              <div className="flex items-center justify-between text-xs text-gray-500">
-                <span className="font-medium">{item.source}</span>
-                <span>{item.date}</span>
-              </div>
-            </Card>
-          ))}
-        </div>
+                <div className="w-full h-4 bg-gray-300 rounded mb-2"></div>
+                <div className="w-full h-3 bg-gray-300 rounded mb-1"></div>
+                <div className="w-3/4 h-3 bg-gray-300 rounded mb-3"></div>
+                <div className="flex items-center justify-between">
+                  <div className="w-20 h-3 bg-gray-300 rounded"></div>
+                  <div className="w-16 h-3 bg-gray-300 rounded"></div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : error ? (
+          <Card className="p-6 text-center shadow-orange-200 shadow-md">
+            <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-3" />
+            <h3 className="font-semibold text-gray-800 mb-2">Failed to Load News</h3>
+            <p className="text-xs text-gray-600 mb-4">
+              Unable to fetch latest news. Please check your connection and try again.
+            </p>
+            <Button
+              onClick={() => refreshNewsMutation.mutate()}
+              disabled={refreshNewsMutation.isPending}
+              className="bg-orange-600 hover:bg-orange-700 text-white"
+            >
+              {refreshNewsMutation.isPending ? (
+                <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <RefreshCw className="w-4 h-4 mr-2" />
+              )}
+              Try Again
+            </Button>
+          </Card>
+        ) : newsItems.length === 0 ? (
+          <Card className="p-6 text-center shadow-orange-200 shadow-md">
+            <Newspaper className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+            <h3 className="font-semibold text-gray-800 mb-2">No News Available</h3>
+            <p className="text-xs text-gray-600 mb-4">
+              No vehicle news found at the moment. Try refreshing to check for updates.
+            </p>
+            <Button
+              onClick={() => refreshNewsMutation.mutate()}
+              disabled={refreshNewsMutation.isPending}
+              variant="outline"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh News
+            </Button>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {newsItems.map((item) => (
+              <Card key={item.id} className={`p-4 shadow-orange-200 shadow-md ${getPriorityBorder(item.priority)}`}>
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center space-x-2">
+                    {getCategoryIcon(item.category)}
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(item.category)}`}>
+                      {item.category.toUpperCase()}
+                    </span>
+                    {item.priority === "high" && (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-200 text-red-800">
+                        BREAKING
+                      </span>
+                    )}
+                  </div>
+                  <a 
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-orange-600 transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+                
+                <h3 className="font-semibold text-gray-800 text-sm mb-2">
+                  {item.title}
+                </h3>
+                
+                <p className="text-xs text-gray-600 mb-3 leading-relaxed">
+                  {item.summary}
+                </p>
+                
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span className="font-medium">{item.source}</span>
+                  <span>{item.date}</span>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
 
-        {/* Refresh Notice */}
+        {/* Dynamic Update Notice */}
         <Card className="p-3 text-center bg-blue-50 shadow-orange-200 shadow-md">
           <p className="text-xs text-blue-700">
-            📱 News updated every hour with latest automotive information from trusted sources
+            🔄 News updates hourly with intelligent caching • Tap refresh for latest updates
           </p>
         </Card>
       </div>

@@ -4,6 +4,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact } from "@shared/schema";
 import { maintenanceService } from "./maintenance-service";
+import { newsService } from "./news-service";
 import crypto from "crypto";
 import multer from "multer";
 import path from "path";
@@ -899,6 +900,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching available maintenance schedules:", error);
       res.status(500).json({ message: "Failed to fetch available maintenance schedules" });
+    }
+  });
+
+  // News API routes
+  app.get("/api/news", async (req, res) => {
+    try {
+      const news = await newsService.getLatestNews();
+      res.json(news);
+    } catch (error) {
+      console.error("Error fetching news:", error);
+      res.status(500).json({ message: "Failed to fetch news" });
+    }
+  });
+
+  app.get("/api/news/cache-info", async (req, res) => {
+    try {
+      const cacheInfo = newsService.getCacheInfo();
+      res.json(cacheInfo);
+    } catch (error) {
+      console.error("Error fetching cache info:", error);
+      res.status(500).json({ message: "Failed to fetch cache info" });
+    }
+  });
+
+  app.post("/api/news/refresh", async (req, res) => {
+    try {
+      newsService.clearCache();
+      const news = await newsService.getLatestNews();
+      res.json({ message: "News refreshed successfully", news });
+    } catch (error) {
+      console.error("Error refreshing news:", error);
+      res.status(500).json({ message: "Failed to refresh news" });
     }
   });
 
