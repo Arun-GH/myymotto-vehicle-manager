@@ -10,7 +10,8 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Standardized app tagline to proper case format across application
+**July 21, 2025**: Updated contact support email message and standardized app tagline
+- Changed contact support mail body to new professional format: "Dear Arudhih Team, I am reaching out to request information and assistance regarding few features on the app.I would appreciate it if someone from your team could get in touch with me at your earliest convenience. Regards,"
 - Updated tagline from "Timely Care for your carrier" to "Timely Care For Your Carrier" for consistent branding
 - Applied proper case formatting in dashboard.tsx and sign-in.tsx main tagline displays
 - Maintained consistent red color (#dc2626) and font styling for brand recognition

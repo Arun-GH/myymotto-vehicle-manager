@@ -67,7 +67,7 @@ export default function InfoDropdown() {
   };
 
   const handleContact = () => {
-    window.open("mailto:info@arudhihsolutions.com?subject=Myymotto Support Request&body=Hi there,%0D%0A%0D%0APlease get in touch with us at info@arudhihsolutions.com for any support queries.%0D%0A%0D%0AThanks!", "_blank");
+    window.open("mailto:info@arudhihsolutions.com?subject=Myymotto Support Request&body=Dear Arudhih Team,%0D%0AI am reaching out to request information and assistance regarding few features on the app.I would appreciate it if someone from your team could get in touch with me at your earliest convenience.%0D%0A%0D%0ARegards,", "_blank");
   };
 
   const handleFeedback = () => {
