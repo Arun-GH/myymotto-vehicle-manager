@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocation, useParams } from "wouter";
-import { ArrowLeft, Upload, Camera, FileText, Calendar, CheckCircle } from "lucide-react";
+import { useLocation, useParams, Link } from "wouter";
+import { ArrowLeft, Upload, Camera, FileText, Calendar, CheckCircle, Bell, Settings } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
