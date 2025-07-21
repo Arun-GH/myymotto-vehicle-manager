@@ -358,27 +358,29 @@ export default function CombinedServicePage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="header-gradient-border shadow-lg relative z-10">
-        <div className="px-4 py-4">
+        <div className="px-3 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <Link href="/">
-                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
-                  <ArrowLeft className="w-5 h-5" />
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 p-1">
+                  <ArrowLeft className="w-4 h-4" />
                 </Button>
               </Link>
-              <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
+              <img src={logoImage} alt="Myymotto Logo" className="w-10 h-10 rounded-lg" />
               <div>
-                <ColorfulLogo />
-                <p className="text-sm text-red-600">{vehicle?.vehicleType === '4-wheeler' ? '4 Wheeler' : '2 Wheeler'} Service Management</p>
+                <div className="text-base font-bold">
+                  <ColorfulLogo />
+                </div>
+                <p className="text-xs text-red-600">{vehicle?.vehicleType === '4-wheeler' ? '4 Wheeler' : '2 Wheeler'} Service Management</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
-                <Bell className="w-5 h-5" />
+            <div className="flex items-center space-x-1">
+              <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 p-1">
+                <Bell className="w-4 h-4" />
               </Button>
               <Link href="/settings">
-                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
-                  <Settings className="w-6 h-6" />
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 p-1">
+                  <Settings className="w-4 h-4" />
                 </Button>
               </Link>
             </div>
@@ -386,95 +388,95 @@ export default function CombinedServicePage() {
         </div>
       </header>
 
-      <div className="p-4 pb-20 bg-warm-pattern">
+      <div className="p-3 pb-20 bg-warm-pattern">
         {/* Vehicle Info Card */}
-        <Card className="mb-6 shadow-orange">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
+        <Card className="mb-4 shadow-orange">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center justify-between text-base">
               <span>{vehicle.make} {vehicle.model} ({vehicle.year})</span>
-              <span className="text-sm text-gray-500">{vehicle.licensePlate}</span>
+              <span className="text-xs text-gray-500">{vehicle.licensePlate}</span>
             </CardTitle>
           </CardHeader>
         </Card>
 
         {/* Service Details Tile */}
-        <Card className="mb-4 shadow-orange">
+        <Card className="mb-3 shadow-orange">
           <Collapsible open={serviceDetailsOpen} onOpenChange={setServiceDetailsOpen}>
             <CollapsibleTrigger className="w-full">
-              <CardHeader className="hover:bg-gray-50">
-                <CardTitle className="flex items-center justify-between text-left">
+              <CardHeader className="hover:bg-gray-50 py-3">
+                <CardTitle className="flex items-center justify-between text-left text-base">
                   <div className="flex items-center space-x-2">
-                    <Wrench className="w-5 h-5 text-blue-600" />
+                    <Wrench className="w-4 h-4 text-blue-600" />
                     <span>Service Details</span>
                   </div>
-                  <Plus className={`w-5 h-5 transition-transform ${serviceDetailsOpen ? 'rotate-45' : ''}`} />
+                  <Plus className={`w-4 h-4 transition-transform ${serviceDetailsOpen ? 'rotate-45' : ''}`} />
                 </CardTitle>
               </CardHeader>
             </CollapsibleTrigger>
             <CollapsibleContent>
               <CardContent className="pt-0">
-                <form onSubmit={serviceForm.handleSubmit(handleServiceSubmit)} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="serviceType">Service Type</Label>
+                <form onSubmit={serviceForm.handleSubmit(handleServiceSubmit)} className="space-y-3">
+                  <div className="space-y-1">
+                    <Label htmlFor="serviceType" className="text-xs">Service Type</Label>
                     <Input
                       id="serviceType"
                       {...serviceForm.register("serviceType")}
                       placeholder="e.g., Oil Change, Brake Service"
-                      className="h-9"
+                      className="h-8"
                     />
                     {serviceForm.formState.errors.serviceType && (
                       <p className="text-sm text-red-600">{serviceForm.formState.errors.serviceType.message}</p>
                     )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="serviceDate">Service Date</Label>
+                  <div className="space-y-1">
+                    <Label htmlFor="serviceDate" className="text-xs">Service Date</Label>
                     <Input
                       id="serviceDate"
                       type="date"
                       {...serviceForm.register("serviceDate")}
-                      className="h-9"
+                      className="h-8"
                     />
                     {serviceForm.formState.errors.serviceDate && (
                       <p className="text-sm text-red-600">{serviceForm.formState.errors.serviceDate.message}</p>
                     )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="serviceCentre">Service Centre</Label>
+                  <div className="space-y-1">
+                    <Label htmlFor="serviceCentre" className="text-xs">Service Centre</Label>
                     <Input
                       id="serviceCentre"
                       {...serviceForm.register("serviceCentre")}
                       placeholder="Service center name"
-                      className="h-9"
+                      className="h-8"
                     />
                     {serviceForm.formState.errors.serviceCentre && (
                       <p className="text-sm text-red-600">{serviceForm.formState.errors.serviceCentre.message}</p>
                     )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="notes">Notes (Optional)</Label>
+                  <div className="space-y-1">
+                    <Label htmlFor="notes" className="text-xs">Notes (Optional)</Label>
                     <Textarea
                       id="notes"
                       {...serviceForm.register("notes")}
                       placeholder="Additional service notes..."
-                      className="min-h-[80px]"
+                      className="min-h-[60px] text-sm"
                     />
                   </div>
 
                   {/* Invoice Upload */}
-                  <div className="space-y-2">
-                    <Label>Invoice (Optional)</Label>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Invoice (Optional)</Label>
                     <div className="flex space-x-2">
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => triggerCamera('service')}
-                        className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
+                        className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50 h-8 text-xs"
                       >
-                        <Camera className="w-4 h-4 mr-2" />
+                        <Camera className="w-3 h-3 mr-1" />
                         Camera
                       </Button>
                       <Button
@@ -482,9 +484,9 @@ export default function CombinedServicePage() {
                         variant="outline"
                         size="sm"
                         onClick={() => triggerFileUpload('service')}
-                        className="flex-1 border-green-300 text-green-700 hover:bg-green-50"
+                        className="flex-1 border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs"
                       >
-                        <Upload className="w-4 h-4 mr-2" />
+                        <Upload className="w-3 h-3 mr-1" />
                         Upload
                       </Button>
                     </div>
@@ -503,7 +505,7 @@ export default function CombinedServicePage() {
                     )}
                   </div>
 
-                  <div className="flex space-x-2 pt-4">
+                  <div className="flex space-x-2 pt-2">
                     <Button
                       type="submit"
                       disabled={createServiceLogMutation.isPending}
@@ -529,13 +531,13 @@ export default function CombinedServicePage() {
         <Card className="shadow-orange">
           <Collapsible open={essentialReplacesOpen} onOpenChange={setEssentialReplacesOpen}>
             <CollapsibleTrigger className="w-full">
-              <CardHeader className="hover:bg-gray-50">
-                <CardTitle className="flex items-center justify-between text-left">
+              <CardHeader className="hover:bg-gray-50 py-3">
+                <CardTitle className="flex items-center justify-between text-left text-base">
                   <div className="flex items-center space-x-2">
-                    <Settings className="w-5 h-5 text-orange-600" />
+                    <Settings className="w-4 h-4 text-orange-600" />
                     <span>Essential Replacements</span>
                   </div>
-                  <Plus className={`w-5 h-5 transition-transform ${essentialReplacesOpen ? 'rotate-45' : ''}`} />
+                  <Plus className={`w-4 h-4 transition-transform ${essentialReplacesOpen ? 'rotate-45' : ''}`} />
                 </CardTitle>
               </CardHeader>
             </CollapsibleTrigger>
@@ -557,14 +559,14 @@ export default function CombinedServicePage() {
                         
                         return (
                           <TableRow key={index} className={isCompleted ? 'bg-green-50' : ''}>
-                            <TableCell className="font-medium text-xs py-2">{item.service}</TableCell>
-                            <TableCell className="text-xs text-gray-600 py-2">{item.recommendedTimeline}</TableCell>
-                            <TableCell className="text-center py-2">
+                            <TableCell className="font-medium text-xs py-1">{item.service}</TableCell>
+                            <TableCell className="text-xs text-gray-600 py-1">{item.recommendedTimeline}</TableCell>
+                            <TableCell className="text-center py-1">
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => openMaintenanceDialog(item)}
-                                className={`border-orange-300 text-orange-700 hover:bg-orange-50 text-xs px-2 py-1 h-7 ${
+                                className={`border-orange-300 text-orange-700 hover:bg-orange-50 text-xs px-1 py-1 h-6 ${
                                   record?.completedDate ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200' : ''
                                 }`}
                               >
