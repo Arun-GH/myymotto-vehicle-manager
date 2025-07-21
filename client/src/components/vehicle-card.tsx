@@ -206,28 +206,28 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         <div className="grid grid-cols-2 gap-3 text-xs mb-2">
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold">Insured date:</span>
-              <span className="text-gray-800 text-xs">
+              <span className="text-amber-800 font-bold text-[10px]">Insured date:</span>
+              <span className="text-gray-800 text-[10px]">
                 {vehicle.insuranceExpiry ? new Date(vehicle.insuranceExpiry).toLocaleDateString() : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold">Latest Emission:</span>
-              <span className="text-gray-800 text-xs">
+              <span className="text-amber-800 font-bold text-[10px]">Latest Emission:</span>
+              <span className="text-gray-800 text-[10px]">
                 {vehicle.emissionExpiry ? new Date(vehicle.emissionExpiry).toLocaleDateString() : "Not set"}
               </span>
             </div>
           </div>
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold">Last Service Date:</span>
-              <span className="text-gray-800 text-xs">
+              <span className="text-amber-800 font-bold text-[10px]">Last Service Date:</span>
+              <span className="text-gray-800 text-[10px]">
                 {vehicle.lastServiceDate ? new Date(vehicle.lastServiceDate).toLocaleDateString() : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold">Next Service Date:</span>
-              <span className={`text-xs ${
+              <span className="text-amber-800 font-bold text-[10px]">Next Service Date:</span>
+              <span className={`text-[10px] ${
                 nextServiceInfo.status === "overdue" ? "text-red-600" :
                 nextServiceInfo.status === "due_soon" ? "text-orange-600" :
                 nextServiceInfo.status === "due_month" ? "text-yellow-600" :
