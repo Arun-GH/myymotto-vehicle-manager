@@ -220,7 +220,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold">Latest Service Date:</span>
+              <span className="text-amber-800 font-bold">Last Service Date:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.lastServiceDate ? new Date(vehicle.lastServiceDate).toLocaleDateString() : "Not set"}
               </span>
