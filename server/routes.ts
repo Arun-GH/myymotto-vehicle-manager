@@ -1104,6 +1104,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dashboard widget routes
+  app.get("/api/dashboard/widgets/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      let widgets = await storage.getDashboardWidgets(userId);
+      
+      // If no widgets exist, initialize default ones
+      if (widgets.length === 0) {
+        widgets = await storage.initializeDefaultWidgets(userId);
+      }
+      
+      res.json(widgets);
+    } catch (error) {
+      console.error("Error fetching dashboard widgets:", error);
+      res.status(500).json({ message: "Failed to fetch dashboard widgets" });
+    }
+  });
+
+  app.post("/api/dashboard/widgets", async (req, res) => {
+    try {
+      const widget = await storage.createDashboardWidget(req.body);
+      res.json(widget);
+    } catch (error) {
+      console.error("Error creating dashboard widget:", error);
+      res.status(500).json({ message: "Failed to create dashboard widget" });
+    }
+  });
+
+  app.patch("/api/dashboard/widgets/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const widget = await storage.updateDashboardWidget(id, req.body);
+      res.json(widget);
+    } catch (error) {
+      console.error("Error updating dashboard widget:", error);
+      res.status(500).json({ message: "Failed to update dashboard widget" });
+    }
+  });
+
+  app.delete("/api/dashboard/widgets/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteDashboardWidget(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting dashboard widget:", error);
+      res.status(500).json({ message: "Failed to delete dashboard widget" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

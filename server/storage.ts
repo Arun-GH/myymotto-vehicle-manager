@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, newsItems, newsUpdateLog, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, newsItems, newsUpdateLog, dashboardWidgets, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte, desc } from "drizzle-orm";
 
@@ -79,6 +79,13 @@ export interface IStorage {
   clearAllNews(): Promise<void>;
   createNewsUpdateLog(log: InsertNewsUpdateLog): Promise<NewsUpdateLog>;
   getLastNewsUpdate(): Promise<NewsUpdateLog | undefined>;
+
+  // Dashboard Widget methods
+  getDashboardWidgets(userId: number): Promise<DashboardWidget[]>;
+  createDashboardWidget(widget: InsertDashboardWidget): Promise<DashboardWidget>;
+  updateDashboardWidget(id: number, updates: Partial<InsertDashboardWidget>): Promise<DashboardWidget>;
+  deleteDashboardWidget(id: number): Promise<void>;
+  initializeDefaultWidgets(userId: number): Promise<DashboardWidget[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -898,6 +905,44 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(newsUpdateLog.lastUpdated))
       .limit(1);
     return lastUpdate;
+  }
+
+  // Dashboard Widget methods
+  async getDashboardWidgets(userId: number): Promise<DashboardWidget[]> {
+    return await db.select().from(dashboardWidgets)
+      .where(eq(dashboardWidgets.userId, userId))
+      .orderBy(dashboardWidgets.position);
+  }
+
+  async createDashboardWidget(widget: InsertDashboardWidget): Promise<DashboardWidget> {
+    const [newWidget] = await db.insert(dashboardWidgets).values(widget).returning();
+    return newWidget;
+  }
+
+  async updateDashboardWidget(id: number, updates: Partial<InsertDashboardWidget>): Promise<DashboardWidget> {
+    const [updatedWidget] = await db
+      .update(dashboardWidgets)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(dashboardWidgets.id, id))
+      .returning();
+    return updatedWidget;
+  }
+
+  async deleteDashboardWidget(id: number): Promise<void> {
+    await db.delete(dashboardWidgets).where(eq(dashboardWidgets.id, id));
+  }
+
+  async initializeDefaultWidgets(userId: number): Promise<DashboardWidget[]> {
+    const defaultWidgets: InsertDashboardWidget[] = [
+      { userId, widgetType: "stats", position: 0, isVisible: true, size: "medium" },
+      { userId, widgetType: "quick_actions", position: 1, isVisible: true, size: "medium" },
+      { userId, widgetType: "recent_vehicles", position: 2, isVisible: true, size: "large" },
+      { userId, widgetType: "news", position: 3, isVisible: true, size: "medium" },
+      { userId, widgetType: "reminders", position: 4, isVisible: true, size: "small" },
+    ];
+
+    const createdWidgets = await db.insert(dashboardWidgets).values(defaultWidgets).returning();
+    return createdWidgets;
   }
 }
 

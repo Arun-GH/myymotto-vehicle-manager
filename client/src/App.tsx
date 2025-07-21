@@ -30,6 +30,7 @@ import MaintenancePage from "@/pages/maintenance";
 import ServiceLogs from "@/pages/service-logs";
 import AddServiceLog from "@/pages/add-service-log";
 import NewsTidbits from "@/pages/news-tidbits";
+import DashboardCustomize from "@/pages/dashboard-customize";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -116,6 +117,7 @@ function Router() {
       <Route path="/settings" component={Settings} />
       <Route path="/climbing-game" component={ClimbingGame} />
       <Route path="/news-tidbits" component={NewsTidbits} />
+      <Route path="/dashboard/customize" component={DashboardCustomize} />
       <Route path="/traffic-violations" component={TrafficViolations} />
       <Route path="/insurance-renewals" component={InsuranceRenewals} />
       <Route component={NotFound} />

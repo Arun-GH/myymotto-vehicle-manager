@@ -1,5 +1,5 @@
 import { useParams, Link } from "wouter";
-import { ArrowLeft, Plus, Eye, FileText, Calendar, MapPin, NotebookPen, Wrench } from "lucide-react";
+import { ArrowLeft, Plus, Eye, FileText, Calendar, MapPin, NotebookPen, Wrench, Settings, Bell } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,22 +43,24 @@ export default function ServiceLogs() {
             </Button>
           </Link>
           
-          <div className="flex-1 text-center">
-            <div className="flex items-center justify-center space-x-2">
-              <ColorfulLogo />
-              <div>
-                <h1 className="text-xl font-bold text-gray-800">Service Logs</h1>
-                <p className="text-sm text-red-600">Timely Care for your carrier</p>
-              </div>
+          <div className="flex items-center space-x-3 flex-1">
+            <ColorfulLogo />
+            <div>
+              <h1 className="text-xl font-bold text-gray-800">Service Logs</h1>
+              <p className="text-sm text-red-600">Timely Care for your carrier</p>
             </div>
           </div>
-
-          <Link href={`/vehicle/${vehicleId}/add-service-log`}>
-            <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
-              <Plus className="w-4 h-4 mr-1" />
-              Add
+          
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50">
+              <Bell className="w-5 h-5" />
             </Button>
-          </Link>
+            <Link href="/settings">
+              <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50">
+                <Settings className="w-5 h-5" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Camera, MapPin, Users, Image, Mic, Shield, Check, X, Settings as SettingsIcon } from "lucide-react";
+import { ArrowLeft, Camera, MapPin, Users, Image, Mic, Shield, Check, X, Settings as SettingsIcon, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -299,6 +299,28 @@ export default function Settings() {
         </div>
 
         {/* Profile Access */}
+        {/* Dashboard Customization */}
+        <Card className="mb-4 shadow-orange">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                  <LayoutGrid className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-gray-800">Customize Dashboard</h4>
+                  <p className="text-sm text-gray-600">Personalize your dashboard layout and widgets</p>
+                </div>
+              </div>
+              <Link href="/dashboard/customize">
+                <Button variant="outline" size="sm">
+                  Customize
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="mb-4 shadow-orange">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">

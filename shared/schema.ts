@@ -206,6 +206,18 @@ export const userProfiles = pgTable("user_profiles", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Dashboard widget configuration for customizable layout
+export const dashboardWidgets = pgTable("dashboard_widgets", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  widgetType: text("widget_type").notNull(), // "stats", "quick_actions", "recent_vehicles", "news", "reminders"
+  position: integer("position").notNull().default(0),
+  isVisible: boolean("is_visible").notNull().default(true),
+  size: text("size").default("medium"), // "small", "medium", "large"
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -364,3 +376,13 @@ export const insertNewsUpdateLogSchema = createInsertSchema(newsUpdateLog).omit(
 
 export type InsertNewsUpdateLog = z.infer<typeof insertNewsUpdateLogSchema>;
 export type NewsUpdateLog = typeof newsUpdateLog.$inferSelect;
+
+// Dashboard widget types and schema
+export const insertDashboardWidgetSchema = createInsertSchema(dashboardWidgets).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type DashboardWidget = typeof dashboardWidgets.$inferSelect;
+export type InsertDashboardWidget = z.infer<typeof insertDashboardWidgetSchema>;
