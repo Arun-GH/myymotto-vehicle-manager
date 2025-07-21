@@ -74,21 +74,13 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <section className="px-4 py-2">
           <h2 className="text-sm font-semibold mb-2 text-gray-800">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <Link href="/add-vehicle">
               <div className="card-hover bg-white rounded-lg p-2.5 flex items-center space-x-2 cursor-pointer shadow-orange border border-gray-200 hover:border-red-300 transition-colors">
                 <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
                   <Plus className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-xs font-medium text-gray-800">Add Vehicle</span>
-              </div>
-            </Link>
-            <Link href="/documents">
-              <div className="card-hover bg-white rounded-lg p-2.5 flex items-center space-x-2 cursor-pointer shadow-orange border border-gray-200 hover:border-orange-300 transition-colors">
-                <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-lg flex items-center justify-center">
-                  <FileText className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-xs font-medium text-gray-800">Documents</span>
               </div>
             </Link>
             <Link href="/traffic-violations">

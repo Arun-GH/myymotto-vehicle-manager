@@ -10,19 +10,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Fixed document viewing system and integrated with local storage architecture
+**July 21, 2025**: Removed redundant Documents screens and streamlined document management
+- Eliminated confusing dual document systems by removing redundant Documents button from Quick Actions
+- Removed server-based documents.tsx and view-documents.tsx pages that were causing navigation confusion
+- Cleaned up routing by removing unused /documents and /vehicle/:id/documents routes
+- Simplified Quick Actions grid from 4 to 3 columns after removing Documents button
+- Users now access documents exclusively through vehicle tiles → "View Documents" → local storage system
 - Fixed critical document viewing issue by aligning navigation with local storage architecture
 - Documents are stored locally on user's device using IndexedDB, not on server database
-- Updated documents.tsx page to use localDocumentStorage instead of server API calls
 - Changed navigation links from /vehicle/:id/documents to /vehicle/:id/local-documents route
-- Modified VehicleDocumentCard to fetch documents from local IndexedDB storage
 - Fixed file viewing issues by replacing window.open() with reliable anchor element creation method
 - Enhanced file opening mechanism to bypass popup blockers and work consistently across browsers
-- Updated service logs page with improved file access functionality using anchor elements
-- Documents now display correctly in the Documents page using local storage system
 - Complete local storage workflow: upload → IndexedDB storage → local viewing/deletion
-- Users can now see their uploaded documents in the Documents page and view them properly
-- Server secure storage system remains for service logs and maintenance records
+- Users can now see their uploaded documents properly through vehicle tiles without confusion
+- Server secure storage system remains for service logs and maintenance records only
 - Local document architecture provides privacy and offline access for sensitive documents
 
 **July 21, 2025**: Created unified Service Management page combining Essential Replaces and Service Details

@@ -13,11 +13,9 @@ import Dashboard from "@/pages/dashboard";
 import AddVehicle from "@/pages/add-vehicle";
 import EditVehicle from "@/pages/edit-vehicle";
 import UploadDocuments from "@/pages/upload-documents";
-import ViewDocuments from "@/pages/view-documents";
 import LocalDocuments from "@/pages/local-documents";
 
 import ServiceCenters from "@/pages/service-centers";
-import Documents from "@/pages/documents";
 import Profile from "@/pages/profile";
 import EmergencyContacts from "@/pages/emergency-contacts";
 import Subscribe from "@/pages/subscribe";
@@ -103,14 +101,12 @@ function Router() {
       <Route path="/add-vehicle" component={AddVehicle} />
       <Route path="/vehicle/:id/edit" component={EditVehicle} />
       <Route path="/vehicle/:id/upload" component={UploadDocuments} />
-      <Route path="/vehicle/:id/documents" component={ViewDocuments} />
       <Route path="/vehicle/:id/local-documents" component={LocalDocuments} />
       <Route path="/vehicle/:id/service" component={CombinedServicePage} />
       <Route path="/vehicle/:vehicleId/service-logs" component={ServiceLogs} />
       <Route path="/vehicle/:vehicleId/add-service-log" component={AddServiceLog} />
 
       <Route path="/service-centers" component={ServiceCenters} />
-      <Route path="/documents" component={Documents} />
       <Route path="/emergency-contacts" component={EmergencyContacts} />
       <Route path="/subscribe" component={Subscribe} />
       <Route path="/profile" component={Profile} />
