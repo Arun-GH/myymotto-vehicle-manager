@@ -3,23 +3,10 @@ import { ArrowLeft, Plus, Eye, FileText, Calendar, MapPin, NotebookPen, Wrench, 
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
 import ColorfulLogo from "@/components/colorful-logo";
 import { type ServiceLog, type Vehicle } from "@shared/schema";
 
-// Four-wheeler maintenance schedule
-const fourWheelerMaintenanceSchedule = [
-  { service: "Engine Oil Change", recommendedTimeline: "Every 10,000 km or 6 months", type: "oil_change" },
-  { service: "Oil Filter Replacement", recommendedTimeline: "Every 10,000 km or 6 months", type: "oil_filter" },
-  { service: "Air Filter Cleaning/Replacement", recommendedTimeline: "Every 15,000 km or 12 months", type: "air_filter" },
-  { service: "Brake Fluid Check", recommendedTimeline: "Every 20,000 km or 12 months", type: "brake_fluid" },
-  { service: "Coolant System Service", recommendedTimeline: "Every 40,000 km or 24 months", type: "coolant" },
-  { service: "Transmission Service", recommendedTimeline: "Every 60,000 km or 36 months", type: "transmission" },
-  { service: "Spark Plug Replacement", recommendedTimeline: "Every 30,000 km or 24 months", type: "spark_plugs" },
-  { service: "Battery Check & Service", recommendedTimeline: "Every 6 months or 10,000 km", type: "battery" },
-  { service: "Tire Rotation & Alignment", recommendedTimeline: "Every 15,000 km or 12 months", type: "tire_service" },
-  { service: "Brake Pad Inspection", recommendedTimeline: "Every 20,000 km or 12 months", type: "brake_pads" }
-];
 
 export default function ServiceLogs() {
   const { vehicleId } = useParams() as { vehicleId: string };
@@ -94,62 +81,6 @@ export default function ServiceLogs() {
           </Card>
         )}
 
-        {/* Four-Wheeler Service Schedule Table */}
-        {vehicle && vehicle.vehicleType === '4-wheeler' && (
-          <Card className="shadow-orange">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2 text-gray-800">
-                <Wrench className="w-5 h-5 text-blue-600" />
-                <span>4 Wheeler Essential Services</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="font-semibold">Service</TableHead>
-                      <TableHead className="font-semibold">Recommended Timeline</TableHead>
-                      <TableHead className="font-semibold text-center">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {fourWheelerMaintenanceSchedule.map((item, index) => {
-                      // Check if this service has been logged
-                      const hasServiceLog = serviceLogs?.some(log => 
-                        log.serviceType.toLowerCase().includes(item.type.replace('_', ' ')) ||
-                        log.serviceType.toLowerCase().includes(item.service.toLowerCase().split(' ')[0])
-                      );
-                      
-                      return (
-                        <TableRow key={index} className={hasServiceLog ? 'bg-green-50' : ''}>
-                          <TableCell className="font-medium">{item.service}</TableCell>
-                          <TableCell className="text-sm text-gray-600">{item.recommendedTimeline}</TableCell>
-                          <TableCell className="text-center">
-                            <Link href={`/vehicle/${vehicleId}/add-service-log?serviceType=${encodeURIComponent(item.service)}`}>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className={`text-xs px-2 py-1 ${
-                                  hasServiceLog 
-                                    ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200' 
-                                    : 'text-blue-600 hover:text-blue-700'
-                                }`}
-                              >
-                                <Plus className="w-3 h-3 mr-1" />
-                                {hasServiceLog ? 'Add Again' : 'Add'}
-                              </Button>
-                            </Link>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Service Logs List */}
         <Card className="shadow-orange">
