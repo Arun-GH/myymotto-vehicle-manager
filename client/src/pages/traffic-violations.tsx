@@ -46,18 +46,19 @@ export default function TrafficViolations() {
     staleTime: 30000,
   });
 
-  // Fetch violations for selected vehicle
-  const { data: violations, isLoading: violationsLoading } = useQuery<TrafficViolation[]>({
+  // Fetch violations for selected vehicle - only when manually triggered
+  const { data: violations, isLoading: violationsLoading, refetch: refetchViolations } = useQuery<TrafficViolation[]>({
     queryKey: [`/api/vehicles/${selectedVehicle?.id}/violations`],
-    enabled: !!selectedVehicle,
+    enabled: false, // Don't auto-fetch, only fetch when manually triggered
     staleTime: 5 * 60 * 1000, // 5 minutes cache
     gcTime: 10 * 60 * 1000, // 10 minutes in memory
   });
 
-  // Auto-select first vehicle if available
+  // Auto-select first vehicle if available (but don't auto-fetch violations)
   useEffect(() => {
     if (vehicles && vehicles.length > 0 && !selectedVehicle) {
       setSelectedVehicle(vehicles[0]);
+      // Don't automatically fetch violations, only when user clicks check button
     }
   }, [vehicles, selectedVehicle]);
 
@@ -73,15 +74,8 @@ export default function TrafficViolations() {
         title: "Violations Checked",
         description: `Successfully checked ${stateCode} state database. ${violationCount} violations found.`,
       });
-      if (selectedVehicle) {
-        queryClient.invalidateQueries({
-          queryKey: [`/api/vehicles/${selectedVehicle.id}/violations`],
-        });
-        // Force refresh with new timestamp
-        queryClient.refetchQueries({
-          queryKey: [`/api/vehicles/${selectedVehicle.id}/violations`],
-        });
-      }
+      // Refresh violations list after checking
+      refetchViolations();
     },
     onError: (error: any) => {
       toast({
@@ -229,7 +223,11 @@ export default function TrafficViolations() {
                 <Button
                   key={vehicle.id}
                   variant={selectedVehicle?.id === vehicle.id ? "default" : "outline"}
-                  onClick={() => setSelectedVehicle(vehicle)}
+                  onClick={() => {
+                    setSelectedVehicle(vehicle);
+                    // Only fetch existing violations, don't check for new ones
+                    refetchViolations();
+                  }}
                   className="justify-start h-auto p-3"
                 >
                   <div className="text-left">
