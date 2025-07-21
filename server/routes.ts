@@ -874,12 +874,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const stateCode = vehicle.licensePlate.substring(0, 2);
       const paymentUrl = trafficViolationService.getPaymentUrl(vehicle.licensePlate);
       
+      const message = violations.length > 0 
+        ? `Traffic violations checked successfully. Found ${violations.length} violations.`
+        : `No violations found for ${vehicle.licensePlate}. Clean record!`;
+      
       res.json({ 
-        message: "Traffic violations checked successfully", 
+        message,
         violations,
         stateCode,
         paymentUrl,
-        source: `${stateCode} State Government API`
+        source: violations.length > 0 
+          ? `${stateCode} State Government API`
+          : `${stateCode} State Government API (No violations found)`
       });
     } catch (error: any) {
       console.error("Error checking traffic violations:", error);

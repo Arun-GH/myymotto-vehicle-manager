@@ -217,8 +217,9 @@ export class TrafficViolationService {
       return await this.fetchKarnatakaViolations(vehicleNumber);
     }
     
-    // For other states, use official Parivahan API or simulate
-    return await this.generateFreshViolations(vehicleNumber, stateConfig);
+    // For other states, API integration pending - return empty result
+    console.log(`⚠️ ${stateConfig.name} Government API integration pending for ${vehicleNumber}`);
+    return [];
   }
   
   /**
@@ -275,9 +276,9 @@ export class TrafficViolationService {
       
     } catch (error) {
       console.error('Karnataka API error:', error);
-      console.log(`🔄 Using fallback data for ${vehicleNumber} due to API timeout`);
-      // Fallback to simulation if API fails - generate fresh data each time
-      return await this.generateFreshViolations(vehicleNumber, STATE_API_CONFIG.KA);
+      console.log(`⚠️ Karnataka Government API unavailable for ${vehicleNumber}`);
+      // Return empty result when government API is unavailable - no synthetic data
+      return [];
     }
   }
   
