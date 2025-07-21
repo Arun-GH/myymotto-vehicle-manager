@@ -51,6 +51,27 @@ export const maintenanceSchedules = pgTable("maintenance_schedules", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const newsItems = pgTable("news_items", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  summary: text("summary").notNull(),
+  category: text("category").notNull(), // 'policy', 'launch', 'news'
+  date: text("date").notNull(),
+  source: text("source").notNull(),
+  link: text("link").notNull(),
+  priority: text("priority").notNull(), // 'high', 'medium', 'low'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+});
+
+export const newsUpdateLog = pgTable("news_update_log", {
+  id: serial("id").primaryKey(),
+  updateType: text("update_type").notNull(), // 'scheduled', 'manual', 'api'
+  source: text("source").notNull(), // 'perplexity', 'fallback'
+  itemsUpdated: integer("items_updated").notNull(),
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+});
+
 export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   id: true,
   createdAt: true,
@@ -278,3 +299,20 @@ export const insertTrafficViolationSchema = createInsertSchema(trafficViolations
 
 export type TrafficViolation = typeof trafficViolations.$inferSelect;
 export type InsertTrafficViolation = z.infer<typeof insertTrafficViolationSchema>;
+
+export const insertNewsItemSchema = createInsertSchema(newsItems).omit({
+  id: true,
+  createdAt: true,
+  lastUpdated: true,
+});
+
+export type InsertNewsItem = z.infer<typeof insertNewsItemSchema>;
+export type NewsItem = typeof newsItems.$inferSelect;
+
+export const insertNewsUpdateLogSchema = createInsertSchema(newsUpdateLog).omit({
+  id: true,
+  lastUpdated: true,
+});
+
+export type InsertNewsUpdateLog = z.infer<typeof insertNewsUpdateLogSchema>;
+export type NewsUpdateLog = typeof newsUpdateLog.$inferSelect;

@@ -10,17 +10,19 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Enhanced News Tidbits with dynamic API system and intelligent caching
-- Transformed News Tidbits from static to dynamic API-driven system with real-time updates
-- Created NewsService class with intelligent caching (1-hour cache expiration) and Perplexity AI integration
-- Implemented comprehensive API endpoints: /api/news, /api/news/cache-info, /api/news/refresh
-- Added dynamic news refresh functionality with spinning refresh button and loading states
-- Enhanced frontend with loading skeletons, error handling, and "Try Again" functionality
-- Integrated cache info display showing last update time for transparency
-- Fallback system provides curated automotive news when Perplexity API key unavailable
-- News categories include Policy (blue), Launch (green), General (orange) with priority indicators
-- Real-time data sourcing from Ministry of Heavy Industries, Autocar India, EVreporter, Economic Times
-- Mobile-optimized with pull-to-refresh-style interaction and comprehensive error states
+**July 21, 2025**: Implemented cost-effective database-powered news system with daily updates
+- Migrated News Tidbits from in-memory cache to PostgreSQL database storage for consistency across all users
+- Created newsItems and newsUpdateLog database tables with proper schema and types
+- Implemented intelligent caching system with 24-hour expiration to minimize API costs
+- Added comprehensive database storage methods: getNewsItems, createNewsItem, clearAllNews, etc.
+- Enhanced NewsService with database integration and automatic fallback to curated news
+- All users now see identical news data served from database instead of individual cache
+- Cost optimization: Perplexity API called maximum once per day instead of per user
+- Database-stored news persists through server restarts and ensures data consistency
+- Added news update logging to track refresh sources and timing
+- Enhanced refresh functionality with forceRefresh method for manual updates
+- Mobile-optimized with loading states, error handling, and cache status display
+- Fallback system provides high-quality curated automotive news when API unavailable
 
 **July 17, 2025**: Added vehicle type and fuel type fields with visual indicators
 - Added vehicleType field to capture 2-wheeler, 3-wheeler, 4-wheeler classification

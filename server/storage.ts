@@ -1,6 +1,6 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, newsItems, newsUpdateLog, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, gt, lte } from "drizzle-orm";
+import { eq, and, gt, lte, desc } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -58,6 +58,15 @@ export interface IStorage {
   getMaintenanceSchedule(make: string, model: string, year: number, drivingCondition: string): Promise<MaintenanceSchedule | undefined>;
   createMaintenanceSchedule(schedule: InsertMaintenanceSchedule): Promise<MaintenanceSchedule>;
   updateMaintenanceSchedule(id: number, schedule: Partial<InsertMaintenanceSchedule>): Promise<MaintenanceSchedule | undefined>;
+  
+  // News methods
+  getNewsItems(): Promise<NewsItem[]>;
+  createNewsItem(newsItem: InsertNewsItem): Promise<NewsItem>;
+  updateNewsItem(id: number, newsItem: Partial<InsertNewsItem>): Promise<NewsItem | undefined>;
+  deleteNewsItem(id: number): Promise<boolean>;
+  clearAllNews(): Promise<void>;
+  createNewsUpdateLog(log: InsertNewsUpdateLog): Promise<NewsUpdateLog>;
+  getLastNewsUpdate(): Promise<NewsUpdateLog | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -761,6 +770,49 @@ export class DatabaseStorage implements IStorage {
       .where(eq(maintenanceSchedules.id, id))
       .returning();
     return updated;
+  }
+
+  // News methods
+  async getNewsItems(): Promise<NewsItem[]> {
+    const items = await db.select().from(newsItems).orderBy(desc(newsItems.createdAt));
+    return items;
+  }
+
+  async createNewsItem(newsItem: InsertNewsItem): Promise<NewsItem> {
+    const [item] = await db.insert(newsItems).values(newsItem).returning();
+    return item;
+  }
+
+  async updateNewsItem(id: number, newsItemUpdate: Partial<InsertNewsItem>): Promise<NewsItem | undefined> {
+    const [updated] = await db
+      .update(newsItems)
+      .set({ ...newsItemUpdate, lastUpdated: new Date() })
+      .where(eq(newsItems.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteNewsItem(id: number): Promise<boolean> {
+    const result = await db.delete(newsItems).where(eq(newsItems.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  async clearAllNews(): Promise<void> {
+    await db.delete(newsItems);
+  }
+
+  async createNewsUpdateLog(log: InsertNewsUpdateLog): Promise<NewsUpdateLog> {
+    const [logEntry] = await db.insert(newsUpdateLog).values(log).returning();
+    return logEntry;
+  }
+
+  async getLastNewsUpdate(): Promise<NewsUpdateLog | undefined> {
+    const [lastUpdate] = await db
+      .select()
+      .from(newsUpdateLog)
+      .orderBy(desc(newsUpdateLog.lastUpdated))
+      .limit(1);
+    return lastUpdate;
   }
 }
 

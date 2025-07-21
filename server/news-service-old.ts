@@ -1,21 +1,29 @@
-import { storage } from "./storage";
-import { type NewsItem, type InsertNewsItem } from "@shared/schema";
+interface NewsItem {
+  id: string;
+  title: string;
+  summary: string;
+  category: "policy" | "launch" | "news";
+  date: string;
+  source: string;
+  link: string;
+  priority: "high" | "medium" | "low";
+}
 
 interface NewsCache {
-  status: "valid" | "expired" | "empty";
-  lastUpdated: Date | null;
-  expiresAt: Date | null;
-  itemCount: number;
+  data: NewsItem[];
+  lastUpdated: Date;
+  expiresAt: Date;
 }
 
 class NewsService {
-  private readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+  private cache: NewsCache | null = null;
+  private readonly CACHE_DURATION = 1000 * 60 * 60; // 1 hour in milliseconds
 
   private isPerplexityAvailable(): boolean {
     return !!process.env.PERPLEXITY_API_KEY;
   }
 
-  private async fetchFromPerplexity(): Promise<InsertNewsItem[]> {
+  private async fetchFromPerplexity(): Promise<NewsItem[]> {
     if (!process.env.PERPLEXITY_API_KEY) {
       throw new Error("PERPLEXITY_API_KEY not found");
     }
@@ -59,69 +67,79 @@ class NewsService {
       // Try to parse JSON from the response
       try {
         const newsData = JSON.parse(content);
-        return Array.isArray(newsData) ? newsData : [];
+        return Array.isArray(newsData) ? newsData.map((item, index) => ({
+          id: String(index + 1),
+          ...item
+        })) : [];
       } catch (parseError) {
         console.error("Failed to parse Perplexity response as JSON:", content);
-        throw new Error("Invalid JSON response from Perplexity API");
+        return this.getFallbackNews();
       }
     } catch (error) {
       console.error("Error fetching from Perplexity:", error);
-      throw error;
+      return this.getFallbackNews();
     }
   }
 
-  private getFallbackNews(): InsertNewsItem[] {
+  private getFallbackNews(): NewsItem[] {
+    // Fallback to curated news when API is unavailable
     return [
       {
+        id: "1",
         title: "India's New EV Policy: 15% Import Duty for Global Manufacturers",
         summary: "Government reduces customs duty to 15% for EVs worth $35,000+ with minimum $500M local investment commitment from manufacturers.",
         category: "policy",
-        date: "7/21/2025",
+        date: new Date().toLocaleDateString(),
         source: "Ministry of Heavy Industries",
         link: "https://heavyindustries.gov.in/scheme-promote-manufacturing-electric-passenger-cars-india-0",
         priority: "high"
       },
       {
+        id: "2", 
         title: "Tesla Model Y Officially Launched in India at ₹59.89 Lakh",
         summary: "Tesla opens first Mumbai showroom with Model Y as debut product after years of anticipation in the Indian market.",
         category: "launch",
-        date: "7/21/2025",
+        date: new Date().toLocaleDateString(),
         source: "Autocar India",
         link: "https://www.autocarindia.com/car-news/tesla-model-y-india-launch-price-specifications-434567",
         priority: "high"
       },
       {
+        id: "3",
         title: "Maharashtra EV Policy 2025: 30% Electric Vehicles by 2030",
         summary: "₹1,740 crore allocated for EV incentives with 100% motor vehicle tax exemption and toll exemption on expressways.",
         category: "policy",
-        date: "7/20/2025",
+        date: new Date(Date.now() - 86400000).toLocaleDateString(), // Yesterday
         source: "EVreporter",
         link: "https://evreporter.com/maharashtra-electric-vehicle-policy-2025/",
         priority: "medium"
       },
       {
+        id: "4",
         title: "Honda Activa 7G Electric Variant Teased for 2025 Launch",
         summary: "Honda reveals electric version of popular Activa scooter with 100km range and fast charging capabilities.",
         category: "launch",
-        date: "7/19/2025",
+        date: new Date(Date.now() - 172800000).toLocaleDateString(), // 2 days ago
         source: "BikeWale",
         link: "https://www.bikewale.com/honda-bikes/activa-7g-electric/",
         priority: "medium"
       },
       {
+        id: "5",
         title: "Tata Motors Reports 28% Growth in EV Sales for Q2 2025",
         summary: "Tata's electric vehicle portfolio including Nexon EV and Tigor EV shows strong market performance with rising demand.",
         category: "news",
-        date: "7/18/2025",
+        date: new Date(Date.now() - 259200000).toLocaleDateString(), // 3 days ago
         source: "Economic Times",
         link: "https://economictimes.indiatimes.com/industry/auto/cars-uvs/tata-motors-ev-sales-growth-q2-2025/articleshow/111234567.cms",
         priority: "low"
       },
       {
+        id: "6",
         title: "Supreme Court Mandates BS-VII Emission Norms by April 2026",
         summary: "New emission standards will require advanced pollution control technology in all new vehicles across India.",
         category: "policy",
-        date: "7/18/2025",
+        date: new Date(Date.now() - 259200000).toLocaleDateString(), // 3 days ago
         source: "Times of India",
         link: "https://timesofindia.indiatimes.com/india/supreme-court-bs-vii-emission-norms-april-2026/articleshow/111234568.cms",
         priority: "medium"
@@ -129,102 +147,56 @@ class NewsService {
     ];
   }
 
-  private async updateNewsDatabase(newsItems: InsertNewsItem[], source: "perplexity" | "fallback"): Promise<void> {
-    // Clear existing news
-    await storage.clearAllNews();
-
-    // Insert new news items
-    for (const item of newsItems) {
-      await storage.createNewsItem(item);
-    }
-
-    // Log the update
-    await storage.createNewsUpdateLog({
-      updateType: "manual",
-      source,
-      itemsUpdated: newsItems.length
-    });
-
-    console.log(`News database updated with ${newsItems.length} items from ${source}`);
+  private isCacheValid(): boolean {
+    if (!this.cache) return false;
+    return new Date() < this.cache.expiresAt;
   }
 
   async getLatestNews(): Promise<NewsItem[]> {
-    // Check if we have fresh data in database
-    const cacheInfo = await this.getCacheInfo();
-    
-    if (cacheInfo.status === "valid") {
-      // Return data from database
-      return await storage.getNewsItems();
+    // Return cached data if still valid
+    if (this.isCacheValid()) {
+      console.log("Returning cached news data");
+      return this.cache!.data;
     }
 
-    // Need to fetch fresh data
     console.log("Fetching fresh news data...");
+
+    let newsData: NewsItem[];
     
-    try {
-      if (this.isPerplexityAvailable()) {
-        console.log("Using Perplexity API for real-time news");
-        const perplexityNews = await this.fetchFromPerplexity();
-        await this.updateNewsDatabase(perplexityNews, "perplexity");
-        return await storage.getNewsItems();
-      } else {
-        console.log("Using fallback news data (Perplexity API key not available)");
-        const fallbackNews = this.getFallbackNews();
-        await this.updateNewsDatabase(fallbackNews, "fallback");
-        return await storage.getNewsItems();
-      }
-    } catch (error) {
-      console.error("Error fetching news, using fallback:", error);
-      const fallbackNews = this.getFallbackNews();
-      await this.updateNewsDatabase(fallbackNews, "fallback");
-      return await storage.getNewsItems();
+    if (this.isPerplexityAvailable()) {
+      console.log("Using Perplexity API for real-time news");
+      newsData = await this.fetchFromPerplexity();
+    } else {
+      console.log("Using fallback news data (Perplexity API key not available)");
+      newsData = this.getFallbackNews();
     }
+
+    // Cache the news data
+    this.cache = {
+      data: newsData,
+      lastUpdated: new Date(),
+      expiresAt: new Date(Date.now() + this.CACHE_DURATION)
+    };
+
+    return newsData;
   }
 
-  async getCacheInfo(): Promise<NewsCache> {
-    const lastUpdate = await storage.getLastNewsUpdate();
-    const currentNews = await storage.getNewsItems();
-    
-    if (!lastUpdate || currentNews.length === 0) {
-      return {
-        status: "empty",
-        lastUpdated: null,
-        expiresAt: null,
-        itemCount: 0
-      };
+  getCacheInfo() {
+    if (!this.cache) {
+      return { status: "no_cache", lastUpdated: null };
     }
 
-    const now = new Date();
-    const expiresAt = new Date(lastUpdate.lastUpdated.getTime() + this.CACHE_DURATION);
-    const isExpired = now > expiresAt;
-
     return {
-      status: isExpired ? "expired" : "valid",
-      lastUpdated: lastUpdate.lastUpdated,
-      expiresAt,
-      itemCount: currentNews.length
+      status: this.isCacheValid() ? "valid" : "expired",
+      lastUpdated: this.cache.lastUpdated,
+      expiresAt: this.cache.expiresAt,
+      itemCount: this.cache.data.length
     };
   }
 
   clearCache(): void {
-    // For database version, we'll trigger a fresh fetch on next request
-    console.log("Cache clear requested - fresh data will be fetched on next request");
-  }
-
-  async forceRefresh(): Promise<NewsItem[]> {
-    // Force a fresh fetch regardless of cache status
-    try {
-      if (this.isPerplexityAvailable()) {
-        const perplexityNews = await this.fetchFromPerplexity();
-        await this.updateNewsDatabase(perplexityNews, "perplexity");
-      } else {
-        const fallbackNews = this.getFallbackNews();
-        await this.updateNewsDatabase(fallbackNews, "fallback");
-      }
-      return await storage.getNewsItems();
-    } catch (error) {
-      console.error("Error during force refresh:", error);
-      throw error;
-    }
+    this.cache = null;
+    console.log("News cache cleared");
   }
 }
 

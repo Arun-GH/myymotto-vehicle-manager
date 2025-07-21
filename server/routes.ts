@@ -926,8 +926,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/news/refresh", async (req, res) => {
     try {
-      newsService.clearCache();
-      const news = await newsService.getLatestNews();
+      const news = await newsService.forceRefresh();
       res.json({ message: "News refreshed successfully", news });
     } catch (error) {
       console.error("Error refreshing news:", error);
