@@ -1,4 +1,4 @@
-import { ArrowLeft, ExternalLink, Newspaper, Zap, Car, Truck, Bike, AlertTriangle, RefreshCw } from "lucide-react";
+import { ArrowLeft, ExternalLink, Newspaper, Zap, Car, Truck, Bike, AlertTriangle, RefreshCw, Settings } from "lucide-react";
 import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -97,37 +97,53 @@ export default function NewsTidbits() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50">
       {/* Header */}
-      <div className="header-gradient-border p-4">
-        <div className="flex items-center justify-between mb-2">
-          <Link href="/" className="text-gray-600 hover:text-red-500">
-            <ArrowLeft className="w-6 h-6" />
-          </Link>
-          <div className="flex items-center space-x-2">
-            <ColorfulLogo />
+      <header className="header-gradient-border shadow-lg relative z-10">
+        <div className="px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Link href="/" className="text-gray-600 hover:text-red-500">
+                <ArrowLeft className="w-6 h-6" />
+              </Link>
+              <div className="flex items-center space-x-2">
+                <Newspaper className="w-6 h-6 text-orange-600" />
+                <div>
+                  <h1 className="text-lg font-bold text-gray-800">News Tidbits</h1>
+                  <p className="text-xs text-red-600">Latest Vehicle News & Updates</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Link href="/settings">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-600 hover:bg-red-50"
+                >
+                  <Settings className="w-6 h-6" />
+                </Button>
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 hover:bg-red-50"
+                onClick={() => refreshNewsMutation.mutate()}
+                disabled={refreshNewsMutation.isPending}
+              >
+                <RefreshCw className={`w-5 h-5 ${refreshNewsMutation.isPending ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-gray-600 hover:bg-red-50"
-            onClick={() => refreshNewsMutation.mutate()}
-            disabled={refreshNewsMutation.isPending}
-          >
-            <RefreshCw className={`w-5 h-5 ${refreshNewsMutation.isPending ? 'animate-spin' : ''}`} />
-          </Button>
-        </div>
-        <div className="text-center">
-          <div className="flex items-center justify-center space-x-2 mb-1">
-            <Newspaper className="w-6 h-6 text-orange-600" />
-            <h1 className="text-xl font-bold text-gray-800">News Tidbits</h1>
-          </div>
-          <p className="text-red-600 text-sm font-medium">Latest Vehicle News & Updates</p>
-          {cacheInfo && (
-            <p className="text-xs text-gray-500 mt-1">
-              Last updated: {cacheInfo.lastUpdated ? new Date(cacheInfo.lastUpdated).toLocaleTimeString() : 'Never'}
+          <div className="mt-2 text-center">
+            <p className="text-xs text-gray-500">
+              Updated: {new Date().toLocaleDateString('en-IN', { 
+                day: 'numeric', 
+                month: 'short', 
+                year: 'numeric' 
+              })} • Tap refresh for latest updates
             </p>
-          )}
+          </div>
         </div>
-      </div>
+      </header>
 
       {/* Content */}
       <div className="p-4 space-y-4">
