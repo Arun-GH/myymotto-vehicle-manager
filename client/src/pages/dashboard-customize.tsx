@@ -94,31 +94,31 @@ export default function DashboardCustomize() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white header-gradient-border shadow-lg">
-        <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50">
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-          </Link>
-          
-          <div className="flex items-center space-x-3 flex-1">
-            <ColorfulLogo />
-            <div>
-              <h1 className="text-xl font-bold text-gray-800">Customize Dashboard</h1>
-              <p className="text-sm text-red-600">Personalize your experience</p>
+      <header className="header-gradient-border shadow-lg relative z-10">
+        <div className="px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Link href="/">
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+              </Link>
+              <img src="/api/static/logos/Mymotto_Logo_Green_Revised_1752603344750.png" alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
+              <div>
+                <ColorfulLogo />
+                <p className="text-sm text-red-600">Customize Dashboard</p>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50">
-              <Bell className="w-5 h-5" />
-            </Button>
-            <Link href="/settings">
-              <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50">
-                <Settings className="w-5 h-5" />
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                <Bell className="w-5 h-5" />
               </Button>
-            </Link>
+              <Link href="/settings">
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                  <Settings className="w-6 h-6" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </header>

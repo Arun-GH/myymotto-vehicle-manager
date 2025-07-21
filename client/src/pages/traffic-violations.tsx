@@ -163,12 +163,12 @@ export default function TrafficViolations() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="header-gradient-border border-4 border-red-500 shadow-lg relative z-10">
+      <header className="header-gradient-border shadow-lg relative z-10">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Link href="/">
-                <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 p-2">
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               </Link>
@@ -179,10 +179,19 @@ export default function TrafficViolations() {
               />
               <div>
                 <ColorfulLogo />
-                <p className="text-sm text-red-600">Timely Care for your carrier</p>
+                <p className="text-sm text-red-600">Traffic Violations</p>
               </div>
             </div>
-            <Zap className="w-8 h-8 text-blue-800 font-bold" />
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                <Bell className="w-5 h-5" />
+              </Button>
+              <Link href="/settings">
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                  <Settings className="w-6 h-6" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </header>

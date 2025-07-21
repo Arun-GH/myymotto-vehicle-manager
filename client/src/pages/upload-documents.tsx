@@ -165,6 +165,16 @@ export default function UploadDocuments() {
                 <p className="text-sm text-red-600">Upload Documents</p>
               </div>
             </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                <Bell className="w-5 h-5" />
+              </Button>
+              <Link href="/settings">
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                  <Settings className="w-6 h-6" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </header>
