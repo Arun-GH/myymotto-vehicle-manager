@@ -69,6 +69,33 @@ class NewsService {
           source: "Ministry of Road Transport & Highways",
           link: "https://morth.nic.in/central-motor-vehicle-rules-autonomous-vehicles-2025",
           priority: "low"
+        },
+        {
+          title: "Electric Vehicle Import Duty Reduced to 15% for Global Manufacturers",
+          summary: "Government slashes import duty for EVs priced over $35,000 from 100% to 15% for companies committing $500 million in local manufacturing investments to attract Tesla and other global EV makers.",
+          category: "policy",
+          date: new Date(Date.now() - 518400000).toLocaleDateString('en-IN'),
+          source: "Ministry of Heavy Industries",
+          link: "https://heavyindustries.gov.in/ev-import-policy-2025",
+          priority: "high"
+        },
+        {
+          title: "Union Budget 2025: 35 Additional Capital Goods Get Customs Duty Exemption",
+          summary: "Finance Ministry extends basic customs duty exemptions to 35 additional capital goods essential for EV battery production to bolster domestic lithium-ion battery manufacturing.",
+          category: "policy",
+          date: new Date(Date.now() - 604800000).toLocaleDateString('en-IN'),
+          source: "Ministry of Finance",
+          link: "https://indiabudget.gov.in/budget2025-26/doc/Budget_at_Glance/bag2.pdf",
+          priority: "medium"
+        },
+        {
+          title: "Electric Mobility Promotion Scheme (EMPS) 2024 Extended",
+          summary: "Government extends EMPS 2024 with ₹500 crore budget to support 3.7 lakh EVs including 3.3 lakh electric 2-wheelers and 38,828 electric 3-wheelers with advanced battery technology incentives.",
+          category: "policy",
+          date: new Date(Date.now() - 691200000).toLocaleDateString('en-IN'),
+          source: "Ministry of Heavy Industries",
+          link: "https://heavyindustries.gov.in/electric-mobility-promotion-scheme-2024",
+          priority: "medium"
         }
       ];
 

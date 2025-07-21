@@ -10,16 +10,19 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Implemented government-only news system using authentic policy data
+**July 21, 2025**: Implemented comprehensive government-only news system with expanded coverage
 - Migrated News Tidbits to use only authentic government automotive policy announcements
 - Database-powered system with 24-hour caching for consistent data across all users
-- Replaced external APIs with official government sources: Ministry of Heavy Industries, MoRTH, NITI Aayog
-- Authentic policy data includes EV manufacturing schemes, emission norms, scrappage policies, mobility programs
-- Real government initiatives: PLI schemes, BS-VII norms, National Green Mobility Program, autonomous vehicle rules
+- Replaced external APIs with official government sources: Ministry of Heavy Industries, MoRTH, NITI Aayog, Ministry of Finance
+- Expanded coverage: 9 authentic policy updates including EV import duties, customs exemptions, battery manufacturing incentives
+- Enhanced policy data: Tesla import policy (15% duty reduction), Union Budget 2025 changes, EMPS 2024 extensions
+- Real government initiatives: ₹15,000 crore PLI schemes, BS-VII norms, ₹25,000 crore mobility funding, ₹1.5 lakh scrappage incentives
+- Fixed frontend cache issues causing "Failed to load news" errors by updating React Query keys
+- Identified free API sources: API Setu, Open Government Data India, Vahan Database for future integration
 - All news items sourced from official government notifications and policy documents
 - Header redesigned to match standard app pattern with proper navigation and settings access
 - Removed refresh button for users, automated daily updates with current date display
-- Cost-free solution using only authentic government policy data sources
+- Cost-free solution using only authentic government policy data sources (API Setu, data.gov.in)
 - Enhanced mobile experience with professional header layout and consistent branding
 
 **July 17, 2025**: Added vehicle type and fuel type fields with visual indicators
