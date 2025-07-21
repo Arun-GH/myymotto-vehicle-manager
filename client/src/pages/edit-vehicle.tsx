@@ -241,46 +241,53 @@ export default function EditVehicle() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="header-gradient-border shadow-lg relative z-10">
-        <div className="px-4 py-4">
+        <div className="px-3 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <Button
                 variant="ghost"
-                size="icon"
-                className="text-gray-600 hover:bg-red-50"
+                size="sm"
+                className="text-gray-600 hover:bg-red-50 p-1"
                 onClick={() => setLocation("/")}
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
               </Button>
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-14 h-14 rounded-lg"
+                className="w-10 h-10 rounded-lg"
               />
               <div>
-                <ColorfulLogo />
-                <p className="text-sm text-red-600">Edit Vehicle</p>
+                <div className="text-base font-bold">
+                  <ColorfulLogo />
+                </div>
+                <p className="text-xs text-red-600">Edit Vehicle</p>
               </div>
+            </div>
+            <div className="flex items-center space-x-1">
+              <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 p-1">
+                <Settings className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="p-4 pb-20 bg-warm-pattern">
+      <div className="p-3 pb-20 bg-warm-pattern">
         <Card className="card-hover shadow-orange">
-          <CardHeader className="bg-gradient-to-r from-red-50 to-orange-50 rounded-t-lg">
-            <CardTitle className="flex items-center space-x-2 text-gray-800">
-              <Car className="w-5 h-5 text-red-600" />
+          <CardHeader className="bg-gradient-to-r from-red-50 to-orange-50 rounded-t-lg py-3">
+            <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
+              <Car className="w-4 h-4 text-red-600" />
               <span>Edit Vehicle Details</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
                 
                 {/* Vehicle Thumbnail Upload */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Vehicle Photo</label>
+                <div className="space-y-1">
+                  <label className="text-xs font-medium">Vehicle Photo</label>
                   <div className="flex items-center space-x-4">
                     {thumbnailPreview ? (
                       <div className="relative">
@@ -316,24 +323,24 @@ export default function EditVehicle() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <FormField
                     control={form.control}
                     name="make"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Make *</FormLabel>
+                        <FormLabel className="text-xs">Make *</FormLabel>
                         <FormControl>
                           {isCustomMake ? (
                             <Input 
                               placeholder="Enter make manually" 
-                              className="h-9" 
+                              className="h-8" 
                               {...field}
                               onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                             />
                           ) : (
                             <Select onValueChange={handleMakeChange} value={selectedMake}>
-                              <SelectTrigger>
+                              <SelectTrigger className="h-8">
                                 <SelectValue placeholder="Select make" />
                               </SelectTrigger>
                               <SelectContent>
@@ -371,18 +378,18 @@ export default function EditVehicle() {
                     name="model"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Model *</FormLabel>
+                        <FormLabel className="text-xs">Model *</FormLabel>
                         <FormControl>
                           {isCustomModel ? (
                             <Input 
                               placeholder="Enter model manually" 
-                              className="h-9" 
+                              className="h-8" 
                               {...field}
                               onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                             />
                           ) : (
                             <Select onValueChange={handleModelChange} value={field.value} disabled={!watchedMake && !isCustomMake}>
-                              <SelectTrigger>
+                              <SelectTrigger className="h-8">
                                 <SelectValue placeholder="Select model" />
                               </SelectTrigger>
                               <SelectContent>
@@ -416,17 +423,18 @@ export default function EditVehicle() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <FormField
                     control={form.control}
                     name="year"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Year *</FormLabel>
+                        <FormLabel className="text-xs">Year *</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
                             placeholder="2024" 
+                            className="h-8"
                             {...field} 
                             onChange={(e) => field.onChange(parseInt(e.target.value))}
                           />
@@ -440,10 +448,11 @@ export default function EditVehicle() {
                     name="color"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Color *</FormLabel>
+                        <FormLabel className="text-xs">Color *</FormLabel>
                         <FormControl>
                           <Input 
                             placeholder="Red" 
+                            className="h-8"
                             {...field}
                             onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                           />
@@ -459,10 +468,11 @@ export default function EditVehicle() {
                   name="licensePlate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>License Plate *</FormLabel>
+                      <FormLabel className="text-xs">License Plate *</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="DL 01 AB 1234" 
+                          className="h-8"
                           {...field}
                           onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                         />
@@ -472,16 +482,16 @@ export default function EditVehicle() {
                   )}
                 />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <FormField
                     control={form.control}
                     name="vehicleType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Vehicle Type</FormLabel>
+                        <FormLabel className="text-xs">Vehicle Type</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value}>
-                            <SelectTrigger>
+                            <SelectTrigger className="h-8">
                               <SelectValue placeholder="Select vehicle type" />
                             </SelectTrigger>
                             <SelectContent>
@@ -500,10 +510,10 @@ export default function EditVehicle() {
                     name="fuelType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Fuel Type</FormLabel>
+                        <FormLabel className="text-xs">Fuel Type</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value}>
-                            <SelectTrigger>
+                            <SelectTrigger className="h-8">
                               <SelectValue placeholder="Select fuel type" />
                             </SelectTrigger>
                             <SelectContent>
@@ -520,16 +530,17 @@ export default function EditVehicle() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <FormField
                     control={form.control}
                     name="chassisNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Chassis Number</FormLabel>
+                        <FormLabel className="text-xs">Chassis Number</FormLabel>
                         <FormControl>
                           <Input 
                             placeholder="MAT123456789" 
+                            className="h-8"
                             {...field}
                             onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                           />
@@ -543,10 +554,11 @@ export default function EditVehicle() {
                     name="engineNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Engine Number</FormLabel>
+                        <FormLabel className="text-xs">Engine Number</FormLabel>
                         <FormControl>
                           <Input 
                             placeholder="ENG987654321" 
+                            className="h-8"
                             {...field}
                             onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                           />
@@ -562,10 +574,11 @@ export default function EditVehicle() {
                   name="ownerName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Owner Name *</FormLabel>
+                      <FormLabel className="text-xs">Owner Name *</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="John Doe" 
+                          className="h-8"
                           {...field}
                           onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                         />
@@ -580,10 +593,11 @@ export default function EditVehicle() {
                   name="ownerPhone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel className="text-xs">Phone Number</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="+1 234 567 8900" 
+                          className="h-8"
                           {...field}
                           onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                         />
@@ -598,14 +612,14 @@ export default function EditVehicle() {
                   name="insuranceCompany"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Insurance Company Name</FormLabel>
+                      <FormLabel className="text-xs">Insurance Company Name</FormLabel>
                       <FormControl>
                         <Input 
                           type="text" 
                           {...field} 
                           value={field.value || ""} 
                           placeholder="e.g., HDFC ERGO, ICICI Lombard, Bajaj Allianz"
-                          className="h-9"
+                          className="h-8"
                           onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                         />
                       </FormControl>
@@ -614,20 +628,20 @@ export default function EditVehicle() {
                   )}
                 />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <FormField
                     control={form.control}
                     name="insuranceExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Insured date</FormLabel>
+                        <FormLabel className="text-xs">Insured date</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
                             {...field} 
                             value={field.value || ""} 
                             onChange={(e) => field.onChange(e.target.value.trim() || null)}
-                            className="h-9"
+                            className="h-8"
                           />
                         </FormControl>
                         <FormMessage />
@@ -639,13 +653,14 @@ export default function EditVehicle() {
                     name="emissionExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Latest Emission</FormLabel>
+                        <FormLabel className="text-xs">Latest Emission</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
                             {...field} 
                             value={field.value || ""} 
                             onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                            className="h-8"
                           />
                         </FormControl>
                         <FormMessage />
@@ -657,13 +672,14 @@ export default function EditVehicle() {
                     name="rcExpiry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>RC Expiry</FormLabel>
+                        <FormLabel className="text-xs">RC Expiry</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
                             {...field} 
                             value={field.value || ""} 
                             onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                            className="h-8"
                           />
                         </FormControl>
                         <FormMessage />
@@ -675,13 +691,14 @@ export default function EditVehicle() {
                     name="lastServiceDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Last Service Date</FormLabel>
+                        <FormLabel className="text-xs">Last Service Date</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
                             {...field} 
                             value={field.value || ""} 
                             onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                            className="h-8"
                           />
                         </FormControl>
                         <FormMessage />
@@ -691,25 +708,26 @@ export default function EditVehicle() {
                 </div>
 
                 {/* Service Details Section */}
-                <Card className="mt-6">
-                  <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-t-lg">
-                    <CardTitle className="flex items-center space-x-2 text-gray-800">
-                      <Settings className="w-5 h-5 text-blue-600" />
+                <Card className="mt-4">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-t-lg py-3">
+                    <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
+                      <Settings className="w-4 h-4 text-blue-600" />
                       <span>Service Details</span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-6">
-                    <div className="grid grid-cols-2 gap-4">
+                  <CardContent className="pt-4">
+                    <div className="grid grid-cols-2 gap-3">
                       <FormField
                         control={form.control}
                         name="currentOdometerReading"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Current Odometer Reading (km)</FormLabel>
+                            <FormLabel className="text-xs">Current Odometer Reading (km)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
                                 placeholder="85000" 
+                                className="h-8"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
@@ -724,11 +742,12 @@ export default function EditVehicle() {
                         name="averageUsagePerMonth"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Average Usage per Month (km)</FormLabel>
+                            <FormLabel className="text-xs">Average Usage per Month (km)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
                                 placeholder="1200" 
+                                className="h-8"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
@@ -743,11 +762,12 @@ export default function EditVehicle() {
                         name="serviceIntervalKms"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Service Interval (km)</FormLabel>
+                            <FormLabel className="text-xs">Service Interval (km)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
                                 placeholder="10000" 
+                                className="h-8"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
@@ -762,11 +782,12 @@ export default function EditVehicle() {
                         name="serviceIntervalMonths"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Service Interval (mths)</FormLabel>
+                            <FormLabel className="text-xs">Service Interval (mths)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
                                 placeholder="6" 
+                                className="h-8"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
@@ -784,17 +805,17 @@ export default function EditVehicle() {
                   <Button 
                     type="button" 
                     variant="outline"
-                    className="flex-1"
+                    className="flex-1 h-8"
                     onClick={() => setLocation("/")}
                   >
                     Cancel
                   </Button>
                   <Button 
                     type="submit" 
-                    className="flex-1"
+                    className="flex-1 h-8"
                     disabled={updateVehicleMutation.isPending}
                   >
-                    <Save className="w-4 h-4 mr-2" />
+                    <Save className="w-3 h-3 mr-1" />
                     {updateVehicleMutation.isPending ? "Updating..." : "Update Vehicle"}
                   </Button>
                 </div>
