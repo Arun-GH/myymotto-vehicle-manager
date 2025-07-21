@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, newsItems, newsUpdateLog, dashboardWidgets, ratings, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte, desc } from "drizzle-orm";
 
@@ -72,6 +72,14 @@ export interface IStorage {
   createServiceLog(serviceLog: InsertServiceLog): Promise<ServiceLog>;
   updateServiceLog(id: number, serviceLog: Partial<InsertServiceLog>): Promise<ServiceLog | undefined>;
   deleteServiceLog(id: number): Promise<boolean>;
+
+  // Service Alert methods
+  getServiceAlerts(vehicleId: number): Promise<ServiceAlert[]>;
+  getServiceAlert(id: number): Promise<ServiceAlert | undefined>;
+  createServiceAlert(serviceAlert: InsertServiceAlert): Promise<ServiceAlert>;
+  updateServiceAlert(id: number, serviceAlert: Partial<InsertServiceAlert>): Promise<ServiceAlert | undefined>;
+  deleteServiceAlert(id: number): Promise<boolean>;
+  getActiveServiceAlerts(): Promise<ServiceAlert[]>;
   
   // News methods
   getNewsItems(): Promise<NewsItem[]>;
@@ -429,6 +437,43 @@ export class MemStorage implements IStorage {
         }
       }
     }
+  }
+
+  // Service Alert methods (stub implementations for MemStorage)
+  async getServiceAlerts(vehicleId: number): Promise<ServiceAlert[]> {
+    return [];
+  }
+
+  async getServiceAlert(id: number): Promise<ServiceAlert | undefined> {
+    return undefined;
+  }
+
+  async createServiceAlert(serviceAlert: InsertServiceAlert): Promise<ServiceAlert> {
+    const newAlert: ServiceAlert = {
+      id: 1,
+      vehicleId: serviceAlert.vehicleId,
+      eventName: serviceAlert.eventName,
+      scheduledDate: serviceAlert.scheduledDate,
+      notes: serviceAlert.notes || null,
+      isActive: serviceAlert.isActive || true,
+      isCompleted: serviceAlert.isCompleted || false,
+      notificationSent: serviceAlert.notificationSent || false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    return newAlert;
+  }
+
+  async updateServiceAlert(id: number, serviceAlert: Partial<InsertServiceAlert>): Promise<ServiceAlert | undefined> {
+    return undefined;
+  }
+
+  async deleteServiceAlert(id: number): Promise<boolean> {
+    return false;
+  }
+
+  async getActiveServiceAlerts(): Promise<ServiceAlert[]> {
+    return [];
   }
 }
 
@@ -994,6 +1039,44 @@ export class DatabaseStorage implements IStorage {
       .from(ratings)
       .where(eq(ratings.userId, userId))
       .orderBy(desc(ratings.createdAt));
+  }
+
+  // Service Alert methods
+  async getServiceAlerts(vehicleId: number): Promise<ServiceAlert[]> {
+    const alerts = await db.select().from(serviceAlerts)
+      .where(eq(serviceAlerts.vehicleId, vehicleId))
+      .orderBy(desc(serviceAlerts.scheduledDate));
+    return alerts;
+  }
+
+  async getServiceAlert(id: number): Promise<ServiceAlert | undefined> {
+    const [alert] = await db.select().from(serviceAlerts).where(eq(serviceAlerts.id, id));
+    return alert || undefined;
+  }
+
+  async createServiceAlert(serviceAlert: InsertServiceAlert): Promise<ServiceAlert> {
+    const [alert] = await db.insert(serviceAlerts).values(serviceAlert).returning();
+    return alert;
+  }
+
+  async updateServiceAlert(id: number, serviceAlert: Partial<InsertServiceAlert>): Promise<ServiceAlert | undefined> {
+    const [alert] = await db.update(serviceAlerts)
+      .set({ ...serviceAlert, updatedAt: new Date() })
+      .where(eq(serviceAlerts.id, id))
+      .returning();
+    return alert || undefined;
+  }
+
+  async deleteServiceAlert(id: number): Promise<boolean> {
+    const [result] = await db.delete(serviceAlerts).where(eq(serviceAlerts.id, id)).returning({ id: serviceAlerts.id });
+    return !!result;
+  }
+
+  async getActiveServiceAlerts(): Promise<ServiceAlert[]> {
+    const alerts = await db.select().from(serviceAlerts)
+      .where(and(eq(serviceAlerts.isActive, true), eq(serviceAlerts.isCompleted, false)))
+      .orderBy(serviceAlerts.scheduledDate);
+    return alerts;
   }
 }
 

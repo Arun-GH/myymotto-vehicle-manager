@@ -1411,6 +1411,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Service Alert API routes
+  app.get("/api/service-alerts/:vehicleId", async (req, res) => {
+    try {
+      const vehicleId = parseInt(req.params.vehicleId);
+      const alerts = await storage.getServiceAlerts(vehicleId);
+      res.json(alerts);
+    } catch (error) {
+      console.error("Error fetching service alerts:", error);
+      res.status(500).json({ message: "Failed to fetch service alerts" });
+    }
+  });
+
+  app.post("/api/service-alerts", async (req, res) => {
+    try {
+      const data = req.body;
+      const alert = await storage.createServiceAlert({
+        vehicleId: parseInt(data.vehicleId),
+        eventName: data.eventName,
+        scheduledDate: data.scheduledDate,
+        notes: data.notes || null,
+        isActive: true,
+        isCompleted: false,
+        notificationSent: false,
+      });
+      res.status(201).json(alert);
+    } catch (error) {
+      console.error("Error creating service alert:", error);
+      res.status(500).json({ message: "Failed to create service alert" });
+    }
+  });
+
+  app.put("/api/service-alerts/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const data = req.body;
+      
+      const alert = await storage.updateServiceAlert(id, {
+        eventName: data.eventName,
+        scheduledDate: data.scheduledDate,
+        notes: data.notes,
+        isActive: data.isActive,
+        isCompleted: data.isCompleted,
+      });
+      
+      if (!alert) {
+        return res.status(404).json({ message: "Service alert not found" });
+      }
+      
+      res.json(alert);
+    } catch (error) {
+      console.error("Error updating service alert:", error);
+      res.status(500).json({ message: "Failed to update service alert" });
+    }
+  });
+
+  app.delete("/api/service-alerts/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteServiceAlert(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Service alert not found" });
+      }
+      res.json({ message: "Service alert deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting service alert:", error);
+      res.status(500).json({ message: "Failed to delete service alert" });
+    }
+  });
+
+  // Check and send notifications for service alerts (1 day prior)
+  app.post("/api/service-alerts/check-notifications", async (req, res) => {
+    try {
+      const activeAlerts = await storage.getActiveServiceAlerts();
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      let notificationsCreated = 0;
+      
+      for (const alert of activeAlerts) {
+        const scheduledDate = new Date(alert.scheduledDate);
+        
+        // Check if tomorrow is the scheduled date and notification hasn't been sent
+        if (scheduledDate.toDateString() === tomorrow.toDateString() && !alert.notificationSent) {
+          // Create notification
+          await storage.createNotification({
+            vehicleId: alert.vehicleId,
+            type: 'service',
+            title: 'Service Alert Reminder',
+            message: `Reminder: ${alert.eventName} is scheduled for tomorrow (${scheduledDate.toLocaleDateString()})`,
+            dueDate: alert.scheduledDate,
+            isRead: false
+          });
+          
+          // Mark notification as sent
+          await storage.updateServiceAlert(alert.id, { notificationSent: true });
+          notificationsCreated++;
+        }
+      }
+      
+      res.json({ 
+        success: true, 
+        message: `${notificationsCreated} service alert notifications created`,
+        count: notificationsCreated 
+      });
+    } catch (error) {
+      console.error("Error checking service alert notifications:", error);
+      res.status(500).json({ message: "Failed to check service alert notifications" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

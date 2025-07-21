@@ -96,6 +96,19 @@ export const serviceLogs = pgTable("service_logs", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const serviceAlerts = pgTable("service_alerts", {
+  id: serial("id").primaryKey(),
+  vehicleId: integer("vehicle_id").references(() => vehicles.id).notNull(),
+  eventName: text("event_name").notNull(), // Name of the scheduled service/event
+  scheduledDate: date("scheduled_date").notNull(), // When the service is scheduled
+  notes: text("notes"), // Short notes about the alert
+  isActive: boolean("is_active").default(true).notNull(), // Whether alert is active
+  isCompleted: boolean("is_completed").default(false).notNull(), // Whether the service was completed
+  notificationSent: boolean("notification_sent").default(false).notNull(), // Whether 1-day prior notification was sent
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   id: true,
   createdAt: true,
@@ -289,6 +302,16 @@ export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
   driversLicenseValidTill: z.string().optional(),
 });
 
+export const insertServiceAlertSchema = createInsertSchema(serviceAlerts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  eventName: z.string().min(1, "Event name is required"),
+  scheduledDate: z.string().min(1, "Scheduled date is required"),
+  notes: z.string().optional(),
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type UserProfile = typeof userProfiles.$inferSelect;
@@ -297,6 +320,8 @@ export type SignInData = z.infer<typeof signInSchema>;
 export type VerifyOtpData = z.infer<typeof verifyOtpSchema>;
 export type OtpVerification = typeof otpVerifications.$inferSelect;
 export type InsertOtpVerification = z.infer<typeof insertOtpSchema>;
+export type ServiceAlert = typeof serviceAlerts.$inferSelect;
+export type InsertServiceAlert = z.infer<typeof insertServiceAlertSchema>;
 
 export const notifications = pgTable("notifications", {
   id: serial("id").primaryKey(),

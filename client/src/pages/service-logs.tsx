@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
 import ColorfulLogo from "@/components/colorful-logo";
+import ServiceAlerts from "@/components/service-alerts";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { type ServiceLog, type Vehicle, type MaintenanceRecord } from "@shared/schema";
 
@@ -142,6 +143,8 @@ export default function ServiceLogs() {
           </Card>
         )}
 
+        {/* Service Alerts Section */}
+        <ServiceAlerts vehicleId={parseInt(vehicleId)} />
 
         {/* Service Logs List */}
         <Card className="shadow-orange">

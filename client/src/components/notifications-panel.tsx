@@ -29,7 +29,7 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
   });
 
   // Fetch vehicles data to get license plate numbers
-  const { data: vehicles = [] } = useQuery({
+  const { data: vehicles = [] } = useQuery<Vehicle[]>({
     queryKey: ["/api/vehicles"]
   });
 
@@ -52,7 +52,7 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
   // Helper function to get vehicle license plate by vehicleId
   const getVehicleLicensePlate = (vehicleId: number | null) => {
     if (!vehicleId || !vehicles) return null;
-    const vehicle = vehicles.find((v: any) => v.id === vehicleId);
+    const vehicle = vehicles.find((v) => v.id === vehicleId);
     return vehicle ? vehicle.licensePlate : null;
   };
 
