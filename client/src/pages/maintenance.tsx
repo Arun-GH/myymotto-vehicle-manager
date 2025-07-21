@@ -353,9 +353,9 @@ export default function MaintenancePage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="font-semibold">Service</TableHead>
-                    <TableHead className="font-semibold">Recommended Timeline</TableHead>
-                    <TableHead className="font-semibold text-center">Date Done</TableHead>
+                    <TableHead className="font-medium text-xs">Service</TableHead>
+                    <TableHead className="font-medium text-xs">Recommended Timeline</TableHead>
+                    <TableHead className="font-medium text-xs text-center">Date Done</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -365,14 +365,14 @@ export default function MaintenancePage() {
                     
                     return (
                       <TableRow key={index} className={isCompleted ? 'bg-green-50' : ''}>
-                        <TableCell className="font-medium">{item.service}</TableCell>
-                        <TableCell className="text-sm text-gray-600">{item.recommendedTimeline}</TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="font-medium text-xs py-2">{item.service}</TableCell>
+                        <TableCell className="text-xs text-gray-600 py-2">{item.recommendedTimeline}</TableCell>
+                        <TableCell className="text-center py-2">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => openDialog(item)}
-                            className={`border-orange-300 text-orange-700 hover:bg-orange-50 ${
+                            className={`border-orange-300 text-orange-700 hover:bg-orange-50 text-xs px-2 py-1 h-7 ${
                               record?.completedDate ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200' : ''
                             }`}
                           >
