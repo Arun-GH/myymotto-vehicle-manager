@@ -48,7 +48,7 @@ export default function TrafficViolations() {
 
   // Fetch violations for selected vehicle
   const { data: violations, isLoading: violationsLoading } = useQuery({
-    queryKey: ["/api/vehicles", selectedVehicle?.id, "violations"],
+    queryKey: [`/api/vehicles/${selectedVehicle?.id}/violations`],
     enabled: !!selectedVehicle,
     staleTime: 30000,
   });
@@ -71,9 +71,11 @@ export default function TrafficViolations() {
         title: "Violations Checked",
         description: `Successfully checked ${stateCode} state database. ${data.violations?.length || 0} violations found.`,
       });
-      queryClient.invalidateQueries({
-        queryKey: ["/api/vehicles", selectedVehicle?.id, "violations"],
-      });
+      if (selectedVehicle) {
+        queryClient.invalidateQueries({
+          queryKey: [`/api/vehicles/${selectedVehicle.id}/violations`],
+        });
+      }
     },
     onError: (error: any) => {
       toast({
@@ -100,9 +102,11 @@ export default function TrafficViolations() {
         title: "Status Updated",
         description: "Violation status has been updated.",
       });
-      queryClient.invalidateQueries({
-        queryKey: ["/api/vehicles", selectedVehicle?.id, "violations"],
-      });
+      if (selectedVehicle) {
+        queryClient.invalidateQueries({
+          queryKey: [`/api/vehicles/${selectedVehicle.id}/violations`],
+        });
+      }
     },
     onError: (error: any) => {
       toast({
