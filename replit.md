@@ -10,12 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Enhanced dashboard with 3D tile effects and updated contact support
-- Implemented comprehensive 3D visual effects for dashboard tiles using CSS perspective transforms and layered shadows
-- Added quick-action-3d class with perspective(800px) rotateX transforms, hover animations, and depth shadows
-- Applied tile-3d class to vehicle cards with perspective(1000px) effects, gradient backgrounds, and inset shadows
-- Enhanced icon containers with icon-3d class featuring depth shadows and glossy highlight overlays
-- Interactive hover states lift tiles with reduced rotation and increased shadows for modern mobile interface
+**July 21, 2025**: Enhanced dashboard with 3D orange-themed tile effects and updated contact support
+- Implemented comprehensive 3D visual effects for dashboard tiles using CSS perspective transforms and orange-tinted layered shadows
+- Added quick-action-3d class with perspective(800px) rotateX transforms, orange shadow animations (rgba(251, 146, 60)) matching app theme
+- Applied tile-3d class to vehicle cards with perspective(1000px) effects, gradient backgrounds, and orange shadow depth
+- Enhanced icon containers with icon-3d class featuring orange-tinted depth shadows and glossy highlight overlays
+- Interactive hover states lift tiles with reduced rotation and intensified orange shadows for cohesive brand experience
+- All shadow effects use orange color variations (rgba(251, 146, 60) with different opacity levels) for unified design language
 - Changed contact support mail body to new professional format: "Dear Arudhih Team, I am reaching out to request information and assistance regarding few features on the app.I would appreciate it if someone from your team could get in touch with me at your earliest convenience. Regards,"
 - Updated tagline from "Timely Care for your carrier" to "Timely Care For Your Carrier" for consistent branding
 - Applied proper case formatting in dashboard.tsx and sign-in.tsx main tagline displays

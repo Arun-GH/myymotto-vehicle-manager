@@ -124,66 +124,71 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  /* 3D Tile Effects */
+  /* 3D Tile Effects with Orange Shadows */
   .tile-3d {
     transform: perspective(1000px) rotateX(5deg);
     box-shadow: 
-      0 4px 8px rgba(0, 0, 0, 0.1),
-      0 8px 16px rgba(0, 0, 0, 0.05),
+      0 4px 8px rgba(251, 146, 60, 0.2),
+      0 8px 16px rgba(251, 146, 60, 0.1),
+      0 12px 24px rgba(251, 146, 60, 0.05),
       inset 0 -2px 4px rgba(0, 0, 0, 0.05);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: linear-gradient(145deg, #ffffff, #f8f9fa);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(251, 146, 60, 0.2);
   }
 
   .tile-3d:hover {
     transform: perspective(1000px) rotateX(2deg) translateY(-4px);
     box-shadow: 
-      0 8px 20px rgba(0, 0, 0, 0.15),
-      0 16px 32px rgba(0, 0, 0, 0.1),
+      0 8px 20px rgba(251, 146, 60, 0.3),
+      0 16px 32px rgba(251, 146, 60, 0.2),
+      0 24px 48px rgba(251, 146, 60, 0.1),
       inset 0 -2px 6px rgba(0, 0, 0, 0.1);
   }
 
   .tile-3d:active {
     transform: perspective(1000px) rotateX(8deg) translateY(2px);
     box-shadow: 
-      0 2px 4px rgba(0, 0, 0, 0.1),
-      0 4px 8px rgba(0, 0, 0, 0.05),
+      0 2px 4px rgba(251, 146, 60, 0.3),
+      0 4px 8px rgba(251, 146, 60, 0.2),
       inset 0 -1px 2px rgba(0, 0, 0, 0.1);
   }
 
-  /* Enhanced Quick Action Tiles */
+  /* Enhanced Quick Action Tiles with Orange Shadows */
   .quick-action-3d {
     transform: perspective(800px) rotateX(3deg);
     box-shadow: 
-      0 3px 6px rgba(0, 0, 0, 0.12),
-      0 6px 12px rgba(0, 0, 0, 0.08),
+      0 3px 6px rgba(251, 146, 60, 0.15),
+      0 6px 12px rgba(251, 146, 60, 0.1),
+      0 9px 18px rgba(251, 146, 60, 0.05),
       inset 0 -1px 3px rgba(0, 0, 0, 0.05);
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     background: linear-gradient(135deg, #ffffff, #fdfdfd);
-    border: 1px solid rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(251, 146, 60, 0.15);
   }
 
   .quick-action-3d:hover {
     transform: perspective(800px) rotateX(0deg) translateY(-2px);
     box-shadow: 
-      0 6px 12px rgba(0, 0, 0, 0.18),
-      0 12px 24px rgba(0, 0, 0, 0.12),
+      0 6px 12px rgba(251, 146, 60, 0.25),
+      0 12px 24px rgba(251, 146, 60, 0.18),
+      0 18px 36px rgba(251, 146, 60, 0.1),
       inset 0 -2px 4px rgba(0, 0, 0, 0.08);
   }
 
   .quick-action-3d:active {
     transform: perspective(800px) rotateX(5deg) translateY(1px);
     box-shadow: 
-      0 1px 3px rgba(0, 0, 0, 0.1),
-      0 3px 6px rgba(0, 0, 0, 0.05),
+      0 1px 3px rgba(251, 146, 60, 0.2),
+      0 3px 6px rgba(251, 146, 60, 0.15),
       inset 0 -1px 2px rgba(0, 0, 0, 0.08);
   }
 
-  /* Icon containers with depth */
+  /* Icon containers with orange depth */
   .icon-3d {
     box-shadow: 
-      0 2px 4px rgba(0, 0, 0, 0.1),
+      0 2px 4px rgba(251, 146, 60, 0.15),
+      0 4px 8px rgba(251, 146, 60, 0.08),
       inset 0 1px 2px rgba(255, 255, 255, 0.3);
     position: relative;
   }
