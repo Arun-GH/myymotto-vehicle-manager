@@ -27,7 +27,7 @@ class NewsService {
           category: "launch",
           date: new Date(Date.now() - 86400000).toLocaleDateString('en-IN'),
           source: "Tata Motors Official",
-          link: "https://cars.tatamotors.com/suv/nexon-ev",
+          link: "https://www.tatamotors.com/cars/nexon-ev",
           priority: "high"
         },
         {
@@ -37,7 +37,7 @@ class NewsService {
           category: "launch",
           date: new Date(Date.now() - 172800000).toLocaleDateString('en-IN'),
           source: "Mahindra & Mahindra",
-          link: "https://www.mahindra.com/news-and-insights/press-release/xuv700-hydrogen",
+          link: "https://www.mahindra.com/suv/xuv-700",
           priority: "high"
         },
         {
@@ -47,7 +47,7 @@ class NewsService {
           category: "launch",
           date: new Date(Date.now() - 259200000).toLocaleDateString('en-IN'),
           source: "Bajaj Auto Limited",
-          link: "https://www.bajajchetak.com/premium-edition",
+          link: "https://www.bajajchetak.com/",
           priority: "medium"
         },
         // Auto Events and Industry Updates
@@ -58,7 +58,7 @@ class NewsService {
           category: "event",
           date: new Date(Date.now() - 345600000).toLocaleDateString('en-IN'),
           source: "SIAM Official",
-          link: "https://www.siamindia.com/auto-expo-2026",
+          link: "https://www.siamindia.com/",
           priority: "high"
         },
         {
@@ -68,7 +68,7 @@ class NewsService {
           category: "event",
           date: new Date(Date.now() - 432000000).toLocaleDateString('en-IN'),
           source: "India Trade Promotion Organisation",
-          link: "https://www.acetechindia.in/delhi/",
+          link: "https://www.itpo.gov.in/",
           priority: "medium"
         },
         {
@@ -78,7 +78,7 @@ class NewsService {
           category: "event",
           date: new Date(Date.now() - 518400000).toLocaleDateString('en-IN'),
           source: "Exhibitions India Group",
-          link: "https://www.indiaautoshow.com/mumbai-2025",
+          link: "https://www.indiamart.com/",
           priority: "medium"
         },
         // Government Policies (displayed after launches)
@@ -89,7 +89,7 @@ class NewsService {
           category: "policy",
           date: new Date().toLocaleDateString('en-IN'),
           source: "Ministry of Heavy Industries",
-          link: "https://heavyindustries.gov.in/scheme-promote-manufacturing-electric-passenger-cars-india",
+          link: "https://heavyindustries.gov.in/",
           priority: "high"
         },
         {
@@ -99,7 +99,7 @@ class NewsService {
           category: "policy",
           date: new Date(Date.now() - 86400000).toLocaleDateString('en-IN'),
           source: "Ministry of Road Transport & Highways",
-          link: "https://morth.nic.in/sites/default/files/notifications_document/BS-VII-notification-2025.pdf",
+          link: "https://morth.nic.in/",
           priority: "high"
         },
         {
@@ -109,7 +109,7 @@ class NewsService {
           category: "policy",
           date: new Date(Date.now() - 172800000).toLocaleDateString('en-IN'),
           source: "Ministry of Heavy Industries",
-          link: "https://heavyindustries.gov.in/national-green-mobility-program-2030",
+          link: "https://heavyindustries.gov.in/",
           priority: "medium"
         },
         {
@@ -119,7 +119,7 @@ class NewsService {
           category: "policy",
           date: new Date(Date.now() - 259200000).toLocaleDateString('en-IN'),
           source: "Ministry of Road Transport & Highways",
-          link: "https://morth.nic.in/vehicle-scrappage-policy-2025",
+          link: "https://morth.nic.in/",
           priority: "medium"
         },
         {
