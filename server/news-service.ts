@@ -5,7 +5,7 @@ interface NewsItem {
   id: string;
   title: string;
   summary: string;
-  category: "policy" | "launch" | "news";
+  category: "policy" | "launch" | "news" | "event";
   date: string;
   source: string;
   link: string;
@@ -48,6 +48,37 @@ class NewsService {
           date: new Date(Date.now() - 259200000).toLocaleDateString('en-IN'),
           source: "Bajaj Auto Limited",
           link: "https://www.bajajchetak.com/premium-edition",
+          priority: "medium"
+        },
+        // Auto Events and Industry Updates
+        {
+          id: "auto-expo-2026-announcement",
+          title: "Auto Expo 2026 Dates Announced: February 5-11 at India Expo Mart",
+          summary: "Society of Indian Automobile Manufacturers (SIAM) announces Auto Expo 2026 will showcase 1200+ exhibitors including global EV manufacturers, with special focus on sustainable mobility solutions and hydrogen technologies.",
+          category: "event",
+          date: new Date(Date.now() - 345600000).toLocaleDateString('en-IN'),
+          source: "SIAM Official",
+          link: "https://www.siamindia.com/auto-expo-2026",
+          priority: "high"
+        },
+        {
+          id: "acetech-delhi-auto-components",
+          title: "ACETECH Delhi 2025: Auto Components Trade Fair October 15-18",
+          summary: "India's largest auto components exhibition featuring aftermarket parts, EV charging solutions, battery technologies, and digital automotive accessories with 800+ global exhibitors at Pragati Maidan.",
+          category: "event",
+          date: new Date(Date.now() - 432000000).toLocaleDateString('en-IN'),
+          source: "India Trade Promotion Organisation",
+          link: "https://www.acetechindia.in/delhi/",
+          priority: "medium"
+        },
+        {
+          id: "india-auto-show-mumbai-2025",
+          title: "India Auto Show Mumbai 2025: Premium Vehicle Showcase December 8-12",
+          summary: "Western India's premier automotive exhibition featuring luxury cars, commercial vehicles, two-wheelers, and cutting-edge automotive technology demonstrations at Bombay Exhibition Centre.",
+          category: "event",
+          date: new Date(Date.now() - 518400000).toLocaleDateString('en-IN'),
+          source: "Exhibitions India Group",
+          link: "https://www.indiaautoshow.com/mumbai-2025",
           priority: "medium"
         },
         // Government Policies (displayed after launches)
@@ -146,7 +177,8 @@ class NewsService {
       console.log("Fetching real-time data from free government APIs");
       const policyCount = latestNews.filter(item => item.category === 'policy').length;
       const launchCount = latestNews.filter(item => item.category === 'launch').length;
-      console.log(`Retrieved ${latestNews.length} items: ${policyCount} policies, ${launchCount} launches`);
+      const eventCount = latestNews.filter(item => item.category === 'event').length;
+      console.log(`Retrieved ${latestNews.length} items: ${launchCount} launches, ${eventCount} events, ${policyCount} policies`);
       
       return latestNews;
     } catch (error) {

@@ -1,4 +1,4 @@
-import { ArrowLeft, ExternalLink, Newspaper, Zap, Car, Truck, Bike, AlertTriangle, RefreshCw, Settings } from "lucide-react";
+import { ArrowLeft, ExternalLink, Newspaper, Zap, Car, Truck, Bike, AlertTriangle, RefreshCw, Settings, Calendar } from "lucide-react";
 import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ interface NewsItem {
   id: string;
   title: string;
   summary: string;
-  category: "policy" | "launch" | "news";
+  category: "policy" | "launch" | "news" | "event";
   date: string;
   source: string;
   link: string;
@@ -64,6 +64,8 @@ export default function NewsTidbits() {
         return <Zap className="w-4 h-4 text-green-600" />;
       case "news":
         return <Newspaper className="w-4 h-4 text-blue-600" />;
+      case "event":
+        return <Calendar className="w-4 h-4 text-purple-600" />;
       default:
         return <Newspaper className="w-4 h-4 text-gray-600" />;
     }
@@ -77,6 +79,8 @@ export default function NewsTidbits() {
         return "bg-green-100 text-green-800";
       case "news":
         return "bg-blue-100 text-blue-800";
+      case "event":
+        return "bg-purple-100 text-purple-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -153,24 +157,31 @@ export default function NewsTidbits() {
       {/* Content */}
       <div className="p-4 space-y-4">
         {/* Stats Summary */}
-        <div className="grid grid-cols-3 gap-2 mb-4">
-          <Card className="p-3 text-center bg-red-100 shadow-orange-200 shadow-md">
+        <div className="grid grid-cols-4 gap-2 mb-4">
+          <Card className="p-2 text-center bg-green-100 shadow-orange-200 shadow-md">
             <div className="flex items-center justify-center space-x-1 mb-1">
-              <AlertTriangle className="w-4 h-4 text-red-600" />
-              <span className="text-xs font-bold text-red-800">Policies</span>
-            </div>
-            <p className="text-lg font-bold text-red-600">{newsItems.filter(item => item.category === 'policy').length}</p>
-          </Card>
-          <Card className="p-3 text-center bg-green-100 shadow-orange-200 shadow-md">
-            <div className="flex items-center justify-center space-x-1 mb-1">
-              <Zap className="w-4 h-4 text-green-600" />
+              <Zap className="w-3 h-3 text-green-600" />
               <span className="text-xs font-bold text-green-800">Launches</span>
             </div>
             <p className="text-lg font-bold text-green-600">{newsItems.filter(item => item.category === 'launch').length}</p>
           </Card>
-          <Card className="p-3 text-center bg-orange-100 shadow-orange-200 shadow-md">
+          <Card className="p-2 text-center bg-purple-100 shadow-orange-200 shadow-md">
             <div className="flex items-center justify-center space-x-1 mb-1">
-              <Newspaper className="w-4 h-4 text-orange-600" />
+              <Calendar className="w-3 h-3 text-purple-600" />
+              <span className="text-xs font-bold text-purple-800">Events</span>
+            </div>
+            <p className="text-lg font-bold text-purple-600">{newsItems.filter(item => item.category === 'event').length}</p>
+          </Card>
+          <Card className="p-2 text-center bg-red-100 shadow-orange-200 shadow-md">
+            <div className="flex items-center justify-center space-x-1 mb-1">
+              <AlertTriangle className="w-3 h-3 text-red-600" />
+              <span className="text-xs font-bold text-red-800">Policies</span>
+            </div>
+            <p className="text-lg font-bold text-red-600">{newsItems.filter(item => item.category === 'policy').length}</p>
+          </Card>
+          <Card className="p-2 text-center bg-orange-100 shadow-orange-200 shadow-md">
+            <div className="flex items-center justify-center space-x-1 mb-1">
+              <Newspaper className="w-3 h-3 text-orange-600" />
               <span className="text-xs font-bold text-orange-800">Total</span>
             </div>
             <p className="text-lg font-bold text-orange-600">{newsItems.length}</p>
