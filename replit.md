@@ -10,7 +10,10 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Removed redundant Documents screens and streamlined document management
+**July 21, 2025**: Streamlined document upload system and removed redundant screens
+- Removed service invoice option from document type dropdown on upload documents page
+- Cleaned up document upload flow to focus only on vehicle-related certificates and permits
+- Service invoices now handled exclusively through Service Logs system for better organization
 - Eliminated confusing dual document systems by removing redundant Documents button from Quick Actions
 - Removed server-based documents.tsx and view-documents.tsx pages that were causing navigation confusion
 - Cleaned up routing by removing unused /documents and /vehicle/:id/documents routes

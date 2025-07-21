@@ -14,7 +14,7 @@ import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
 
-type DocumentType = "emission" | "insurance" | "service" | "rc";
+type DocumentType = "emission" | "insurance" | "rc";
 
 interface DocumentUpload {
   type: DocumentType;
@@ -32,7 +32,7 @@ export default function UploadDocuments() {
   const [selectedType, setSelectedType] = useState<DocumentType>("emission");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [expiryDate, setExpiryDate] = useState<string>("");
-  const [servicingDate, setServicingDate] = useState<string>("");
+
   const [showCamera, setShowCamera] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -49,7 +49,6 @@ export default function UploadDocuments() {
   const documentTypes = [
     { value: "emission" as DocumentType, label: "Emission Certificate", icon: FileText, requiresExpiry: true },
     { value: "insurance" as DocumentType, label: "Insurance Copy", icon: FileText, requiresExpiry: true },
-    { value: "service" as DocumentType, label: "Service Invoice", icon: FileText, requiresExpiry: false },
     { value: "rc" as DocumentType, label: "RC Book Copy", icon: FileText, requiresExpiry: true },
   ];
 
@@ -83,15 +82,7 @@ export default function UploadDocuments() {
         uploadedDocuments.push(localDoc);
       }
 
-      // If uploading service invoice, update vehicle's last service date
-      if (selectedType === "service" && servicingDate) {
-        const updateVehicleResponse = await apiRequest("PATCH", `/api/vehicles/${vehicleId}`, {
-          lastServiceDate: servicingDate,
-        });
-        if (!updateVehicleResponse.ok) {
-          console.warn("Failed to update vehicle last service date");
-        }
-      }
+
 
       return uploadedDocuments;
     },
@@ -258,25 +249,7 @@ export default function UploadDocuments() {
               </div>
             )}
 
-            {/* Servicing Date (for service invoice) */}
-            {selectedType === "service" && (
-              <div className="space-y-2">
-                <Label htmlFor="servicing-date" className="text-sm font-medium">
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>Servicing Date</span>
-                  </div>
-                </Label>
-                <Input
-                  id="servicing-date"
-                  type="date"
-                  className="h-9"
-                  value={servicingDate}
-                  onChange={(e) => setServicingDate(e.target.value)}
-                  placeholder="Select servicing date"
-                />
-              </div>
-            )}
+
 
             {/* File Upload Section */}
             <div className="space-y-3">
