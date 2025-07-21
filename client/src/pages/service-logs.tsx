@@ -145,7 +145,7 @@ export default function ServiceLogs() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => window.open(`/${record.warrantyCardPath}`, '_blank')}
+                          onClick={() => window.open(record.warrantyCardPath, '_blank')}
                           className="text-blue-600 hover:text-blue-800 p-1"
                           title="View Warranty Card"
                         >
@@ -156,7 +156,7 @@ export default function ServiceLogs() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => window.open(`/${record.invoicePath}`, '_blank')}
+                          onClick={() => window.open(record.invoicePath, '_blank')}
                           className="text-green-600 hover:text-green-800 p-1"
                           title="View Invoice"
                         >
@@ -206,7 +206,7 @@ export default function ServiceLogs() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => window.open(`/${log.invoicePath}`, '_blank')}
+                          onClick={() => window.open(log.invoicePath, '_blank')}
                           className="text-green-600 hover:text-green-800 p-1"
                           title="View Invoice"
                         >
