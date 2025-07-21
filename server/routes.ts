@@ -906,7 +906,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // News API routes
   app.get("/api/news", async (req, res) => {
     try {
-      const news = await newsService.getLatestNews();
+      const news = await newsService.fetchLatestNews();
       res.json(news);
     } catch (error) {
       console.error("Error fetching news:", error);
@@ -926,8 +926,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/news/refresh", async (req, res) => {
     try {
-      const news = await newsService.forceRefresh();
-      res.json({ message: "News refreshed successfully", news });
+      const news = await newsService.fetchLatestNews();
+      res.json({ 
+        message: "Real-time news fetched from free government APIs",
+        news,
+        source: "API Setu, Open Government Data India, Ministry Direct Sources"
+      });
     } catch (error) {
       console.error("Error refreshing news:", error);
       res.status(500).json({ message: "Failed to refresh news" });

@@ -114,6 +114,19 @@ export default function NewsTidbits() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              <Button
+                onClick={() => refreshNewsMutation.mutate()}
+                disabled={refreshNewsMutation.isPending}
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 hover:bg-red-50"
+              >
+                {refreshNewsMutation.isPending ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="w-4 h-4" />
+                )}
+              </Button>
               <Link href="/settings">
                 <Button
                   variant="ghost"
@@ -131,7 +144,7 @@ export default function NewsTidbits() {
                 day: 'numeric', 
                 month: 'short', 
                 year: 'numeric' 
-              })} • Auto-updated daily
+              })} • Real-time from free government APIs
             </p>
           </div>
         </div>
