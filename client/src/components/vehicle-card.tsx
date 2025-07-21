@@ -240,7 +240,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         </div>
         
         <div className="flex items-center space-x-2">
-          <span className="text-xs font-medium text-gray-600">Documents:</span>
+          <span className="text-xs font-bold text-gray-600">Documents:</span>
           <div className="flex items-center space-x-1">
             <Link href={`/vehicle/${vehicle.id}/local-documents`}>
               <Button variant="ghost" size="sm" className="text-red-600 p-1 h-auto hover:bg-red-50 flex items-center space-x-1">
@@ -266,7 +266,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         </div>
         
         <div className="flex items-center space-x-2 mt-2">
-          <span className="text-xs font-medium text-gray-600">Service Log:</span>
+          <span className="text-xs font-bold text-gray-600">Service Log:</span>
           <div className="flex items-center space-x-1">
             <Link href={`/vehicle/${vehicle.id}/service-logs`}>
               <Button variant="ghost" size="sm" className="text-blue-600 p-1 h-auto hover:bg-blue-50 flex items-center space-x-1">
