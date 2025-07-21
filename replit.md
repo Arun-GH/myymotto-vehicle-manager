@@ -10,6 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 21, 2025**: Integrated official Karnataka government API for authentic traffic violation checking
+- Updated traffic violation service to use official Karnataka API: www.karnatakaone.gov.in/PoliceCollectionOfFine/FetchPoliceFineDtls
+- Added real API integration for Karnataka state vehicles with proper payload structure (vehicleNo, chassisNo, engineNo)
+- Implemented fallback mechanism: if Karnataka API fails, system uses mock data for demonstration
+- Enhanced API error handling and response parsing for government data format
+- System now attempts real API calls to Karnataka government before showing simulated violations
+- Fixed frontend query issues - violations now display correctly for selected vehicles
+- Updated query key format for proper API endpoint communication
+- Added comprehensive logging to track API calls and responses from government servers
+- Ready for official API key integration when available from Karnataka government
+
 **July 21, 2025**: Updated Service Management interface labels for clearer user experience
 - Changed "Service Management:" label to "Service Log:" on vehicle cards for better clarity
 - Renamed "Service" button to "Add" to clearly indicate adding new service records
