@@ -378,6 +378,7 @@ export default function EditVehicle() {
                               placeholder="Enter model manually" 
                               className="h-9" 
                               {...field}
+                              onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                             />
                           ) : (
                             <Select onValueChange={handleModelChange} value={field.value} disabled={!watchedMake && !isCustomMake}>
@@ -441,7 +442,11 @@ export default function EditVehicle() {
                       <FormItem>
                         <FormLabel>Color *</FormLabel>
                         <FormControl>
-                          <Input placeholder="Red" {...field} />
+                          <Input 
+                            placeholder="Red" 
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -456,7 +461,11 @@ export default function EditVehicle() {
                     <FormItem>
                       <FormLabel>License Plate *</FormLabel>
                       <FormControl>
-                        <Input placeholder="DL 01 AB 1234" {...field} />
+                        <Input 
+                          placeholder="DL 01 AB 1234" 
+                          {...field}
+                          onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -519,7 +528,11 @@ export default function EditVehicle() {
                       <FormItem>
                         <FormLabel>Chassis Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="MAT123456789" {...field} />
+                          <Input 
+                            placeholder="MAT123456789" 
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -532,7 +545,11 @@ export default function EditVehicle() {
                       <FormItem>
                         <FormLabel>Engine Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="ENG987654321" {...field} />
+                          <Input 
+                            placeholder="ENG987654321" 
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -547,7 +564,11 @@ export default function EditVehicle() {
                     <FormItem>
                       <FormLabel>Owner Name *</FormLabel>
                       <FormControl>
-                        <Input placeholder="John Doe" {...field} />
+                        <Input 
+                          placeholder="John Doe" 
+                          {...field}
+                          onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -561,7 +582,11 @@ export default function EditVehicle() {
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="+1 234 567 8900" {...field} />
+                        <Input 
+                          placeholder="+1 234 567 8900" 
+                          {...field}
+                          onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -581,6 +606,7 @@ export default function EditVehicle() {
                           value={field.value || ""} 
                           placeholder="e.g., HDFC ERGO, ICICI Lombard, Bajaj Allianz"
                           className="h-9"
+                          onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                         />
                       </FormControl>
                       <FormMessage />

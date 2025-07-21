@@ -390,7 +390,11 @@ export default function EmergencyContacts() {
                           <FormItem>
                             <FormLabel>Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Emergency contact name" {...field} />
+                              <Input 
+                                placeholder="Emergency contact name" 
+                                {...field}
+                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -403,7 +407,11 @@ export default function EmergencyContacts() {
                           <FormItem>
                             <FormLabel>Phone Number</FormLabel>
                             <FormControl>
-                              <Input placeholder="Emergency contact phone" {...field} />
+                              <Input 
+                                placeholder="Emergency contact phone" 
+                                {...field}
+                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -426,7 +434,11 @@ export default function EmergencyContacts() {
                           <FormItem>
                             <FormLabel>Company Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Insurance company name" {...field} />
+                              <Input 
+                                placeholder="Insurance company name" 
+                                {...field}
+                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -439,7 +451,11 @@ export default function EmergencyContacts() {
                           <FormItem>
                             <FormLabel>Phone Number</FormLabel>
                             <FormControl>
-                              <Input placeholder="Insurance company phone" {...field} />
+                              <Input 
+                                placeholder="Insurance company phone" 
+                                {...field}
+                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -461,7 +477,11 @@ export default function EmergencyContacts() {
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input placeholder="Roadside assistance phone" {...field} />
+                            <Input 
+                              placeholder="Roadside assistance phone" 
+                              {...field}
+                              onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -483,7 +503,11 @@ export default function EmergencyContacts() {
                           <FormItem>
                             <FormLabel>Centre Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Service centre name" {...field} />
+                              <Input 
+                                placeholder="Service centre name" 
+                                {...field}
+                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -496,7 +520,11 @@ export default function EmergencyContacts() {
                           <FormItem>
                             <FormLabel>Phone Number</FormLabel>
                             <FormControl>
-                              <Input placeholder="Service centre phone" {...field} />
+                              <Input 
+                                placeholder="Service centre phone" 
+                                {...field}
+                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -519,7 +547,11 @@ export default function EmergencyContacts() {
                           <FormItem>
                             <FormLabel>Provider Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Spare parts provider name" {...field} />
+                              <Input 
+                                placeholder="Spare parts provider name" 
+                                {...field}
+                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -532,7 +564,11 @@ export default function EmergencyContacts() {
                           <FormItem>
                             <FormLabel>Phone Number</FormLabel>
                             <FormControl>
-                              <Input placeholder="Spare parts provider phone" {...field} />
+                              <Input 
+                                placeholder="Spare parts provider phone" 
+                                {...field}
+                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

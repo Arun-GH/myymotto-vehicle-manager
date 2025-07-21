@@ -70,6 +70,7 @@ export default function Profile() {
       city: "",
       pinCode: "",
       alternatePhone: "",
+      email: "",
       driversLicenseNumber: "",
       driversLicenseValidTill: "",
     },
@@ -139,6 +140,7 @@ export default function Profile() {
         city: profile.city,
         pinCode: profile.pinCode,
         alternatePhone: profile.alternatePhone || "",
+        email: profile.email || "",
         driversLicenseNumber: profile.driversLicenseNumber || "",
         driversLicenseValidTill: profile.driversLicenseValidTill || "",
       });
@@ -194,6 +196,7 @@ export default function Profile() {
         age: typeof data.age === 'number' ? data.age : parseInt(String(data.age)) || 25,
         // Handle optional fields properly - send undefined for empty strings
         alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
+        email: data.email && data.email.trim() !== '' ? data.email : undefined,
         driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
         driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? data.driversLicenseValidTill : undefined,
       };
@@ -265,6 +268,7 @@ export default function Profile() {
         age: typeof data.age === 'number' ? data.age : parseInt(String(data.age)) || 25,
         // Handle optional fields properly - send undefined for empty strings
         alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
+        email: data.email && data.email.trim() !== '' ? data.email : undefined,
         driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
         driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? data.driversLicenseValidTill : undefined,
       };
@@ -466,6 +470,13 @@ export default function Profile() {
                   <p className="font-medium">{profile.alternatePhone}</p>
                 </div>
               )}
+              
+              {profile.email && (
+                <div>
+                  <label className="text-sm text-muted-foreground">Email Address</label>
+                  <p className="font-medium">{profile.email}</p>
+                </div>
+              )}
 
               {/* Driver's License Information */}
               {(profile.driversLicenseNumber || profile.driversLicenseCopy || profile.driversLicenseValidTill) && (
@@ -592,7 +603,14 @@ export default function Profile() {
                       <FormItem>
                         <FormLabel>Full Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your full name" {...field} />
+                          <Input 
+                            placeholder="Enter your full name" 
+                            {...field}
+                            onChange={(e) => {
+                              const upperValue = e.target.value.toUpperCase();
+                              field.onChange(upperValue);
+                            }}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -656,6 +674,10 @@ export default function Profile() {
                           <Textarea 
                             placeholder="Enter your complete address"
                             {...field}
+                            onChange={(e) => {
+                              const upperValue = e.target.value.toUpperCase();
+                              field.onChange(upperValue);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -695,7 +717,14 @@ export default function Profile() {
                         <FormItem>
                           <FormLabel>City</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter city" {...field} />
+                            <Input 
+                              placeholder="Enter city" 
+                              {...field}
+                              onChange={(e) => {
+                                const upperValue = e.target.value.toUpperCase();
+                                field.onChange(upperValue);
+                              }}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -713,7 +742,11 @@ export default function Profile() {
                           <Input 
                             placeholder="Enter 6-digit pin code" 
                             maxLength={6}
-                            {...field} 
+                            {...field}
+                            onChange={(e) => {
+                              const upperValue = e.target.value.toUpperCase();
+                              field.onChange(upperValue);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -728,7 +761,32 @@ export default function Profile() {
                       <FormItem>
                         <FormLabel>Alternate Phone Number (Optional)</FormLabel>
                         <FormControl>
-                          <Input placeholder="+91 98765 43210" {...field} />
+                          <Input 
+                            placeholder="+91 98765 43210" 
+                            {...field}
+                            onChange={(e) => {
+                              const upperValue = e.target.value.toUpperCase();
+                              field.onChange(upperValue);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email Address (Optional)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="email" 
+                            placeholder="user@example.com" 
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -750,7 +808,11 @@ export default function Profile() {
                               <Input 
                                 placeholder="e.g., MH12 20220012345" 
                                 className="h-9"
-                                {...field} 
+                                {...field}
+                                onChange={(e) => {
+                                  const upperValue = e.target.value.toUpperCase();
+                                  field.onChange(upperValue);
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
