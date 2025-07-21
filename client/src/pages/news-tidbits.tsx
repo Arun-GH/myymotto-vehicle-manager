@@ -24,7 +24,7 @@ export default function NewsTidbits() {
 
   // Fetch news data from API
   const { data: newsItems = [], isLoading, error } = useQuery<NewsItem[]>({
-    queryKey: ["/api/news", "government-2025"], // Updated key to force refresh
+    queryKey: ["/api/news"],
     refetchOnMount: true,
     staleTime: 0, // Always fetch fresh data
     cacheTime: 1000 * 60 * 5, // Cache for 5 minutes only
@@ -32,7 +32,7 @@ export default function NewsTidbits() {
 
   // Fetch cache info
   const { data: cacheInfo } = useQuery({
-    queryKey: ["/api/news/cache-info", "government-2025"], // Updated key to force refresh
+    queryKey: ["/api/news/cache-info"],
     refetchInterval: 1000 * 60, // Refresh every minute
   });
 
