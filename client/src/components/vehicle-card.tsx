@@ -137,7 +137,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   };
 
   return (
-    <Card className="card-hover shadow-orange-dark bg-gradient-to-r from-white to-gray-50 border-l-4 border-l-blue-500 border border-orange-300">
+    <Card className="tile-3d border-l-4 border-l-blue-500">
       <CardContent className="p-3">
         <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
@@ -145,10 +145,10 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 <img 
                   src={vehicle.thumbnailPath} 
                   alt={`${vehicle.make?.toUpperCase()} ${vehicle.model}`}
-                  className="w-10 h-10 object-cover rounded-lg shadow-md"
+                  className="w-10 h-10 object-cover rounded-lg icon-3d"
                 />
               ) : (
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center icon-3d">
                   <Car className="w-5 h-5 text-white" />
                 </div>
               )}

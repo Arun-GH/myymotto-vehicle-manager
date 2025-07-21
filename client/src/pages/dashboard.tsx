@@ -105,24 +105,24 @@ export default function Dashboard() {
           <h2 className="text-xs font-semibold mb-2 text-gray-800">Quick Actions</h2>
           <div className="grid grid-cols-3 gap-2">
             <Link href="/add-vehicle">
-              <div className="card-hover bg-white rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer shadow-orange border border-gray-200 hover:border-red-300 transition-colors">
-                <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
+              <div className="quick-action-3d rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer hover:border-red-300 transition-colors">
+                <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center icon-3d">
                   <Plus className="w-3 h-3 text-white" />
                 </div>
                 <span className="text-xs font-medium text-gray-800 text-center leading-tight">Add Vehicle</span>
               </div>
             </Link>
             <Link href="/traffic-violations">
-              <div className="card-hover bg-white rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer shadow-orange border border-gray-200 hover:border-blue-300 transition-colors">
-                <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+              <div className="quick-action-3d rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer hover:border-blue-300 transition-colors">
+                <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center icon-3d">
                   <Zap className="w-3 h-3 text-white" />
                 </div>
                 <span className="text-xs font-medium text-gray-800 text-center leading-tight">Violations</span>
               </div>
             </Link>
             <Link href="/insurance-renewals">
-              <div className="card-hover bg-white rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer shadow-orange border border-gray-200 hover:border-green-300 transition-colors">
-                <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+              <div className="quick-action-3d rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer hover:border-green-300 transition-colors">
+                <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center icon-3d">
                   <Shield className="w-3 h-3 text-white" />
                 </div>
                 <span className="text-xs font-medium text-gray-800 text-center leading-tight">Insurance</span>
