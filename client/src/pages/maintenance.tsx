@@ -206,7 +206,7 @@ export default function MaintenancePage() {
                 <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
                 <div>
                   <ColorfulLogo />
-                  <p className="text-sm text-red-600">2 Wheeler Maintenance</p>
+                  <p className="text-sm text-red-600">2 Wheeler Essential Replaces</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
@@ -263,7 +263,7 @@ export default function MaintenancePage() {
               <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
               <div>
                 <ColorfulLogo />
-                <p className="text-sm text-red-600">2 Wheeler Maintenance</p>
+                <p className="text-sm text-red-600">2 Wheeler Essential Replaces</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">

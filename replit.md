@@ -10,6 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 21, 2025**: Completed Service Logs system and renamed Maintenance to Essential Replaces
+- Built complete Service Logs functionality with view and add service log pages
+- Added Service Logs section to vehicle tiles with View and Add buttons positioned next to Essential Replaces
+- Created service-logs.tsx for viewing service history with invoice file opening capability
+- Created add-service-log.tsx for capturing new service records with file upload functionality
+- Renamed "Maintenance" to "Essential Replaces" throughout the application interface
+- Moved Essential Replaces button to same row as Service Logs for better organization
+- Fixed navigation issues: back buttons properly navigate to dashboard, invoice files open correctly
+- Updated maintenance page headers to show "2 Wheeler Essential Replaces" instead of "Maintenance"
+- Service logs integrate with existing database schema and API endpoints for seamless data management
+- Complete service history tracking with service type, date, service centre, notes, and invoice uploads
+
 **July 21, 2025**: Completed two-wheeler maintenance page rework with professional table format and file upload system
 - Created comprehensive maintenance table showing 7 essential two-wheeler services with recommended timelines
 - Implemented maintenance record tracking system with database integration and API routes

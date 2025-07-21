@@ -63,10 +63,12 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   if (!vehicle.chassisNumber?.trim()) missingDetails.push("Chassis Number");
   if (!vehicle.engineNumber?.trim()) missingDetails.push("Engine Number");
 
-  // Determine overall status (all certificates show when issued, so status is always valid unless not set)
-  const overallStatus = insuranceStatus.status === "unknown" || emissionStatus.status === "unknown"
-    ? "unknown"
-    : "valid";
+  // Determine overall status based on insurance and emission status
+  const overallStatus = 
+    insuranceStatus.status === "expired" || emissionStatus.status === "expired" ? "expired" :
+    insuranceStatus.status === "expiring" || emissionStatus.status === "expiring" ? "expiring" :
+    insuranceStatus.status === "unknown" || emissionStatus.status === "unknown" ? "unknown" :
+    "valid";
 
   const StatusIcon = {
     expired: AlertTriangle,
@@ -260,13 +262,6 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 <span className="text-xs">Upload</span>
               </Button>
             </Link>
-            <span className="text-gray-400 text-xs">|</span>
-            <Link href={`/vehicle/${vehicle.id}/maintenance`}>
-              <Button variant="ghost" size="sm" className="text-purple-600 p-1 h-auto hover:bg-purple-50 flex items-center space-x-1">
-                <Settings className="w-3 h-3" />
-                <span className="text-xs">Maintenance</span>
-              </Button>
-            </Link>
           </div>
         </div>
         
@@ -284,6 +279,13 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               <Button variant="ghost" size="sm" className="text-green-600 p-1 h-auto hover:bg-green-50 flex items-center space-x-1">
                 <Plus className="w-3 h-3" />
                 <span className="text-xs">Add</span>
+              </Button>
+            </Link>
+            <span className="text-gray-400 text-xs">|</span>
+            <Link href={`/vehicle/${vehicle.id}/maintenance`}>
+              <Button variant="ghost" size="sm" className="text-purple-600 p-1 h-auto hover:bg-purple-50 flex items-center space-x-1">
+                <Settings className="w-3 h-3" />
+                <span className="text-xs">Essential Replaces</span>
               </Button>
             </Link>
           </div>
