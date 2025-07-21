@@ -10,14 +10,26 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// Configure multer for file uploads
+// Configure secure app storage directories
+const appStorageDir = path.join(process.cwd(), "app_storage");
+const documentsDir = path.join(appStorageDir, "documents");
+const tempDir = path.join(appStorageDir, "temp");
+
+// Create directories if they don't exist
+[appStorageDir, documentsDir, tempDir].forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
+
+// Legacy uploads directory for backward compatibility
 const uploadsDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
 const upload = multer({
-  dest: uploadsDir,
+  dest: tempDir, // Use temp directory for initial uploads
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
@@ -30,6 +42,50 @@ const upload = multer({
     }
   }
 });
+
+// Utility function to securely copy and store files
+function secureFileStorage(tempPath: string, originalName: string, category: string): string {
+  const fileExtension = path.extname(originalName);
+  const timestamp = Date.now();
+  const randomId = crypto.randomBytes(8).toString('hex');
+  const secureFileName = `${category}_${timestamp}_${randomId}${fileExtension}`;
+  const securePath = path.join(documentsDir, secureFileName);
+  
+  // Copy file from temp to secure storage
+  fs.copyFileSync(tempPath, securePath);
+  
+  // Delete temp file
+  if (fs.existsSync(tempPath)) {
+    fs.unlinkSync(tempPath);
+  }
+  
+  return `/app_storage/documents/${secureFileName}`;
+}
+
+// Utility function to delete files from secure storage
+function deleteSecureFile(filePath: string): boolean {
+  try {
+    if (filePath.startsWith('/app_storage/documents/')) {
+      const fullPath = path.join(process.cwd(), filePath);
+      if (fs.existsSync(fullPath)) {
+        fs.unlinkSync(fullPath);
+        return true;
+      }
+    }
+    // Also handle legacy uploads
+    if (filePath.startsWith('/uploads/')) {
+      const fullPath = path.join(process.cwd(), filePath);
+      if (fs.existsSync(fullPath)) {
+        fs.unlinkSync(fullPath);
+        return true;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    return false;
+  }
+}
 
 // Utility functions for OTP generation and validation
 function generateOTP(): string {
@@ -91,7 +147,39 @@ async function checkTrafficViolationsAPI(licensePlate: string): Promise<any[]> {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve static files from uploads directory with proper content-type headers
+  // Serve static files from secure app storage with proper content-type headers
+  app.use('/app_storage/documents', (req, res, next) => {
+    const filePath = path.join(documentsDir, req.path);
+    
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).send('File not found');
+    }
+    
+    // Read first few bytes to determine file type
+    const buffer = fs.readFileSync(filePath);
+    let contentType = 'application/octet-stream';
+    
+    // Check magic numbers to determine file type
+    if (buffer.length >= 4) {
+      const header = buffer.toString('hex', 0, 4);
+      if (header.startsWith('ffd8ff')) {
+        contentType = 'image/jpeg';
+      } else if (header.startsWith('89504e47')) {
+        contentType = 'image/png';
+      } else if (header.startsWith('52494646')) {
+        contentType = 'image/webp';
+      } else if (header.startsWith('25504446')) {
+        contentType = 'application/pdf';
+      }
+    }
+    
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', 'inline');
+    res.sendFile(filePath);
+  });
+
+  // Legacy uploads directory support for backward compatibility
   app.use('/uploads', (req, res, next) => {
     const filePath = path.join(process.cwd(), 'uploads', req.path);
     
@@ -504,23 +592,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { type } = req.body;
-      const fileExtension = path.extname(req.file.originalname);
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}${fileExtension}`;
-      const newPath = path.join(uploadsDir, fileName);
+      const secureFilePath = secureFileStorage(req.file.path, req.file.originalname, type || 'general');
 
-      // Move file to permanent location with proper name
-      fs.renameSync(req.file.path, newPath);
-
-      console.log(`File uploaded successfully: ${req.file.originalname} -> ${fileName}`);
+      console.log(`File uploaded successfully to secure storage: ${req.file.originalname}`);
 
       res.json({
         fileName: req.file.originalname,
-        filePath: `/uploads/${fileName}`,
+        filePath: secureFilePath,
         fileSize: req.file.size,
         mimeType: req.file.mimetype,
         type: type || 'other'
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Upload error:", error);
       res.status(500).json({ message: "Failed to upload file", error: error.message });
     }
@@ -578,11 +661,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Vehicle not found" });
       }
 
+      // Store file securely 
+      const secureFilePath = secureFileStorage(req.file.path, req.file.originalname, `doc_v${vehicleId}_${type}`);
+
       const documentData = {
         vehicleId,
         type: type || 'other',
         fileName: req.file.originalname,
-        filePath: req.file.path,
+        filePath: secureFilePath,
         fileSize: req.file.size,
         mimeType: req.file.mimetype,
       };
@@ -632,14 +718,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Document not found" });
       }
 
-      // Delete file from filesystem
-      if (fs.existsSync(document.filePath)) {
-        fs.unlinkSync(document.filePath);
+      // Delete the document from database
+      const deleted = await storage.deleteDocument(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Document not found" });
       }
 
-      const deleted = await storage.deleteDocument(id);
+      // Delete associated file from secure storage
+      if (document.filePath) {
+        deleteSecureFile(document.filePath);
+      }
+
       res.status(204).send();
     } catch (error) {
+      console.error("Error deleting document:", error);
       res.status(500).json({ message: "Failed to delete document" });
     }
   });
@@ -843,24 +935,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         notes: req.body.notes || null,
       });
 
-      // Handle file uploads
+      // Handle file uploads using secure storage
       let warrantyCardPath: string | null = null;
       let invoicePath: string | null = null;
 
       if (files?.warrantyCard?.[0]) {
         const file = files.warrantyCard[0];
-        const fileName = `warranty_${Date.now()}_${recordData.vehicleId}.${file.originalname.split('.').pop()}`;
-        const filePath = path.join(uploadsDir, fileName);
-        fs.renameSync(file.path, filePath);
-        warrantyCardPath = `/uploads/${fileName}`;
+        warrantyCardPath = secureFileStorage(file.path, file.originalname, `warranty_v${recordData.vehicleId}`);
       }
 
       if (files?.invoice?.[0]) {
         const file = files.invoice[0];
-        const fileName = `invoice_${Date.now()}_${recordData.vehicleId}.${file.originalname.split('.').pop()}`;
-        const filePath = path.join(uploadsDir, fileName);
-        fs.renameSync(file.path, filePath);
-        invoicePath = `/uploads/${fileName}`;
+        invoicePath = secureFileStorage(file.path, file.originalname, `invoice_v${recordData.vehicleId}`);
       }
 
       const record = await storage.createMaintenanceRecord({
@@ -886,21 +972,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         notes: req.body.notes || null,
       };
 
-      // Handle file uploads
+      // Handle file uploads using secure storage
       if (files?.warrantyCard?.[0]) {
         const file = files.warrantyCard[0];
-        const fileName = `warranty_${Date.now()}_${id}.${file.originalname.split('.').pop()}`;
-        const filePath = path.join(uploadsDir, fileName);
-        fs.renameSync(file.path, filePath);
-        updateData.warrantyCardPath = `/uploads/${fileName}`;
+        updateData.warrantyCardPath = secureFileStorage(file.path, file.originalname, `warranty_r${id}`);
       }
 
       if (files?.invoice?.[0]) {
         const file = files.invoice[0];
-        const fileName = `invoice_${Date.now()}_${id}.${file.originalname.split('.').pop()}`;
-        const filePath = path.join(uploadsDir, fileName);
-        fs.renameSync(file.path, filePath);
-        updateData.invoicePath = `/uploads/${fileName}`;
+        updateData.invoicePath = secureFileStorage(file.path, file.originalname, `invoice_r${id}`);
       }
 
       const record = await storage.updateMaintenanceRecord(id, updateData);
@@ -914,10 +994,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/maintenance/records/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      
+      // Get the record first to retrieve file paths
+      const record = await storage.getMaintenanceRecord(id);
+      if (!record) {
+        return res.status(404).json({ message: "Maintenance record not found" });
+      }
+      
+      // Delete the record from database
       const deleted = await storage.deleteMaintenanceRecord(id);
       if (!deleted) {
         return res.status(404).json({ message: "Maintenance record not found" });
       }
+      
+      // Delete associated files from secure storage
+      if (record.warrantyCardPath) {
+        deleteSecureFile(record.warrantyCardPath);
+      }
+      if (record.invoicePath) {
+        deleteSecureFile(record.invoicePath);
+      }
+      
       res.json({ message: "Maintenance record deleted successfully" });
     } catch (error) {
       console.error("Error deleting maintenance record:", error);
@@ -940,7 +1037,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/service-logs", upload.single('invoice'), async (req, res) => {
     try {
       const data = req.body;
-      const invoicePath = req.file ? `/uploads/${req.file.filename}` : undefined;
+      let invoicePath: string | null = null;
+      
+      if (req.file) {
+        invoicePath = secureFileStorage(req.file.path, req.file.originalname, `service_v${data.vehicleId}`);
+      }
       
       const serviceLog = await storage.createServiceLog({
         vehicleId: parseInt(data.vehicleId),
@@ -948,7 +1049,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         serviceDate: data.serviceDate,
         serviceCentre: data.serviceCentre.toUpperCase(),
         notes: data.notes || null,
-        invoicePath: invoicePath || null,
+        invoicePath: invoicePath,
       });
       
       res.status(201).json(serviceLog);
@@ -962,7 +1063,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const data = req.body;
-      const invoicePath = req.file ? `/uploads/${req.file.filename}` : undefined;
       
       const updateData: any = {
         serviceType: data.serviceType?.toUpperCase(),
@@ -971,8 +1071,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         notes: data.notes || null,
       };
       
-      if (invoicePath) {
-        updateData.invoicePath = invoicePath;
+      if (req.file) {
+        updateData.invoicePath = secureFileStorage(req.file.path, req.file.originalname, `service_log${id}`);
       }
       
       const serviceLog = await storage.updateServiceLog(id, updateData);
@@ -990,10 +1090,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/service-logs/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      
+      // Get the service log first to retrieve file path
+      const serviceLog = await storage.getServiceLog(id);
+      if (!serviceLog) {
+        return res.status(404).json({ message: "Service log not found" });
+      }
+      
+      // Delete the service log from database
       const deleted = await storage.deleteServiceLog(id);
       if (!deleted) {
         return res.status(404).json({ message: "Service log not found" });
       }
+      
+      // Delete associated file from secure storage
+      if (serviceLog.invoicePath) {
+        deleteSecureFile(serviceLog.invoicePath);
+      }
+      
       res.json({ message: "Service log deleted successfully" });
     } catch (error) {
       console.error("Error deleting service log:", error);

@@ -61,12 +61,14 @@ export interface IStorage {
 
   // Maintenance Record methods
   getMaintenanceRecords(vehicleId: number): Promise<MaintenanceRecord[]>;
+  getMaintenanceRecord(id: number): Promise<MaintenanceRecord | undefined>;
   createMaintenanceRecord(record: InsertMaintenanceRecord & { warrantyCardPath?: string | null; invoicePath?: string | null }): Promise<MaintenanceRecord>;
   updateMaintenanceRecord(id: number, record: Partial<MaintenanceRecord>): Promise<MaintenanceRecord | undefined>;
   deleteMaintenanceRecord(id: number): Promise<boolean>;
   
   // Service Log methods
   getServiceLogs(vehicleId: number): Promise<ServiceLog[]>;
+  getServiceLog(id: number): Promise<ServiceLog | undefined>;
   createServiceLog(serviceLog: InsertServiceLog): Promise<ServiceLog>;
   updateServiceLog(id: number, serviceLog: Partial<InsertServiceLog>): Promise<ServiceLog | undefined>;
   deleteServiceLog(id: number): Promise<boolean>;
@@ -800,6 +802,14 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(maintenanceRecords.completedDate));
   }
 
+  async getMaintenanceRecord(id: number): Promise<MaintenanceRecord | undefined> {
+    const [record] = await db
+      .select()
+      .from(maintenanceRecords)
+      .where(eq(maintenanceRecords.id, id));
+    return record;
+  }
+
   async createMaintenanceRecord(record: InsertMaintenanceRecord & { warrantyCardPath?: string | null; invoicePath?: string | null }): Promise<MaintenanceRecord> {
     const [newRecord] = await db
       .insert(maintenanceRecords)
@@ -838,6 +848,14 @@ export class DatabaseStorage implements IStorage {
       .from(serviceLogs)
       .where(eq(serviceLogs.vehicleId, vehicleId))
       .orderBy(desc(serviceLogs.serviceDate));
+  }
+
+  async getServiceLog(id: number): Promise<ServiceLog | undefined> {
+    const [serviceLog] = await db
+      .select()
+      .from(serviceLogs)
+      .where(eq(serviceLogs.id, id));
+    return serviceLog;
   }
 
   async createServiceLog(serviceLog: InsertServiceLog): Promise<ServiceLog> {
