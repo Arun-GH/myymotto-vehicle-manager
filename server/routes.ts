@@ -2,7 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact } from "@shared/schema";
+import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, insertMaintenanceRecordSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact, type InsertMaintenanceRecord } from "@shared/schema";
 import { maintenanceService } from "./maintenance-service";
 import { newsService } from "./news-service";
 import crypto from "crypto";
@@ -789,6 +789,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error updating violation status:", error);
       res.status(500).json({ error: "Failed to update violation status" });
+    }
+  });
+
+  // Maintenance Records API routes
+  app.get("/api/maintenance/records/:vehicleId", async (req, res) => {
+    try {
+      const vehicleId = parseInt(req.params.vehicleId);
+      const records = await storage.getMaintenanceRecords(vehicleId);
+      res.json(records);
+    } catch (error: any) {
+      console.error("Error fetching maintenance records:", error);
+      res.status(500).json({ error: "Failed to fetch maintenance records" });
+    }
+  });
+
+  app.post("/api/maintenance/records", upload.fields([{ name: 'warrantyCard' }, { name: 'invoice' }]), async (req, res) => {
+    try {
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      const recordData = insertMaintenanceRecordSchema.parse({
+        vehicleId: parseInt(req.body.vehicleId),
+        maintenanceType: req.body.maintenanceType,
+        completedDate: req.body.completedDate || null,
+        notes: req.body.notes || null,
+      });
+
+      // Handle file uploads
+      let warrantyCardPath: string | null = null;
+      let invoicePath: string | null = null;
+
+      if (files?.warrantyCard?.[0]) {
+        const file = files.warrantyCard[0];
+        const fileName = `warranty_${Date.now()}_${recordData.vehicleId}.${file.originalname.split('.').pop()}`;
+        const filePath = path.join(uploadsDir, fileName);
+        fs.renameSync(file.path, filePath);
+        warrantyCardPath = `/uploads/${fileName}`;
+      }
+
+      if (files?.invoice?.[0]) {
+        const file = files.invoice[0];
+        const fileName = `invoice_${Date.now()}_${recordData.vehicleId}.${file.originalname.split('.').pop()}`;
+        const filePath = path.join(uploadsDir, fileName);
+        fs.renameSync(file.path, filePath);
+        invoicePath = `/uploads/${fileName}`;
+      }
+
+      const record = await storage.createMaintenanceRecord({
+        ...recordData,
+        warrantyCardPath,
+        invoicePath,
+      });
+
+      res.json(record);
+    } catch (error: any) {
+      console.error("Error creating maintenance record:", error);
+      res.status(500).json({ error: "Failed to create maintenance record" });
+    }
+  });
+
+  app.put("/api/maintenance/records/:id", upload.fields([{ name: 'warrantyCard' }, { name: 'invoice' }]), async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      
+      const updateData: any = {
+        completedDate: req.body.completedDate || null,
+        notes: req.body.notes || null,
+      };
+
+      // Handle file uploads
+      if (files?.warrantyCard?.[0]) {
+        const file = files.warrantyCard[0];
+        const fileName = `warranty_${Date.now()}_${id}.${file.originalname.split('.').pop()}`;
+        const filePath = path.join(uploadsDir, fileName);
+        fs.renameSync(file.path, filePath);
+        updateData.warrantyCardPath = `/uploads/${fileName}`;
+      }
+
+      if (files?.invoice?.[0]) {
+        const file = files.invoice[0];
+        const fileName = `invoice_${Date.now()}_${id}.${file.originalname.split('.').pop()}`;
+        const filePath = path.join(uploadsDir, fileName);
+        fs.renameSync(file.path, filePath);
+        updateData.invoicePath = `/uploads/${fileName}`;
+      }
+
+      const record = await storage.updateMaintenanceRecord(id, updateData);
+      res.json(record);
+    } catch (error: any) {
+      console.error("Error updating maintenance record:", error);
+      res.status(500).json({ error: "Failed to update maintenance record" });
     }
   });
 

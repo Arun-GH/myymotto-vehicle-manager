@@ -72,6 +72,18 @@ export const newsUpdateLog = pgTable("news_update_log", {
   lastUpdated: timestamp("last_updated").defaultNow().notNull(),
 });
 
+export const maintenanceRecords = pgTable("maintenance_records", {
+  id: serial("id").primaryKey(),
+  vehicleId: integer("vehicle_id").references(() => vehicles.id).notNull(),
+  maintenanceType: text("maintenance_type").notNull(), // 'oil_change', 'tire_change', 'battery_replacement', etc.
+  completedDate: date("completed_date"),
+  warrantyCardPath: text("warranty_card_path"), // Path to uploaded warranty card image
+  invoicePath: text("invoice_path"), // Path to uploaded invoice image
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   id: true,
   createdAt: true,
@@ -107,12 +119,22 @@ export const insertMaintenanceScheduleSchema = createInsertSchema(maintenanceSch
   lastUpdated: true,
 });
 
+export const insertMaintenanceRecordSchema = createInsertSchema(maintenanceRecords).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  completedDate: z.string().optional().nullable(),
+});
+
 export type Vehicle = typeof vehicles.$inferSelect;
 export type InsertVehicle = z.infer<typeof insertVehicleSchema>;
 export type Document = typeof documents.$inferSelect;
 export type InsertDocument = z.infer<typeof insertDocumentSchema>;
 export type MaintenanceSchedule = typeof maintenanceSchedules.$inferSelect;
 export type InsertMaintenanceSchedule = z.infer<typeof insertMaintenanceScheduleSchema>;
+export type MaintenanceRecord = typeof maintenanceRecords.$inferSelect;
+export type InsertMaintenanceRecord = z.infer<typeof insertMaintenanceRecordSchema>;
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),

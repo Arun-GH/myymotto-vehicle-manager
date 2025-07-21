@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, newsItems, newsUpdateLog, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, newsItems, newsUpdateLog, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte, desc } from "drizzle-orm";
 
@@ -58,6 +58,12 @@ export interface IStorage {
   getMaintenanceSchedule(make: string, model: string, year: number, drivingCondition: string): Promise<MaintenanceSchedule | undefined>;
   createMaintenanceSchedule(schedule: InsertMaintenanceSchedule): Promise<MaintenanceSchedule>;
   updateMaintenanceSchedule(id: number, schedule: Partial<InsertMaintenanceSchedule>): Promise<MaintenanceSchedule | undefined>;
+
+  // Maintenance Record methods
+  getMaintenanceRecords(vehicleId: number): Promise<MaintenanceRecord[]>;
+  createMaintenanceRecord(record: InsertMaintenanceRecord & { warrantyCardPath?: string | null; invoicePath?: string | null }): Promise<MaintenanceRecord>;
+  updateMaintenanceRecord(id: number, record: Partial<MaintenanceRecord>): Promise<MaintenanceRecord | undefined>;
+  deleteMaintenanceRecord(id: number): Promise<boolean>;
   
   // News methods
   getNewsItems(): Promise<NewsItem[]>;
@@ -770,6 +776,46 @@ export class DatabaseStorage implements IStorage {
       .where(eq(maintenanceSchedules.id, id))
       .returning();
     return updated;
+  }
+
+  // Maintenance Record methods
+  async getMaintenanceRecords(vehicleId: number): Promise<MaintenanceRecord[]> {
+    return await db
+      .select()
+      .from(maintenanceRecords)
+      .where(eq(maintenanceRecords.vehicleId, vehicleId))
+      .orderBy(desc(maintenanceRecords.completedDate));
+  }
+
+  async createMaintenanceRecord(record: InsertMaintenanceRecord & { warrantyCardPath?: string | null; invoicePath?: string | null }): Promise<MaintenanceRecord> {
+    const [newRecord] = await db
+      .insert(maintenanceRecords)
+      .values({
+        vehicleId: record.vehicleId,
+        maintenanceType: record.maintenanceType,
+        completedDate: record.completedDate,
+        warrantyCardPath: record.warrantyCardPath,
+        invoicePath: record.invoicePath,
+        notes: record.notes,
+      })
+      .returning();
+    return newRecord;
+  }
+
+  async updateMaintenanceRecord(id: number, recordUpdate: Partial<MaintenanceRecord>): Promise<MaintenanceRecord | undefined> {
+    const [updated] = await db
+      .update(maintenanceRecords)
+      .set({ ...recordUpdate, updatedAt: new Date() })
+      .where(eq(maintenanceRecords.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteMaintenanceRecord(id: number): Promise<boolean> {
+    const result = await db
+      .delete(maintenanceRecords)
+      .where(eq(maintenanceRecords.id, id));
+    return (result.rowCount ?? 0) > 0;
   }
 
   // News methods

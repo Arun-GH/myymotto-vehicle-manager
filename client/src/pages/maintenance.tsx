@@ -1,0 +1,548 @@
+import { useState, useRef } from 'react';
+import { useParams, Link } from 'wouter';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ArrowLeft, Settings, Bell, Calendar, Camera, Upload, FileText, Trash2, Eye } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import ColorfulLogo from '@/components/colorful-logo';
+import logoImage from '@assets/Mymotto_Logo_Green_Revised_1752603344750.png';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
+import type { Vehicle, MaintenanceRecord } from '@shared/schema';
+
+interface MaintenanceItem {
+  type: string;
+  service: string;
+  recommendedTimeline: string;
+}
+
+const twoWheelerMaintenanceSchedule: MaintenanceItem[] = [
+  {
+    type: 'engine_oil_replacement',
+    service: 'Engine oil Replacement',
+    recommendedTimeline: 'Every 3000 - 5000 Kms'
+  },
+  {
+    type: 'oil_air_filters_change',
+    service: 'Oil and air filters change',
+    recommendedTimeline: 'Every 4000 - 6000 Kms'
+  },
+  {
+    type: 'tyres_front_change',
+    service: 'Tyres Front change',
+    recommendedTimeline: '20000Km or 2 to 3 years'
+  },
+  {
+    type: 'tyres_back_change',
+    service: 'Tyres Back changed',
+    recommendedTimeline: '40,000 kms or 2 to 3 years'
+  },
+  {
+    type: 'spark_plug_replaced',
+    service: 'Spark plug replaced',
+    recommendedTimeline: '150000 kms or 5 years'
+  },
+  {
+    type: 'battery_replacement',
+    service: 'Battery replacement',
+    recommendedTimeline: '4 to 5 years'
+  },
+  {
+    type: 'engine_overhauling',
+    service: 'Engine overhauling/Rebore',
+    recommendedTimeline: 'Depends on condition'
+  }
+];
+
+export default function MaintenancePage() {
+  const { id } = useParams<{ id: string }>();
+  const [selectedMaintenance, setSelectedMaintenance] = useState<MaintenanceItem | null>(null);
+  const [completedDate, setCompletedDate] = useState('');
+  const [warrantyFile, setWarrantyFile] = useState<File | null>(null);
+  const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
+  const [notes, setNotes] = useState('');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const warrantyFileRef = useRef<HTMLInputElement>(null);
+  const invoiceFileRef = useRef<HTMLInputElement>(null);
+  const warrantyCameraRef = useRef<HTMLInputElement>(null);
+  const invoiceCameraRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Fetch vehicle details
+  const { data: vehicle, isLoading: vehicleLoading } = useQuery<Vehicle>({
+    queryKey: [`/api/vehicles/${id}`],
+    enabled: !!id,
+  });
+
+  // Fetch maintenance records
+  const { data: maintenanceRecords = [], isLoading: recordsLoading } = useQuery<MaintenanceRecord[]>({
+    queryKey: [`/api/maintenance/records/${id}`],
+    enabled: !!id,
+  });
+
+  // Create maintenance record mutation
+  const createRecordMutation = useMutation({
+    mutationFn: async (data: FormData) => {
+      const response = await fetch('/api/maintenance/records', {
+        method: 'POST',
+        body: data,
+      });
+      if (!response.ok) throw new Error('Failed to create maintenance record');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/maintenance/records/${id}`] });
+      toast({
+        title: "Success",
+        description: "Maintenance record created successfully!",
+      });
+      resetForm();
+      setIsDialogOpen(false);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create maintenance record. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const resetForm = () => {
+    setSelectedMaintenance(null);
+    setCompletedDate('');
+    setWarrantyFile(null);
+    setInvoiceFile(null);
+    setNotes('');
+    if (warrantyFileRef.current) warrantyFileRef.current.value = '';
+    if (invoiceFileRef.current) invoiceFileRef.current.value = '';
+  };
+
+  const handleFileSelect = (file: File | null, type: 'warranty' | 'invoice') => {
+    if (type === 'warranty') {
+      setWarrantyFile(file);
+    } else {
+      setInvoiceFile(file);
+    }
+  };
+
+  const triggerCamera = (type: 'warranty' | 'invoice') => {
+    const ref = type === 'warranty' ? warrantyCameraRef : invoiceCameraRef;
+    ref.current?.click();
+  };
+
+  const triggerFileUpload = (type: 'warranty' | 'invoice') => {
+    const ref = type === 'warranty' ? warrantyFileRef : invoiceFileRef;
+    ref.current?.click();
+  };
+
+  const handleSubmit = () => {
+    if (!selectedMaintenance) {
+      toast({
+        title: "Error",
+        description: "Please select a maintenance type.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!completedDate) {
+      toast({
+        title: "Error",
+        description: "Please enter the completion date.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('vehicleId', id!);
+    formData.append('maintenanceType', selectedMaintenance.type);
+    formData.append('completedDate', completedDate);
+    formData.append('notes', notes);
+    
+    if (warrantyFile) {
+      formData.append('warrantyCard', warrantyFile);
+    }
+    
+    if (invoiceFile) {
+      formData.append('invoice', invoiceFile);
+    }
+
+    createRecordMutation.mutate(formData);
+  };
+
+  const getMaintenanceRecord = (type: string) => {
+    return maintenanceRecords.find(record => record.maintenanceType === type);
+  };
+
+  const openDialog = (maintenance: MaintenanceItem) => {
+    setSelectedMaintenance(maintenance);
+    const existingRecord = getMaintenanceRecord(maintenance.type);
+    if (existingRecord) {
+      setCompletedDate(existingRecord.completedDate || '');
+      setNotes(existingRecord.notes || '');
+    }
+    setIsDialogOpen(true);
+  };
+
+  if (vehicleLoading || recordsLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="header-gradient-border shadow-lg relative z-10">
+          <div className="px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Link href="/">
+                  <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                    <ArrowLeft className="w-5 h-5" />
+                  </Button>
+                </Link>
+                <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
+                <div>
+                  <ColorfulLogo />
+                  <p className="text-sm text-red-600">2 Wheeler Maintenance</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                  <Bell className="w-5 h-5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                  <Settings className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div className="p-4 pb-20 bg-warm-pattern">
+          <div className="h-screen flex items-center justify-center">
+            <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!vehicle) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="p-4 pb-20 bg-warm-pattern">
+          <Card className="shadow-orange">
+            <CardContent className="p-6 text-center">
+              <h2 className="text-xl font-semibold mb-2">Vehicle Not Found</h2>
+              <p className="text-gray-600 mb-4">The vehicle you're looking for doesn't exist.</p>
+              <Link href="/">
+                <Button>Return to Dashboard</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="header-gradient-border shadow-lg relative z-10">
+        <div className="px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Link href="/">
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+              </Link>
+              <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
+              <div>
+                <ColorfulLogo />
+                <p className="text-sm text-red-600">2 Wheeler Maintenance</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                <Bell className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                <Settings className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="p-4 pb-20 bg-warm-pattern">
+        {/* Vehicle Info Card */}
+        <Card className="mb-6 shadow-orange">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span>{vehicle.make} {vehicle.model} ({vehicle.year})</span>
+              <span className="text-sm text-gray-500">{vehicle.licensePlate}</span>
+            </CardTitle>
+          </CardHeader>
+        </Card>
+
+        {/* Maintenance Schedule Table */}
+        <Card className="shadow-orange">
+          <CardHeader>
+            <CardTitle>2 Wheeler Essential Maintenance</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="font-semibold">Service</TableHead>
+                    <TableHead className="font-semibold">Recommended Timeline</TableHead>
+                    <TableHead className="font-semibold text-center">Date Done</TableHead>
+                    <TableHead className="font-semibold text-center">Warranty Cards / Invoices</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {twoWheelerMaintenanceSchedule.map((item, index) => {
+                    const record = getMaintenanceRecord(item.type);
+                    const isCompleted = !!record?.completedDate;
+                    
+                    return (
+                      <TableRow key={index} className={isCompleted ? 'bg-green-50' : ''}>
+                        <TableCell className="font-medium">{item.service}</TableCell>
+                        <TableCell className="text-sm text-gray-600">{item.recommendedTimeline}</TableCell>
+                        <TableCell className="text-center">
+                          {record?.completedDate ? (
+                            <div className="text-sm">
+                              <div className="font-medium text-green-700">
+                                {new Date(record.completedDate).toLocaleDateString('en-GB')}
+                              </div>
+                            </div>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openDialog(item)}
+                              className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                            >
+                              <Calendar className="w-4 h-4 mr-1" />
+                              Add
+                            </Button>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center space-x-2">
+                            {record?.warrantyCardPath && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => window.open(record.warrantyCardPath!, '_blank')}
+                                className="text-blue-600 hover:text-blue-800"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                            )}
+                            {record?.invoicePath && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => window.open(record.invoicePath!, '_blank')}
+                                className="text-green-600 hover:text-green-800"
+                              >
+                                <FileText className="w-4 h-4" />
+                              </Button>
+                            )}
+                            {!record && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openDialog(item)}
+                                className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                              >
+                                <Upload className="w-4 h-4 mr-1" />
+                                Upload
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Maintenance Entry Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-md mx-auto">
+          <DialogHeader>
+            <DialogTitle>Update Maintenance Record</DialogTitle>
+            <DialogDescription>
+              {selectedMaintenance?.service}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Completion Date */}
+            <div className="space-y-2">
+              <Label htmlFor="completedDate">Date Completed</Label>
+              <Input
+                id="completedDate"
+                type="date"
+                value={completedDate}
+                onChange={(e) => setCompletedDate(e.target.value)}
+                className="h-9"
+              />
+            </div>
+
+            {/* Warranty Card Upload */}
+            <div className="space-y-2">
+              <Label>Warranty Card</Label>
+              <div className="flex space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => triggerCamera('warranty')}
+                  className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  Camera
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => triggerFileUpload('warranty')}
+                  className="flex-1 border-green-300 text-green-700 hover:bg-green-50"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload
+                </Button>
+              </div>
+              {warrantyFile && (
+                <div className="text-sm text-green-600 flex items-center justify-between bg-green-50 p-2 rounded">
+                  <span>📄 {warrantyFile.name}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleFileSelect(null, 'warranty')}
+                  >
+                    <Trash2 className="w-4 h-4 text-red-500" />
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Invoice Upload */}
+            <div className="space-y-2">
+              <Label>Invoice</Label>
+              <div className="flex space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => triggerCamera('invoice')}
+                  className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  Camera
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => triggerFileUpload('invoice')}
+                  className="flex-1 border-green-300 text-green-700 hover:bg-green-50"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload
+                </Button>
+              </div>
+              {invoiceFile && (
+                <div className="text-sm text-green-600 flex items-center justify-between bg-green-50 p-2 rounded">
+                  <span>📄 {invoiceFile.name}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleFileSelect(null, 'invoice')}
+                  >
+                    <Trash2 className="w-4 h-4 text-red-500" />
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Notes */}
+            <div className="space-y-2">
+              <Label htmlFor="notes">Notes (Optional)</Label>
+              <Input
+                id="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Any additional notes..."
+                className="h-9"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex space-x-2 pt-4">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setIsDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={createRecordMutation.isPending}
+                className="flex-1 gradient-warm text-white"
+              >
+                {createRecordMutation.isPending ? 'Saving...' : 'Save Record'}
+              </Button>
+            </div>
+          </div>
+
+          {/* Hidden file inputs */}
+          <input
+            ref={warrantyFileRef}
+            type="file"
+            accept="image/*,.pdf"
+            onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'warranty')}
+            className="hidden"
+          />
+          <input
+            ref={invoiceFileRef}
+            type="file"
+            accept="image/*,.pdf"
+            onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'invoice')}
+            className="hidden"
+          />
+          <input
+            ref={warrantyCameraRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'warranty')}
+            className="hidden"
+          />
+          <input
+            ref={invoiceCameraRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'invoice')}
+            className="hidden"
+          />
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
