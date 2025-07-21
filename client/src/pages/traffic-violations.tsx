@@ -41,16 +41,17 @@ export default function TrafficViolations() {
   const queryClient = useQueryClient();
 
   // Fetch vehicles
-  const { data: vehicles, isLoading: vehiclesLoading } = useQuery({
+  const { data: vehicles, isLoading: vehiclesLoading } = useQuery<Vehicle[]>({
     queryKey: ["/api/vehicles"],
     staleTime: 30000,
   });
 
   // Fetch violations for selected vehicle
-  const { data: violations, isLoading: violationsLoading } = useQuery({
+  const { data: violations, isLoading: violationsLoading } = useQuery<TrafficViolation[]>({
     queryKey: [`/api/vehicles/${selectedVehicle?.id}/violations`],
     enabled: !!selectedVehicle,
-    staleTime: 30000,
+    staleTime: 5 * 60 * 1000, // 5 minutes cache
+    gcTime: 10 * 60 * 1000, // 10 minutes in memory
   });
 
   // Auto-select first vehicle if available
@@ -67,12 +68,17 @@ export default function TrafficViolations() {
     },
     onSuccess: (data: any) => {
       const stateCode = data.stateCode || selectedVehicle?.licensePlate.substring(0, 2);
+      const violationCount = data.message?.match(/(\d+) violations found/)?.[1] || '0';
       toast({
         title: "Violations Checked",
-        description: `Successfully checked ${stateCode} state database. ${data.violations?.length || 0} violations found.`,
+        description: `Successfully checked ${stateCode} state database. ${violationCount} violations found.`,
       });
       if (selectedVehicle) {
         queryClient.invalidateQueries({
+          queryKey: [`/api/vehicles/${selectedVehicle.id}/violations`],
+        });
+        // Force refresh with new timestamp
+        queryClient.refetchQueries({
           queryKey: [`/api/vehicles/${selectedVehicle.id}/violations`],
         });
       }

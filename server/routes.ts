@@ -848,27 +848,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`🚗 Checking violations for vehicle ${vehicle.licensePlate}`);
       
+      // Clear existing violations to ensure fresh data
+      await storage.clearVehicleViolations(vehicleId);
+      
       // Use state-based traffic violation service
       const violations = await trafficViolationService.checkViolations(vehicle.licensePlate);
       
-      // Store new violations in database
+      // Store fresh violations in database
       for (const violation of violations) {
-        try {
-          await storage.createTrafficViolation({
-            vehicleId: vehicleId,
-            challanNumber: violation.challanNumber,
-            offense: violation.offense,
-            fineAmount: violation.fineAmount,
-            violationDate: violation.violationDate,
-            location: violation.location,
-            status: violation.status,
-            paymentDate: violation.paymentDate || null,
-            lastChecked: new Date()
-          });
-        } catch (dbError) {
-          console.log(`Skipping duplicate violation: ${violation.challanNumber}`);
-        }
+        await storage.createTrafficViolation({
+          vehicleId: vehicleId,
+          challanNumber: violation.challanNumber,
+          offense: violation.offense,
+          fineAmount: violation.fineAmount,
+          violationDate: violation.violationDate,
+          location: violation.location,
+          status: violation.status,
+          paymentDate: violation.paymentDate || null,
+          lastChecked: new Date()
+        });
       }
+      
+      console.log(`✅ Found ${violations.length} violations for ${vehicle.licensePlate}`);
 
       const stateCode = vehicle.licensePlate.substring(0, 2);
       const paymentUrl = trafficViolationService.getPaymentUrl(vehicle.licensePlate);

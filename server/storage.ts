@@ -758,6 +758,10 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount !== null && result.rowCount > 0;
   }
 
+  async clearVehicleViolations(vehicleId: number): Promise<void> {
+    await db.delete(trafficViolations).where(eq(trafficViolations.vehicleId, vehicleId));
+  }
+
   // Maintenance Schedule methods
   async getMaintenanceSchedule(make: string, model: string, year: number, drivingCondition: string): Promise<MaintenanceSchedule | undefined> {
     const [schedule] = await db

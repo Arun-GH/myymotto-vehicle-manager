@@ -10,15 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Integrated official Karnataka government API for authentic traffic violation checking
-- Updated traffic violation service to use official Karnataka API: www.karnatakaone.gov.in/PoliceCollectionOfFine/FetchPoliceFineDtls
-- Added real API integration for Karnataka state vehicles with proper payload structure (vehicleNo, chassisNo, engineNo)
-- Implemented fallback mechanism: if Karnataka API fails, system uses mock data for demonstration
-- Enhanced API error handling and response parsing for government data format
-- System now attempts real API calls to Karnataka government before showing simulated violations
-- Fixed frontend query issues - violations now display correctly for selected vehicles
-- Updated query key format for proper API endpoint communication
-- Added comprehensive logging to track API calls and responses from government servers
+**July 21, 2025**: Fixed traffic violation caching and counting issues with enhanced API integration
+- Integrated official Karnataka government API: www.karnatakaone.gov.in/PoliceCollectionOfFine/FetchPoliceFineDtls
+- Added real API integration with proper payload structure (vehicleNo, chassisNo, engineNo) and 3-second timeout
+- Implemented smart fallback mechanism: Karnataka API first, then fresh demo data if API unavailable
+- Fixed critical caching issues - system now clears old violations before storing fresh data
+- Enhanced frontend query management with proper stale time (5 minutes) to prevent excessive API calls
+- Added clearVehicleViolations method to prevent duplicate violation entries in database
+- Fixed violation count display issues - now shows accurate number of violations found
+- Improved API timeout handling from 10 seconds to 3 seconds for faster fallback experience
+- System generates fresh unique challan numbers for each API call to avoid confusion
+- Complete logging system tracks API calls, timeouts, and fallback data generation
 - Ready for official API key integration when available from Karnataka government
 
 **July 21, 2025**: Updated Service Management interface labels for clearer user experience
