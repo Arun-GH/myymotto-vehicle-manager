@@ -10,6 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 21, 2025**: Updated Service Management interface labels for clearer user experience
+- Changed "Service Management:" label to "Service Log:" on vehicle cards for better clarity
+- Renamed "Service" button to "Add" to clearly indicate adding new service records
+- Fixed service logs page routing issue by standardizing route parameters to use :id consistently
+- Resolved parameter mismatch that was preventing service logs screen from loading
+- All vehicle routes now use consistent :id parameter naming for better maintainability
+
 **July 21, 2025**: Streamlined document upload system and removed redundant screens
 - Removed service invoice option from document type dropdown on upload documents page
 - Cleaned up document upload flow to focus only on vehicle-related certificates and permits
