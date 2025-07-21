@@ -2,7 +2,7 @@
 import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye, Trash2, Settings, Bike, Truck, Zap, Droplets, Plus, Bell } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { type Vehicle } from "@shared/schema";
@@ -52,6 +52,17 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch alerts count for this vehicle
+  const { data: alerts = [] } = useQuery({
+    queryKey: ['/api/service-alerts', vehicle.id],
+    queryFn: async () => {
+      const response = await apiRequest('GET', `/api/service-alerts/${vehicle.id}`);
+      return response.json();
+    }
+  });
+
+  const alertsCount = alerts.length;
 
   const insuranceStatus = getExpiryStatus(vehicle.insuranceExpiry);
   const emissionStatus = getExpiryStatus(vehicle.emissionExpiry);
@@ -286,6 +297,11 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               <Button variant="ghost" size="sm" className="text-orange-600 p-1 h-auto hover:bg-orange-50 flex items-center space-x-1">
                 <Calendar className="w-3 h-3" />
                 <span className="text-xs">Set Alert</span>
+                {alertsCount > 0 && (
+                  <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-[10px] px-1 py-0 h-4 min-w-4 flex items-center justify-center">
+                    {alertsCount}
+                  </Badge>
+                )}
               </Button>
             </Link>
           </div>
