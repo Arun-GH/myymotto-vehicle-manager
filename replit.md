@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 21, 2025**: Added four-wheeler service schedule table to Service Logs page
+- Implemented comprehensive four-wheeler maintenance schedule with 10 essential services
+- Added service table showing Engine Oil Change, Oil Filter, Air Filter, Brake Fluid, Coolant, Transmission, Spark Plugs, Battery, Tire Service, and Brake Pad services
+- Four-wheeler service table displays recommended timelines and action buttons for each service type
+- Service completion tracking with green highlighting for completed services and "Add Again" functionality
+- Table integrates with existing Service Logs system for seamless service history management
+- Smart detection of completed services based on existing service log entries
+- Direct navigation to add-service-log page with pre-populated service type from table selection
+- Professional table layout with comprehensive four-wheeler maintenance coverage comparable to two-wheeler system
+
 **July 21, 2025**: Completed customizable dashboard widget system with full database integration
 - Fixed critical 404 error in dashboard customization by properly handling userId in API requests
 - Implemented complete customizable dashboard widget layout system with database schema and API routes

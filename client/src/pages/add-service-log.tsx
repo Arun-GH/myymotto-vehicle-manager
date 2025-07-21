@@ -33,6 +33,10 @@ export default function AddServiceLog() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
 
+  // Get service type from URL query parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const preSelectedServiceType = urlParams.get('serviceType') || "";
+
   const { data: vehicle, isLoading: vehicleLoading } = useQuery<Vehicle>({
     queryKey: [`/api/vehicles/${vehicleId}`],
   });
@@ -40,7 +44,7 @@ export default function AddServiceLog() {
   const form = useForm<ServiceLogForm>({
     resolver: zodResolver(serviceLogSchema),
     defaultValues: {
-      serviceType: "",
+      serviceType: preSelectedServiceType,
       serviceDate: "",
       serviceCentre: "",
       notes: "",
