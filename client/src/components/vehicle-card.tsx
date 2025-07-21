@@ -196,7 +196,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           <div className="mb-2 p-1.5 bg-orange-50 border border-orange-200 rounded-lg">
             <div className="flex items-center space-x-1">
               <AlertTriangle className="w-3 h-3 text-orange-600" />
-              <span className="text-xs font-medium text-orange-800">
+              <span className="text-[10px] font-medium text-orange-800">
                 Missing: {missingDetails.join(", ")}
               </span>
             </div>
