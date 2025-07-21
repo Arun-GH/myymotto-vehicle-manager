@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "@/lib/date-utils";
+import { type Vehicle } from "@shared/schema";
 
 interface Notification {
   id: number;
@@ -35,13 +36,6 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
 
   const markAsReadMutation = useMutation({
     mutationFn: (id: number) => apiRequest("PUT", `/api/notifications/${id}/read`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
-    }
-  });
-
-  const generateNotificationsMutation = useMutation({
-    mutationFn: () => apiRequest("POST", "/api/notifications/generate"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
     }
@@ -141,17 +135,7 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
               <X className="w-5 h-5" />
             </Button>
           </div>
-          <div className="flex justify-center">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => generateNotificationsMutation.mutate()}
-              disabled={generateNotificationsMutation.isPending}
-              className="text-blue-600 hover:text-blue-700 border-blue-300"
-            >
-              {generateNotificationsMutation.isPending ? "Checking..." : "Check Renewals"}
-            </Button>
-          </div>
+
         </CardHeader>
         
         <CardContent className="max-h-[60vh] overflow-y-auto space-y-3 px-4">

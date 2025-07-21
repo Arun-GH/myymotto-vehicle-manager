@@ -1,8 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings, Gamepad2, Puzzle, Newspaper } from "lucide-react";
 import { Link } from "wouter";
 import { type Vehicle } from "@shared/schema";
 import VehicleCard from "@/components/vehicle-card";
+import { apiRequest } from "@/lib/queryClient";
 
 import BottomNav from "@/components/bottom-nav";
 import FloatingActionButton from "@/components/floating-action-button";
@@ -13,9 +15,30 @@ import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function Dashboard() {
+  const queryClient = useQueryClient();
+  
   const { data: vehicles = [], isLoading } = useQuery<Vehicle[]>({
     queryKey: ["/api/vehicles"],
   });
+
+  const generateNotificationsMutation = useMutation({
+    mutationFn: () => apiRequest("POST", "/api/notifications/generate"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
+    }
+  });
+
+  // Auto-generate notifications when dashboard loads (once daily)
+  useEffect(() => {
+    const lastNotificationCheck = localStorage.getItem("lastNotificationCheck");
+    const today = new Date().toDateString();
+    
+    // Check if we haven't generated notifications today
+    if (lastNotificationCheck !== today) {
+      generateNotificationsMutation.mutate();
+      localStorage.setItem("lastNotificationCheck", today);
+    }
+  }, [generateNotificationsMutation]);
 
   return (
     <>
