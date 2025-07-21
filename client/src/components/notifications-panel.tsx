@@ -28,6 +28,11 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
     queryKey: ["/api/notifications"]
   });
 
+  // Fetch vehicles data to get license plate numbers
+  const { data: vehicles = [] } = useQuery({
+    queryKey: ["/api/vehicles"]
+  });
+
   const markAsReadMutation = useMutation({
     mutationFn: (id: number) => apiRequest("PUT", `/api/notifications/${id}/read`),
     onSuccess: () => {
@@ -43,6 +48,13 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
   });
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  // Helper function to get vehicle license plate by vehicleId
+  const getVehicleLicensePlate = (vehicleId: number | null) => {
+    if (!vehicleId || !vehicles) return null;
+    const vehicle = vehicles.find((v: any) => v.id === vehicleId);
+    return vehicle ? vehicle.licensePlate : null;
+  };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -168,6 +180,11 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
                           {notification.title}
                         </h4>
                         {getTypeBadge(notification.type)}
+                        {notification.vehicleId && getVehicleLicensePlate(notification.vehicleId) && (
+                          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-300 text-xs">
+                            {getVehicleLicensePlate(notification.vehicleId)}
+                          </Badge>
+                        )}
                       </div>
                       <p className={`text-sm ${notification.isRead ? 'text-gray-500' : 'text-gray-700'}`}>
                         {notification.message}
