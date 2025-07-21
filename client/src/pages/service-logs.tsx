@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 import ColorfulLogo from "@/components/colorful-logo";
-import { type ServiceLog, type Vehicle } from "@shared/schema";
+import { type ServiceLog, type Vehicle, type MaintenanceRecord } from "@shared/schema";
 
 
 export default function ServiceLogs() {
@@ -19,7 +19,11 @@ export default function ServiceLogs() {
     queryKey: [`/api/service-logs/${vehicleId}`],
   });
 
-  if (vehicleLoading || logsLoading) {
+  const { data: maintenanceRecords, isLoading: maintenanceLoading } = useQuery<MaintenanceRecord[]>({
+    queryKey: [`/api/maintenance/records/${vehicleId}`],
+  });
+
+  if (vehicleLoading || logsLoading || maintenanceLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
         <div className="animate-pulse p-4 space-y-4">
@@ -91,7 +95,7 @@ export default function ServiceLogs() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            {!serviceLogs || serviceLogs.length === 0 ? (
+            {(!serviceLogs || serviceLogs.length === 0) && (!maintenanceRecords || maintenanceRecords.length === 0) ? (
               <div className="text-center py-8 px-4">
                 <NotebookPen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600 mb-2">No service logs yet</p>
@@ -107,7 +111,64 @@ export default function ServiceLogs() {
               </div>
             ) : (
               <div className="space-y-1">
-                {serviceLogs.map((log) => (
+                {/* Display maintenance records from Essential Replaces */}
+                {maintenanceRecords?.map((record) => (
+                  <div
+                    key={`maintenance-${record.id}`}
+                    className="flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <Wrench className="w-4 h-4 text-green-600" />
+                        <h3 className="font-medium text-gray-800">
+                          {record.maintenanceType} (Essential Replace) - {record.completedDate ? new Date(record.completedDate).toLocaleDateString() : 'No date'}
+                        </h3>
+                      </div>
+                      
+                      <div className="space-y-1 ml-6">
+                        <div className="flex items-center space-x-2 text-sm text-gray-600">
+                          <Calendar className="w-3 h-3" />
+                          <span>{record.completedDate ? new Date(record.completedDate).toLocaleDateString('en-GB') : 'No date'}</span>
+                        </div>
+                        
+                        {record.notes && (
+                          <div className="flex items-start space-x-2 text-sm text-gray-600">
+                            <NotebookPen className="w-3 h-3 mt-0.5" />
+                            <span className="text-xs">{record.notes}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      {record.warrantyCardPath && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => window.open(`/${record.warrantyCardPath}`, '_blank')}
+                          className="text-blue-600 hover:text-blue-800 p-1"
+                          title="View Warranty Card"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      )}
+                      {record.invoicePath && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => window.open(`/${record.invoicePath}`, '_blank')}
+                          className="text-green-600 hover:text-green-800 p-1"
+                          title="View Invoice"
+                        >
+                          <FileText className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Display regular service logs */}
+                {serviceLogs?.map((log) => (
                   <div
                     key={log.id}
                     className="flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"

@@ -368,46 +368,17 @@ export default function MaintenancePage() {
                         <TableCell className="font-medium">{item.service}</TableCell>
                         <TableCell className="text-sm text-gray-600">{item.recommendedTimeline}</TableCell>
                         <TableCell className="text-center">
-                          {record?.completedDate ? (
-                            <div className="text-sm flex items-center justify-center space-x-2">
-                              <div className="font-medium text-green-700">
-                                {new Date(record.completedDate).toLocaleDateString('en-GB')}
-                              </div>
-                              {/* Document view buttons */}
-                              {record?.warrantyCardPath && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => window.open(record.warrantyCardPath!, '_blank')}
-                                  className="text-blue-600 hover:text-blue-800 p-1"
-                                  title="View Warranty Card"
-                                >
-                                  <Eye className="w-3 h-3" />
-                                </Button>
-                              )}
-                              {record?.invoicePath && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => window.open(record.invoicePath!, '_blank')}
-                                  className="text-green-600 hover:text-green-800 p-1"
-                                  title="View Invoice"
-                                >
-                                  <FileText className="w-3 h-3" />
-                                </Button>
-                              )}
-                            </div>
-                          ) : (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => openDialog(item)}
-                              className="border-orange-300 text-orange-700 hover:bg-orange-50"
-                            >
-                              <Calendar className="w-4 h-4 mr-1" />
-                              Add
-                            </Button>
-                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openDialog(item)}
+                            className={`border-orange-300 text-orange-700 hover:bg-orange-50 ${
+                              record?.completedDate ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200' : ''
+                            }`}
+                          >
+                            <Calendar className="w-4 h-4 mr-1" />
+                            {record?.completedDate ? 'Add Again' : 'Add'}
+                          </Button>
                         </TableCell>
                       </TableRow>
                     );
