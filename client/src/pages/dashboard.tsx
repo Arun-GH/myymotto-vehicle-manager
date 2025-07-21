@@ -35,7 +35,6 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <InfoDropdown />
               <Link href="/settings">
                 <Button
                   variant="ghost"
@@ -46,6 +45,7 @@ export default function Dashboard() {
                 </Button>
               </Link>
               <NotificationBell />
+              <InfoDropdown />
             </div>
           </div>
         </div>

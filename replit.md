@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 21, 2025**: Created information dropdown menu with About, Contact, Feedback, and Review sections
+- Added InfoDropdown component with three vertical dots menu next to notification bell
+- Integrated About, Contact Support, Send Feedback, and Rate & Review options with external links
+- Position optimized: Settings → Bell → Three-dot menu for clean header layout
+- Platform detection for app store reviews (Android Play Store, iOS App Store, Web reviews)
+- Professional dropdown design with icons and external link indicators
+- Available on dashboard and traffic violations pages for easy user access to support information
+
 **July 21, 2025**: Completed authentic traffic violation checking with real government API integration
 - Fixed automatic API calling - now only triggers on "Check Traffic Violations" button click, not vehicle selection
 - Integrated official Karnataka government API: www.karnatakaone.gov.in/PoliceCollectionOfFine/FetchPoliceFineDtls

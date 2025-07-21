@@ -196,15 +196,15 @@ export default function TrafficViolations() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <InfoDropdown />
-              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
-                <Bell className="w-5 h-5" />
-              </Button>
               <Link href="/settings">
                 <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
                   <Settings className="w-6 h-6" />
                 </Button>
               </Link>
+              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                <Bell className="w-5 h-5" />
+              </Button>
+              <InfoDropdown />
             </div>
           </div>
         </div>

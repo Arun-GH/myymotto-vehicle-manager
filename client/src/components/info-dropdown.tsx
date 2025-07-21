@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Info, Phone, MessageCircle, Star, ChevronDown, ExternalLink } from "lucide-react";
+import { Info, Phone, MessageCircle, Star, ChevronDown, ExternalLink, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -39,12 +39,10 @@ export default function InfoDropdown() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          size="sm"
-          className="text-gray-600 hover:bg-red-50 flex items-center space-x-1"
+          size="icon"
+          className="text-gray-600 hover:bg-red-50"
         >
-          <Info className="w-4 h-4" />
-          <span className="text-xs hidden sm:inline">Info</span>
-          <ChevronDown className="w-3 h-3" />
+          <MoreVertical className="w-5 h-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
