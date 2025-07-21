@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, AlertTriangle, Zap, Search, Clock, MapPin, ArrowLeft, Bell, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import ColorfulLogo from "@/components/colorful-logo";
+import InfoDropdown from "@/components/info-dropdown";
 import { format } from "date-fns";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
@@ -195,6 +196,7 @@ export default function TrafficViolations() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              <InfoDropdown />
               <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
                 <Bell className="w-5 h-5" />
               </Button>
