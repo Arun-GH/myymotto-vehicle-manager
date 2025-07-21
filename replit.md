@@ -14,8 +14,9 @@ Preferred communication style: Simple, everyday language.
 - Added InfoDropdown component with three vertical dots menu next to notification bell
 - Created mobile-friendly About dialog popup with compact four-line app description highlighting key features
 - About section shows Myymotto's vehicle management capabilities, document storage, traffic violation checking, and subscription features
-- Contact Support opens email client with info@arudhihsolutions.com and pre-filled support message
-- Feedback and Review options open external links with platform detection for app stores
+- Contact Support opens email client with info@arudhihsolutions.com and pre-filled support message  
+- Send Feedback shows popup dialog with info@arudhihsolutions.com email address for sharing feedback and suggestions
+- Review option opens external links with platform detection for app stores
 - Position optimized: Settings → Bell → Three-dot menu for clean header layout
 - Professional dropdown design with icons and compact mobile-friendly dialog popup
 - Available on dashboard and traffic violations pages for easy user access to support information

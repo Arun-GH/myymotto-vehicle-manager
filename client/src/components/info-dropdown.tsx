@@ -16,6 +16,7 @@ import {
 
 export default function InfoDropdown() {
   const [showAbout, setShowAbout] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   const handleAbout = () => {
     setShowAbout(true);
@@ -26,7 +27,7 @@ export default function InfoDropdown() {
   };
 
   const handleFeedback = () => {
-    window.open("https://forms.google.com/feedback-myymotto", "_blank");
+    setShowFeedback(true);
   };
 
   const handleReview = () => {
@@ -67,7 +68,6 @@ export default function InfoDropdown() {
           <DropdownMenuItem onClick={handleFeedback} className="cursor-pointer">
             <MessageCircle className="w-4 h-4 mr-2" />
             Send Feedback
-            <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleReview} className="cursor-pointer">
             <Star className="w-4 h-4 mr-2" />
@@ -103,6 +103,43 @@ export default function InfoDropdown() {
           <div className="flex justify-center pt-3">
             <Button 
               onClick={() => setShowAbout(false)}
+              size="sm"
+              className="px-4"
+            >
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Feedback Dialog */}
+      <Dialog open={showFeedback} onOpenChange={setShowFeedback}>
+        <DialogContent className="max-w-sm mx-4 sm:mx-auto p-4">
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-center text-base font-semibold text-orange-600 flex items-center justify-center gap-2">
+              <MessageCircle className="w-4 h-4" />
+              Send Feedback
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-center space-y-3 py-2">
+            <p className="text-sm text-gray-700 leading-snug">
+              We'd love to hear your feedback and suggestions!
+            </p>
+            <div className="bg-orange-50 p-3 rounded-lg">
+              <p className="text-sm font-medium text-gray-800">
+                Share your thoughts with us at:
+              </p>
+              <p className="text-sm font-semibold text-orange-600 mt-1">
+                info@arudhihsolutions.com
+              </p>
+            </div>
+            <p className="text-xs text-gray-600">
+              Your feedback helps us improve Myymotto for everyone!
+            </p>
+          </div>
+          <div className="flex justify-center pt-3">
+            <Button 
+              onClick={() => setShowFeedback(false)}
               size="sm"
               className="px-4"
             >
