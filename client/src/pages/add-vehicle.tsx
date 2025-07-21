@@ -210,42 +210,44 @@ export default function AddVehicle() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="header-gradient-border shadow-lg relative z-10">
-        <div className="px-4 py-4">
+        <div className="px-3 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <Button
                 variant="ghost"
-                size="icon"
-                className="text-gray-600 hover:bg-red-50"
+                size="sm"
+                className="text-gray-600 hover:bg-red-50 p-1"
                 onClick={() => setLocation("/")}
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
               </Button>
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-14 h-14 rounded-lg"
+                className="w-10 h-10 rounded-lg"
               />
               <div>
-                <ColorfulLogo />
-                <p className="text-sm text-red-600">Add Vehicle</p>
+                <div className="text-base font-bold">
+                  <ColorfulLogo />
+                </div>
+                <p className="text-xs text-red-600">Add Vehicle</p>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="p-4 pb-20 bg-warm-pattern">
+      <div className="p-3 pb-20 bg-warm-pattern">
         <Card className="card-hover shadow-orange border-l-4 border-l-red-500">
-          <CardHeader className="bg-gradient-to-r from-red-50 to-orange-50 rounded-t-lg py-3">
-            <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
-              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                <Car className="w-4 h-4 text-red-600" />
+          <CardHeader className="bg-gradient-to-r from-red-50 to-orange-50 rounded-t-lg py-2">
+            <CardTitle className="flex items-center space-x-2 text-gray-800 text-sm">
+              <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                <Car className="w-3 h-3 text-red-600" />
               </div>
               <span>Vehicle Details</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent className="pt-3">
             {vehicleLimitReached && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <div className="flex items-center space-x-2">
@@ -278,11 +280,11 @@ export default function AddVehicle() {
               </div>
             )}
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
                 
                 {/* Vehicle Thumbnail Upload */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Vehicle Photo</label>
+                <div className="space-y-1">
+                  <label className="text-xs font-medium">Vehicle Photo</label>
                   <div className="flex items-center space-x-4">
                     {thumbnailPreview ? (
                       <div className="relative">
@@ -336,7 +338,7 @@ export default function AddVehicle() {
                     name="make"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium">Make *</FormLabel>
+                        <FormLabel className="text-xs font-medium">Make *</FormLabel>
                         <FormControl>
                           {isCustomMake ? (
                             <Input 
@@ -385,7 +387,7 @@ export default function AddVehicle() {
                     name="model"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium">Model *</FormLabel>
+                        <FormLabel className="text-xs font-medium">Model *</FormLabel>
                         <FormControl>
                           {isCustomModel ? (
                             <Input 
@@ -436,7 +438,7 @@ export default function AddVehicle() {
                     name="year"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium">Year *</FormLabel>
+                        <FormLabel className="text-xs font-medium">Year *</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
@@ -454,7 +456,7 @@ export default function AddVehicle() {
                     name="color"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium">Color</FormLabel>
+                        <FormLabel className="text-xs font-medium">Color</FormLabel>
                         <FormControl>
                           <Input placeholder="Red" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
                         </FormControl>
@@ -467,7 +469,7 @@ export default function AddVehicle() {
                     name="licensePlate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium">License Plate *</FormLabel>
+                        <FormLabel className="text-xs font-medium">License Plate *</FormLabel>
                         <FormControl>
                           <Input placeholder="DL 01 AB 1234" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
                         </FormControl>
@@ -483,7 +485,7 @@ export default function AddVehicle() {
                     name="vehicleType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium">Vehicle Type</FormLabel>
+                        <FormLabel className="text-xs font-medium">Vehicle Type</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger className="h-9">
@@ -505,7 +507,7 @@ export default function AddVehicle() {
                     name="fuelType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium">Fuel Type</FormLabel>
+                        <FormLabel className="text-xs font-medium">Fuel Type</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger className="h-9">

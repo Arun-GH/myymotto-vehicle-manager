@@ -312,17 +312,19 @@ export default function Profile() {
       <div className="min-h-screen bg-background">
         {/* Header */}
         <header className="header-gradient-border shadow-lg relative z-10">
-          <div className="px-4 py-4">
+          <div className="px-3 py-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 <img 
                   src={logoImage} 
                   alt="Myymotto Logo" 
-                  className="w-14 h-14 rounded-lg"
+                  className="w-10 h-10 rounded-lg"
                 />
                 <div>
-                  <ColorfulLogo />
-                  <p className="text-sm text-red-600">Timely Care for your carrier</p>
+                  <div className="text-base font-bold">
+                    <ColorfulLogo />
+                  </div>
+                  <p className="text-xs text-red-600">Timely Care for your carrier</p>
                 </div>
               </div>
             </div>
@@ -361,35 +363,37 @@ export default function Profile() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="header-gradient-border shadow-lg relative z-10">
-        <div className="px-4 py-4">
+        <div className="px-3 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <Button
                 variant="ghost"
-                size="icon"
-                className="text-gray-600 hover:bg-red-50"
+                size="sm"
+                className="text-gray-600 hover:bg-red-50 p-1"
                 onClick={() => profile ? setLocation("/") : setIsEditing(false)}
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
               </Button>
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-14 h-14 rounded-lg"
+                className="w-10 h-10 rounded-lg"
               />
               <div>
-                <ColorfulLogo />
-                <p className="text-sm text-red-600">
+                <div className="text-base font-bold">
+                  <ColorfulLogo />
+                </div>
+                <p className="text-xs text-red-600">
                   {profile ? (isEditing ? "Edit Profile" : "Profile") : "Create Profile"}
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               {profile && !isEditing && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-gray-600 hover:bg-red-50"
+                  className="text-gray-600 hover:bg-red-50 p-1"
                   onClick={() => setIsEditing(true)}
                 >
                   Edit
@@ -399,9 +403,9 @@ export default function Profile() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gray-600 hover:bg-red-50"
+                  className="text-gray-600 hover:bg-red-50 p-1"
                 >
-                  <Settings className="w-6 h-6" />
+                  <Settings className="w-4 h-4" />
                 </Button>
               </Link>
               <NotificationBell />

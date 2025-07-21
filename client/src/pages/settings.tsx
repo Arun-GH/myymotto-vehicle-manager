@@ -178,33 +178,35 @@ export default function Settings() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="header-gradient-border shadow-lg relative z-10">
-        <div className="px-4 py-4">
+        <div className="px-3 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <Link href="/">
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="text-gray-600 hover:bg-red-50"
+                  size="sm"
+                  className="text-gray-600 hover:bg-red-50 p-1"
                 >
-                  <ArrowLeft className="w-5 h-5" />
+                  <ArrowLeft className="w-4 h-4" />
                 </Button>
               </Link>
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-14 h-14 rounded-lg"
+                className="w-10 h-10 rounded-lg"
               />
               <div>
-                <ColorfulLogo />
-                <p className="text-sm text-red-600">App Settings</p>
+                <div className="text-base font-bold">
+                  <ColorfulLogo />
+                </div>
+                <p className="text-xs text-red-600">App Settings</p>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="p-4 pb-20 bg-warm-pattern">
+      <div className="p-3 pb-20 bg-warm-pattern">
         {/* Permissions Card */}
         <Card className="mb-6 shadow-orange">
           <CardHeader>

@@ -176,33 +176,35 @@ export default function EmergencyContacts() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="header-gradient-border shadow-lg relative z-10">
-        <div className="px-4 py-4">
+        <div className="px-3 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <Button
                 variant="ghost"
-                size="icon"
-                className="text-gray-600 hover:bg-red-50"
+                size="sm"
+                className="text-gray-600 hover:bg-red-50 p-1"
                 onClick={() => setLocation("/")}
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
               </Button>
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-14 h-14 rounded-lg"
+                className="w-10 h-10 rounded-lg"
               />
               <div>
-                <ColorfulLogo />
-                <p className="text-sm text-red-600">Emergency Contacts</p>
+                <div className="text-base font-bold">
+                  <ColorfulLogo />
+                </div>
+                <p className="text-xs text-red-600">Emergency Contacts</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               {hasContacts && !isEditing && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-gray-600 hover:bg-red-50"
+                  className="text-gray-600 hover:bg-red-50 p-1"
                   onClick={() => setIsEditing(true)}
                 >
                   Edit
@@ -211,10 +213,10 @@ export default function EmergencyContacts() {
               <Link href="/settings">
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="text-gray-600 hover:bg-red-50"
+                  size="sm"
+                  className="text-gray-600 hover:bg-red-50 p-1"
                 >
-                  <Settings className="w-6 h-6" />
+                  <Settings className="w-4 h-4" />
                 </Button>
               </Link>
               <NotificationBell />
@@ -223,7 +225,7 @@ export default function EmergencyContacts() {
         </div>
       </header>
 
-      <div className="p-4 pb-20 bg-warm-pattern">
+      <div className="p-3 pb-20 bg-warm-pattern">
         {!isEditing && hasContacts ? (
           // Display Mode - Compact Tiles
           <div className="grid grid-cols-1 gap-3">
