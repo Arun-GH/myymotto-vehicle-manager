@@ -84,6 +84,18 @@ export const maintenanceRecords = pgTable("maintenance_records", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const serviceLogs = pgTable("service_logs", {
+  id: serial("id").primaryKey(),
+  vehicleId: integer("vehicle_id").references(() => vehicles.id).notNull(),
+  serviceType: text("service_type").notNull(), // Type of service performed
+  serviceDate: date("service_date").notNull(),
+  serviceCentre: text("service_centre").notNull(),
+  notes: text("notes"),
+  invoicePath: text("invoice_path"), // Path to uploaded invoice image
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   id: true,
   createdAt: true,
@@ -127,6 +139,16 @@ export const insertMaintenanceRecordSchema = createInsertSchema(maintenanceRecor
   completedDate: z.string().optional().nullable(),
 });
 
+export const insertServiceLogSchema = createInsertSchema(serviceLogs).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  serviceDate: z.string().min(1, "Service date is required"),
+  serviceType: z.string().min(1, "Service type is required"),
+  serviceCentre: z.string().min(1, "Service centre is required"),
+});
+
 export type Vehicle = typeof vehicles.$inferSelect;
 export type InsertVehicle = z.infer<typeof insertVehicleSchema>;
 export type Document = typeof documents.$inferSelect;
@@ -135,6 +157,8 @@ export type MaintenanceSchedule = typeof maintenanceSchedules.$inferSelect;
 export type InsertMaintenanceSchedule = z.infer<typeof insertMaintenanceScheduleSchema>;
 export type MaintenanceRecord = typeof maintenanceRecords.$inferSelect;
 export type InsertMaintenanceRecord = z.infer<typeof insertMaintenanceRecordSchema>;
+export type ServiceLog = typeof serviceLogs.$inferSelect;
+export type InsertServiceLog = z.infer<typeof insertServiceLogSchema>;
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),

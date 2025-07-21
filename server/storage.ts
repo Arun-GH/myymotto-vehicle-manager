@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, newsItems, newsUpdateLog, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, newsItems, newsUpdateLog, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte, desc } from "drizzle-orm";
 
@@ -64,6 +64,12 @@ export interface IStorage {
   createMaintenanceRecord(record: InsertMaintenanceRecord & { warrantyCardPath?: string | null; invoicePath?: string | null }): Promise<MaintenanceRecord>;
   updateMaintenanceRecord(id: number, record: Partial<MaintenanceRecord>): Promise<MaintenanceRecord | undefined>;
   deleteMaintenanceRecord(id: number): Promise<boolean>;
+  
+  // Service Log methods
+  getServiceLogs(vehicleId: number): Promise<ServiceLog[]>;
+  createServiceLog(serviceLog: InsertServiceLog): Promise<ServiceLog>;
+  updateServiceLog(id: number, serviceLog: Partial<InsertServiceLog>): Promise<ServiceLog | undefined>;
+  deleteServiceLog(id: number): Promise<boolean>;
   
   // News methods
   getNewsItems(): Promise<NewsItem[]>;
@@ -815,6 +821,39 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(maintenanceRecords)
       .where(eq(maintenanceRecords.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  // Service Log methods
+  async getServiceLogs(vehicleId: number): Promise<ServiceLog[]> {
+    return await db
+      .select()
+      .from(serviceLogs)
+      .where(eq(serviceLogs.vehicleId, vehicleId))
+      .orderBy(desc(serviceLogs.serviceDate));
+  }
+
+  async createServiceLog(serviceLog: InsertServiceLog): Promise<ServiceLog> {
+    const [newLog] = await db
+      .insert(serviceLogs)
+      .values(serviceLog)
+      .returning();
+    return newLog;
+  }
+
+  async updateServiceLog(id: number, serviceLogUpdate: Partial<InsertServiceLog>): Promise<ServiceLog | undefined> {
+    const [updated] = await db
+      .update(serviceLogs)
+      .set({ ...serviceLogUpdate, updatedAt: new Date() })
+      .where(eq(serviceLogs.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteServiceLog(id: number): Promise<boolean> {
+    const result = await db
+      .delete(serviceLogs)
+      .where(eq(serviceLogs.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 

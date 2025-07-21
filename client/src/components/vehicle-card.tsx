@@ -1,5 +1,5 @@
 
-import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye, Trash2, Settings, Bike, Truck, Zap, Droplets } from "lucide-react";
+import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye, Trash2, Settings, Bike, Truck, Zap, Droplets, Plus } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -265,6 +265,25 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               <Button variant="ghost" size="sm" className="text-purple-600 p-1 h-auto hover:bg-purple-50 flex items-center space-x-1">
                 <Settings className="w-3 h-3" />
                 <span className="text-xs">Maintenance</span>
+              </Button>
+            </Link>
+          </div>
+        </div>
+        
+        <div className="flex items-center space-x-2 mt-2">
+          <span className="text-xs font-medium text-gray-600">Service Logs:</span>
+          <div className="flex items-center space-x-1">
+            <Link href={`/vehicle/${vehicle.id}/service-logs`}>
+              <Button variant="ghost" size="sm" className="text-blue-600 p-1 h-auto hover:bg-blue-50 flex items-center space-x-1">
+                <Eye className="w-3 h-3" />
+                <span className="text-xs">View</span>
+              </Button>
+            </Link>
+            <span className="text-gray-400 text-xs">|</span>
+            <Link href={`/vehicle/${vehicle.id}/add-service-log`}>
+              <Button variant="ghost" size="sm" className="text-green-600 p-1 h-auto hover:bg-green-50 flex items-center space-x-1">
+                <Plus className="w-3 h-3" />
+                <span className="text-xs">Add</span>
               </Button>
             </Link>
           </div>

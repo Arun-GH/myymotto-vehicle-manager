@@ -882,6 +882,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Service log routes
+  app.get("/api/service-logs/:vehicleId", async (req, res) => {
+    try {
+      const vehicleId = parseInt(req.params.vehicleId);
+      const logs = await storage.getServiceLogs(vehicleId);
+      res.json(logs);
+    } catch (error) {
+      console.error("Error fetching service logs:", error);
+      res.status(500).json({ message: "Failed to fetch service logs" });
+    }
+  });
+
+  app.post("/api/service-logs", upload.single('invoice'), async (req, res) => {
+    try {
+      const data = req.body;
+      const invoicePath = req.file ? `/uploads/${req.file.filename}` : undefined;
+      
+      const serviceLog = await storage.createServiceLog({
+        vehicleId: parseInt(data.vehicleId),
+        serviceType: data.serviceType.toUpperCase(),
+        serviceDate: data.serviceDate,
+        serviceCentre: data.serviceCentre.toUpperCase(),
+        notes: data.notes || null,
+        invoicePath: invoicePath || null,
+      });
+      
+      res.status(201).json(serviceLog);
+    } catch (error) {
+      console.error("Error creating service log:", error);
+      res.status(500).json({ message: "Failed to create service log" });
+    }
+  });
+
+  app.put("/api/service-logs/:id", upload.single('invoice'), async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const data = req.body;
+      const invoicePath = req.file ? `/uploads/${req.file.filename}` : undefined;
+      
+      const updateData: any = {
+        serviceType: data.serviceType?.toUpperCase(),
+        serviceDate: data.serviceDate,
+        serviceCentre: data.serviceCentre?.toUpperCase(),
+        notes: data.notes || null,
+      };
+      
+      if (invoicePath) {
+        updateData.invoicePath = invoicePath;
+      }
+      
+      const serviceLog = await storage.updateServiceLog(id, updateData);
+      if (!serviceLog) {
+        return res.status(404).json({ message: "Service log not found" });
+      }
+      
+      res.json(serviceLog);
+    } catch (error) {
+      console.error("Error updating service log:", error);
+      res.status(500).json({ message: "Failed to update service log" });
+    }
+  });
+
+  app.delete("/api/service-logs/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteServiceLog(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Service log not found" });
+      }
+      res.json({ message: "Service log deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting service log:", error);
+      res.status(500).json({ message: "Failed to delete service log" });
+    }
+  });
+
   // Razorpay Subscription API routes
   app.post("/api/create-subscription", async (req, res) => {
     try {

@@ -27,6 +27,8 @@ import InsuranceRenewals from "@/pages/insurance-renewals";
 import Settings from "@/pages/settings";
 import ClimbingGame from "@/pages/climbing-game";
 import MaintenancePage from "@/pages/maintenance";
+import ServiceLogs from "@/pages/service-logs";
+import AddServiceLog from "@/pages/add-service-log";
 import NewsTidbits from "@/pages/news-tidbits";
 import NotFound from "@/pages/not-found";
 
@@ -103,6 +105,8 @@ function Router() {
       <Route path="/vehicle/:id/documents" component={ViewDocuments} />
       <Route path="/vehicle/:id/local-documents" component={LocalDocuments} />
       <Route path="/vehicle/:id/maintenance" component={MaintenancePage} />
+      <Route path="/vehicle/:vehicleId/service-logs" component={ServiceLogs} />
+      <Route path="/vehicle/:vehicleId/add-service-log" component={AddServiceLog} />
 
       <Route path="/service-centers" component={ServiceCenters} />
       <Route path="/documents" component={Documents} />
