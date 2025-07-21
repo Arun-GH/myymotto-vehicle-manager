@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, insertMaintenanceRecordSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact, type InsertMaintenanceRecord } from "@shared/schema";
 import { maintenanceService } from "./maintenance-service";
 import { newsService } from "./news-service";
+import { trafficViolationService } from "./traffic-violation-service";
 import crypto from "crypto";
 import multer from "multer";
 import path from "path";
@@ -119,32 +120,7 @@ function maskIdentifier(identifier: string): string {
   }
 }
 
-// Mock function for eChallan Parivahan API integration
-async function checkTrafficViolationsAPI(licensePlate: string): Promise<any[]> {
-  // This is a mock implementation. In production, you would:
-  // 1. Call the official eChallan Parivahan API
-  // 2. Handle authentication and API keys
-  // 3. Parse the response according to the API specification
-  
-  // For now, return empty array until API integration is complete
-  console.log(`Checking traffic violations for license plate: ${licensePlate}`);
-  return [];
-  
-  // Example of what the API response might look like:
-  /*
-  return [
-    {
-      challanNumber: "CH123456789",
-      offense: "Speed Limit Violation",
-      fineAmount: 500,
-      violationDate: "2024-01-15",
-      location: "MG Road, Bangalore",
-      status: "pending",
-      paymentDate: null
-    }
-  ];
-  */
-}
+
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Serve static files from secure app storage with proper content-type headers
@@ -870,28 +846,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Vehicle not found" });
       }
 
-      // Call eChallan Parivahan API
-      const violations = await checkTrafficViolationsAPI(vehicle.licensePlate);
+      console.log(`🚗 Checking violations for vehicle ${vehicle.licensePlate}`);
+      
+      // Use state-based traffic violation service
+      const violations = await trafficViolationService.checkViolations(vehicle.licensePlate);
       
       // Store new violations in database
       for (const violation of violations) {
-        await storage.createTrafficViolation({
-          vehicleId: vehicleId,
-          challanNumber: violation.challanNumber,
-          offense: violation.offense,
-          fineAmount: violation.fineAmount,
-          violationDate: violation.violationDate,
-          location: violation.location,
-          status: violation.status,
-          paymentDate: violation.paymentDate || null,
-          lastChecked: new Date()
-        });
+        try {
+          await storage.createTrafficViolation({
+            vehicleId: vehicleId,
+            challanNumber: violation.challanNumber,
+            offense: violation.offense,
+            fineAmount: violation.fineAmount,
+            violationDate: violation.violationDate,
+            location: violation.location,
+            status: violation.status,
+            paymentDate: violation.paymentDate || null,
+            lastChecked: new Date()
+          });
+        } catch (dbError) {
+          console.log(`Skipping duplicate violation: ${violation.challanNumber}`);
+        }
       }
 
-      res.json({ message: "Traffic violations checked successfully", violations });
+      const stateCode = vehicle.licensePlate.substring(0, 2);
+      const paymentUrl = trafficViolationService.getPaymentUrl(vehicle.licensePlate);
+      
+      res.json({ 
+        message: "Traffic violations checked successfully", 
+        violations,
+        stateCode,
+        paymentUrl,
+        source: `${stateCode} State Government API`
+      });
     } catch (error: any) {
       console.error("Error checking traffic violations:", error);
-      res.status(500).json({ error: "Failed to check traffic violations" });
+      res.status(500).json({ 
+        error: error.message || "Failed to check traffic violations",
+        details: "Please ensure vehicle number is valid and state API is accessible"
+      });
     }
   });
 
@@ -1223,6 +1217,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching available maintenance schedules:", error);
       res.status(500).json({ message: "Failed to fetch available maintenance schedules" });
+    }
+  });
+
+  // Get supported states for traffic violations
+  app.get("/api/traffic-violations/supported-states", async (req, res) => {
+    try {
+      const supportedStates = trafficViolationService.getSupportedStates();
+      res.json(supportedStates);
+    } catch (error) {
+      console.error("Error fetching supported states:", error);
+      res.status(500).json({ message: "Failed to fetch supported states" });
+    }
+  });
+
+  // Get payment URL for specific vehicle
+  app.get("/api/traffic-violations/payment-url/:licensePlate", async (req, res) => {
+    try {
+      const licensePlate = req.params.licensePlate;
+      const paymentUrl = trafficViolationService.getPaymentUrl(licensePlate);
+      const stateCode = licensePlate.substring(0, 2);
+      
+      res.json({ 
+        paymentUrl,
+        stateCode,
+        message: `Payment URL for ${stateCode} state`
+      });
+    } catch (error) {
+      console.error("Error getting payment URL:", error);
+      res.status(500).json({ message: "Failed to get payment URL" });
     }
   });
 

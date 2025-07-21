@@ -65,10 +65,11 @@ export default function TrafficViolations() {
     mutationFn: async (vehicleId: number) => {
       return await apiRequest("POST", `/api/vehicles/${vehicleId}/check-violations`);
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
+      const stateCode = data.stateCode || selectedVehicle?.licensePlate.substring(0, 2);
       toast({
         title: "Violations Checked",
-        description: "Traffic violations have been checked successfully.",
+        description: `Successfully checked ${stateCode} state database. ${data.violations?.length || 0} violations found.`,
       });
       queryClient.invalidateQueries({
         queryKey: ["/api/vehicles", selectedVehicle?.id, "violations"],
@@ -115,7 +116,14 @@ export default function TrafficViolations() {
   const handleCheckViolations = async () => {
     if (!selectedVehicle) return;
     
+    const stateCode = selectedVehicle.licensePlate.substring(0, 2);
+    
     setIsChecking(true);
+    toast({
+      title: "Checking Violations",
+      description: `Connecting to ${stateCode} State Government API...`,
+    });
+    
     await checkViolationsMutation.mutateAsync(selectedVehicle.id);
   };
 
@@ -216,7 +224,9 @@ export default function TrafficViolations() {
                 >
                   <div className="text-left">
                     <div className="font-semibold">{vehicle.make?.toUpperCase()} {vehicle.model}</div>
-                    <div className="text-sm opacity-80">{vehicle.licensePlate}</div>
+                    <div className="text-sm opacity-80">
+                      {vehicle.licensePlate} • {vehicle.licensePlate.substring(0, 2)} State
+                    </div>
                   </div>
                 </Button>
               ))}
@@ -227,7 +237,16 @@ export default function TrafficViolations() {
         {/* Check Violations Button */}
         {selectedVehicle && (
           <Card className="mb-6 shadow-lg shadow-orange-100">
-            <CardContent className="pt-6">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Zap className="w-5 h-5 text-blue-600" />
+                Check {selectedVehicle.licensePlate.substring(0, 2)} State Database
+              </CardTitle>
+              <p className="text-sm text-gray-600 mt-1">
+                Connecting to {selectedVehicle.licensePlate.substring(0, 2)} State Government Traffic API
+              </p>
+            </CardHeader>
+            <CardContent>
               <Button
                 onClick={handleCheckViolations}
                 disabled={isChecking}
@@ -236,18 +255,18 @@ export default function TrafficViolations() {
                 {isChecking ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                    Checking...
+                    Checking Government Database...
                   </>
                 ) : (
                   <>
                     <Search className="w-5 h-5 mr-2" />
-                    Check for Violations
+                    Check Traffic Violations
                   </>
                 )}
               </Button>
-              <p className="text-sm text-gray-600 mt-2 text-center">
-                Check {selectedVehicle.licensePlate} for traffic violations
-              </p>
+              <div className="mt-3 text-xs text-gray-500 text-center">
+                Real-time data from official government sources
+              </div>
             </CardContent>
           </Card>
         )}
