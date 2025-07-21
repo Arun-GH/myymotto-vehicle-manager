@@ -123,7 +123,7 @@ class LocalDocumentStorage {
   downloadDocument(document: LocalDocument) {
     const blob = new Blob([document.fileData], { type: document.mimeType });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = window.document.createElement('a');
     a.href = url;
     a.download = document.fileName;
     a.click();

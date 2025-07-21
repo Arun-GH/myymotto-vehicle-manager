@@ -102,7 +102,11 @@ function DriversLicenseCard({ profile, profileLoading }: { profile: UserProfile 
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  onClick={() => window.open(profile.driversLicenseCopy, '_blank')}
+                  onClick={() => {
+                    if (profile.driversLicenseCopy) {
+                      window.open(profile.driversLicenseCopy, '_blank');
+                    }
+                  }}
                 >
                   <Eye className="w-4 h-4 mr-1" />
                   View
@@ -275,13 +279,13 @@ function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
                 <FileText className="w-4 h-4 text-muted-foreground" />
                 <div className="flex-1 min-w-0 cursor-pointer" onClick={() => {
                   const url = localDocumentStorage.createObjectURL(doc);
-                  const link = document.createElement('a');
+                  const link = window.document.createElement('a');
                   link.href = url;
                   link.target = '_blank';
                   link.rel = 'noopener noreferrer';
-                  document.body.appendChild(link);
+                  window.document.body.appendChild(link);
                   link.click();
-                  document.body.removeChild(link);
+                  window.document.body.removeChild(link);
                 }}>
                   <p className="text-sm font-medium truncate">{doc.fileName}</p>
                   <p className="text-xs text-muted-foreground">{doc.type}</p>
@@ -293,13 +297,13 @@ function VehicleDocumentCard({ vehicle }: { vehicle: Vehicle }) {
                     className="text-xs"
                     onClick={() => {
                       const url = localDocumentStorage.createObjectURL(doc);
-                      const link = document.createElement('a');
+                      const link = window.document.createElement('a');
                       link.href = url;
                       link.target = '_blank';
                       link.rel = 'noopener noreferrer';
-                      document.body.appendChild(link);
+                      window.document.body.appendChild(link);
                       link.click();
-                      document.body.removeChild(link);
+                      window.document.body.removeChild(link);
                     }}
                   >
                     <Eye className="w-4 h-4 mr-1" />
