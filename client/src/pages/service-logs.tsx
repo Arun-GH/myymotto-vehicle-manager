@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
 import ColorfulLogo from "@/components/colorful-logo";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { type ServiceLog, type Vehicle, type MaintenanceRecord } from "@shared/schema";
 
 
@@ -106,7 +107,7 @@ export default function ServiceLogs() {
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               </Link>
-              <img src="/api/static/logos/Mymotto_Logo_Green_Revised_1752603344750.png" alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
+              <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
               <div>
                 <ColorfulLogo />
                 <p className="text-sm text-red-600">Service Logs</p>

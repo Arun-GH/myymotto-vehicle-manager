@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import ColorfulLogo from "@/components/colorful-logo";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -103,7 +104,7 @@ export default function DashboardCustomize() {
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               </Link>
-              <img src="/api/static/logos/Mymotto_Logo_Green_Revised_1752603344750.png" alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
+              <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
               <div>
                 <ColorfulLogo />
                 <p className="text-sm text-red-600">Customize Dashboard</p>
