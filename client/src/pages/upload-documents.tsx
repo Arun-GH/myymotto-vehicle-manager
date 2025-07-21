@@ -144,34 +144,34 @@ export default function UploadDocuments() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="header-gradient-border shadow-lg relative z-10">
-        <div className="px-4 py-4">
+        <div className="px-3 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <Button
                 variant="ghost"
                 size="icon"
                 className="text-gray-600 hover:bg-red-50"
                 onClick={() => setLocation("/")}
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
               </Button>
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-14 h-14 rounded-lg"
+                className="w-10 h-10 rounded-lg"
               />
               <div>
                 <ColorfulLogo />
-                <p className="text-sm text-red-600">Upload Documents</p>
+                <p className="text-xs text-red-600">Upload Documents</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
-                <Bell className="w-5 h-5" />
+                <Bell className="w-4 h-4" />
               </Button>
               <Link href="/settings">
                 <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
-                  <Settings className="w-6 h-6" />
+                  <Settings className="w-4 h-4" />
                 </Button>
               </Link>
             </div>
@@ -179,25 +179,25 @@ export default function UploadDocuments() {
         </div>
       </header>
 
-      <div className="p-4 pb-20 bg-warm-pattern">
+      <div className="p-3 pb-20 bg-warm-pattern">
         {/* Vehicle Info */}
-        <Card className="mb-4 shadow-orange border-l-4 border-l-blue-500">
-          <CardContent className="p-3">
-            <div className="flex items-center space-x-3">
+        <Card className="mb-3 shadow-orange border-l-4 border-l-blue-500">
+          <CardContent className="p-2">
+            <div className="flex items-center space-x-2">
               {vehicle.thumbnailPath ? (
                 <img 
                   src={vehicle.thumbnailPath} 
                   alt={`${vehicle.make} ${vehicle.model}`}
-                  className="w-10 h-10 object-cover rounded-lg shadow-md"
+                  className="w-8 h-8 object-cover rounded-lg shadow-md"
                 />
               ) : (
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-md">
-                  <FileText className="w-5 h-5 text-white" />
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-md">
+                  <FileText className="w-4 h-4 text-white" />
                 </div>
               )}
               <div>
-                <h3 className="font-medium text-gray-800 text-sm">{vehicle.make?.toUpperCase()} {vehicle.model} ({vehicle.year})</h3>
-                <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
+                <h3 className="font-medium text-gray-800 text-xs">{vehicle.make?.toUpperCase()} {vehicle.model} ({vehicle.year})</h3>
+                <p className="text-[10px] text-gray-600">{vehicle.licensePlate}</p>
               </div>
             </div>
           </CardContent>
@@ -205,21 +205,21 @@ export default function UploadDocuments() {
 
         {/* Document Upload Form */}
         <Card className="card-hover shadow-orange border-l-4 border-l-orange-500">
-          <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50 rounded-t-lg py-3">
-            <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
-              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                <Upload className="w-4 h-4 text-orange-600" />
+          <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50 rounded-t-lg py-2">
+            <CardTitle className="flex items-center space-x-2 text-gray-800 text-xs">
+              <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
+                <Upload className="w-3 h-3 text-orange-600" />
               </div>
               <span>Upload Documents</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 space-y-4">
+          <CardContent className="p-3 space-y-3">
             
             {/* Document Type Selection */}
-            <div className="space-y-2">
-              <Label htmlFor="document-type" className="text-sm font-medium">Document Type</Label>
+            <div className="space-y-1">
+              <Label htmlFor="document-type" className="text-xs font-medium">Document Type</Label>
               <Select value={selectedType} onValueChange={(value: DocumentType) => setSelectedType(value)}>
-                <SelectTrigger className="h-9">
+                <SelectTrigger className="h-8">
                   <SelectValue placeholder="Select document type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -237,20 +237,20 @@ export default function UploadDocuments() {
 
             {/* Expiry Date (if required) */}
             {selectedDocumentType?.requiresExpiry && (
-              <div className="space-y-2">
-                <Label htmlFor="expiry-date" className="text-sm font-medium">
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="w-4 h-4" />
+              <div className="space-y-1">
+                <Label htmlFor="expiry-date" className="text-xs font-medium">
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="w-3 h-3" />
                     <span>
                       {selectedType === "emission" ? "Emission certificate issue date" : 
-                       selectedType === "insurance" ? "Date of Insurance issuance" : "Expiry Date"}
+                       selectedType === "insurance" ? "Insured date" : "Expiry Date"}
                     </span>
                   </div>
                 </Label>
                 <Input
                   id="expiry-date"
                   type="date"
-                  className="h-9"
+                  className="h-8"
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
                   placeholder="Select expiry date"
@@ -261,49 +261,49 @@ export default function UploadDocuments() {
 
 
             {/* File Upload Section */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Upload Files</Label>
+            <div className="space-y-2">
+              <Label className="text-xs font-medium">Upload Files</Label>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-2">
                 <div className="flex-1">
                   <Input
                     type="file"
                     accept="image/*,application/pdf"
                     multiple
                     onChange={handleFileSelect}
-                    className="h-9 file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-medium file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                    className="h-8 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-medium file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                   />
                 </div>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setShowCamera(true)}
-                  className="h-9 flex items-center justify-center"
+                  className="h-8 flex items-center justify-center"
                 >
-                  <Camera className="w-4 h-4 mr-2" />
-                  Camera
+                  <Camera className="w-3 h-3 mr-1" />
+                  <span className="text-xs">Camera</span>
                 </Button>
               </div>
               
-              <p className="text-xs text-gray-500">
+              <p className="text-[10px] text-gray-500">
                 Supported: JPEG, PNG, WebP, PDF • Max: 10MB per file
               </p>
             </div>
 
             {/* Selected Files Preview */}
             {selectedFiles.length > 0 && (
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Selected Files ({selectedFiles.length})</Label>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
+              <div className="space-y-1">
+                <Label className="text-xs font-medium">Selected Files ({selectedFiles.length})</Label>
+                <div className="space-y-1 max-h-32 overflow-y-auto">
                   {selectedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-orange-50 border border-orange-100 rounded-lg">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-orange-100 rounded flex items-center justify-center">
-                          <FileText className="w-3 h-3 text-orange-600" />
+                    <div key={index} className="flex items-center justify-between p-1.5 bg-orange-50 border border-orange-100 rounded-lg">
+                      <div className="flex items-center space-x-1.5">
+                        <div className="w-5 h-5 bg-orange-100 rounded flex items-center justify-center">
+                          <FileText className="w-2.5 h-2.5 text-orange-600" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium truncate max-w-[200px]">{file.name}</p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs font-medium truncate max-w-[160px]">{file.name}</p>
+                          <p className="text-[10px] text-gray-500">
                             {(file.size / 1024 / 1024).toFixed(1)} MB
                           </p>
                         </div>
@@ -313,7 +313,7 @@ export default function UploadDocuments() {
                         variant="ghost"
                         size="sm"
                         onClick={() => removeFile(index)}
-                        className="text-red-600 hover:text-red-700 h-6 w-6 p-0 shrink-0"
+                        className="text-red-600 hover:text-red-700 h-5 w-5 p-0 shrink-0"
                       >
                         ×
                       </Button>
@@ -324,11 +324,11 @@ export default function UploadDocuments() {
             )}
 
             {/* Action Buttons */}
-            <div className="flex space-x-2 pt-2">
+            <div className="flex space-x-2 pt-1">
               <Button 
                 type="button" 
                 variant="outline"
-                className="flex-1 h-9"
+                className="flex-1 h-8 text-xs"
                 onClick={() => setLocation("/")}
               >
                 Cancel
@@ -336,16 +336,16 @@ export default function UploadDocuments() {
               <Button 
                 onClick={handleUpload}
                 disabled={selectedFiles.length === 0 || uploadDocuments.isPending}
-                className="flex-1 h-9 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+                className="flex-1 h-8 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-xs"
               >
                 {uploadDocuments.isPending ? (
                   <>
-                    <Upload className="w-4 h-4 mr-2 animate-spin" />
+                    <Upload className="w-3 h-3 mr-1 animate-spin" />
                     Uploading...
                   </>
                 ) : (
                   <>
-                    <CheckCircle className="w-4 h-4 mr-2" />
+                    <CheckCircle className="w-3 h-3 mr-1" />
                     Upload {selectedFiles.length || ''} {selectedFiles.length === 1 ? 'File' : 'Files'}
                   </>
                 )}
