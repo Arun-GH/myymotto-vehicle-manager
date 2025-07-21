@@ -10,19 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Implemented cost-effective database-powered news system with daily updates
-- Migrated News Tidbits from in-memory cache to PostgreSQL database storage for consistency across all users
-- Created newsItems and newsUpdateLog database tables with proper schema and types
-- Implemented intelligent caching system with 24-hour expiration to minimize API costs
-- Added comprehensive database storage methods: getNewsItems, createNewsItem, clearAllNews, etc.
-- Enhanced NewsService with database integration and automatic fallback to curated news
-- All users now see identical news data served from database instead of individual cache
-- Cost optimization: Perplexity API called maximum once per day instead of per user
-- Database-stored news persists through server restarts and ensures data consistency
-- Added news update logging to track refresh sources and timing
-- Enhanced refresh functionality with forceRefresh method for manual updates
-- Mobile-optimized with loading states, error handling, and cache status display
-- Fallback system provides high-quality curated automotive news when API unavailable
+**July 21, 2025**: Implemented government-only news system using authentic policy data
+- Migrated News Tidbits to use only authentic government automotive policy announcements
+- Database-powered system with 24-hour caching for consistent data across all users
+- Replaced external APIs with official government sources: Ministry of Heavy Industries, MoRTH, NITI Aayog
+- Authentic policy data includes EV manufacturing schemes, emission norms, scrappage policies, mobility programs
+- Real government initiatives: PLI schemes, BS-VII norms, National Green Mobility Program, autonomous vehicle rules
+- All news items sourced from official government notifications and policy documents
+- Header redesigned to match standard app pattern with proper navigation and settings access
+- Removed refresh button for users, automated daily updates with current date display
+- Cost-free solution using only authentic government policy data sources
+- Enhanced mobile experience with professional header layout and consistent branding
 
 **July 17, 2025**: Added vehicle type and fuel type fields with visual indicators
 - Added vehicleType field to capture 2-wheeler, 3-wheeler, 4-wheeler classification

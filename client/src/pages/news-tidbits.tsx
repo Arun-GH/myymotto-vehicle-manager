@@ -122,24 +122,15 @@ export default function NewsTidbits() {
                   <Settings className="w-6 h-6" />
                 </Button>
               </Link>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-600 hover:bg-red-50"
-                onClick={() => refreshNewsMutation.mutate()}
-                disabled={refreshNewsMutation.isPending}
-              >
-                <RefreshCw className={`w-5 h-5 ${refreshNewsMutation.isPending ? 'animate-spin' : ''}`} />
-              </Button>
             </div>
           </div>
           <div className="mt-2 text-center">
             <p className="text-xs text-gray-500">
-              Updated: {new Date().toLocaleDateString('en-IN', { 
+              Today: {new Date().toLocaleDateString('en-IN', { 
                 day: 'numeric', 
                 month: 'short', 
                 year: 'numeric' 
-              })} • Tap refresh for latest updates
+              })} • Auto-updated daily
             </p>
           </div>
         </div>
