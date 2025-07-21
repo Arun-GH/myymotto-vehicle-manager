@@ -58,6 +58,60 @@ const twoWheelerMaintenanceSchedule: MaintenanceItem[] = [
   }
 ];
 
+// Four-wheeler essential maintenance schedule from user's table
+const fourWheelerMaintenanceSchedule: MaintenanceItem[] = [
+  {
+    type: 'engine_oil_replacement',
+    service: 'Engine oil Replacement',
+    recommendedTimeline: '10,000 - 15,000 kms'
+  },
+  {
+    type: 'oil_air_filters_change',
+    service: 'Oil and air filters change',
+    recommendedTimeline: '40,000 to 50,000 kms'
+  },
+  {
+    type: 'tyres_front_change',
+    service: 'Tyres Front change',
+    recommendedTimeline: '40,000 to 50,000 kms'
+  },
+  {
+    type: 'tyres_back_change',
+    service: 'Tyres Back changed',
+    recommendedTimeline: '40,000 kms or 2 to 3 years'
+  },
+  {
+    type: 'battery_replacement',
+    service: 'Battery replacement',
+    recommendedTimeline: '4 to 5 years'
+  },
+  {
+    type: 'timing_belts',
+    service: 'Timing Belts',
+    recommendedTimeline: '60,000 to 100000 Kms'
+  },
+  {
+    type: 'ac_regassing',
+    service: 'AC regassing',
+    recommendedTimeline: '1.5 to 2 years'
+  },
+  {
+    type: 'brake_fluid',
+    service: 'Brake Fluid',
+    recommendedTimeline: '2 years'
+  },
+  {
+    type: 'clutch_oil',
+    service: 'Clutch Oil',
+    recommendedTimeline: '2 - 3 years'
+  },
+  {
+    type: 'wheel_balancing',
+    service: 'Wheel Balancing',
+    recommendedTimeline: '5000 - 8000 kms'
+  }
+];
+
 export default function MaintenancePage() {
   const { id } = useParams<{ id: string }>();
   const [selectedMaintenance, setSelectedMaintenance] = useState<MaintenanceItem | null>(null);
@@ -263,7 +317,7 @@ export default function MaintenancePage() {
               <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
               <div>
                 <ColorfulLogo />
-                <p className="text-sm text-red-600">2 Wheeler Essential Replaces</p>
+                <p className="text-sm text-red-600">{vehicle?.vehicleType === '4-wheeler' ? '4 Wheeler' : '2 Wheeler'} Essential Replaces</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -292,7 +346,7 @@ export default function MaintenancePage() {
         {/* Maintenance Schedule Table */}
         <Card className="shadow-orange">
           <CardHeader>
-            <CardTitle>2 Wheeler Essential Maintenance</CardTitle>
+            <CardTitle>{vehicle?.vehicleType === '4-wheeler' ? '4 Wheeler' : '2 Wheeler'} Essential Maintenance</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -305,7 +359,7 @@ export default function MaintenancePage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {twoWheelerMaintenanceSchedule.map((item, index) => {
+                  {(vehicle?.vehicleType === '4-wheeler' ? fourWheelerMaintenanceSchedule : twoWheelerMaintenanceSchedule).map((item, index) => {
                     const record = getMaintenanceRecord(item.type);
                     const isCompleted = !!record?.completedDate;
                     

@@ -10,15 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 21, 2025**: Added four-wheeler service schedule table to Service Logs page
-- Implemented comprehensive four-wheeler maintenance schedule with 10 essential services
-- Added service table showing Engine Oil Change, Oil Filter, Air Filter, Brake Fluid, Coolant, Transmission, Spark Plugs, Battery, Tire Service, and Brake Pad services
-- Four-wheeler service table displays recommended timelines and action buttons for each service type
-- Service completion tracking with green highlighting for completed services and "Add Again" functionality
-- Table integrates with existing Service Logs system for seamless service history management
-- Smart detection of completed services based on existing service log entries
-- Direct navigation to add-service-log page with pre-populated service type from table selection
-- Professional table layout with comprehensive four-wheeler maintenance coverage comparable to two-wheeler system
+**July 21, 2025**: Implemented vehicle-specific Essential Replaces tables with authentic maintenance data
+- Updated Essential Replaces page to display different maintenance schedules based on vehicle type
+- Four-wheeler vehicles show comprehensive 10-item essential replacement table: Engine oil Replacement, Oil and air filters change, Tyres Front/Back change, Battery replacement, Timing Belts, AC regassing, Brake Fluid, Clutch Oil, Wheel Balancing
+- Two-wheeler vehicles show 7-item essential replacement table: Engine oil, Oil and air filters, Tyres Front/Back, Spark plug, Battery, Engine overhauling
+- Vehicle-specific timelines: Four-wheelers use km-based intervals (10,000-15,000 kms for engine oil), Two-wheelers use shorter intervals (3,000-5,000 kms)
+- Dynamic page headers and titles automatically update based on vehicle type (4 Wheeler vs 2 Wheeler Essential Replaces)
+- Maintenance completion tracking with date entry, warranty card upload, and invoice management
+- Professional table layout with "Date Done" column showing completion status and document access buttons
+- Green highlighting for completed maintenance items with smart detection from existing records
 
 **July 21, 2025**: Completed customizable dashboard widget system with full database integration
 - Fixed critical 404 error in dashboard customization by properly handling userId in API requests
