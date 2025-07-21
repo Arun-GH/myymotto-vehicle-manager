@@ -27,6 +27,7 @@ import ClimbingGame from "@/pages/climbing-game";
 import CombinedServicePage from "@/pages/combined-service";
 import ServiceLogs from "@/pages/service-logs";
 import AddServiceLog from "@/pages/add-service-log";
+import VehicleAlerts from "@/pages/vehicle-alerts";
 import NewsTidbits from "@/pages/news-tidbits";
 import DashboardCustomize from "@/pages/dashboard-customize";
 import NotFound from "@/pages/not-found";
@@ -105,6 +106,7 @@ function Router() {
       <Route path="/vehicle/:id/service" component={CombinedServicePage} />
       <Route path="/vehicle/:id/service-logs" component={ServiceLogs} />
       <Route path="/vehicle/:id/add-service-log" component={AddServiceLog} />
+      <Route path="/vehicle/:id/alerts" component={VehicleAlerts} />
 
       <Route path="/service-centers" component={ServiceCenters} />
       <Route path="/emergency-contacts" component={EmergencyContacts} />
