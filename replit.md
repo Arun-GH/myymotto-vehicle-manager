@@ -12,10 +12,11 @@ Preferred communication style: Simple, everyday language.
 
 **July 21, 2025**: Created information dropdown menu with About, Contact, Feedback, and Review sections
 - Added InfoDropdown component with three vertical dots menu next to notification bell
-- Integrated About, Contact Support, Send Feedback, and Rate & Review options with external links
+- Created About dialog popup with four-line comprehensive app description highlighting key features
+- About section shows Myymotto's vehicle management capabilities, document storage, traffic violation checking, and subscription features
+- Contact, Feedback, and Review options open external links with platform detection for app stores
 - Position optimized: Settings → Bell → Three-dot menu for clean header layout
-- Platform detection for app store reviews (Android Play Store, iOS App Store, Web reviews)
-- Professional dropdown design with icons and external link indicators
+- Professional dropdown design with icons and dialog popup for About information
 - Available on dashboard and traffic violations pages for easy user access to support information
 
 **July 21, 2025**: Completed authentic traffic violation checking with real government API integration

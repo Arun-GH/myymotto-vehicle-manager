@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Info, Phone, MessageCircle, Star, ChevronDown, ExternalLink, MoreVertical } from "lucide-react";
+import { Info, Phone, MessageCircle, Star, ChevronDown, ExternalLink, MoreVertical, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,10 +7,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function InfoDropdown() {
+  const [showAbout, setShowAbout] = useState(false);
+
   const handleAbout = () => {
-    window.open("https://about.myymotto.app", "_blank");
+    setShowAbout(true);
   };
 
   const handleContact = () => {
@@ -35,38 +43,73 @@ export default function InfoDropdown() {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-gray-600 hover:bg-red-50"
-        >
-          <MoreVertical className="w-5 h-5" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuItem onClick={handleAbout} className="cursor-pointer">
-          <Info className="w-4 h-4 mr-2" />
-          About Myymotto
-          <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleContact} className="cursor-pointer">
-          <Phone className="w-4 h-4 mr-2" />
-          Contact Support
-          <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleFeedback} className="cursor-pointer">
-          <MessageCircle className="w-4 h-4 mr-2" />
-          Send Feedback
-          <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleReview} className="cursor-pointer">
-          <Star className="w-4 h-4 mr-2" />
-          Rate & Review
-          <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-gray-600 hover:bg-red-50"
+          >
+            <MoreVertical className="w-5 h-5" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem onClick={handleAbout} className="cursor-pointer">
+            <Info className="w-4 h-4 mr-2" />
+            About Myymotto
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleContact} className="cursor-pointer">
+            <Phone className="w-4 h-4 mr-2" />
+            Contact Support
+            <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleFeedback} className="cursor-pointer">
+            <MessageCircle className="w-4 h-4 mr-2" />
+            Send Feedback
+            <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleReview} className="cursor-pointer">
+            <Star className="w-4 h-4 mr-2" />
+            Rate & Review
+            <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* About Dialog */}
+      <Dialog open={showAbout} onOpenChange={setShowAbout}>
+        <DialogContent className="max-w-md mx-auto">
+          <DialogHeader>
+            <DialogTitle className="text-center text-lg font-semibold text-orange-600 flex items-center justify-center gap-2">
+              <Info className="w-5 h-5" />
+              About Myymotto
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-center space-y-3 py-4">
+            <p className="text-gray-700 leading-relaxed">
+              <strong>Myymotto</strong> is your complete mobile vehicle management companion with the tagline "Timely Care for your carrier".
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              Store vehicle documents securely on your device, track service schedules, and get renewal reminders for insurance and emissions.
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              Check authentic traffic violations through government APIs, find nearby service centers, and manage emergency contacts effortlessly.
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              Features include subscription plans, puzzle games, real-time automotive news, and comprehensive maintenance tracking.
+            </p>
+          </div>
+          <div className="flex justify-center pt-2">
+            <Button 
+              onClick={() => setShowAbout(false)}
+              className="px-6"
+            >
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
