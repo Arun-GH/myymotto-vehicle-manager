@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { ArrowLeft, RotateCcw, Play, Shuffle } from "lucide-react";
+import { ArrowLeft, RotateCcw, Play, Shuffle, Trophy, Share2, Clock, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "wouter";
 import BottomNav from "@/components/bottom-nav";
 import ColorfulLogo from "@/components/colorful-logo";
@@ -19,9 +20,12 @@ export default function ClimbingGame() {
   const [gameState, setGameState] = useState<'ready' | 'playing' | 'completed'>('ready');
   const [moves, setMoves] = useState(0);
   const [timer, setTimer] = useState(0);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [completedTime, setCompletedTime] = useState(0);
   const [currentCarIndex, setCurrentCarIndex] = useState(0);
   const [pieces, setPieces] = useState<PuzzlePiece[]>([]);
   const [emptyPosition, setEmptyPosition] = useState(8);
+  const [showCongratsPopup, setShowCongratsPopup] = useState(false);
 
   // Sports car designs with realistic styling
   const sportsCars = [
@@ -1102,6 +1106,8 @@ export default function ClimbingGame() {
 
     if (isSolved) {
       setGameState('completed');
+      setCompletedTime(timer);
+      setShowCongratsPopup(true);
     }
   };
 
@@ -1110,6 +1116,7 @@ export default function ClimbingGame() {
     // Auto-start game on first click
     if (gameState === 'ready') {
       setGameState('playing');
+      setStartTime(Date.now());
       setTimer(0);
       setMoves(0);
     }
@@ -1141,15 +1148,17 @@ export default function ClimbingGame() {
   // Timer effect
   useEffect(() => {
     let interval: number;
-    if (gameState === 'playing') {
+    if (gameState === 'playing' && startTime) {
       interval = setInterval(() => {
-        setTimer(prev => prev + 1);
+        const now = Date.now();
+        const elapsed = Math.floor((now - startTime) / 1000);
+        setTimer(elapsed);
       }, 1000);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [gameState]);
+  }, [gameState, startTime]);
 
   // Draw effect
   useEffect(() => {
@@ -1170,6 +1179,7 @@ export default function ClimbingGame() {
   const newPuzzle = () => {
     const nextCarIndex = (currentCarIndex + 1) % sportsCars.length;
     setCurrentCarIndex(nextCarIndex);
+    setShowCongratsPopup(false);
   };
 
   const resetPuzzle = () => {
@@ -1180,6 +1190,27 @@ export default function ClimbingGame() {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // WhatsApp sharing function
+  const shareOnWhatsApp = () => {
+    const message = `🏆 Just completed the ${currentCar.name} Logo Puzzle on Myymotto! 🚗
+
+📊 My Stats:
+🎯 Moves: ${moves}
+⏱️ Time: ${formatTime(completedTime)}
+🏁 Car: ${currentCar.name}
+
+Think you can beat my score? Try the Logo Puzzle Game in Myymotto app!
+
+Myymotto - Timely Care for your carrier
+Download: https://myymotto.app
+
+#MyymottoChallenge #LogoPuzzle #${currentCar.name}`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
@@ -1343,31 +1374,79 @@ export default function ClimbingGame() {
           </CardContent>
         </Card>
 
-        {gameState === 'completed' && (
-          <Card className="shadow-orange mt-4 bg-green-50 border-green-200">
-            <CardContent className="p-4 text-center">
-              <h3 className="text-lg font-bold text-green-700 mb-2">Puzzle Completed!</h3>
-              <p className="text-sm text-green-600 mb-3">
-                {currentCar.name} completed in {moves} moves and {formatTime(timer)}
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  onClick={newPuzzle}
-                  className="gradient-warm text-white"
-                >
-                  Try New Car
-                </Button>
-                <Button
-                  onClick={resetPuzzle}
-                  variant="outline"
-                  className="border-green-300 text-green-700 hover:bg-green-50"
-                >
-                  Play Again
-                </Button>
+        {/* Congratulations Popup */}
+        <Dialog open={showCongratsPopup} onOpenChange={setShowCongratsPopup}>
+          <DialogContent className="max-w-sm mx-auto">
+            <DialogHeader className="text-center space-y-3">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                <Trophy className="w-10 h-10 text-white" />
               </div>
-            </CardContent>
-          </Card>
-        )}
+              <DialogTitle className="text-xl font-bold text-gray-900">
+                Puzzle Completed! 🎉
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              {/* Achievement Stats */}
+              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-4 space-y-3">
+                <h3 className="font-semibold text-purple-800 text-center">
+                  {currentCar.name} Logo Mastered!
+                </h3>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center bg-white rounded-lg p-3">
+                    <Target className="w-5 h-5 text-purple-600 mx-auto mb-1" />
+                    <div className="text-lg font-bold text-purple-800">{moves}</div>
+                    <div className="text-xs text-purple-600">Moves</div>
+                  </div>
+                  <div className="text-center bg-white rounded-lg p-3">
+                    <Clock className="w-5 h-5 text-purple-600 mx-auto mb-1" />
+                    <div className="text-lg font-bold text-purple-800">{formatTime(completedTime)}</div>
+                    <div className="text-xs text-purple-600">Time</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2">
+                <Button
+                  onClick={shareOnWhatsApp}
+                  className="w-full bg-green-500 hover:bg-green-600 text-white"
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Share with Fellow MMians
+                </Button>
+                
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    onClick={() => {
+                      newPuzzle();
+                      initializePuzzle();
+                    }}
+                    variant="outline"
+                    className="border-purple-300 text-purple-700 hover:bg-purple-50"
+                  >
+                    Try New Car
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      resetPuzzle();
+                      setShowCongratsPopup(false);
+                    }}
+                    variant="outline"
+                    className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                  >
+                    Play Again
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="text-center text-xs text-gray-500">
+                Challenge your friends to beat your score!
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <BottomNav currentPath="/" />
