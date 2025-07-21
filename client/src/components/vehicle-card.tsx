@@ -1,5 +1,5 @@
 
-import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye, Trash2, Settings } from "lucide-react";
+import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye, Trash2, Settings, Bike, Truck } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,6 +14,20 @@ import { Button } from "@/components/ui/button";
 interface VehicleCardProps {
   vehicle: Vehicle;
 }
+
+// Function to get vehicle type icon
+const getVehicleTypeIcon = (vehicleType: string | null) => {
+  switch (vehicleType) {
+    case "2-wheeler":
+      return <Bike className="w-3 h-3 text-blue-600" />;
+    case "3-wheeler":
+      return <Truck className="w-3 h-3 text-orange-600" />;
+    case "4-wheeler":
+      return <Car className="w-3 h-3 text-green-600" />;
+    default:
+      return null;
+  }
+};
 
 export default function VehicleCard({ vehicle }: VehicleCardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -110,7 +124,10 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 <h3 className="font-semibold text-gray-800 text-sm">
                   {vehicle.make?.toUpperCase()}{vehicle.model ? ` ${vehicle.model}` : ''} {vehicle.year && `(${vehicle.year})`}
                 </h3>
-                <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
+                <div className="flex items-center space-x-1">
+                  <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
+                  {getVehicleTypeIcon(vehicle.vehicleType)}
+                </div>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -166,18 +183,6 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         
         <div className="grid grid-cols-2 gap-3 text-xs mb-2">
           <div className="space-y-1">
-            <div className="flex flex-col">
-              <span className="text-amber-800 font-bold">Vehicle Type:</span>
-              <span className="text-gray-800 text-xs">
-                {vehicle.vehicleType || "Not specified"}
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-amber-800 font-bold">Fuel Type:</span>
-              <span className="text-gray-800 text-xs">
-                {vehicle.fuelType || "Not specified"}
-              </span>
-            </div>
             <div className="flex flex-col">
               <span className="text-amber-800 font-bold">Insurance Date of Issuance:</span>
               <span className="text-gray-800 text-xs">

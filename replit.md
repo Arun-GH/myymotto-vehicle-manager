@@ -10,13 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 17, 2025**: Added vehicle type and fuel type fields to vehicle management system
+**July 17, 2025**: Added vehicle type and fuel type fields with visual indicators
 - Added vehicleType field to capture 2-wheeler, 3-wheeler, 4-wheeler classification
 - Added fuelType field to capture petrol, diesel, electric (EV), hybrid fuel types
 - Updated database schema with new vehicle type and fuel type columns
 - Enhanced Add Vehicle form with dropdown fields for vehicle type and fuel type selection
 - Updated Edit Vehicle form to include vehicle type and fuel type editing capabilities
-- Added vehicle type and fuel type display on vehicle cards for better information visibility
+- Added vehicle type icons next to license plate: Bike (2-wheeler), Truck (3-wheeler), Car (4-wheeler)
+- Removed verbose vehicle type and fuel type text display from vehicle cards for cleaner interface
+- Color-coded vehicle type icons: blue (2-wheeler), orange (3-wheeler), green (4-wheeler)
 - Pushed database schema changes to production with proper field validation
 - Maintained mobile-first design with responsive dropdown layouts and orange gradient theme
 
