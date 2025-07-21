@@ -112,7 +112,7 @@ export default function NewsTidbits() {
               <div className="flex items-center space-x-2">
                 <Newspaper className="w-6 h-6 text-orange-600" />
                 <div>
-                  <h1 className="text-lg font-bold text-gray-800">News Tidbits</h1>
+                  <h1 className="text-lg font-bold text-gray-800">News Bits</h1>
                   <p className="text-xs text-red-600">Latest Vehicle News & Updates</p>
                 </div>
               </div>

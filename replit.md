@@ -11,7 +11,7 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes: Latest modifications with dates
 
 **July 21, 2025**: Implemented comprehensive government-only news system with expanded coverage
-- Migrated News Tidbits to use only authentic government automotive policy announcements
+- Migrated News Bits to use only authentic government automotive policy announcements
 - Database-powered system with 24-hour caching for consistent data across all users
 - Replaced external APIs with official government sources: Ministry of Heavy Industries, MoRTH, NITI Aayog, Ministry of Finance
 - Expanded coverage: 9 authentic policy updates including EV import duties, customs exemptions, battery manufacturing incentives
