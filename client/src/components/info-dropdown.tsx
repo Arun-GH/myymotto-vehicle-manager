@@ -199,14 +199,11 @@ export default function InfoDropdown() {
               <Star className="w-4 h-4" />
               Rate & Review Myymotto
             </DialogTitle>
-            <DialogDescription className="text-center text-xs text-gray-500 mt-1">
-              Your profile information will be used automatically
-            </DialogDescription>
           </DialogHeader>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* Star Rating */}
             <div className="text-center">
-              <p className="text-sm text-gray-700 mb-3">How would you rate your experience?</p>
+              <p className="text-sm text-gray-700 mb-3">How would you rate your overall experience and the usefulness of Myymotto?</p>
               <div className="flex justify-center gap-1 mb-3">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
