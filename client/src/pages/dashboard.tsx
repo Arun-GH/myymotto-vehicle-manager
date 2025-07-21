@@ -76,25 +76,25 @@ export default function Dashboard() {
           <h2 className="text-sm font-semibold mb-2 text-gray-800">Quick Actions</h2>
           <div className="grid grid-cols-3 gap-2">
             <Link href="/add-vehicle">
-              <div className="card-hover bg-white rounded-lg p-2.5 flex items-center space-x-2 cursor-pointer shadow-orange border border-gray-200 hover:border-red-300 transition-colors">
-                <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
-                  <Plus className="w-4 h-4 text-white" />
+              <div className="card-hover bg-white rounded-lg p-2 flex items-center space-x-2 cursor-pointer shadow-orange border border-gray-200 hover:border-red-300 transition-colors">
+                <div className="w-7 h-7 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
+                  <Plus className="w-3.5 h-3.5 text-white" />
                 </div>
                 <span className="text-xs font-medium text-gray-800">Add Vehicle</span>
               </div>
             </Link>
             <Link href="/traffic-violations">
-              <div className="card-hover bg-white rounded-lg p-2.5 flex items-center space-x-2 cursor-pointer shadow-orange border border-gray-200 hover:border-blue-300 transition-colors">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <Zap className="w-4 h-4 text-white" />
+              <div className="card-hover bg-white rounded-lg p-2 flex items-center space-x-2 cursor-pointer shadow-orange border border-gray-200 hover:border-blue-300 transition-colors">
+                <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <Zap className="w-3.5 h-3.5 text-white" />
                 </div>
                 <span className="text-xs font-medium text-gray-800">Violations</span>
               </div>
             </Link>
             <Link href="/insurance-renewals">
-              <div className="card-hover bg-white rounded-lg p-2.5 flex items-center space-x-2 cursor-pointer shadow-orange border border-gray-200 hover:border-green-300 transition-colors">
-                <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-white" />
+              <div className="card-hover bg-white rounded-lg p-2 flex items-center space-x-2 cursor-pointer shadow-orange border border-gray-200 hover:border-green-300 transition-colors">
+                <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                  <Shield className="w-3.5 h-3.5 text-white" />
                 </div>
                 <span className="text-xs font-medium text-gray-800">Insurance</span>
               </div>
