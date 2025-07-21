@@ -206,7 +206,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         <div className="grid grid-cols-2 gap-3 text-xs mb-2">
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold">Insurance Date of Issuance:</span>
+              <span className="text-amber-800 font-bold">Insured date:</span>
               <span className="text-gray-800 text-xs">
                 {vehicle.insuranceExpiry ? new Date(vehicle.insuranceExpiry).toLocaleDateString() : "Not set"}
               </span>

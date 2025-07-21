@@ -353,7 +353,7 @@ Preferred communication style: Simple, everyday language.
 - Maintained color-coded status indicators for next service date
 
 **July 16, 2025**: Updated document field labels for better clarity
-- Changed "Insurance Expiry" to "Insurance Date of Issuance" across all forms and displays
+- Changed "Insurance Expiry" to "Insured date" across all forms and displays for mobile-friendly compact text
 - Changed "Emission Expiry" to "Latest Emission" across all forms and displays
 - Updated vehicle card labels to match new terminology
 - Enhanced user understanding of document date fields with clearer labeling
