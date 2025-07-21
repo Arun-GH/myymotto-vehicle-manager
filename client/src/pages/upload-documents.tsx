@@ -100,7 +100,6 @@ export default function UploadDocuments() {
       // Reset form
       setSelectedFiles([]);
       setExpiryDate("");
-      setServicingDate("");
       setLocation("/");
     },
     onError: (error) => {

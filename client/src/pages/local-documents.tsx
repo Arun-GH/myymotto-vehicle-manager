@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
-import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
+import { apiRequest } from "@/lib/queryClient";
 import ColorfulLogo from "@/components/colorful-logo";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function LocalDocuments() {
   const [, setLocation] = useLocation();
@@ -17,6 +20,16 @@ export default function LocalDocuments() {
   const [documents, setDocuments] = useState<LocalDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [storageInfo, setStorageInfo] = useState({ used: 0, available: 0 });
+
+  // Fetch vehicle data
+  const { data: vehicle, isLoading: vehicleLoading } = useQuery({
+    queryKey: ["/api/vehicles", vehicleId],
+    queryFn: async () => {
+      const response = await apiRequest("GET", `/api/vehicles/${vehicleId}`);
+      return response.json();
+    },
+    enabled: !!vehicleId,
+  });
 
   const documentTypes = {
     emission: { label: "Emission Certificates", color: "bg-green-500" },
@@ -96,12 +109,26 @@ export default function LocalDocuments() {
     return acc;
   }, {} as Record<string, LocalDocument[]>);
 
-  if (isLoading) {
+  if (isLoading || vehicleLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4 animate-pulse" />
-          <p className="text-muted-foreground">Loading local documents...</p>
+          <p className="text-muted-foreground">Loading vehicle documents...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!vehicle) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Car className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">Vehicle not found</p>
+          <Button className="mt-4" onClick={() => setLocation("/")}>
+            Go Back to Dashboard
+          </Button>
         </div>
       </div>
     );
@@ -122,10 +149,14 @@ export default function LocalDocuments() {
           </Button>
           
           <div className="flex items-center space-x-3">
-            <ColorfulLogo className="w-12 h-12" />
-            <div className="text-center">
-              <h1 className="text-lg font-bold text-gray-900">Myymotto</h1>
-              <p className="text-sm text-red-600 font-medium">Local Documents</p>
+            <img 
+              src={logoImage} 
+              alt="Myymotto Logo" 
+              className="w-14 h-14 rounded-lg"
+            />
+            <div>
+              <ColorfulLogo />
+              <p className="text-sm text-red-600">Vehicle Documents</p>
             </div>
           </div>
           
@@ -133,27 +164,57 @@ export default function LocalDocuments() {
         </div>
       </div>
 
-      <div className="max-w-md mx-auto p-4 space-y-4">
+      <div className="p-4 pb-20 bg-warm-pattern">
+        {/* Vehicle Info */}
+        <Card className="mb-4 shadow-orange border-l-4 border-l-blue-500">
+          <CardContent className="p-3">
+            <div className="flex items-center space-x-3">
+              {vehicle.thumbnailPath ? (
+                <img 
+                  src={vehicle.thumbnailPath} 
+                  alt={`${vehicle.make} ${vehicle.model}`}
+                  className="w-10 h-10 object-cover rounded-lg shadow-md"
+                />
+              ) : (
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-md">
+                  <Car className="w-5 h-5 text-white" />
+                </div>
+              )}
+              <div>
+                <h3 className="font-medium text-gray-800 text-sm">{vehicle.make?.toUpperCase()} {vehicle.model} ({vehicle.year})</h3>
+                <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
+                <div className="text-xs text-blue-600 mt-1">
+                  <FileText className="w-3 h-3 inline mr-1" />
+                  {documents.length} document{documents.length !== 1 ? 's' : ''} stored locally
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Storage Info */}
-        <Card className="shadow-lg shadow-orange-100">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center space-x-2 text-base">
-              <HardDrive className="w-5 h-5" />
+        <Card className="mb-4 shadow-orange border-l-4 border-l-green-500">
+          <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-t-lg py-3">
+            <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <HardDrive className="w-4 h-4 text-green-600" />
+              </div>
               <span>Device Storage</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4">
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Documents stored locally:</span>
-                <span className="font-medium">{documents.length}</span>
+                <span>Documents for this vehicle:</span>
+                <span className="font-medium text-blue-600">{documents.length}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Storage used:</span>
                 <span className="font-medium">{formatFileSize(storageInfo.used)}</span>
               </div>
-              <div className="text-xs text-green-600 mt-2">
-                ✓ Documents secured on your device
+              <div className="text-xs text-green-600 mt-2 flex items-center">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                Documents secured on your device
               </div>
             </div>
           </CardContent>
@@ -161,12 +222,12 @@ export default function LocalDocuments() {
 
         {/* Documents by Type */}
         {Object.keys(groupedDocuments).length === 0 ? (
-          <Card className="shadow-lg shadow-orange-100">
+          <Card className="card-hover shadow-orange border-l-4 border-l-orange-500">
             <CardContent className="text-center py-8">
               <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Documents Stored</h3>
               <p className="text-muted-foreground mb-4">
-                Upload documents to store them securely on your device
+                Upload documents for this vehicle to store them securely on your device
               </p>
               <Button 
                 onClick={() => setLocation(`/vehicle/${vehicleId}/upload`)}
@@ -178,7 +239,7 @@ export default function LocalDocuments() {
           </Card>
         ) : (
           Object.entries(groupedDocuments).map(([type, docs]) => (
-            <Card key={type} className="shadow-lg shadow-orange-100">
+            <Card key={type} className="card-hover shadow-orange border-l-4 border-l-purple-500">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center space-x-2 text-base">
                   <div className={`w-3 h-3 rounded-full ${documentTypes[type]?.color || 'bg-gray-500'}`} />
