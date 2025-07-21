@@ -160,7 +160,7 @@ export default function ServiceLogs() {
                           className="text-green-600 hover:text-green-800 p-1"
                           title="View Invoice"
                         >
-                          <FileText className="w-4 h-4" />
+                          <Eye className="w-4 h-4" />
                         </Button>
                       )}
                     </div>
@@ -210,7 +210,7 @@ export default function ServiceLogs() {
                           className="text-green-600 hover:text-green-800 p-1"
                           title="View Invoice"
                         >
-                          <FileText className="w-4 h-4" />
+                          <Eye className="w-4 h-4" />
                         </Button>
                       )}
                     </div>

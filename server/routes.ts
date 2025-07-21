@@ -91,8 +91,37 @@ async function checkTrafficViolationsAPI(licensePlate: string): Promise<any[]> {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve static files from uploads directory
-  app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+  // Serve static files from uploads directory with proper content-type headers
+  app.use('/uploads', (req, res, next) => {
+    const filePath = path.join(process.cwd(), 'uploads', req.path);
+    
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).send('File not found');
+    }
+    
+    // Read first few bytes to determine file type
+    const buffer = fs.readFileSync(filePath);
+    let contentType = 'application/octet-stream';
+    
+    // Check magic numbers to determine file type
+    if (buffer.length >= 4) {
+      const header = buffer.toString('hex', 0, 4);
+      if (header.startsWith('ffd8ff')) {
+        contentType = 'image/jpeg';
+      } else if (header.startsWith('89504e47')) {
+        contentType = 'image/png';
+      } else if (header.startsWith('52494646')) {
+        contentType = 'image/webp';
+      } else if (header.startsWith('25504446')) {
+        contentType = 'application/pdf';
+      }
+    }
+    
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', 'inline');
+    res.sendFile(filePath);
+  });
   
   // Authentication routes
   app.post("/api/auth/signin", async (req, res) => {
