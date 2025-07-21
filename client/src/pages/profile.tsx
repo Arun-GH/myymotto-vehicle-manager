@@ -196,7 +196,7 @@ export default function Profile() {
         age: typeof data.age === 'number' ? data.age : parseInt(String(data.age)) || 25,
         // Handle optional fields properly - send undefined for empty strings
         alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
-        email: data.email && data.email.trim() !== '' ? data.email : undefined,
+        email: data.email, // Required field
         driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
         driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? data.driversLicenseValidTill : undefined,
       };
@@ -268,7 +268,7 @@ export default function Profile() {
         age: typeof data.age === 'number' ? data.age : parseInt(String(data.age)) || 25,
         // Handle optional fields properly - send undefined for empty strings
         alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
-        email: data.email && data.email.trim() !== '' ? data.email : undefined,
+        email: data.email, // Required field
         driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
         driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? data.driversLicenseValidTill : undefined,
       };
@@ -780,7 +780,7 @@ export default function Profile() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email Address (Optional)</FormLabel>
+                        <FormLabel>Email Address *</FormLabel>
                         <FormControl>
                           <Input 
                             type="email" 
