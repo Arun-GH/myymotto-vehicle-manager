@@ -25,6 +25,7 @@ Preferred communication style: Simple, everyday language.
 - Applied consistent mobile design standards across all form sections including vehicle photo upload, basic details, dates, and service tracking
 - Optimized vehicle card component by reducing missing chassis number information bar font size to text-[10px] for better mobile display
 - Reduced font size of all date labels (Insured date, Last service date, Latest emission, Next service date) to text-[10px] for more compact mobile layout
+- Increased darkness of dashboard tile shadows by enhancing shadow-orange-dark (0.45 opacity, 18px spread) and shadow-orange (0.35 opacity) for better visual depth
 - All screens now use consistent mobile-friendly designs with uniform spacing and sizing standards throughout the entire application
 
 **July 21, 2025**: Completed rating collection system with database integration
