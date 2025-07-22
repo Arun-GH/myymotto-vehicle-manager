@@ -347,7 +347,7 @@ export default function SignIn() {
                 className="w-16 h-16 rounded-full"
               />
             </div>
-            <CardTitle className="text-2xl font-bold text-gray-800">Welcome to <ColorfulLogo className="inline" />!</CardTitle>
+            <CardTitle className="text-2xl font-bold text-gray-800">Welcome to <ColorfulLogo />!</CardTitle>
             <p className="text-gray-600">Complete your registration to continue</p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -479,6 +479,93 @@ export default function SignIn() {
     );
   }
 
+  // PIN Setup Screen
+  if (step === "set-pin") {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center bg-warm-pattern">
+        <Card className="w-full max-w-md card-hover shadow-orange">
+          <CardHeader className="text-center">
+            <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
+              <Shield className="w-12 h-12 text-primary" />
+            </div>
+            <CardTitle className="text-2xl font-bold gradient-text">Setup PIN</CardTitle>
+            <p className="text-gray-600">Create a 4-digit PIN for quick access</p>
+          </CardHeader>
+          <CardContent>
+            <Form {...setPinForm}>
+              <form onSubmit={setPinForm.handleSubmit(onSetPinSubmit)} className="space-y-6">
+                <FormField
+                  control={setPinForm.control}
+                  name="pin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-700">Create PIN</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                          <Input
+                            {...field}
+                            type="password"
+                            placeholder="Enter 4-digit PIN"
+                            maxLength={4}
+                            className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={setPinForm.control}
+                  name="confirmPin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-700">Confirm PIN</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                          <Input
+                            {...field}
+                            type="password"
+                            placeholder="Confirm 4-digit PIN"
+                            maxLength={4}
+                            className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 gradient-warm text-white border-0 hover:opacity-90"
+                  size="lg"
+                  disabled={setPinMutation.isPending}
+                >
+                  {setPinMutation.isPending ? "Setting up..." : "Create PIN"}
+                  <Shield className="w-4 h-4 ml-2" />
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setStep("signin")}
+                  className="w-full text-gray-500 hover:text-gray-700"
+                >
+                  Back to Sign In
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // Main Sign-In Screen
   return (
     <div className="min-h-screen bg-background flex items-center justify-center bg-warm-pattern">
@@ -491,7 +578,7 @@ export default function SignIn() {
               className="w-16 h-16 rounded-full"
             />
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-800">Welcome to <ColorfulLogo className="inline" />!</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-800">Welcome to <ColorfulLogo />!</CardTitle>
           <p className="text-red-600 font-medium">Timely Care For Your Carrier</p>
         </CardHeader>
         <CardContent>
