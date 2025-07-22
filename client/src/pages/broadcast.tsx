@@ -38,6 +38,10 @@ type BroadcastFormData = z.infer<typeof broadcastFormSchema>;
 export default function BroadcastPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  
+  // Check if this is view-only mode from URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const isViewOnly = urlParams.get('view') === 'only';
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showVehicleSelector, setShowVehicleSelector] = useState(false);
   const [selectedVehicleForSell, setSelectedVehicleForSell] = useState<any>(null);
@@ -270,16 +274,18 @@ export default function BroadcastPage() {
                 <p className="text-xs text-red-600">Community for MMians</p>
               </div>
             </div>
-            <Button
-              onClick={() => {
-                initializeFormWithProfile();
-                setShowCreateDialog(true);
-              }}
-              className="bg-orange-500 hover:bg-orange-600 text-white h-8 px-3 text-xs"
-            >
-              <Plus className="w-3 h-3 mr-1" />
-              Create Post
-            </Button>
+            {!isViewOnly && (
+              <Button
+                onClick={() => {
+                  initializeFormWithProfile();
+                  setShowCreateDialog(true);
+                }}
+                className="bg-orange-500 hover:bg-orange-600 text-white h-8 px-3 text-xs"
+              >
+                <Plus className="w-3 h-3 mr-1" />
+                Create Post
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -288,19 +294,21 @@ export default function BroadcastPage() {
       <div className="px-3 py-3 space-y-3">
         {(broadcasts as any[]).length === 0 ? (
           <div className="text-center py-8">
-            <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <Radio className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <h3 className="text-base font-medium text-gray-900 mb-1">No broadcasts yet</h3>
-            <p className="text-xs text-gray-500 mb-4">Be the first to share with the MMian community!</p>
-            <Button
-              onClick={() => {
-                initializeFormWithProfile();
-                setShowCreateDialog(true);
-              }}
-              className="bg-orange-500 hover:bg-orange-600 text-white h-8 px-3 text-xs"
-            >
-              <Plus className="w-3 h-3 mr-1" />
-              Create First Post
-            </Button>
+            <p className="text-xs text-gray-500 mb-4">{isViewOnly ? "Check back later for new posts from the MMian community!" : "Be the first to share with the MMian community!"}</p>
+            {!isViewOnly && (
+              <Button
+                onClick={() => {
+                  initializeFormWithProfile();
+                  setShowCreateDialog(true);
+                }}
+                className="bg-orange-500 hover:bg-orange-600 text-white h-8 px-3 text-xs"
+              >
+                <Plus className="w-3 h-3 mr-1" />
+                Create First Post
+              </Button>
+            )}
           </div>
         ) : (
           <div className="space-y-2">
@@ -427,7 +435,8 @@ export default function BroadcastPage() {
         )}
       </div>
 
-      {/* Create Broadcast Dialog */}
+      {/* Create Broadcast Dialog - Hidden in view-only mode */}
+      {!isViewOnly && (
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="w-[94%] max-w-xs mx-auto max-h-[80vh] overflow-y-auto p-3">
           <DialogHeader className="pb-1">
@@ -702,6 +711,7 @@ export default function BroadcastPage() {
           </Form>
         </DialogContent>
       </Dialog>
+      )}
 
       {/* Vehicle Selector Dialog */}
       <Dialog open={showVehicleSelector} onOpenChange={setShowVehicleSelector}>

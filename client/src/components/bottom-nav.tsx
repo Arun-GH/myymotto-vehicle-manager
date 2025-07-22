@@ -1,15 +1,23 @@
 import { Link } from "wouter";
 import { Home, Radio, Users, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 
 interface BottomNavProps {
   currentPath: string;
 }
 
 export default function BottomNav({ currentPath }: BottomNavProps) {
+  // Fetch broadcast count
+  const { data: broadcasts = [] } = useQuery({
+    queryKey: ["/api/broadcasts"],
+  });
+  
+  const broadcastCount = Array.isArray(broadcasts) ? broadcasts.length : 0;
+  
   const navItems = [
     { path: "/", icon: Home, label: "Home" },
-    { path: "/broadcast", icon: Radio, label: "Broadcast" },
+    { path: "/broadcast?view=only", icon: Radio, label: "Broadcast", count: broadcastCount },
     { path: "/emergency-contacts", icon: Users, label: "Emergency" },
     { path: "/profile", icon: User, label: "Profile" },
   ];
@@ -32,11 +40,18 @@ export default function BottomNav({ currentPath }: BottomNavProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className={`flex flex-col items-center py-2 h-auto space-y-1 mx-1 rounded-xl ${
+                className={`flex flex-col items-center py-2 h-auto space-y-1 mx-1 rounded-xl relative ${
                   isActive ? colors[index].active : colors[index].inactive
                 }`}
               >
-                <Icon className="w-5 h-5" />
+                <div className="relative">
+                  <Icon className="w-5 h-5" />
+                  {item.count !== undefined && item.count > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] rounded-full w-3 h-3 flex items-center justify-center font-bold">
+                      {item.count > 99 ? '99+' : item.count}
+                    </span>
+                  )}
+                </div>
                 <span className="text-xs">{item.label}</span>
               </Button>
             </Link>
