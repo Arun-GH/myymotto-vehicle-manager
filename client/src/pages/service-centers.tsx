@@ -29,13 +29,12 @@ export default function ServiceCenters() {
   const [isLoading, setIsLoading] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
 
-  // Mock service centers data (in production, this would come from a real API)
-  const mockServiceCenters: ServiceCenter[] = [
+  // Service centers data with diverse geographic locations for better testing
+  const baseServiceCenters: Omit<ServiceCenter, 'distance'>[] = [
     {
       id: "1",
       name: "AutoCare Pro Service Center",
       address: "123 Main Street, Sector 15, Gurgaon, Haryana",
-      distance: "1.2 km",
       rating: 4.5,
       phone: "+91 98765 43210",
       services: ["Oil Change", "Brake Service", "AC Repair", "General Maintenance"],
@@ -47,7 +46,6 @@ export default function ServiceCenters() {
       id: "2", 
       name: "Speed Motors Workshop",
       address: "456 Service Road, DLF Phase 2, Gurgaon, Haryana",
-      distance: "2.8 km",
       rating: 4.2,
       phone: "+91 98765 43211",
       services: ["Engine Repair", "Transmission", "Electrical", "Tyre Service"],
@@ -59,7 +57,6 @@ export default function ServiceCenters() {
       id: "3",
       name: "Expert Auto Solutions",
       address: "789 Industrial Area, Phase 1, Gurgaon, Haryana", 
-      distance: "3.5 km",
       rating: 4.7,
       phone: "+91 98765 43212",
       services: ["Denting & Painting", "Insurance Claims", "Oil Change", "Brake Service"],
@@ -71,7 +68,6 @@ export default function ServiceCenters() {
       id: "4",
       name: "Premium Car Care",
       address: "321 Mall Road, Sector 28, Gurgaon, Haryana",
-      distance: "4.1 km", 
       rating: 4.0,
       phone: "+91 98765 43213",
       services: ["Detailing", "AC Service", "Battery", "General Checkup"],
@@ -83,15 +79,64 @@ export default function ServiceCenters() {
       id: "5",
       name: "Reliable Motors",
       address: "654 NH-8, Sector 32, Gurgaon, Haryana",
-      distance: "5.2 km",
       rating: 3.8,
       phone: "+91 98765 43214", 
       services: ["Engine Diagnostics", "Suspension", "Clutch Repair", "Oil Change"],
       openHours: "8:00 AM - 7:30 PM",
       lat: 28.4314,
       lng: 77.0688
+    },
+    {
+      id: "6",
+      name: "Metro Car Service",
+      address: "Delhi Gate, Connaught Place, New Delhi",
+      rating: 4.3,
+      phone: "+91 98765 43215",
+      services: ["AC Repair", "Battery", "Brake Service", "Engine Diagnostics"],
+      openHours: "9:00 AM - 8:00 PM",
+      lat: 28.6139,
+      lng: 77.2090
+    },
+    {
+      id: "7",
+      name: "Quick Fix Auto",
+      address: "Sector 18, Noida, Uttar Pradesh",
+      rating: 4.1,
+      phone: "+91 98765 43216",
+      services: ["Oil Change", "Tyre Service", "General Maintenance", "Electrical"],
+      openHours: "8:00 AM - 9:00 PM",
+      lat: 28.5706,
+      lng: 77.3272
+    },
+    {
+      id: "8",
+      name: "City Motors",
+      address: "Lajpat Nagar, New Delhi",
+      rating: 3.9,
+      phone: "+91 98765 43217",
+      services: ["Denting & Painting", "Insurance Claims", "Suspension", "Clutch Repair"],
+      openHours: "9:30 AM - 7:00 PM",
+      lat: 28.5653,
+      lng: 77.2430
     }
   ];
+
+  // Calculate distance between two coordinates using Haversine formula
+  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): string => {
+    const R = 6371; // Earth's radius in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c;
+    
+    return distance < 1 
+      ? `${Math.round(distance * 1000)}m`
+      : `${distance.toFixed(1)} km`;
+  };
 
   useEffect(() => {
     getCurrentLocation();
@@ -104,8 +149,12 @@ export default function ServiceCenters() {
     if (!navigator.geolocation) {
       setLocationError("Geolocation is not supported by this browser. Showing default service centers.");
       setIsLoading(false);
-      // Load default service centers without distance calculation
-      setServiceCenters(mockServiceCenters);
+      // Load default service centers with placeholder distances
+      const centersWithDefaultDistance: ServiceCenter[] = baseServiceCenters.map(center => ({
+        ...center,
+        distance: "-- km" // No location available
+      }));
+      setServiceCenters(centersWithDefaultDistance);
       return;
     }
 
@@ -115,10 +164,10 @@ export default function ServiceCenters() {
         setUserLocation({ lat: latitude, lng: longitude });
         
         // Calculate distances based on user's actual location
-        const centersWithDistance = mockServiceCenters.map(center => ({
+        const centersWithDistance: ServiceCenter[] = baseServiceCenters.map(center => ({
           ...center,
           distance: calculateDistance(latitude, longitude, center.lat, center.lng)
-        })).sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+        })).sort((a: ServiceCenter, b: ServiceCenter) => parseFloat(a.distance) - parseFloat(b.distance));
         
         setServiceCenters(centersWithDistance);
         setIsLoading(false);
@@ -143,8 +192,12 @@ export default function ServiceCenters() {
         
         setLocationError(errorMessage);
         setIsLoading(false);
-        // Load default service centers without distance calculation
-        setServiceCenters(mockServiceCenters);
+        // Load default service centers with placeholder distances
+        const centersWithDefaultDistance: ServiceCenter[] = baseServiceCenters.map(center => ({
+          ...center,
+          distance: "-- km" // No location available
+        }));
+        setServiceCenters(centersWithDefaultDistance);
       },
       { 
         timeout: 15000, 
@@ -154,17 +207,7 @@ export default function ServiceCenters() {
     );
   };
 
-  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): string => {
-    const R = 6371; // Earth's radius in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLng = (lng2 - lng1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLng/2) * Math.sin(dLng/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = R * c;
-    return distance.toFixed(1) + " km";
-  };
+
 
   const filteredCenters = serviceCenters.filter(center =>
     center.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
