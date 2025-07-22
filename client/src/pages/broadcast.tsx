@@ -51,10 +51,11 @@ export default function BroadcastPage() {
 
   // Function to auto-populate form with user profile data
   const initializeFormWithProfile = () => {
-    if (userProfile) {
-      form.setValue("contactPhone", userProfile.phoneNumber || "");
-      form.setValue("contactEmail", userProfile.emailId || "");
-      form.setValue("location", userProfile.city || "");
+    if (userProfile && typeof userProfile === 'object') {
+      const profile = userProfile as any;
+      form.setValue("contactPhone", profile.phoneNumber || "");
+      form.setValue("contactEmail", profile.emailId || "");
+      form.setValue("location", profile.city || "");
     }
   };
 
@@ -75,19 +76,37 @@ export default function BroadcastPage() {
 
   // Auto-populate form with profile data when available
   useEffect(() => {
-    if (userProfile) {
-      // Only update if form values are currently empty to avoid overwriting user input
-      if (!form.getValues("contactPhone")) {
-        form.setValue("contactPhone", userProfile.phoneNumber || "", { shouldValidate: false });
+    if (userProfile && typeof userProfile === 'object') {
+      const profile = userProfile as any;
+      // Always populate contact fields when dialog opens or data becomes available
+      if (profile.phoneNumber) {
+        form.setValue("contactPhone", profile.phoneNumber, { shouldValidate: false });
       }
-      if (!form.getValues("contactEmail")) {
-        form.setValue("contactEmail", userProfile.emailId || "", { shouldValidate: false });
+      if (profile.emailId) {
+        form.setValue("contactEmail", profile.emailId, { shouldValidate: false });
       }
-      if (!form.getValues("location")) {
-        form.setValue("location", userProfile.city || "", { shouldValidate: false });
+      if (profile.city) {
+        form.setValue("location", profile.city, { shouldValidate: false });
       }
     }
   }, [userProfile, form]);
+
+  // Auto-populate when type changes to "buy"
+  useEffect(() => {
+    if (form.watch("type") === "buy" && userProfile && typeof userProfile === 'object') {
+      const profile = userProfile as any;
+      // Ensure contact details are always populated for buy posts
+      if (profile.phoneNumber) {
+        form.setValue("contactPhone", profile.phoneNumber, { shouldValidate: false });
+      }
+      if (profile.emailId) {
+        form.setValue("contactEmail", profile.emailId, { shouldValidate: false });
+      }
+      if (profile.city) {
+        form.setValue("location", profile.city, { shouldValidate: false });
+      }
+    }
+  }, [form.watch("type"), userProfile, form]);
 
   // Create broadcast mutation
   const createBroadcastMutation = useMutation({
@@ -134,9 +153,9 @@ export default function BroadcastPage() {
       description: data.description,
       contactPhone: data.contactPhone,
       contactEmail: data.contactEmail || undefined,
-      price: data.price || null,
-      location: data.location || null,
-      vehicleId: selectedVehicleForSell?.id || null,
+      price: data.price || undefined,
+      location: data.location || undefined,
+      vehicleId: selectedVehicleForSell?.id || undefined,
     };
     createBroadcastMutation.mutate(broadcastData);
   };
@@ -192,7 +211,7 @@ export default function BroadcastPage() {
           >
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <ColorfulLogo className="w-8 h-8" />
+          <ColorfulLogo />
           <div>
             <h1 className="text-sm font-semibold text-gray-800">Broadcast</h1>
             <p className="text-[10px] text-red-600">Community for MMians</p>
@@ -212,7 +231,7 @@ export default function BroadcastPage() {
 
       {/* Content */}
       <div className="px-3 py-3 space-y-3">
-        {broadcasts.length === 0 ? (
+        {(broadcasts as any[]).length === 0 ? (
           <div className="text-center py-8">
             <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <h3 className="text-base font-medium text-gray-900 mb-1">No broadcasts yet</h3>
@@ -230,7 +249,7 @@ export default function BroadcastPage() {
           </div>
         ) : (
           <div className="space-y-2">
-            {broadcasts.map((broadcast: any) => (
+            {(broadcasts as any[]).map((broadcast: any) => (
               <Card key={broadcast.id} className="shadow-orange border-orange-100">
                 <CardHeader className="pb-1 px-3 pt-2">
                   <div className="flex items-center justify-between">
@@ -559,13 +578,13 @@ export default function BroadcastPage() {
           </DialogHeader>
           
           <div className="space-y-1 max-h-48 overflow-y-auto">
-            {userVehicles.length === 0 ? (
+            {(userVehicles as any[]).length === 0 ? (
               <div className="text-center py-4">
                 <Car className="w-8 h-8 text-gray-300 mx-auto mb-1" />
                 <p className="text-[10px] text-gray-600">Add a vehicle first to sell it on broadcast.</p>
               </div>
             ) : (
-              userVehicles.map((vehicle: any) => (
+              (userVehicles as any[]).map((vehicle: any) => (
                 <div
                   key={vehicle.id}
                   onClick={() => handleVehicleSelect(vehicle)}
