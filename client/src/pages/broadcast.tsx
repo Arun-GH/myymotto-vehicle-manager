@@ -247,36 +247,41 @@ export default function BroadcastPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       {/* Header */}
-      <div className="header-gradient-border px-3 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setLocation("/")}
-            className="text-gray-600 hover:text-gray-800 hover:bg-red-50 p-1 rounded-full"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <img 
-            src="/uploads/Mymotto_Logo_Green_Revised_1752603344750.png" 
-            alt="Myymotto Logo" 
-            className="w-8 h-8 object-contain"
-          />
-          <div>
-            <ColorfulLogo />
-            <p className="text-[9px] text-red-600 leading-tight -mt-0.5">Community for MMians</p>
+      <header className="header-gradient-border shadow-lg relative z-10">
+        <div className="px-3 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setLocation("/")}
+                className="text-gray-600 hover:text-gray-800 hover:bg-red-50 p-1 rounded-full mr-1"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+              <img 
+                src="/uploads/Mymotto_Logo_Green_Revised_1752603344750.png" 
+                alt="Myymotto Logo" 
+                className="w-10 h-10 rounded-lg"
+              />
+              <div>
+                <div className="text-base font-bold">
+                  <ColorfulLogo />
+                </div>
+                <p className="text-xs text-red-600">Community for MMians</p>
+              </div>
+            </div>
+            <Button
+              onClick={() => {
+                initializeFormWithProfile();
+                setShowCreateDialog(true);
+              }}
+              className="bg-orange-500 hover:bg-orange-600 text-white h-8 px-3 text-xs"
+            >
+              <Plus className="w-3 h-3 mr-1" />
+              Create Post
+            </Button>
           </div>
         </div>
-        
-        <Button
-          onClick={() => {
-            initializeFormWithProfile();
-            setShowCreateDialog(true);
-          }}
-          className="bg-orange-500 hover:bg-orange-600 text-white h-6 px-2 text-[9px]"
-        >
-          <Plus className="w-2 h-2 mr-0.5" />
-          Post
-        </Button>
-      </div>
+      </header>
 
       {/* Content */}
       <div className="px-3 py-3 space-y-3">
