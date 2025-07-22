@@ -150,7 +150,7 @@ export default function UploadDocuments() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-gray-600 hover:bg-red-50"
+                className="text-gray-600 hover:bg-red-50 h-8 w-8"
                 onClick={() => setLocation("/")}
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -158,19 +158,21 @@ export default function UploadDocuments() {
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-10 h-10 rounded-lg"
+                className="w-8 h-8 rounded-lg"
               />
               <div>
-                <ColorfulLogo />
+                <div className="text-sm font-bold">
+                  <ColorfulLogo />
+                </div>
                 <p className="text-xs text-red-600">Upload Documents</p>
               </div>
             </div>
             <div className="flex items-center space-x-1">
-              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50 h-8 w-8">
                 <Bell className="w-4 h-4" />
               </Button>
               <Link href="/settings">
-                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50 h-8 w-8">
                   <Settings className="w-4 h-4" />
                 </Button>
               </Link>
@@ -179,9 +181,9 @@ export default function UploadDocuments() {
         </div>
       </header>
 
-      <div className="p-3 pb-20 bg-warm-pattern">
+      <div className="p-2 pb-20 bg-warm-pattern">
         {/* Vehicle Info */}
-        <Card className="mb-3 shadow-orange border-l-4 border-l-blue-500">
+        <Card className="mb-2 shadow-orange border-l-4 border-l-blue-500">
           <CardContent className="p-2">
             <div className="flex items-center space-x-2">
               {vehicle.thumbnailPath ? (
@@ -205,15 +207,15 @@ export default function UploadDocuments() {
 
         {/* Document Upload Form */}
         <Card className="card-hover shadow-orange border-l-4 border-l-orange-500">
-          <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50 rounded-t-lg py-2">
+          <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50 rounded-t-lg py-1.5">
             <CardTitle className="flex items-center space-x-2 text-gray-800 text-xs">
-              <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
+              <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center">
                 <Upload className="w-3 h-3 text-orange-600" />
               </div>
               <span>Upload Documents</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-3 space-y-3">
+          <CardContent className="p-2 space-y-2">
             
             {/* Document Type Selection */}
             <div className="space-y-1">
