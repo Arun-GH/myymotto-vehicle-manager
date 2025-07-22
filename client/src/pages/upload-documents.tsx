@@ -253,6 +253,7 @@ export default function UploadDocuments() {
                   id="expiry-date"
                   type="date"
                   className="h-8"
+                  max={selectedType === "emission" || selectedType === "insurance" ? new Date().toISOString().split('T')[0] : undefined}
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
                   placeholder="Select expiry date"

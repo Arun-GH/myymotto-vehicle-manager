@@ -614,6 +614,7 @@ export default function AddVehicle() {
                         <FormControl>
                           <Input 
                             type="date" 
+                            max={new Date().toISOString().split('T')[0]}
                             className="h-9"
                             {...field} 
                             value={field.value || ""} 

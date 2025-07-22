@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 22, 2025**: Implemented comprehensive date validation system to prevent future dates in all vehicle and service forms
+- Added Zod schema validation with .refine() method for insuranceExpiry, emissionExpiry, and lastServiceDate fields
+- Enhanced client-side validation using HTML max attribute set to today's date (new Date().toISOString().split('T')[0])
+- Applied date constraints across all forms: Edit Vehicle, Add Vehicle, Upload Documents, Add Service Log, Maintenance, Combined Service
+- Prevents users from selecting future dates for insurance issue dates, emission certificate dates, and service completion dates
+- Server-side validation provides clear error messages: "Insurance date cannot be in the future", "Emission date cannot be in the future"
+- Comprehensive validation covers vehicle forms, document upload, service logs, and maintenance completion records
+- Enhanced data integrity by ensuring all historical dates remain logically consistent with past events only
+
 **July 22, 2025**: Enhanced authentication flow with smart PIN login and fixed all authentication issues
 - Implemented intelligent authentication flow that detects returning users with saved PIN credentials
 - Fixed critical confirm PIN input blocking issue by removing complex form validation and using direct input control

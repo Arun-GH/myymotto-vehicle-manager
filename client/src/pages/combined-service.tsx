@@ -643,6 +643,7 @@ export default function CombinedServicePage() {
               <Input
                 id="completedDate"
                 type="date"
+                max={new Date().toISOString().split('T')[0]}
                 value={completedDate}
                 onChange={(e) => setCompletedDate(e.target.value)}
                 className="h-8 text-sm"

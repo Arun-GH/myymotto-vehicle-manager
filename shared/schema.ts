@@ -121,10 +121,28 @@ export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   ownerPhone: z.string().optional(),
   thumbnailPath: z.string().optional().nullable(),
   insuranceCompany: z.string().optional(),
-  insuranceExpiry: z.string().optional().nullable(),
-  emissionExpiry: z.string().optional().nullable(),
+  insuranceExpiry: z.string().optional().nullable().refine((date) => {
+    if (!date) return true; // Allow empty/null dates
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+    return selectedDate <= today;
+  }, "Insurance date cannot be in the future"),
+  emissionExpiry: z.string().optional().nullable().refine((date) => {
+    if (!date) return true; // Allow empty/null dates
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+    return selectedDate <= today;
+  }, "Emission date cannot be in the future"),
   rcExpiry: z.string().optional().nullable(),
-  lastServiceDate: z.string().optional().nullable(),
+  lastServiceDate: z.string().optional().nullable().refine((date) => {
+    if (!date) return true; // Allow empty/null dates
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+    return selectedDate <= today;
+  }, "Last service date cannot be in the future"),
   currentOdometerReading: z.number().optional().nullable(),
   averageUsagePerMonth: z.number().optional().nullable(),
   serviceIntervalKms: z.number().optional().nullable(),

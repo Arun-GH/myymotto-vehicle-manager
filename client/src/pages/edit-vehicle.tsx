@@ -638,6 +638,7 @@ export default function EditVehicle() {
                         <FormControl>
                           <Input 
                             type="date" 
+                            max={new Date().toISOString().split('T')[0]}
                             {...field} 
                             value={field.value || ""} 
                             onChange={(e) => field.onChange(e.target.value.trim() || null)}
@@ -657,6 +658,7 @@ export default function EditVehicle() {
                         <FormControl>
                           <Input 
                             type="date" 
+                            max={new Date().toISOString().split('T')[0]}
                             {...field} 
                             value={field.value || ""} 
                             onChange={(e) => field.onChange(e.target.value.trim() || null)}
@@ -695,6 +697,7 @@ export default function EditVehicle() {
                         <FormControl>
                           <Input 
                             type="date" 
+                            max={new Date().toISOString().split('T')[0]}
                             {...field} 
                             value={field.value || ""} 
                             onChange={(e) => field.onChange(e.target.value.trim() || null)}

@@ -211,6 +211,7 @@ export default function AddServiceLog() {
                   <Input
                     id="serviceDate"
                     type="date"
+                    max={new Date().toISOString().split('T')[0]}
                     className="h-9 pl-10"
                     {...form.register("serviceDate")}
                   />
