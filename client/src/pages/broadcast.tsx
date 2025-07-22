@@ -20,7 +20,12 @@ import ColorfulLogo from "@/components/colorful-logo";
 const broadcastFormSchema = z.object({
   type: z.string(),
   title: z.string().optional(), // Made optional since buy posts auto-generate title
-  description: z.string().min(1, "Description is required"),
+  description: z.string()
+    .min(1, "Description is required")
+    .refine((val) => {
+      const wordCount = val.trim().split(/\s+/).filter(word => word.length > 0).length;
+      return wordCount <= 75;
+    }, "Description must be 75 words or less"),
   contactPhone: z.string().min(10, "Valid phone number required"),
   contactEmail: z.string().email().optional().or(z.literal("")),
   price: z.number().optional(),
@@ -462,25 +467,44 @@ export default function BroadcastPage() {
               <FormField
                 control={form.control}
                 name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[10px] font-medium">
-                      {form.watch("type") === "buy" ? "Vehicle Requirements" : "Description"}
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder={
-                          form.watch("type") === "buy" 
-                            ? "Describe what vehicle you're looking for (make, model, year, budget, etc.)"
-                            : "Detailed description..."
-                        }
-                        className="min-h-[50px] text-[10px] resize-none"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage className="text-[9px]" />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const wordCount = field.value ? field.value.trim().split(/\s+/).filter(word => word.length > 0).length : 0;
+                  const maxWords = 75;
+                  
+                  return (
+                    <FormItem>
+                      <div className="flex justify-between items-center">
+                        <FormLabel className="text-[10px] font-medium">
+                          {form.watch("type") === "buy" ? "Vehicle Requirements" : "Description"}
+                        </FormLabel>
+                        <span className={`text-[9px] ${wordCount > maxWords ? 'text-red-500' : 'text-gray-400'}`}>
+                          {wordCount}/{maxWords} words
+                        </span>
+                      </div>
+                      <FormControl>
+                        <Textarea 
+                          placeholder={
+                            form.watch("type") === "buy" 
+                              ? "Describe what vehicle you're looking for (make, model, year, budget, etc.)"
+                              : "Detailed description..."
+                          }
+                          className="min-h-[50px] text-[10px] resize-none"
+                          {...field}
+                          onChange={(e) => {
+                            const words = e.target.value.trim().split(/\s+/).filter(word => word.length > 0);
+                            if (words.length <= maxWords || e.target.value === '') {
+                              field.onChange(e);
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      {wordCount > maxWords && (
+                        <p className="text-[9px] text-red-500">Description must be 75 words or less</p>
+                      )}
+                      <FormMessage className="text-[9px]" />
+                    </FormItem>
+                  );
+                }}
               />
 
               <div className="grid grid-cols-2 gap-2">

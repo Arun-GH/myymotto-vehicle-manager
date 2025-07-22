@@ -27,6 +27,9 @@ Preferred communication style: Simple, everyday language.
 - Auto-generates "Looking for a Vehicle" title for buy posts and hides title field for streamlined user experience
 - Enhanced contact field auto-population from user profile data triggered on dialog open and type selection
 - Updated form labels to "Your Contact Phone" and "Your Email" for buy posts with proper auto-filling functionality
+- Added 75-word limit to description field with real-time word counter and validation
+- Visual word counter shows current/maximum words with red warning when limit exceeded
+- Form validation prevents submission of posts exceeding 75-word description limit
 - Complete broadcast system fully functional with authentic vehicle data display including color, odometer readings and document dates
 
 **July 21, 2025**: Enhanced dashboard with 3D orange-themed tile effects and updated contact support
