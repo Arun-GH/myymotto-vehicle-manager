@@ -30,6 +30,7 @@ import AddServiceLog from "@/pages/add-service-log";
 import VehicleAlerts from "@/pages/vehicle-alerts";
 import NewsTidbits from "@/pages/news-tidbits";
 import DashboardCustomize from "@/pages/dashboard-customize";
+import BroadcastPage from "@/pages/broadcast";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -118,6 +119,7 @@ function Router() {
       <Route path="/dashboard/customize" component={DashboardCustomize} />
       <Route path="/traffic-violations" component={TrafficViolations} />
       <Route path="/insurance-renewals" component={InsuranceRenewals} />
+      <Route path="/broadcast" component={BroadcastPage} />
       <Route component={NotFound} />
     </Switch>
   );

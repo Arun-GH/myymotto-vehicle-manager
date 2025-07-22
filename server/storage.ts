@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte, desc } from "drizzle-orm";
 
@@ -101,6 +101,20 @@ export interface IStorage {
   createRating(rating: InsertRating & { userId: number }): Promise<Rating>;
   getRatings(): Promise<Rating[]>;
   getUserRatings(userId: number): Promise<Rating[]>;
+
+  // Broadcast methods
+  getBroadcasts(): Promise<Broadcast[]>;
+  getBroadcast(id: number): Promise<Broadcast | undefined>;
+  createBroadcast(broadcast: InsertBroadcast & { userId: number }): Promise<Broadcast>;
+  updateBroadcast(id: number, broadcast: Partial<InsertBroadcast>): Promise<Broadcast | undefined>;
+  deleteBroadcast(id: number): Promise<boolean>;
+  getBroadcastsByType(type: string): Promise<Broadcast[]>;
+  incrementBroadcastViews(id: number): Promise<void>;
+
+  // Broadcast Response methods
+  getBroadcastResponses(broadcastId: number): Promise<BroadcastResponse[]>;
+  createBroadcastResponse(response: InsertBroadcastResponse & { userId: number }): Promise<BroadcastResponse>;
+  markResponseAsRead(id: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -1077,6 +1091,84 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(serviceAlerts.isActive, true), eq(serviceAlerts.isCompleted, false)))
       .orderBy(serviceAlerts.scheduledDate);
     return alerts;
+  }
+
+  // Broadcast methods
+  async getBroadcasts(): Promise<Broadcast[]> {
+    const broadcastList = await db
+      .select()
+      .from(broadcasts)
+      .leftJoin(vehicles, eq(broadcasts.vehicleId, vehicles.id))
+      .where(eq(broadcasts.isActive, true))
+      .orderBy(desc(broadcasts.createdAt));
+
+    return broadcastList.map(row => ({
+      ...row.broadcasts,
+      vehicle: row.vehicles || undefined
+    })) as any[];
+  }
+
+  async getBroadcast(id: number): Promise<Broadcast | undefined> {
+    const [broadcast] = await db.select().from(broadcasts).where(eq(broadcasts.id, id));
+    return broadcast;
+  }
+
+  async createBroadcast(broadcastData: InsertBroadcast & { userId: number }): Promise<Broadcast> {
+    const [broadcast] = await db.insert(broadcasts).values(broadcastData).returning();
+    return broadcast;
+  }
+
+  async updateBroadcast(id: number, broadcastUpdate: Partial<InsertBroadcast>): Promise<Broadcast | undefined> {
+    const [updated] = await db
+      .update(broadcasts)
+      .set({ ...broadcastUpdate, updatedAt: new Date() })
+      .where(eq(broadcasts.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteBroadcast(id: number): Promise<boolean> {
+    const result = await db.delete(broadcasts).where(eq(broadcasts.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  async getBroadcastsByType(type: string): Promise<Broadcast[]> {
+    return await db
+      .select()
+      .from(broadcasts)
+      .where(and(eq(broadcasts.type, type), eq(broadcasts.isActive, true)))
+      .orderBy(desc(broadcasts.createdAt));
+  }
+
+  async incrementBroadcastViews(id: number): Promise<void> {
+    const [broadcast] = await db.select({ viewCount: broadcasts.viewCount }).from(broadcasts).where(eq(broadcasts.id, id));
+    if (broadcast) {
+      await db
+        .update(broadcasts)
+        .set({ viewCount: (broadcast.viewCount || 0) + 1 })
+        .where(eq(broadcasts.id, id));
+    }
+  }
+
+  // Broadcast Response methods
+  async getBroadcastResponses(broadcastId: number): Promise<BroadcastResponse[]> {
+    return await db
+      .select()
+      .from(broadcastResponses)
+      .where(eq(broadcastResponses.broadcastId, broadcastId))
+      .orderBy(desc(broadcastResponses.createdAt));
+  }
+
+  async createBroadcastResponse(responseData: InsertBroadcastResponse & { userId: number }): Promise<BroadcastResponse> {
+    const [response] = await db.insert(broadcastResponses).values(responseData).returning();
+    return response;
+  }
+
+  async markResponseAsRead(id: number): Promise<void> {
+    await db
+      .update(broadcastResponses)
+      .set({ isRead: true })
+      .where(eq(broadcastResponses.id, id));
   }
 }
 

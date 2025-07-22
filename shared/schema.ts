@@ -385,6 +385,69 @@ export const insertRatingSchema = createInsertSchema(ratings, {
   createdAt: true,
 });
 
+// Broadcasts table for buy/sell/queries
+export const broadcasts = pgTable("broadcasts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  type: text("type").notNull(), // "sell", "buy", "query"
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  vehicleId: integer("vehicle_id").references(() => vehicles.id), // Only for sell type
+  price: integer("price"), // For sell/buy posts, in rupees
+  contactPhone: text("contact_phone").notNull(),
+  contactEmail: text("contact_email"),
+  location: text("location"), // City/area
+  status: text("status").default("active").notNull(), // "active", "sold", "resolved", "expired"
+  viewCount: integer("view_count").default(0).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  expiresAt: timestamp("expires_at"), // Auto-expire posts after certain time
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Broadcast responses/comments table
+export const broadcastResponses = pgTable("broadcast_responses", {
+  id: serial("id").primaryKey(),
+  broadcastId: integer("broadcast_id").references(() => broadcasts.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  message: text("message").notNull(),
+  contactPhone: text("contact_phone"),
+  contactEmail: text("contact_email"),
+  isRead: boolean("is_read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertBroadcastSchema = createInsertSchema(broadcasts).omit({
+  id: true,
+  userId: true,
+  viewCount: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  title: z.string().min(1, "Title is required").max(100, "Title must be less than 100 characters"),
+  description: z.string().min(1, "Description is required").max(500, "Description must be less than 500 characters"),
+  price: z.number().optional().nullable(),
+  contactPhone: z.string().min(10, "Valid contact phone is required"),
+  contactEmail: z.string().email("Valid email is required").optional(),
+  location: z.string().optional(),
+  expiresAt: z.string().optional().nullable(),
+});
+
+export const insertBroadcastResponseSchema = createInsertSchema(broadcastResponses).omit({
+  id: true,
+  userId: true,
+  createdAt: true,
+}).extend({
+  message: z.string().min(1, "Message is required").max(300, "Message must be less than 300 characters"),
+  contactPhone: z.string().min(10, "Valid contact phone is required").optional(),
+  contactEmail: z.string().email("Valid email is required").optional(),
+});
+
+export type Broadcast = typeof broadcasts.$inferSelect;
+export type InsertBroadcast = z.infer<typeof insertBroadcastSchema>;
+export type BroadcastResponse = typeof broadcastResponses.$inferSelect;
+export type InsertBroadcastResponse = z.infer<typeof insertBroadcastResponseSchema>;
+
 export type Rating = typeof ratings.$inferSelect;
 export type InsertRating = z.infer<typeof insertRatingSchema>;
 

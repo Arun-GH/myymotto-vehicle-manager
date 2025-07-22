@@ -2,7 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, insertMaintenanceRecordSchema, insertRatingSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact, type InsertMaintenanceRecord, type Rating } from "@shared/schema";
+import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, insertMaintenanceRecordSchema, insertRatingSchema, insertBroadcastSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact, type InsertMaintenanceRecord, type Rating, type InsertBroadcast } from "@shared/schema";
 import { maintenanceService } from "./maintenance-service";
 import { newsService } from "./news-service";
 import { trafficViolationService } from "./traffic-violation-service";
@@ -1519,6 +1519,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error checking service alert notifications:", error);
       res.status(500).json({ message: "Failed to check service alert notifications" });
+    }
+  });
+
+  // Broadcast API routes
+  app.get("/api/broadcasts", async (req, res) => {
+    try {
+      const broadcasts = await storage.getBroadcasts();
+      res.json(broadcasts);
+    } catch (error) {
+      console.error("Error fetching broadcasts:", error);
+      res.status(500).json({ message: "Failed to fetch broadcasts" });
+    }
+  });
+
+  app.get("/api/broadcasts/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const broadcast = await storage.getBroadcast(id);
+      if (!broadcast) {
+        return res.status(404).json({ message: "Broadcast not found" });
+      }
+      
+      // Increment view count
+      await storage.incrementBroadcastViews(id);
+      res.json(broadcast);
+    } catch (error) {
+      console.error("Error fetching broadcast:", error);
+      res.status(500).json({ message: "Failed to fetch broadcast" });
+    }
+  });
+
+  app.post("/api/broadcasts", async (req, res) => {
+    try {
+      // For demo purposes, using hardcoded userId = 1
+      // In real implementation, get this from authenticated session
+      const userId = 1;
+      
+      const broadcastData: InsertBroadcast & { userId: number } = {
+        ...req.body,
+        userId,
+      };
+      
+      const validatedData = insertBroadcastSchema.parse(broadcastData);
+      const broadcast = await storage.createBroadcast(validatedData);
+      res.status(201).json(broadcast);
+    } catch (error) {
+      console.error("Error creating broadcast:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Failed to create broadcast" });
+      }
+    }
+  });
+
+  app.put("/api/broadcasts/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const broadcastData = insertBroadcastSchema.partial().parse(req.body);
+      const broadcast = await storage.updateBroadcast(id, broadcastData);
+      
+      if (!broadcast) {
+        return res.status(404).json({ message: "Broadcast not found" });
+      }
+      
+      res.json(broadcast);
+    } catch (error) {
+      console.error("Error updating broadcast:", error);
+      res.status(500).json({ message: "Failed to update broadcast" });
+    }
+  });
+
+  app.delete("/api/broadcasts/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteBroadcast(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Broadcast not found" });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting broadcast:", error);
+      res.status(500).json({ message: "Failed to delete broadcast" });
+    }
+  });
+
+  app.get("/api/broadcasts/type/:type", async (req, res) => {
+    try {
+      const type = req.params.type;
+      const broadcasts = await storage.getBroadcastsByType(type);
+      res.json(broadcasts);
+    } catch (error) {
+      console.error("Error fetching broadcasts by type:", error);
+      res.status(500).json({ message: "Failed to fetch broadcasts by type" });
     }
   });
 

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings, Gamepad2, Puzzle, Newspaper, Files, Wrench } from "lucide-react";
+import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings, Gamepad2, Puzzle, Newspaper, Files, Wrench, MessageSquare } from "lucide-react";
 import { Link } from "wouter";
 import { type Vehicle } from "@shared/schema";
 import VehicleCard from "@/components/vehicle-card";
@@ -163,6 +163,23 @@ export default function Dashboard() {
                 <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Insurance</span>
               </div>
             </Link>
+          </div>
+          
+          {/* Second Row - Additional Actions */}
+          <div className="grid grid-cols-5 gap-2 mt-2">
+            <Link href="/broadcast" className="block">
+              <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-pink-300 transition-all duration-200 h-16 px-1 active:scale-95">
+                <div className="w-5 h-5 bg-gradient-to-br from-pink-500 to-rose-500 rounded-lg flex items-center justify-center icon-3d mb-1">
+                  <MessageSquare className="w-2.5 h-2.5 text-white" />
+                </div>
+                <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Broadcast</span>
+              </div>
+            </Link>
+            {/* Empty slots for future features */}
+            <div className="opacity-0"></div>
+            <div className="opacity-0"></div>
+            <div className="opacity-0"></div>
+            <div className="opacity-0"></div>
           </div>
         </section>
 
