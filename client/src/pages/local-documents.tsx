@@ -166,11 +166,11 @@ export default function LocalDocuments() {
         </div>
       </div>
 
-      <div className="p-3 pb-20 bg-warm-pattern">
+      <div className="p-2 pb-20 bg-warm-pattern">
         {/* Vehicle Info */}
-        <Card className="mb-3 shadow-orange border-l-4 border-l-blue-500">
-          <CardContent className="p-3">
-            <div className="flex items-center space-x-3">
+        <Card className="mb-2 shadow-orange border-l-4 border-l-blue-500">
+          <CardContent className="p-2">
+            <div className="flex items-center space-x-2">
               {vehicle.thumbnailPath ? (
                 <img 
                   src={vehicle.thumbnailPath} 
@@ -197,22 +197,21 @@ export default function LocalDocuments() {
         </Card>
 
         {/* Storage Info */}
-        <Card className="mb-3 shadow-orange border-l-4 border-l-green-500">
-          <CardContent className="p-3">
+        <Card className="mb-2 shadow-orange border-l-4 border-l-green-500">
+          <CardContent className="p-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
                   <HardDrive className="w-3 h-3 text-green-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-800">Device Storage</span>
+                <span className="text-xs font-medium text-gray-800">Device Storage</span>
               </div>
               <div className="text-right">
-                <div className="text-sm font-medium text-blue-600">{documents.length} docs</div>
-                <div className="text-xs text-gray-600">{formatFileSize(storageInfo.used)}</div>
+                <div className="text-xs font-medium text-blue-600">{documents.length} docs • {formatFileSize(storageInfo.used)}</div>
               </div>
             </div>
-            <div className="text-xs text-green-600 mt-2 flex items-center">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+            <div className="text-xs text-green-600 mt-1 flex items-center">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></div>
               Secured locally
             </div>
           </CardContent>
@@ -221,15 +220,15 @@ export default function LocalDocuments() {
         {/* Documents by Type */}
         {Object.keys(groupedDocuments).length === 0 ? (
           <Card className="card-hover shadow-orange border-l-4 border-l-orange-500">
-            <CardContent className="text-center py-6">
-              <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-              <h3 className="text-base font-semibold mb-2">No Documents Stored</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+            <CardContent className="text-center py-4">
+              <FileText className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+              <h3 className="text-sm font-semibold mb-1">No Documents Stored</h3>
+              <p className="text-xs text-muted-foreground mb-3">
                 Upload documents to store them securely
               </p>
               <Button 
                 onClick={() => setLocation(`/vehicle/${vehicleId}/upload`)}
-                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 h-8 text-sm"
+                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 h-7 text-xs"
               >
                 Upload Documents
               </Button>
@@ -237,21 +236,21 @@ export default function LocalDocuments() {
           </Card>
         ) : (
           Object.entries(groupedDocuments).map(([type, docs]) => (
-            <Card key={type} className="card-hover shadow-orange border-l-4 border-l-purple-500 mb-3">
-              <CardHeader className="pb-2 px-3 pt-3">
-                <CardTitle className="flex items-center space-x-2 text-sm">
+            <Card key={type} className="card-hover shadow-orange border-l-4 border-l-purple-500 mb-2">
+              <CardHeader className="pb-1 px-2 pt-2">
+                <CardTitle className="flex items-center space-x-2 text-xs">
                   <div className={`w-3 h-3 rounded-full ${documentTypes[type]?.color || 'bg-gray-500'}`} />
                   <span>{documentTypes[type]?.label || type}</span>
                   <Badge variant="secondary" className="ml-auto text-xs">{docs.length}</Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 px-3 pb-3">
+              <CardContent className="space-y-1 px-2 pb-2">
                 {docs.map((document) => (
-                  <div key={document.id} className="border rounded-lg p-2 space-y-2">
+                  <div key={document.id} className="border rounded-lg p-1.5 space-y-1">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-xs truncate">{document.fileName}</p>
-                        <p className="text-[10px] text-muted-foreground">
+                        <p className="font-medium text-[10px] truncate">{document.fileName}</p>
+                        <p className="text-[9px] text-muted-foreground">
                           {formatFileSize(document.fileSize)} • {formatDate(document.uploadedAt)}
                         </p>
                       </div>
@@ -262,27 +261,27 @@ export default function LocalDocuments() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleViewDocument(document)}
-                        className="flex-1 h-7 text-xs"
+                        className="flex-1 h-6 text-[10px] py-0"
                       >
-                        <Eye className="w-3 h-3 mr-1" />
+                        <Eye className="w-2.5 h-2.5 mr-1" />
                         View
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleDownloadDocument(document)}
-                        className="flex-1 h-7 text-xs"
+                        className="flex-1 h-6 text-[10px] py-0"
                       >
-                        <Download className="w-3 h-3 mr-1" />
+                        <Download className="w-2.5 h-2.5 mr-1" />
                         Download
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleDeleteDocument(document)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50 h-7 px-2"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 h-6 px-1.5 py-0"
                       >
-                        <Trash2 className="w-3 h-3" />
+                        <Trash2 className="w-2.5 h-2.5" />
                       </Button>
                     </div>
                   </div>
@@ -295,20 +294,20 @@ export default function LocalDocuments() {
         {/* Upload More Button */}
         <Button 
           onClick={() => setLocation(`/vehicle/${vehicleId}/upload`)}
-          className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 h-8 text-sm"
+          className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 h-7 text-xs"
         >
           Upload More Documents
         </Button>
       </div>
 
       {/* Floating Action Button for Upload */}
-      <div className="fixed bottom-20 right-4 z-50">
+      <div className="fixed bottom-20 right-3 z-50">
         <Button
           onClick={() => setLocation(`/vehicle/${vehicleId}/upload`)}
-          className="h-14 w-14 rounded-full bg-gradient-to-br from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-white"
+          className="h-12 w-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-white"
           size="icon"
         >
-          <Plus className="h-6 w-6 text-white" />
+          <Plus className="h-5 w-5 text-white" />
         </Button>
       </div>
     </div>
