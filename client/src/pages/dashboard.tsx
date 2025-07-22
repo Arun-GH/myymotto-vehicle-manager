@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings, Gamepad2, Puzzle, Newspaper, Files, Wrench } from "lucide-react";
 import { Link } from "wouter";
 import { type Vehicle } from "@shared/schema";
@@ -10,12 +10,15 @@ import BottomNav from "@/components/bottom-nav";
 import FloatingActionButton from "@/components/floating-action-button";
 import NotificationBell from "@/components/notification-bell";
 import InfoDropdown from "@/components/info-dropdown";
+import VehicleSelectorModal from "@/components/vehicle-selector-modal";
 import { Button } from "@/components/ui/button";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
+  const [showVehicleSelector, setShowVehicleSelector] = useState(false);
+  const [selectorActionType, setSelectorActionType] = useState<'documents' | 'service-logs'>('documents');
   
   const { data: vehicles = [], isLoading } = useQuery<Vehicle[]>({
     queryKey: ["/api/vehicles"],
@@ -114,12 +117,11 @@ export default function Dashboard() {
             </Link>
             <div className="quick-action-3d rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer hover:border-purple-300 transition-colors" 
                  onClick={() => {
-                   // Show vehicle selection for documents
                    if (vehicles.length === 1) {
                      window.location.href = `/vehicle/${vehicles[0].id}/local-documents`;
                    } else if (vehicles.length > 1) {
-                     // Could add a vehicle selector modal here
-                     alert("Please select a vehicle from Your Vehicles section below to view documents");
+                     setSelectorActionType('documents');
+                     setShowVehicleSelector(true);
                    } else {
                      alert("Please add a vehicle first");
                    }
@@ -131,11 +133,11 @@ export default function Dashboard() {
             </div>
             <div className="quick-action-3d rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer hover:border-teal-300 transition-colors"
                  onClick={() => {
-                   // Show vehicle selection for service logs
                    if (vehicles.length === 1) {
                      window.location.href = `/vehicle/${vehicles[0].id}/service-logs`;
                    } else if (vehicles.length > 1) {
-                     alert("Please select a vehicle from Your Vehicles section below to view service logs");
+                     setSelectorActionType('service-logs');
+                     setShowVehicleSelector(true);
                    } else {
                      alert("Please add a vehicle first");
                    }
@@ -203,6 +205,13 @@ export default function Dashboard() {
 
       <BottomNav currentPath="/" />
       <FloatingActionButton />
+      
+      <VehicleSelectorModal
+        isOpen={showVehicleSelector}
+        onClose={() => setShowVehicleSelector(false)}
+        vehicles={vehicles}
+        actionType={selectorActionType}
+      />
     </>
   );
 }
