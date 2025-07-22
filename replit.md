@@ -37,7 +37,7 @@ Preferred communication style: Simple, everyday language.
 - Added delete post functionality with confirmation dialog for user's own broadcasts
 - Implemented automatic 7-day expiry for all broadcast posts with server-side cleanup
 - Posts automatically expire and are deleted one week after creation
-- Hourly cleanup routine removes expired broadcasts from database
+- Daily cleanup routine removes expired broadcasts from database (runs once every 24 hours)
 - Complete broadcast system fully functional with authentic vehicle data display including color, odometer readings and document dates
 
 **July 21, 2025**: Enhanced dashboard with 3D orange-themed tile effects and updated contact support

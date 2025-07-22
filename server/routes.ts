@@ -1633,14 +1633,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Setup automatic cleanup of expired broadcasts (run every hour)
+  // Setup automatic cleanup of expired broadcasts (run once daily)
   setInterval(async () => {
     try {
       await storage.cleanupExpiredBroadcasts();
     } catch (error) {
       console.error("Error during automatic broadcast cleanup:", error);
     }
-  }, 60 * 60 * 1000); // 1 hour in milliseconds
+  }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds (once daily)
 
   // Run initial cleanup on server start
   setTimeout(async () => {
