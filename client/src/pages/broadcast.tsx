@@ -40,6 +40,7 @@ export default function BroadcastPage() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showVehicleSelector, setShowVehicleSelector] = useState(false);
   const [selectedVehicleForSell, setSelectedVehicleForSell] = useState<any>(null);
+  const [broadcastToDelete, setBroadcastToDelete] = useState<number | null>(null);
 
   const form = useForm<BroadcastFormData>({
     resolver: zodResolver(broadcastFormSchema),
@@ -317,9 +318,7 @@ export default function BroadcastPage() {
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            if (confirm("Are you sure you want to delete this post?")) {
-                              deleteBroadcastMutation.mutate(broadcast.id);
-                            }
+                            setBroadcastToDelete(broadcast.id);
                           }}
                           className="text-red-500 hover:text-red-700 hover:bg-red-50 p-0 h-auto w-auto"
                           disabled={deleteBroadcastMutation.isPending}
@@ -753,6 +752,42 @@ export default function BroadcastPage() {
                 </div>
               ))
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={broadcastToDelete !== null} onOpenChange={() => setBroadcastToDelete(null)}>
+        <DialogContent className="w-[90%] max-w-xs mx-auto">
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-sm text-red-600">Delete Post</DialogTitle>
+            <DialogDescription className="text-[10px] text-gray-600">
+              Are you sure you want to delete this post? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex gap-2 pt-1">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setBroadcastToDelete(null)}
+              className="flex-1 h-7 text-[10px]"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                if (broadcastToDelete) {
+                  deleteBroadcastMutation.mutate(broadcastToDelete);
+                  setBroadcastToDelete(null);
+                }
+              }}
+              disabled={deleteBroadcastMutation.isPending}
+              className="flex-1 h-7 text-[10px] bg-red-500 hover:bg-red-600"
+            >
+              {deleteBroadcastMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
