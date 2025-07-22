@@ -24,7 +24,7 @@ export default function BottomNav({ currentPath }: BottomNavProps) {
 
   return (
     <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 max-w-md w-full bg-white/95 backdrop-blur-sm border-t border-red-100 z-20 shadow-lg">
-      <div className="grid grid-cols-4 py-2 px-2">
+      <div className="grid grid-cols-4 gap-0 py-2 px-1">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = currentPath === item.path;
@@ -36,11 +36,11 @@ export default function BottomNav({ currentPath }: BottomNavProps) {
           ];
           
           return (
-            <Link key={item.path} href={item.path}>
+            <Link key={item.path} href={item.path} className="flex-1">
               <Button
                 variant="ghost"
                 size="sm"
-                className={`flex flex-col items-center justify-center py-2 px-1 h-16 space-y-0.5 mx-0.5 rounded-lg relative transition-all duration-200 ${
+                className={`flex flex-col items-center justify-center py-2 px-0.5 h-16 space-y-0.5 w-full rounded-lg relative transition-all duration-200 ${
                   isActive ? colors[index].active : colors[index].inactive
                 }`}
               >
