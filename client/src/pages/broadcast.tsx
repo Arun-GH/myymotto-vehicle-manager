@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { ArrowLeft, Plus, MessageSquare, Eye, Calendar, User, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -72,6 +72,22 @@ export default function BroadcastPage() {
   const { data: userProfile } = useQuery({
     queryKey: ["/api/profile/1"],
   });
+
+  // Auto-populate form with profile data when available
+  useEffect(() => {
+    if (userProfile) {
+      // Only update if form values are currently empty to avoid overwriting user input
+      if (!form.getValues("contactPhone")) {
+        form.setValue("contactPhone", userProfile.phoneNumber || "", { shouldValidate: false });
+      }
+      if (!form.getValues("contactEmail")) {
+        form.setValue("contactEmail", userProfile.emailId || "", { shouldValidate: false });
+      }
+      if (!form.getValues("location")) {
+        form.setValue("location", userProfile.city || "", { shouldValidate: false });
+      }
+    }
+  }, [userProfile, form]);
 
   // Create broadcast mutation
   const createBroadcastMutation = useMutation({
@@ -244,6 +260,10 @@ export default function BroadcastPage() {
                         <div className="bg-white rounded p-1">
                           <span className="text-gray-500 block leading-none">Year</span>
                           <span className="font-medium text-gray-800 leading-tight">{broadcast.vehicle.year}</span>
+                        </div>
+                        <div className="bg-white rounded p-1">
+                          <span className="text-gray-500 block leading-none">Color</span>
+                          <span className="font-medium text-gray-800 leading-tight capitalize">{broadcast.vehicle.color || 'N/A'}</span>
                         </div>
                         <div className="bg-white rounded p-1">
                           <span className="text-gray-500 block leading-none">Fuel</span>
