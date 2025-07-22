@@ -39,7 +39,7 @@ function Router() {
   const [showPermissions, setShowPermissions] = useState(false);
   
   // Check if user is authenticated (in a real app, this would come from session/token)
-  const currentUserId = localStorage.getItem("currentUserId");
+  const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId");
   const isAuthenticated = !!currentUserId;
 
   // Handle splash screen completion

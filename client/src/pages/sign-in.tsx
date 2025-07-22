@@ -138,6 +138,7 @@ export default function SignIn() {
     onSuccess: (data) => {
       setUserId(data.userId);
       // Store authentication state and user data
+      localStorage.setItem("currentUserId", data.userId.toString());
       localStorage.setItem("userId", data.userId.toString());
       localStorage.setItem("authMethod", "pin");
       localStorage.setItem("lastUsedIdentifier", identifier);
@@ -175,6 +176,7 @@ export default function SignIn() {
       });
       
       // Store authentication state and user data
+      localStorage.setItem("currentUserId", userId!.toString());
       localStorage.setItem("userId", userId!.toString());
       localStorage.setItem("authMethod", "pin");
       localStorage.setItem("lastUsedIdentifier", identifier);
@@ -207,6 +209,7 @@ export default function SignIn() {
       });
       
       // Store authentication state
+      localStorage.setItem("currentUserId", userId!.toString());
       localStorage.setItem("userId", userId!.toString());
       localStorage.setItem("authMethod", "biometric");
       
@@ -236,6 +239,7 @@ export default function SignIn() {
       setUserId(data.userId);
       
       // Store authentication state immediately
+      localStorage.setItem("currentUserId", data.userId.toString());
       localStorage.setItem("userId", data.userId.toString());
       localStorage.setItem("authMethod", "otp");
       
