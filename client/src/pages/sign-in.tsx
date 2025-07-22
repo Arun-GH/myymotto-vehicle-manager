@@ -140,6 +140,7 @@ export default function SignIn() {
       // Store authentication state and user data
       localStorage.setItem("currentUserId", data.userId.toString());
       localStorage.setItem("userId", data.userId.toString());
+      localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("authMethod", "pin");
       localStorage.setItem("lastUsedIdentifier", identifier);
       localStorage.setItem("hasPin", "true");
@@ -178,6 +179,7 @@ export default function SignIn() {
       // Store authentication state and user data
       localStorage.setItem("currentUserId", userId!.toString());
       localStorage.setItem("userId", userId!.toString());
+      localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("authMethod", "pin");
       localStorage.setItem("lastUsedIdentifier", identifier);
       localStorage.setItem("hasPin", "true");
@@ -211,6 +213,7 @@ export default function SignIn() {
       // Store authentication state
       localStorage.setItem("currentUserId", userId!.toString());
       localStorage.setItem("userId", userId!.toString());
+      localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("authMethod", "biometric");
       
       // Check if user has profile
@@ -241,6 +244,7 @@ export default function SignIn() {
       // Store authentication state immediately
       localStorage.setItem("currentUserId", data.userId.toString());
       localStorage.setItem("userId", data.userId.toString());
+      localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("authMethod", "otp");
       
       // Always proceed to next screen based on profile status

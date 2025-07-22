@@ -38,15 +38,17 @@ function Router() {
   const [showSplash, setShowSplash] = useState(true);
   const [showPermissions, setShowPermissions] = useState(false);
   
-  // Check if user is authenticated (in a real app, this would come from session/token)
+  // Check if user is authenticated - need proper authentication flag, not just userId
   const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId");
-  const isAuthenticated = !!currentUserId;
+  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
 
   // Handle splash screen completion
   const handleSplashComplete = () => {
     setShowSplash(false);
-    // Don't show permissions automatically after splash
-    // They will be shown after successful login for new users
+    // After splash, check authentication and redirect accordingly
+    if (!isAuthenticated) {
+      setLocation("/sign-in");
+    }
   };
 
   // Handle permissions completion
