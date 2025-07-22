@@ -87,7 +87,7 @@ export default function Dashboard() {
         {/* Vehicle Count Label */}
         <div className="px-3 py-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-xs font-medium text-gray-600">
+            <h2 className="text-sm font-medium text-gray-600">
               {vehicles.length > 0 ? `${vehicles.length} Vehicle${vehicles.length > 1 ? 's' : ''}` : 'Vehicle Management'}
             </h2>
             <div className="text-xs text-gray-500 flex items-center space-x-2">
@@ -114,14 +114,14 @@ export default function Dashboard() {
 
         {/* Quick Actions */}
         <section className="px-3 py-2">
-          <h2 className="text-xs font-semibold mb-3 text-gray-800">Quick Actions</h2>
+          <h2 className="text-sm font-semibold mb-3 text-gray-800">Quick Actions</h2>
           <div className="grid grid-cols-5 gap-2">
             <Link href="/add-vehicle" className="block">
               <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-red-300 transition-all duration-200 h-16 px-1 active:scale-95">
                 <div className="w-5 h-5 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center icon-3d mb-1">
                   <Plus className="w-2.5 h-2.5 text-white" />
                 </div>
-                <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Add Vehicle</span>
+                <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Add Vehicle</span>
               </div>
             </Link>
             <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-purple-300 transition-all duration-200 h-16 px-1 active:scale-95" 
@@ -138,7 +138,7 @@ export default function Dashboard() {
               <div className="w-5 h-5 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-lg flex items-center justify-center icon-3d mb-1">
                 <Files className="w-2.5 h-2.5 text-white" />
               </div>
-              <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Documents</span>
+              <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Documents</span>
             </div>
             <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-teal-300 transition-all duration-200 h-16 px-1 active:scale-95"
                  onClick={() => {
@@ -154,14 +154,14 @@ export default function Dashboard() {
               <div className="w-5 h-5 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center icon-3d mb-1">
                 <Wrench className="w-2.5 h-2.5 text-white" />
               </div>
-              <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Service Log</span>
+              <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Service Log</span>
             </div>
             <Link href="/traffic-violations" className="block">
               <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-300 transition-all duration-200 h-16 px-1 active:scale-95">
                 <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center icon-3d mb-1">
                   <Zap className="w-2.5 h-2.5 text-white" />
                 </div>
-                <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Violations</span>
+                <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Violations</span>
               </div>
             </Link>
             <Link href="/insurance-renewals" className="block">
@@ -169,7 +169,7 @@ export default function Dashboard() {
                 <div className="w-5 h-5 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center icon-3d mb-1">
                   <Shield className="w-2.5 h-2.5 text-white" />
                 </div>
-                <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Insurance</span>
+                <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Insurance</span>
               </div>
             </Link>
           </div>
@@ -180,8 +180,8 @@ export default function Dashboard() {
         {/* Vehicle List */}
         <section className="px-3 py-2">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold">Your Vehicles</h2>
-            <Button variant="ghost" size="sm" className="text-primary text-xs h-6 px-2">
+            <h2 className="text-base font-semibold">Your Vehicles</h2>
+            <Button variant="ghost" size="sm" className="text-primary text-sm h-7 px-2">
               View All
             </Button>
           </div>

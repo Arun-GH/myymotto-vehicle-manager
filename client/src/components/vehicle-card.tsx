@@ -153,11 +153,11 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 </div>
               )}
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-800 text-sm">
+                <h3 className="font-semibold text-gray-800 text-base">
                   {vehicle.make?.toUpperCase()}{vehicle.model ? ` ${vehicle.model}` : ''} {vehicle.year && `(${vehicle.year})`}
                 </h3>
                 <div className="flex items-center space-x-1">
-                  <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
+                  <p className="text-sm text-gray-600">{vehicle.licensePlate}</p>
                   {getVehicleTypeIcon(vehicle.vehicleType)}
                   {getFuelTypeIcon(vehicle.fuelType)}
                 </div>
@@ -217,7 +217,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           <div className="mb-2 p-1.5 bg-orange-50 border border-orange-200 rounded-lg">
             <div className="flex items-center space-x-1">
               <AlertTriangle className="w-3 h-3 text-orange-600" />
-              <span className="text-[10px] font-medium text-orange-800">
+              <span className="text-xs font-medium text-orange-800">
                 Missing: {missingDetails.join(", ")}
               </span>
             </div>
@@ -227,28 +227,28 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         <div className="grid grid-cols-2 gap-3 text-xs mb-2">
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold text-[10px]">Insured date:</span>
-              <span className="text-gray-800 text-[10px]">
+              <span className="text-amber-800 font-bold text-xs">Insured date:</span>
+              <span className="text-gray-800 text-xs">
                 {vehicle.insuranceExpiry ? new Date(vehicle.insuranceExpiry).toLocaleDateString() : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold text-[10px]">Latest Emission:</span>
-              <span className="text-gray-800 text-[10px]">
+              <span className="text-amber-800 font-bold text-xs">Latest Emission:</span>
+              <span className="text-gray-800 text-xs">
                 {vehicle.emissionExpiry ? new Date(vehicle.emissionExpiry).toLocaleDateString() : "Not set"}
               </span>
             </div>
           </div>
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold text-[10px]">Last Service Date:</span>
-              <span className="text-gray-800 text-[10px]">
+              <span className="text-amber-800 font-bold text-xs">Last Service Date:</span>
+              <span className="text-gray-800 text-xs">
                 {vehicle.lastServiceDate ? new Date(vehicle.lastServiceDate).toLocaleDateString() : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold text-[10px]">Next Service Date:</span>
-              <span className={`text-[10px] ${
+              <span className="text-amber-800 font-bold text-xs">Next Service Date:</span>
+              <span className={`text-xs ${
                 nextServiceInfo.status === "overdue" ? "text-red-600" :
                 nextServiceInfo.status === "due_soon" ? "text-orange-600" :
                 nextServiceInfo.status === "due_month" ? "text-yellow-600" :
