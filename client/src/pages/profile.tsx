@@ -21,13 +21,42 @@ import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 // Authentication is now handled via localStorage
 
 const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-const states = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
-  "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
-  "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
-  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh",
-  "Uttarakhand", "West Bengal", "Delhi", "Jammu and Kashmir", "Ladakh"
-];
+
+const stateCityMapping: Record<string, string[]> = {
+  "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool", "Rajahmundry", "Tirupati", "Kadapa"],
+  "Karnataka": ["Bengaluru", "Mysuru", "Hubli", "Mangaluru", "Belagavi", "Davangere", "Ballari", "Tumakuru"],
+  "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Alappuzha", "Kollam", "Palakkad", "Kannur"],
+  "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tirunelveli", "Tiruppur", "Erode"],
+  "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Khammam", "Karimnagar", "Ramagundam", "Mahbubnagar", "Nalgonda"],
+  "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad", "Solapur", "Kolhapur", "Sangli"],
+  "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Jamnagar", "Gandhinagar", "Anand"],
+  "Delhi": ["New Delhi", "North Delhi", "South Delhi", "East Delhi", "West Delhi", "Central Delhi"],
+  "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol", "Siliguri", "Malda", "Bardhaman", "Kharagpur"],
+  "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Bikaner", "Ajmer", "Bhilwara", "Alwar"],
+  "Uttar Pradesh": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Varanasi", "Meerut", "Allahabad", "Bareilly"],
+  "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Jabalpur", "Ujjain", "Sagar", "Dewas", "Satna"],
+  "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Purnia", "Darbhanga", "Bihar Sharif", "Arrah"],
+  "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Sambalpur", "Puri", "Balasore", "Baripada"],
+  "Punjab": ["Chandigarh", "Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda", "Mohali", "Firozpur"],
+  "Haryana": ["Faridabad", "Gurgaon", "Panipat", "Ambala", "Yamunanagar", "Rohtak", "Hisar", "Karnal"],
+  "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon", "Tinsukia", "Tezpur", "Bongaigaon"],
+  "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar", "Phusro", "Hazaribagh", "Giridih"],
+  "Himachal Pradesh": ["Shimla", "Dharamshala", "Solan", "Mandi", "Palampur", "Nahan", "Kullu", "Hamirpur"],
+  "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Haldwani", "Rudrapur", "Kashipur", "Rishikesh", "Kotdwar"],
+  "Goa": ["Panaji", "Vasco da Gama", "Margao", "Mapusa", "Ponda", "Bicholim", "Curchorem", "Sanquelim"],
+  "Chhattisgarh": ["Raipur", "Bhilai", "Korba", "Bilaspur", "Durg", "Rajnandgaon", "Jagdalpur", "Raigarh"],
+  "Tripura": ["Agartala", "Dharmanagar", "Udaipur", "Kailasahar", "Belonia", "Khowai", "Bishramganj", "Teliamura"],
+  "Manipur": ["Imphal", "Thoubal", "Bishnupur", "Churachandpur", "Kakching", "Ukhrul", "Senapati", "Tamenglong"],
+  "Meghalaya": ["Shillong", "Tura", "Cherrapunji", "Jowai", "Nongstoin", "Baghmara", "Williamnagar", "Resubelpara"],
+  "Mizoram": ["Aizawl", "Lunglei", "Saiha", "Champhai", "Kolasib", "Serchhip", "Mamit", "Lawngtlai"],
+  "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Tuensang", "Wokha", "Zunheboto", "Phek", "Kiphire"],
+  "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat", "Tezpur", "Bomdila", "Tawang", "Ziro", "Along"],
+  "Sikkim": ["Gangtok", "Namchi", "Gyalshing", "Mangan", "Jorethang", "Nayabazar", "Rangpo", "Singtam"],
+  "Jammu and Kashmir": ["Srinagar", "Jammu", "Anantnag", "Baramulla", "Sopore", "Kathua", "Udhampur", "Punch"],
+  "Ladakh": ["Leh", "Kargil", "Nubra", "Changthang", "Zanskar", "Drass", "Sankoo", "Turtuk"]
+};
+
+const states = Object.keys(stateCityMapping);
 
 export default function Profile() {
   const [, setLocation] = useLocation();
@@ -41,6 +70,12 @@ export default function Profile() {
   const [licenseImage, setLicenseImage] = useState<File | null>(null);
   const [licenseImagePreview, setLicenseImagePreview] = useState<string | null>(null);
   const currentUserId = localStorage.getItem("currentUserId");
+
+  // Check authentication
+  if (!currentUserId) {
+    setLocation("/sign-in");
+    return null;
+  }
 
   const { data: profile, isLoading } = useQuery<UserProfile>({
     queryKey: ["/api/profile", currentUserId],
@@ -63,7 +98,7 @@ export default function Profile() {
     resolver: zodResolver(insertUserProfileSchema),
     defaultValues: {
       name: "",
-      age: 25,
+      age: undefined,
       gender: "",
       address: "",
       bloodGroup: "",
@@ -76,6 +111,20 @@ export default function Profile() {
       driversLicenseValidTill: "",
     },
   });
+
+  // Watch state changes to update city options
+  const selectedState = form.watch("state");
+  const availableCities = selectedState ? stateCityMapping[selectedState] || [] : [];
+
+  // Clear city when state changes
+  useEffect(() => {
+    if (selectedState && form.getValues().city) {
+      const currentCity = form.getValues().city;
+      if (!availableCities.includes(currentCity)) {
+        form.setValue("city", "");
+      }
+    }
+  }, [selectedState, availableCities, form]);
 
   // Handle file upload
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -621,7 +670,7 @@ export default function Profile() {
                           <FormControl>
                             <Input 
                               placeholder="Enter your full name"
-                              className="h-8 text-sm"
+                              className="h-8 text-sm text-black"
                               {...field}
                               onChange={(e) => {
                                 const upperValue = e.target.value.toUpperCase();
@@ -644,11 +693,12 @@ export default function Profile() {
                             <FormControl>
                               <Input 
                                 type="number"
-                                className="h-8 text-sm"
-                                {...field} 
+                                placeholder="Age"
+                                className="h-8 text-sm text-black"
+                                value={field.value || ''}
                                 onChange={(e) => {
                                   const value = e.target.value;
-                                  field.onChange(value === '' ? 0 : parseInt(value) || 0);
+                                  field.onChange(value === '' ? undefined : parseInt(value) || undefined);
                                 }}
                               />
                             </FormControl>
@@ -719,7 +769,7 @@ export default function Profile() {
                           <FormControl>
                             <Textarea 
                               placeholder="Enter your complete address"
-                              className="text-sm resize-none h-16"
+                              className="text-sm text-black resize-none h-16"
                               {...field}
                               onChange={(e) => {
                                 const upperValue = e.target.value.toUpperCase();
@@ -735,34 +785,13 @@ export default function Profile() {
                     <div className="grid grid-cols-2 gap-2">
                       <FormField
                         control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs">City</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="Enter city"
-                                className="h-8 text-sm"
-                                {...field}
-                                onChange={(e) => {
-                                  const upperValue = e.target.value.toUpperCase();
-                                  field.onChange(upperValue);
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
                         name="state"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-xs">State</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
-                                <SelectTrigger className="h-8 text-sm">
+                                <SelectTrigger className="h-8 text-sm text-black">
                                   <SelectValue placeholder="Select state" />
                                 </SelectTrigger>
                               </FormControl>
@@ -770,6 +799,30 @@ export default function Profile() {
                                 {states.map((state) => (
                                   <SelectItem key={state} value={state}>
                                     {state}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">City</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!selectedState}>
+                              <FormControl>
+                                <SelectTrigger className="h-8 text-sm text-black">
+                                  <SelectValue placeholder={selectedState ? "Select city" : "Select state first"} />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {availableCities.map((city) => (
+                                  <SelectItem key={city} value={city}>
+                                    {city}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -789,12 +842,12 @@ export default function Profile() {
                           <FormControl>
                             <Input 
                               placeholder="Enter 6-digit pin code"
-                              className="h-8 text-sm"
+                              className="h-8 text-sm text-black"
                               maxLength={6}
                               {...field}
                               onChange={(e) => {
-                                const upperValue = e.target.value.toUpperCase();
-                                field.onChange(upperValue);
+                                const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                                field.onChange(value);
                               }}
                             />
                           </FormControl>
@@ -818,7 +871,7 @@ export default function Profile() {
                             <Input 
                               type="email" 
                               placeholder="user@example.com"
-                              className="h-8 text-sm"
+                              className="h-8 text-sm text-black"
                               {...field}
                             />
                           </FormControl>
@@ -836,7 +889,7 @@ export default function Profile() {
                           <FormControl>
                             <Input 
                               placeholder="+91 98765 43210"
-                              className="h-8 text-sm"
+                              className="h-8 text-sm text-black"
                               {...field}
                             />
                           </FormControl>
@@ -860,7 +913,7 @@ export default function Profile() {
                             <FormControl>
                               <Input 
                                 placeholder="MH12 20220012345" 
-                                className="h-8 text-sm"
+                                className="h-8 text-sm text-black"
                                 {...field}
                                 onChange={(e) => {
                                   const upperValue = e.target.value.toUpperCase();
@@ -882,7 +935,7 @@ export default function Profile() {
                             <FormControl>
                               <Input 
                                 type="date"
-                                className="h-8 text-sm"
+                                className="h-8 text-sm text-black"
                                 {...field}
                                 value={field.value || ""}
                               />
