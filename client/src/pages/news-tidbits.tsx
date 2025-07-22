@@ -42,17 +42,11 @@ export default function NewsTidbits() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/news"] });
       queryClient.invalidateQueries({ queryKey: ["/api/news/cache-info"] });
-      toast({
-        title: "News Refreshed",
-        description: "Latest government policy updates loaded successfully.",
-      });
+      // No popup notification - just silent refresh
     },
     onError: () => {
-      toast({
-        title: "Refresh Failed",
-        description: "Could not fetch latest news. Showing cached data.",
-        variant: "destructive",
-      });
+      // Silent error handling - no popup
+      queryClient.invalidateQueries({ queryKey: ["/api/news"] });
     },
   });
 
