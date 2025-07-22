@@ -93,15 +93,16 @@ Preferred communication style: Simple, everyday language.
 - Documents section now shows only "View | Upload" options, reducing visual clutter
 - Edit icon positioned before Delete icon in top-right corner for better user experience
 
-**July 22, 2025**: Fixed Service Log navigation to combined service management page and added floating buttons
-- Fixed Service Log buttons to navigate to combined service page (/vehicle/:id/service) instead of service logs view
-- Service Log buttons now correctly open the page with "Service Details" and "Essential Replacements" options
-- Updated Quick Actions Service Log button, vehicle selector modal, and all service log page buttons
-- Added floating action button to service logs page with teal gradient for quick access to service management
-- Added "Add New Service Log" bottom button that appears when existing service logs are present  
+**July 22, 2025**: Fixed Service Log navigation flow and added floating buttons with proper user journey
+- Service Log buttons now correctly navigate to service logs view page (/vehicle/:id/service-logs) first
+- Users can view existing service history before deciding to add new logs
+- Add service log buttons within service logs page navigate to combined service page with "Service Details" and "Essential Replacements" options
+- Updated Quick Actions Service Log button and vehicle selector modal to show service logs view first
+- Added floating action button to service logs page with teal gradient for quick access to add service options
+- Added "Add New Service Log" bottom button that appears when existing service logs are present
 - Document page: Orange gradient floating button with Plus icon for document uploading
-- Service management: All buttons now point to combined service page with dual service options
-- Enhanced user experience with proper navigation flow to service management interface
+- Proper user flow: Dashboard → Service logs view → Add service (with service/essential options)
+- Enhanced user experience with logical navigation sequence and floating buttons for quick access
 - Floating buttons positioned to avoid bottom navigation interference with proper shadows and hover effects
 
 **July 22, 2025**: Restructured Quick Actions with Documents and Service Log buttons and vehicle selection modal
