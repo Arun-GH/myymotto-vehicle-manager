@@ -79,8 +79,10 @@ export default function InfoDropdown() {
   };
 
   const handleLogout = () => {
-    // Redirect to logout API endpoint
-    window.location.href = "/api/logout";
+    // Clear all localStorage data for logout
+    localStorage.clear();
+    // Redirect to sign-in page
+    window.location.href = "/sign-in";
   };
 
   const handleStarClick = (starValue: number) => {

@@ -397,6 +397,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(400).json({ message: error.message || "Failed to fetch user" });
     }
   });
+
+  // Logout route
+  app.get("/api/logout", (req, res) => {
+    try {
+      // Clear localStorage data on client side by redirecting to sign-in page
+      // Since this app uses localStorage for session management, 
+      // the actual logout happens on the client side
+      res.redirect("/sign-in");
+    } catch (error) {
+      console.error("Logout error:", error);
+      res.status(500).json({ message: "Logout failed" });
+    }
+  });
   
   // User Profile routes
   app.get("/api/profile/:userId", async (req, res) => {
