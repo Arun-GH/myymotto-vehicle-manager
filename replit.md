@@ -10,6 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 22, 2025**: Enhanced service centers search with location-based functionality and improved user experience
+- Renamed search button from "Search" to "Service Centres Near You" on dashboard for better clarity
+- Updated service centers page header to "Service Centres Near You" reflecting location-aware functionality  
+- Enhanced location detection with improved error handling and user-friendly messaging
+- Added specific error messages for different geolocation failure scenarios (permission denied, unavailable, timeout)
+- Improved location status display with distinct icons and styling for current location vs location needed states
+- Added loading indicator with spinner animation while detecting user location
+- Enhanced location caching (5 minutes) and increased timeout (15 seconds) for better reliability
+- Updated search placeholder to "Search nearby service centers or services..." for location context
+- Service centers now automatically sorted by distance from user's actual location when available
+- Fallback to default service centers with clear messaging when location access is unavailable
+
 **July 22, 2025**: Implemented comprehensive date validation system to prevent future dates in all vehicle and service forms
 - Added Zod schema validation with .refine() method for insuranceExpiry, emissionExpiry, and lastServiceDate fields
 - Enhanced client-side validation using HTML max attribute set to today's date (new Date().toISOString().split('T')[0])

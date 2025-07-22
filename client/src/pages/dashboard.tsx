@@ -93,8 +93,8 @@ export default function Dashboard() {
             <div className="text-xs text-gray-500 flex items-center space-x-2">
               <Link href="/service-centers" className="text-orange-600 hover:text-orange-800 flex items-center space-x-1">
                 <Search className="w-3 h-3" />
-                <span className="hidden sm:inline">Search</span>
-                <span className="sm:hidden">Search</span>
+                <span className="hidden sm:inline">Service Centres Near You</span>
+                <span className="sm:hidden">Near You</span>
               </Link>
               <span className="text-gray-400">|</span>
               <Link href="/climbing-game" className="text-purple-600 hover:text-purple-800 flex items-center space-x-1">

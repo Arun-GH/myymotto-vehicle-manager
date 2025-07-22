@@ -102,9 +102,9 @@ export default function ServiceCenters() {
     setLocationError(null);
 
     if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by this browser");
+      setLocationError("Geolocation is not supported by this browser. Showing default service centers.");
       setIsLoading(false);
-      // Load default service centers
+      // Load default service centers without distance calculation
       setServiceCenters(mockServiceCenters);
       return;
     }
@@ -114,8 +114,7 @@ export default function ServiceCenters() {
         const { latitude, longitude } = position.coords;
         setUserLocation({ lat: latitude, lng: longitude });
         
-        // In a real app, you'd make an API call to get nearby service centers
-        // For now, we'll use mock data with calculated distances
+        // Calculate distances based on user's actual location
         const centersWithDistance = mockServiceCenters.map(center => ({
           ...center,
           distance: calculateDistance(latitude, longitude, center.lat, center.lng)
@@ -125,12 +124,33 @@ export default function ServiceCenters() {
         setIsLoading(false);
       },
       (error) => {
-        setLocationError("Unable to retrieve your location");
+        let errorMessage = "Unable to retrieve your location. ";
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage += "Please allow location access to find nearby service centers.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage += "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage += "Location request timed out.";
+            break;
+          default:
+            errorMessage += "An unknown error occurred.";
+            break;
+        }
+        errorMessage += " Showing default service centers.";
+        
+        setLocationError(errorMessage);
         setIsLoading(false);
-        // Load default service centers
+        // Load default service centers without distance calculation
         setServiceCenters(mockServiceCenters);
       },
-      { timeout: 10000, enableHighAccuracy: true }
+      { 
+        timeout: 15000, 
+        enableHighAccuracy: true,
+        maximumAge: 300000 // Cache location for 5 minutes
+      }
     );
   };
 
@@ -183,7 +203,7 @@ export default function ServiceCenters() {
               />
               <div>
                 <ColorfulLogo />
-                <p className="text-sm text-red-600">Service Centers</p>
+                <p className="text-sm text-red-600">Service Centres Near You</p>
               </div>
             </div>
           </div>
@@ -197,7 +217,7 @@ export default function ServiceCenters() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
               type="text"
-              placeholder="Search service centers or services..."
+              placeholder="Search nearby service centers or services..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -210,24 +230,44 @@ export default function ServiceCenters() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <MapPin className="w-4 h-4 text-green-600" />
-                <span className="text-sm">
-                  {userLocation ? "Using your current location" : "Using default location"}
-                </span>
+                {userLocation ? (
+                  <>
+                    <Navigation className="w-4 h-4 text-green-600" />
+                    <span className="text-sm text-green-700">
+                      Using your current location
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <MapPin className="w-4 h-4 text-orange-600" />
+                    <span className="text-sm text-orange-700">
+                      Location access needed for accurate results
+                    </span>
+                  </>
+                )}
               </div>
-              {!userLocation && (
+              {!userLocation && !isLoading && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={getCurrentLocation}
                   disabled={isLoading}
+                  className="border-orange-200 text-orange-600 hover:bg-orange-50"
                 >
-                  {isLoading ? "Locating..." : "Get Location"}
+                  Enable Location
                 </Button>
+              )}
+              {isLoading && (
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-sm text-orange-600">Getting location...</span>
+                </div>
               )}
             </div>
             {locationError && (
-              <p className="text-xs text-orange-600 mt-1">{locationError}</p>
+              <div className="mt-2 p-2 bg-orange-50 rounded-lg">
+                <p className="text-xs text-orange-700">{locationError}</p>
+              </div>
             )}
           </CardContent>
         </Card>
