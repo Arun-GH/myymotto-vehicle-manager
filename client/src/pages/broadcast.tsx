@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { insertBroadcastSchema } from "@shared/schema";
 import { z } from "zod";
 import ColorfulLogo from "@/components/colorful-logo";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 const broadcastFormSchema = z.object({
   type: z.string(),
@@ -258,7 +259,7 @@ export default function BroadcastPage() {
                 <ArrowLeft className="w-4 h-4" />
               </button>
               <img 
-                src="/uploads/Mymotto_Logo_Green_Revised_1752603344750.png" 
+                src={logoImage} 
                 alt="Myymotto Logo" 
                 className="w-10 h-10 rounded-lg"
               />
