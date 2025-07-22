@@ -249,6 +249,12 @@ export default function BroadcastPage() {
       {/* Header */}
       <div className="header-gradient-border px-3 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setLocation("/")}
+            className="text-gray-600 hover:text-gray-800 hover:bg-red-50 p-1 rounded-full"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </button>
           <img 
             src="/uploads/Mymotto_Logo_Green_Revised_1752603344750.png" 
             alt="Myymotto Logo" 
@@ -260,24 +266,16 @@ export default function BroadcastPage() {
           </div>
         </div>
         
-        <div className="flex items-center gap-1">
-          <Button
-            onClick={() => {
-              initializeFormWithProfile();
-              setShowCreateDialog(true);
-            }}
-            className="bg-orange-500 hover:bg-orange-600 text-white h-6 px-2 text-[9px]"
-          >
-            <Plus className="w-2 h-2 mr-0.5" />
-            Post
-          </Button>
-          <button
-            onClick={() => setLocation("/")}
-            className="text-gray-600 hover:text-gray-800 hover:bg-gray-50 p-1 rounded-full"
-          >
-            <ArrowLeft className="w-3 h-3" />
-          </button>
-        </div>
+        <Button
+          onClick={() => {
+            initializeFormWithProfile();
+            setShowCreateDialog(true);
+          }}
+          className="bg-orange-500 hover:bg-orange-600 text-white h-6 px-2 text-[9px]"
+        >
+          <Plus className="w-2 h-2 mr-0.5" />
+          Post
+        </Button>
       </div>
 
       {/* Content */}
