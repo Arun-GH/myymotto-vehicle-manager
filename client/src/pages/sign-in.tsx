@@ -209,20 +209,21 @@ export default function SignIn() {
       localStorage.setItem("userId", data.userId.toString());
       localStorage.setItem("authMethod", "otp");
       
-      // For new users without profile, offer PIN setup
-      if (data.userId && !data.hasProfile) {
-        setStep("set-pin");
-        toast({
-          title: "Account Created",
-          description: "Let's set up secure authentication for your account",
-        });
-      } else {
-        // Existing user with profile - go directly to dashboard
+      // Always proceed to next screen based on profile status
+      if (data.hasProfile) {
+        // User has profile - go to dashboard
         toast({
           title: "Login Successful",
           description: "Welcome back to Myymotto!",
         });
         setLocation("/");
+      } else {
+        // User needs to create profile - skip PIN setup
+        toast({
+          title: "Login Successful", 
+          description: "Please complete your profile setup",
+        });
+        setLocation("/profile");
       }
     },
     onError: (error: any) => {
