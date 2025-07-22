@@ -379,13 +379,13 @@ export default function Profile() {
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-10 h-10 rounded-lg"
+                className="w-8 h-8 rounded-lg"
               />
               <div>
-                <div className="text-base font-bold">
+                <div className="text-sm font-bold">
                   <ColorfulLogo />
                 </div>
-                <p className="text-xs text-red-600">
+                <p className="text-[10px] text-red-600">
                   {profile ? (isEditing ? "Edit Profile" : "Profile") : "Create Profile"}
                 </p>
               </div>
@@ -395,7 +395,7 @@ export default function Profile() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-gray-600 hover:bg-red-50 p-1"
+                  className="text-gray-600 hover:bg-red-50 h-6 text-xs px-2"
                   onClick={() => setIsEditing(true)}
                 >
                   Edit
@@ -405,7 +405,7 @@ export default function Profile() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gray-600 hover:bg-red-50 p-1"
+                  className="text-gray-600 hover:bg-red-50 w-8 h-8"
                 >
                   <Settings className="w-4 h-4" />
                 </Button>
@@ -416,14 +416,14 @@ export default function Profile() {
         </div>
       </header>
 
-      <div className="p-4 pb-20">
+      <div className="p-2 pb-20">
         {!isEditing && profile ? (
           // Display Mode
           <Card className="shadow-orange">
-            <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
+            <CardHeader className="p-2 pb-2">
+              <CardTitle className="text-lg">Personal Information</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="p-2 space-y-3">
               {/* Profile Picture Display */}
               {profile.profilePicture && (
                 <div className="flex justify-center">
@@ -538,15 +538,15 @@ export default function Profile() {
         ) : (
           // Edit/Create Mode
           <Card className="shadow-orange">
-            <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Personal Information</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
                   {/* Profile Picture Upload Section */}
-                  <div className="space-y-4">
-                    <label className="text-sm font-medium">Profile Picture</label>
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-gray-700">Profile Picture</label>
                     
                     {/* Profile Picture Preview */}
                     <div className="flex justify-center">
@@ -555,45 +555,45 @@ export default function Profile() {
                           <img 
                             src={profileImagePreview} 
                             alt="Profile Preview" 
-                            className="w-24 h-24 rounded-full object-cover shadow-md"
+                            className="w-16 h-16 rounded-full object-cover shadow-md"
                           />
                           <Button
                             type="button"
                             variant="destructive"
                             size="icon"
-                            className="absolute -top-2 -right-2 w-6 h-6 rounded-full"
+                            className="absolute -top-1 -right-1 w-5 h-5 rounded-full"
                             onClick={removeProfileImage}
                           >
-                            <X className="w-3 h-3" />
+                            <X className="w-2.5 h-2.5" />
                           </Button>
                         </div>
                       ) : (
-                        <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center">
-                          <User className="w-8 h-8 text-muted-foreground" />
+                        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                          <User className="w-6 h-6 text-muted-foreground" />
                         </div>
                       )}
                     </div>
 
                     {/* Upload Options */}
-                    <div className="flex gap-2 justify-center">
+                    <div className="flex gap-1.5 justify-center">
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => setShowCamera(true)}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-1.5 h-7 text-xs px-2"
                       >
-                        <Camera className="w-4 h-4" />
+                        <Camera className="w-3 h-3" />
                         Camera
                       </Button>
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-1.5 h-7 text-xs px-2"
                         onClick={() => document.getElementById('profile-upload')?.click()}
                       >
-                        <Upload className="w-4 h-4" />
+                        <Upload className="w-3 h-3" />
                         Upload
                       </Button>
                     </div>
@@ -608,153 +608,20 @@ export default function Profile() {
                     />
                   </div>
 
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Name</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="Enter your full name" 
-                            {...field}
-                            onChange={(e) => {
-                              const upperValue = e.target.value.toUpperCase();
-                              field.onChange(upperValue);
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
+                  {/* Basic Info Section */}
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Basic Information</h4>
+                    
                     <FormField
                       control={form.control}
-                      name="age"
+                      name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Age</FormLabel>
+                          <FormLabel className="text-xs">Full Name</FormLabel>
                           <FormControl>
                             <Input 
-                              type="number" 
-                              {...field} 
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                field.onChange(value === '' ? 0 : parseInt(value) || 0);
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="gender"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Gender</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select gender" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="male">Male</SelectItem>
-                              <SelectItem value="female">Female</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                              <SelectItem value="prefer_not_to_say">Prefer not to say</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  
-                  <FormField
-                    control={form.control}
-                    name="bloodGroup"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Blood Group</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select blood group" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {bloodGroups.map((group) => (
-                              <SelectItem key={group} value={group}>
-                                {group}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Address</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Enter your complete address"
-                            {...field}
-                            onChange={(e) => {
-                              const upperValue = e.target.value.toUpperCase();
-                              field.onChange(upperValue);
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="state"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>State</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select state" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {states.map((state) => (
-                                <SelectItem key={state} value={state}>
-                                  {state}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>City</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="Enter city" 
+                              placeholder="Enter your full name"
+                              className="h-8 text-sm"
                               {...field}
                               onChange={(e) => {
                                 const upperValue = e.target.value.toUpperCase();
@@ -762,88 +629,120 @@ export default function Profile() {
                               }}
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-xs" />
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name="pinCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Pin Code</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="Enter 6-digit pin code" 
-                            maxLength={6}
-                            {...field}
-                            onChange={(e) => {
-                              const upperValue = e.target.value.toUpperCase();
-                              field.onChange(upperValue);
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="alternatePhone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Alternate Phone Number (Optional)</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="+91 98765 43210" 
-                            {...field}
-                            onChange={(e) => {
-                              const upperValue = e.target.value.toUpperCase();
-                              field.onChange(upperValue);
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email Address *</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="email" 
-                            placeholder="user@example.com" 
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Driver's License Section */}
-                  <div className="pt-4 border-t border-gray-200">
-                    <h4 className="font-medium text-gray-900 mb-4">Driver's License (Optional)</h4>
-                    
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-2">
                       <FormField
                         control={form.control}
-                        name="driversLicenseNumber"
+                        name="age"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>License Number</FormLabel>
+                            <FormLabel className="text-xs">Age</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="e.g., MH12 20220012345" 
-                                className="h-9"
+                                type="number"
+                                className="h-8 text-sm"
+                                {...field} 
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === '' ? 0 : parseInt(value) || 0);
+                                }}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="gender"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Gender</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="h-8 text-sm">
+                                  <SelectValue placeholder="Gender" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="male">Male</SelectItem>
+                                <SelectItem value="female">Female</SelectItem>
+                                <SelectItem value="other">Other</SelectItem>
+                                <SelectItem value="prefer_not_to_say">Prefer not to say</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="bloodGroup"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Blood Group</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="h-8 text-sm">
+                                  <SelectValue placeholder="Blood" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {bloodGroups.map((group) => (
+                                  <SelectItem key={group} value={group}>
+                                    {group}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Address Section */}
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Address Information</h4>
+                    
+                    <FormField
+                      control={form.control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Complete Address</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Enter your complete address"
+                              className="text-sm resize-none h-16"
+                              {...field}
+                              onChange={(e) => {
+                                const upperValue = e.target.value.toUpperCase();
+                                field.onChange(upperValue);
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">City</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="Enter city"
+                                className="h-8 text-sm"
                                 {...field}
                                 onChange={(e) => {
                                   const upperValue = e.target.value.toUpperCase();
@@ -851,7 +750,125 @@ export default function Profile() {
                                 }}
                               />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="state"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">State</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="h-8 text-sm">
+                                  <SelectValue placeholder="Select state" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {states.map((state) => (
+                                  <SelectItem key={state} value={state}>
+                                    {state}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="pinCode"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Pin Code</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Enter 6-digit pin code"
+                              className="h-8 text-sm"
+                              maxLength={6}
+                              {...field}
+                              onChange={(e) => {
+                                const upperValue = e.target.value.toUpperCase();
+                                field.onChange(upperValue);
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Contact Section */}
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Contact Information</h4>
+                    
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Email Address</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="email" 
+                              placeholder="user@example.com"
+                              className="h-8 text-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="alternatePhone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Alternate Phone (Optional)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="+91 98765 43210"
+                              className="h-8 text-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Driver's License Section */}
+                  <div className="space-y-2 pt-2 border-t border-gray-100">
+                    <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Driver's License (Optional)</h4>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      <FormField
+                        control={form.control}
+                        name="driversLicenseNumber"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">License Number</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="MH12 20220012345" 
+                                className="h-8 text-sm"
+                                {...field}
+                                onChange={(e) => {
+                                  const upperValue = e.target.value.toUpperCase();
+                                  field.onChange(upperValue);
+                                }}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
                           </FormItem>
                         )}
                       />
@@ -861,23 +878,24 @@ export default function Profile() {
                         name="driversLicenseValidTill"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>License Valid Till</FormLabel>
+                            <FormLabel className="text-xs">Valid Till</FormLabel>
                             <FormControl>
                               <Input 
                                 type="date"
-                                className="h-9"
-                                {...field} 
+                                className="h-8 text-sm"
+                                {...field}
+                                value={field.value || ""}
                               />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-xs" />
                           </FormItem>
                         )}
                       />
                     </div>
 
                     {/* License Copy Upload Section */}
-                    <div className="space-y-4 mt-4">
-                      <label className="text-sm font-medium">License Copy (Optional)</label>
+                    <div className="space-y-2 mt-2">
+                      <label className="text-xs font-medium text-gray-700">License Copy (Optional)</label>
                       
                       {/* License Image Preview */}
                       <div className="flex justify-center">
@@ -886,43 +904,44 @@ export default function Profile() {
                             <img 
                               src={licenseImagePreview} 
                               alt="License Preview" 
-                              className="w-full max-w-sm rounded-lg object-cover shadow-md"
+                              className="w-full max-w-48 rounded-lg object-cover shadow-md"
                             />
                             <Button
                               type="button"
                               variant="destructive"
                               size="icon"
-                              className="absolute -top-2 -right-2 w-6 h-6 rounded-full"
+                              className="absolute -top-1 -right-1 w-5 h-5 rounded-full"
                               onClick={removeLicenseImage}
                             >
-                              <X className="w-3 h-3" />
+                              <X className="w-2.5 h-2.5" />
                             </Button>
                           </div>
                         ) : (
-                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                            <div className="flex flex-col items-center space-y-2">
-                              <Camera className="w-8 h-8 text-gray-400" />
-                              <p className="text-sm text-gray-500">No license copy uploaded</p>
+                          <div className="border border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <div className="flex flex-col items-center space-y-1">
+                              <Camera className="w-5 h-5 text-gray-400" />
+                              <p className="text-xs text-gray-500">No license uploaded</p>
                             </div>
                           </div>
                         )}
                       </div>
 
                       {/* License Upload Buttons */}
-                      <div className="flex space-x-2">
+                      <div className="flex gap-1.5 justify-center">
                         <Button
                           type="button"
                           variant="outline"
-                          className="flex-1"
+                          size="sm"
                           onClick={() => setShowLicenseCamera(true)}
+                          className="flex items-center gap-1.5 h-7 text-xs px-2"
                         >
-                          <Camera className="w-4 h-4 mr-2" />
+                          <Camera className="w-3 h-3" />
                           Camera
                         </Button>
-                        <label className="flex-1">
-                          <Button type="button" variant="outline" className="w-full" asChild>
+                        <label>
+                          <Button type="button" variant="outline" size="sm" className="flex items-center gap-1.5 h-7 text-xs px-2" asChild>
                             <div>
-                              <Upload className="w-4 h-4 mr-2" />
+                              <Upload className="w-3 h-3" />
                               Upload
                             </div>
                           </Button>
@@ -937,34 +956,33 @@ export default function Profile() {
                     </div>
                   </div>
 
-                  <div className="flex space-x-3 pt-4">
-                    {profile && (
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        className="flex-1"
-                        onClick={() => setIsEditing(false)}
-                      >
-                        Cancel
-                      </Button>
-                    )}
-                    <Button 
-                      type="submit" 
-                      className="flex-1"
-                      disabled={createProfileMutation.isPending || updateProfileMutation.isPending}
-                    >
-                      {createProfileMutation.isPending || updateProfileMutation.isPending ? (
-                        <>
-                          <Save className="w-4 h-4 mr-2" />
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="w-4 h-4 mr-2" />
-                          {profile ? "Update Profile" : "Create Profile"}
-                        </>
+                  {/* Action Buttons */}
+                  <div className="pt-2 border-t border-gray-100 mt-3">
+                    <div className="flex gap-2">
+                      {profile && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="flex-1 h-8 text-sm"
+                          onClick={() => setIsEditing(false)}
+                        >
+                          Cancel
+                        </Button>
                       )}
-                    </Button>
+                      <Button 
+                        type="submit"
+                        className="flex-1 gradient-warm text-white border-0 h-8 text-sm"
+                        disabled={createProfileMutation.isPending || updateProfileMutation.isPending}
+                      >
+                        {createProfileMutation.isPending || updateProfileMutation.isPending ? (
+                          'Saving...'
+                        ) : profile ? (
+                          'Update Profile'
+                        ) : (
+                          'Create Profile'
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </form>
               </Form>
