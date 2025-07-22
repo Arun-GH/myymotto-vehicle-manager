@@ -19,7 +19,7 @@ import ColorfulLogo from "@/components/colorful-logo";
 
 const broadcastFormSchema = z.object({
   type: z.string(),
-  title: z.string().min(1, "Title is required"),
+  title: z.string().optional(), // Made optional since buy posts auto-generate title
   description: z.string().min(1, "Description is required"),
   contactPhone: z.string().min(10, "Valid phone number required"),
   contactEmail: z.string().email().optional().or(z.literal("")),
@@ -123,9 +123,14 @@ export default function BroadcastPage() {
   };
 
   const onSubmit = (data: BroadcastFormData) => {
+    // Auto-generate title for "buy" posts
+    const title = data.type === "buy" 
+      ? "Looking for a Vehicle" 
+      : data.title;
+
     const broadcastData = {
       type: data.type,
-      title: data.title,
+      title: title,
       description: data.description,
       contactPhone: data.contactPhone,
       contactEmail: data.contactEmail || undefined,
@@ -399,29 +404,38 @@ export default function BroadcastPage() {
                 </div>
               )}
 
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[10px] font-medium">Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Brief title for your post" className="h-7 text-[10px]" {...field} />
-                    </FormControl>
-                    <FormMessage className="text-[9px]" />
-                  </FormItem>
-                )}
-              />
+              {/* Title field - hidden for "buy" type */}
+              {form.watch("type") !== "buy" && (
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[10px] font-medium">Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Brief title for your post" className="h-7 text-[10px]" {...field} />
+                      </FormControl>
+                      <FormMessage className="text-[9px]" />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               <FormField
                 control={form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[10px] font-medium">Description</FormLabel>
+                    <FormLabel className="text-[10px] font-medium">
+                      {form.watch("type") === "buy" ? "Vehicle Requirements" : "Description"}
+                    </FormLabel>
                     <FormControl>
                       <Textarea 
-                        placeholder="Detailed description..."
+                        placeholder={
+                          form.watch("type") === "buy" 
+                            ? "Describe what vehicle you're looking for (make, model, year, budget, etc.)"
+                            : "Detailed description..."
+                        }
                         className="min-h-[50px] text-[10px] resize-none"
                         {...field} 
                       />
@@ -437,7 +451,9 @@ export default function BroadcastPage() {
                   name="contactPhone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] font-medium">Contact Phone (auto-filled)</FormLabel>
+                      <FormLabel className="text-[10px] font-medium">
+                        {form.watch("type") === "buy" ? "Your Contact Phone" : "Contact Phone (auto-filled)"}
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Phone number" className="h-7 text-[10px]" {...field} />
                       </FormControl>
@@ -451,7 +467,9 @@ export default function BroadcastPage() {
                   name="contactEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] font-medium">Email (optional)</FormLabel>
+                      <FormLabel className="text-[10px] font-medium">
+                        {form.watch("type") === "buy" ? "Your Email (optional)" : "Email (optional)"}
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="email@example.com" className="h-7 text-[10px]" {...field} />
                       </FormControl>
@@ -476,15 +494,13 @@ export default function BroadcastPage() {
                   )}
                 />
                 
-                {(form.watch("type") === "sell" || form.watch("type") === "buy") && (
+                {form.watch("type") === "sell" && (
                   <FormField
                     control={form.control}
                     name="price"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-medium">
-                          {form.watch("type") === "sell" ? "Expected Price (₹)" : "Budget (₹)"}
-                        </FormLabel>
+                        <FormLabel className="text-[10px] font-medium">Expected Price (₹)</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -519,7 +535,9 @@ export default function BroadcastPage() {
                   disabled={createBroadcastMutation.isPending || (form.watch("type") === "sell" && !selectedVehicleForSell)}
                   className="flex-1 h-7 text-[10px] bg-orange-500 hover:bg-orange-600"
                 >
-                  {createBroadcastMutation.isPending ? "Posting..." : "Post"}
+                  {createBroadcastMutation.isPending ? "Posting..." : 
+                   form.watch("type") === "buy" ? "Post Requirement" :
+                   form.watch("type") === "sell" ? "List Vehicle" : "Post"}
                 </Button>
               </div>
             </form>
