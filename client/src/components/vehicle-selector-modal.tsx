@@ -36,9 +36,9 @@ export default function VehicleSelectorModal({
     } else {
       return {
         title: "Select Vehicle for Service Log",
-        description: "Choose a vehicle to view its service history", 
+        description: "Choose a vehicle to manage its service records", 
         icon: Wrench,
-        route: (vehicleId: number) => `/vehicle/${vehicleId}/service-logs`,
+        route: (vehicleId: number) => `/vehicle/${vehicleId}/service`,
         color: "teal"
       };
     }

@@ -134,7 +134,7 @@ export default function Dashboard() {
             <div className="quick-action-3d rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer hover:border-teal-300 transition-colors"
                  onClick={() => {
                    if (vehicles.length === 1) {
-                     window.location.href = `/vehicle/${vehicles[0].id}/service-logs`;
+                     window.location.href = `/vehicle/${vehicles[0].id}/service`;
                    } else if (vehicles.length > 1) {
                      setSelectorActionType('service-logs');
                      setShowVehicleSelector(true);
