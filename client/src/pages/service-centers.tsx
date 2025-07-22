@@ -29,8 +29,8 @@ export default function ServiceCenters() {
   const [isLoading, setIsLoading] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
 
-  // Generate realistic service centers around user's current location
-  const generateNearbyServiceCenters = (userLat: number, userLng: number): Omit<ServiceCenter, 'distance'>[] => {
+  // Generate realistic service centers with proper addresses around user's current location
+  const generateNearbyServiceCenters = (userLat: number, userLng: number, userArea: string = "Local Area"): Omit<ServiceCenter, 'distance'>[] => {
     const serviceNames = [
       "AutoCare Pro Service Center",
       "Speed Motors Workshop", 
@@ -39,9 +39,7 @@ export default function ServiceCenters() {
       "Reliable Motors",
       "Metro Car Service",
       "Quick Fix Auto",
-      "City Motors",
-      "Elite Auto Service",
-      "Professional Car Care"
+      "City Motors"
     ];
 
     const serviceTypes = [
@@ -55,9 +53,20 @@ export default function ServiceCenters() {
       ["Denting & Painting", "Insurance Claims", "Suspension", "Clutch Repair"]
     ];
 
+    // Common Indian street/area names for realistic addresses
+    const streetNames = [
+      "Main Road", "Service Road", "Industrial Area", "Market Road", 
+      "Station Road", "Ring Road", "Metro Station Road", "Bus Stand Road",
+      "Commercial Complex", "Auto Hub", "Mechanic Street", "Workshop Lane"
+    ];
+
+    const areaTypes = [
+      "Sector", "Block", "Phase", "Extension", "Colony", "Nagar", "Plaza", "Complex"
+    ];
+
     const centers: Omit<ServiceCenter, 'distance'>[] = [];
     
-    // Generate 6-8 service centers within a 5km radius of user's location
+    // Generate 8 service centers within a 5km radius of user's location
     for (let i = 0; i < 8; i++) {
       // Generate random coordinates within 5km radius
       const radiusInDegrees = 0.045; // approximately 5km
@@ -67,12 +76,21 @@ export default function ServiceCenters() {
       const lat = userLat + radius * Math.cos(angle);
       const lng = userLng + radius * Math.sin(angle);
       
+      // Generate realistic address components
+      const buildingNo = Math.floor(Math.random() * 500) + 1;
+      const streetName = streetNames[Math.floor(Math.random() * streetNames.length)];
+      const areaType = areaTypes[Math.floor(Math.random() * areaTypes.length)];
+      const areaNumber = Math.floor(Math.random() * 50) + 1;
+      
+      // Create realistic address using actual area information
+      const address = `${buildingNo}, ${streetName}, ${areaType} ${areaNumber}, ${userArea}`;
+      
       centers.push({
         id: (i + 1).toString(),
         name: serviceNames[i],
-        address: `Near your location, ${Math.floor(Math.random() * 100 + 1)} Service Street, Local Area`,
+        address,
         rating: parseFloat((3.5 + Math.random() * 1.5).toFixed(1)),
-        phone: `+91 ${90000 + Math.floor(Math.random() * 10000)} ${Math.floor(Math.random() * 90000) + 10000}`,
+        phone: `+91 ${Math.floor(Math.random() * 10) + 90000}${Math.floor(Math.random() * 90000) + 10000}`,
         services: serviceTypes[i % serviceTypes.length],
         openHours: `${Math.floor(Math.random() * 3) + 8}:00 AM - ${Math.floor(Math.random() * 3) + 7}:00 PM`,
         lat,
@@ -136,12 +154,34 @@ export default function ServiceCenters() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const { latitude, longitude } = position.coords;
         setUserLocation({ lat: latitude, lng: longitude });
         
-        // Generate service centers around user's actual location
-        const nearbyServiceCenters = generateNearbyServiceCenters(latitude, longitude);
+        // Get user's area information for realistic addresses
+        let userArea = "Local Area";
+        try {
+          // Using free Nominatim API for reverse geocoding
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=14&addressdetails=1`
+          );
+          if (response.ok) {
+            const locationData = await response.json();
+            const address = locationData.address;
+            
+            // Extract relevant area information
+            const area = address?.suburb || address?.neighbourhood || address?.city_district || address?.town || address?.city || "Local Area";
+            const city = address?.city || address?.town || address?.village || "";
+            const state = address?.state || "";
+            
+            userArea = city && state ? `${area}, ${city}, ${state}` : area;
+          }
+        } catch (error) {
+          console.log("Geocoding not available, using generic area name");
+        }
+        
+        // Generate service centers around user's actual location with real area context
+        const nearbyServiceCenters = generateNearbyServiceCenters(latitude, longitude, userArea);
         
         // Calculate distances and sort by proximity
         const centersWithDistance: ServiceCenter[] = nearbyServiceCenters.map(center => ({
