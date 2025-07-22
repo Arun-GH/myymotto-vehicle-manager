@@ -53,8 +53,8 @@ export default function BroadcastPage() {
   const initializeFormWithProfile = () => {
     if (userProfile && typeof userProfile === 'object') {
       const profile = userProfile as any;
-      form.setValue("contactPhone", profile.phoneNumber || "");
-      form.setValue("contactEmail", profile.emailId || "");
+      form.setValue("contactPhone", profile.alternatePhone || "");
+      form.setValue("contactEmail", profile.email || "");
       form.setValue("location", profile.city || "");
     }
   };
@@ -79,11 +79,11 @@ export default function BroadcastPage() {
     if (userProfile && typeof userProfile === 'object') {
       const profile = userProfile as any;
       // Always populate contact fields when dialog opens or data becomes available
-      if (profile.phoneNumber) {
-        form.setValue("contactPhone", profile.phoneNumber, { shouldValidate: false });
+      if (profile.alternatePhone) {
+        form.setValue("contactPhone", profile.alternatePhone, { shouldValidate: false });
       }
-      if (profile.emailId) {
-        form.setValue("contactEmail", profile.emailId, { shouldValidate: false });
+      if (profile.email) {
+        form.setValue("contactEmail", profile.email, { shouldValidate: false });
       }
       if (profile.city) {
         form.setValue("location", profile.city, { shouldValidate: false });
@@ -96,17 +96,36 @@ export default function BroadcastPage() {
     if (form.watch("type") === "buy" && userProfile && typeof userProfile === 'object') {
       const profile = userProfile as any;
       // Ensure contact details are always populated for buy posts
-      if (profile.phoneNumber) {
-        form.setValue("contactPhone", profile.phoneNumber, { shouldValidate: false });
+      if (profile.alternatePhone) {
+        form.setValue("contactPhone", profile.alternatePhone, { shouldValidate: false });
       }
-      if (profile.emailId) {
-        form.setValue("contactEmail", profile.emailId, { shouldValidate: false });
+      if (profile.email) {
+        form.setValue("contactEmail", profile.email, { shouldValidate: false });
       }
       if (profile.city) {
         form.setValue("location", profile.city, { shouldValidate: false });
       }
     }
   }, [form.watch("type"), userProfile, form]);
+
+  // Auto-populate when dialog opens
+  useEffect(() => {
+    if (showCreateDialog && userProfile && typeof userProfile === 'object') {
+      const profile = userProfile as any;
+      // Auto-fill contact details when dialog opens
+      setTimeout(() => {
+        if (profile.alternatePhone) {
+          form.setValue("contactPhone", profile.alternatePhone, { shouldValidate: false });
+        }
+        if (profile.email) {
+          form.setValue("contactEmail", profile.email, { shouldValidate: false });
+        }
+        if (profile.city) {
+          form.setValue("location", profile.city, { shouldValidate: false });
+        }
+      }, 100); // Small delay to ensure form is ready
+    }
+  }, [showCreateDialog, userProfile, form]);
 
   // Create broadcast mutation
   const createBroadcastMutation = useMutation({
