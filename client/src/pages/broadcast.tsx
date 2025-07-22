@@ -318,7 +318,7 @@ export default function BroadcastPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       {getBroadcastTypeIcon(broadcast.type)}
-                      <span className="text-[10px] font-medium text-gray-600">
+                      <span className="text-xs font-medium text-gray-600">
                         {getBroadcastTypeLabel(broadcast.type)}
                       </span>
                     </div>
