@@ -3,11 +3,7 @@ import { Plus, Car, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-interface FloatingActionButtonProps {
-  onCreatePost?: () => void;
-}
-
-export default function FloatingActionButton({ onCreatePost }: FloatingActionButtonProps) {
+export default function FloatingActionButton() {
   const [showOptions, setShowOptions] = useState(false);
 
   return (
@@ -27,16 +23,15 @@ export default function FloatingActionButton({ onCreatePost }: FloatingActionBut
           </Link>
           
           {/* Create Broadcast Post Option */}
-          <Button
-            size="sm"
-            className="w-12 h-12 rounded-full bg-orange-500 hover:bg-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-            onClick={() => {
-              setShowOptions(false);
-              onCreatePost?.();
-            }}
-          >
-            <Radio className="w-5 h-5" />
-          </Button>
+          <Link href="/broadcast">
+            <Button
+              size="sm"
+              className="w-12 h-12 rounded-full bg-orange-500 hover:bg-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              onClick={() => setShowOptions(false)}
+            >
+              <Radio className="w-5 h-5" />
+            </Button>
+          </Link>
         </div>
       )}
 
