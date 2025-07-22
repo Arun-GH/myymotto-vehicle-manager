@@ -314,8 +314,10 @@ export default function BroadcastPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => {
-                            if (window.confirm("Are you sure you want to delete this broadcast?")) {
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (confirm("Are you sure you want to delete this post?")) {
                               deleteBroadcastMutation.mutate(broadcast.id);
                             }
                           }}
