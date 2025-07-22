@@ -31,6 +31,16 @@ export default function SignIn() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Reset PIN form when entering PIN setup step
+  useEffect(() => {
+    if (step === "set-pin") {
+      setPinForm.reset({
+        pin: "",
+        confirmPin: "",
+      });
+    }
+  }, [step, setPinForm]);
+
   const signInForm = useForm<SignInData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -219,6 +229,11 @@ export default function SignIn() {
         setLocation("/");
       } else {
         // User needs PIN setup first, then profile
+        // Reset the PIN form to ensure clean state
+        setPinForm.reset({
+          pin: "",
+          confirmPin: "",
+        });
         setStep("set-pin");
         toast({
           title: "Login Successful",
