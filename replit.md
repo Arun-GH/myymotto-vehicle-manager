@@ -93,12 +93,15 @@ Preferred communication style: Simple, everyday language.
 - Documents section now shows only "View | Upload" options, reducing visual clutter
 - Edit icon positioned before Delete icon in top-right corner for better user experience
 
-**July 22, 2025**: Added floating upload button to vehicle documents page and restructured Quick Actions
+**July 22, 2025**: Added floating upload button to vehicle documents page and service logs page with dual access points
 - Added floating action button to local documents page for easy document uploading from anywhere on the screen
-- Floating button positioned in bottom-right corner with orange gradient matching app theme and Plus icon
-- Button provides quick access to upload page without scrolling to bottom of document list
-- Maintained existing "Upload More Documents" button at bottom for users who prefer traditional button placement
-- Enhanced user experience with dual upload access points for better mobile usability
+- Added floating action button to service logs page for quick access to add new service logs
+- Document page: Orange gradient floating button with Plus icon positioned in bottom-right corner
+- Service logs page: Teal gradient floating button with Plus icon for consistent theme matching
+- Added "Add New Service Log" bottom button that appears when existing service logs are present
+- Maintained existing buttons: "Upload More Documents" for documents and "Add First Service Log" for empty state
+- Enhanced user experience with dual access points for both documents and service logs
+- Floating buttons positioned to avoid bottom navigation interference with proper shadows and hover effects
 
 **July 22, 2025**: Restructured Quick Actions with Documents and Service Log buttons and vehicle selection modal
 - Moved Documents and Service Log sections from vehicle tiles to Quick Actions as dedicated buttons

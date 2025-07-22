@@ -342,7 +342,31 @@ export default function ServiceLogs() {
             )}
           </CardContent>
         </Card>
+
+        {/* Add Service Log Button - Always show when there are existing logs */}
+        {((serviceLogs && serviceLogs.length > 0) || (maintenanceRecords && maintenanceRecords.length > 0)) && (
+          <div className="mt-4">
+            <Link href={`/vehicle/${vehicleId}/add-service-log`}>
+              <Button className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600">
+                <Plus className="w-4 h-4 mr-2" />
+                Add New Service Log
+              </Button>
+            </Link>
+          </div>
+        )}
       </main>
+
+      {/* Floating Action Button for Add Service Log */}
+      <div className="fixed bottom-20 right-4 z-50">
+        <Link href={`/vehicle/${vehicleId}/add-service-log`}>
+          <Button
+            className="h-14 w-14 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-white"
+            size="icon"
+          >
+            <Plus className="h-6 w-6 text-white" />
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }
