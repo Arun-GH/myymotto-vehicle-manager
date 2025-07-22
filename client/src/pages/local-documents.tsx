@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car } from "lucide-react";
+import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -300,6 +300,17 @@ export default function LocalDocuments() {
           className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
         >
           Upload More Documents
+        </Button>
+      </div>
+
+      {/* Floating Action Button for Upload */}
+      <div className="fixed bottom-20 right-4 z-50">
+        <Button
+          onClick={() => setLocation(`/vehicle/${vehicleId}/upload`)}
+          className="h-14 w-14 rounded-full bg-gradient-to-br from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-white"
+          size="icon"
+        >
+          <Plus className="h-6 w-6 text-white" />
         </Button>
       </div>
     </div>
