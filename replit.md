@@ -93,6 +93,16 @@ Preferred communication style: Simple, everyday language.
 - Documents section now shows only "View | Upload" options, reducing visual clutter
 - Edit icon positioned before Delete icon in top-right corner for better user experience
 
+**July 22, 2025**: Restructured Quick Actions with Documents and Service Log buttons
+- Moved Documents and Service Log sections from vehicle tiles to Quick Actions as dedicated buttons
+- Expanded Quick Actions grid from 3 to 5 columns including new Documents and Service Log buttons
+- Added smart vehicle selection logic: single vehicle auto-navigates, multiple vehicles show selection prompt
+- Documents button uses purple gradient (purple-to-indigo) with Files icon for visual distinction
+- Service Log button uses teal gradient (teal-to-cyan) with Wrench icon for maintenance identification
+- Removed Documents and Service Log inline sections from vehicle tiles for cleaner, streamlined design
+- Quick Actions now contains: Add Vehicle, Documents, Service Log, Violations, Insurance buttons
+- Enhanced mobile usability by centralizing common actions in easily accessible Quick Actions section
+
 **July 21, 2025**: Streamlined document upload system and removed redundant screens
 - Removed service invoice option from document type dropdown on upload documents page
 - Cleaned up document upload flow to focus only on vehicle-related certificates and permits

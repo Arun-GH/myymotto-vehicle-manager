@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings, Gamepad2, Puzzle, Newspaper } from "lucide-react";
+import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings, Gamepad2, Puzzle, Newspaper, Files, Wrench } from "lucide-react";
 import { Link } from "wouter";
 import { type Vehicle } from "@shared/schema";
 import VehicleCard from "@/components/vehicle-card";
@@ -103,7 +103,7 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <section className="px-3 py-2">
           <h2 className="text-xs font-semibold mb-2 text-gray-800">Quick Actions</h2>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-5 gap-2">
             <Link href="/add-vehicle">
               <div className="quick-action-3d rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer hover:border-red-300 transition-colors">
                 <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center icon-3d">
@@ -112,6 +112,39 @@ export default function Dashboard() {
                 <span className="text-xs font-medium text-gray-800 text-center leading-tight">Add Vehicle</span>
               </div>
             </Link>
+            <div className="quick-action-3d rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer hover:border-purple-300 transition-colors" 
+                 onClick={() => {
+                   // Show vehicle selection for documents
+                   if (vehicles.length === 1) {
+                     window.location.href = `/vehicle/${vehicles[0].id}/local-documents`;
+                   } else if (vehicles.length > 1) {
+                     // Could add a vehicle selector modal here
+                     alert("Please select a vehicle from Your Vehicles section below to view documents");
+                   } else {
+                     alert("Please add a vehicle first");
+                   }
+                 }}>
+              <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-lg flex items-center justify-center icon-3d">
+                <Files className="w-3 h-3 text-white" />
+              </div>
+              <span className="text-xs font-medium text-gray-800 text-center leading-tight">Documents</span>
+            </div>
+            <div className="quick-action-3d rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer hover:border-teal-300 transition-colors"
+                 onClick={() => {
+                   // Show vehicle selection for service logs
+                   if (vehicles.length === 1) {
+                     window.location.href = `/vehicle/${vehicles[0].id}/service-logs`;
+                   } else if (vehicles.length > 1) {
+                     alert("Please select a vehicle from Your Vehicles section below to view service logs");
+                   } else {
+                     alert("Please add a vehicle first");
+                   }
+                 }}>
+              <div className="w-6 h-6 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center icon-3d">
+                <Wrench className="w-3 h-3 text-white" />
+              </div>
+              <span className="text-xs font-medium text-gray-800 text-center leading-tight">Service Log</span>
+            </div>
             <Link href="/traffic-violations">
               <div className="quick-action-3d rounded-lg p-2 flex flex-col items-center space-y-1 cursor-pointer hover:border-blue-300 transition-colors">
                 <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center icon-3d">

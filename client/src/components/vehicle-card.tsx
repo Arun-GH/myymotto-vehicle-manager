@@ -1,5 +1,5 @@
 
-import { Calendar, AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Upload, Eye, Trash2, Settings, Bike, Truck, Zap, Droplets, Plus, Bell } from "lucide-react";
+import { AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Trash2, Bike, Truck, Zap, Droplets } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -260,55 +260,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
-          <span className="text-xs font-bold text-gray-600">Documents:</span>
-          <div className="flex items-center space-x-1">
-            <Link href={`/vehicle/${vehicle.id}/local-documents`}>
-              <Button variant="ghost" size="sm" className="text-red-600 p-1 h-auto hover:bg-red-50 flex items-center space-x-1">
-                <Eye className="w-3 h-3" />
-                <span className="text-xs">View</span>
-              </Button>
-            </Link>
-            <span className="text-gray-400 text-xs">|</span>
-            <Link href={`/vehicle/${vehicle.id}/upload`}>
-              <Button variant="ghost" size="sm" className="text-green-600 p-1 h-auto hover:bg-green-50 flex items-center space-x-1">
-                <Upload className="w-3 h-3" />
-                <span className="text-xs">Upload</span>
-              </Button>
-            </Link>
-          </div>
-        </div>
-        
-        <div className="flex items-center space-x-2 mt-2">
-          <span className="text-xs font-bold text-gray-600">Service Log:</span>
-          <div className="flex items-center space-x-1">
-            <Link href={`/vehicle/${vehicle.id}/service-logs`}>
-              <Button variant="ghost" size="sm" className="text-blue-600 p-1 h-auto hover:bg-blue-50 flex items-center space-x-1">
-                <Eye className="w-3 h-3" />
-                <span className="text-xs">View</span>
-              </Button>
-            </Link>
-            <span className="text-gray-400 text-xs">|</span>
-            <Link href={`/vehicle/${vehicle.id}/service`}>
-              <Button variant="ghost" size="sm" className="text-purple-600 p-1 h-auto hover:bg-purple-50 flex items-center space-x-1">
-                <Settings className="w-3 h-3" />
-                <span className="text-xs">Add</span>
-              </Button>
-            </Link>
-            <span className="text-gray-400 text-xs">|</span>
-            <Link href={`/vehicle/${vehicle.id}/alerts`}>
-              <Button variant="ghost" size="sm" className="text-orange-600 p-1 h-auto hover:bg-orange-50 flex items-center space-x-1">
-                <Calendar className="w-3 h-3" />
-                <span className="text-xs">Set Alert</span>
-                {alertsCount > 0 && (
-                  <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-[10px] px-1 py-0 h-4 min-w-4 flex items-center justify-center">
-                    {alertsCount}
-                  </Badge>
-                )}
-              </Button>
-            </Link>
-          </div>
-        </div>
+
       </CardContent>
     </Card>
   );
