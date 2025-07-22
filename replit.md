@@ -10,6 +10,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 22, 2025**: Mobile-optimized broadcast page with comprehensive vehicle details and compact design
+- Enhanced vehicle details display in sell posts with 7 key fields: Model, Year, Fuel Type, Registration, Km Run, Insured Date, RC Valid Till
+- Added "Km Run" field showing odometer reading (currentOdometerReading) with thousand separators for better readability
+- Implemented compact mobile-friendly design with 3-column grid layout using text-[9px] for optimal space utilization
+- Updated vehicle details cards with white background sub-cards for better visual separation and readability
+- Enhanced mobile header design: reduced py-3 to py-2, logo w-10 to w-8, button heights to h-6/h-7 for compact mobile interface
+- Streamlined broadcast cards with smaller padding (px-3, pt-2, pb-1/pb-2) and reduced text sizes for mobile optimization
+- Added contact info badges with background colors (gray-50, green-50) for better visual distinction and mobile touch targets
+- Reduced icon sizes to w-2/w-3 h-2/h-3 and view counts to text-[9px] for ultra-compact mobile display
+- Vehicle photo integration with thumbnail display in compact h-8 image containers for quick vehicle identification
+- Successfully resolved userId constraint errors in broadcast creation with proper schema alignment and debugging
+- Fixed vehicle selector modal bug that was redirecting to service logs instead of showing vehicle selection interface
+- Complete broadcast system fully functional with authentic vehicle data display including odometer readings and document dates
+
 **July 21, 2025**: Enhanced dashboard with 3D orange-themed tile effects and updated contact support
 - Implemented comprehensive 3D visual effects for dashboard tiles using CSS perspective transforms and orange-tinted layered shadows
 - Added quick-action-3d class with perspective(800px) rotateX transforms, orange shadow animations (rgba(251, 146, 60)) matching app theme

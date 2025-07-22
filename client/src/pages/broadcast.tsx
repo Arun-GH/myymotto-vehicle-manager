@@ -147,116 +147,139 @@ export default function BroadcastPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       {/* Header */}
-      <div className="header-gradient-border px-3 py-3 flex items-center justify-between">
+      <div className="header-gradient-border px-3 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setLocation("/")}
-            className="text-gray-600 hover:bg-red-50"
+            className="text-gray-600 hover:bg-red-50 p-1 h-6 w-6"
           >
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <ColorfulLogo className="w-10 h-10" />
+          <ColorfulLogo className="w-8 h-8" />
           <div>
-            <h1 className="text-base font-semibold text-gray-800">Broadcast</h1>
-            <p className="text-xs text-red-600">Community for MMians</p>
+            <h1 className="text-sm font-semibold text-gray-800">Broadcast</h1>
+            <p className="text-[10px] text-red-600">Community for MMians</p>
           </div>
         </div>
         <Button
           onClick={() => setShowCreateDialog(true)}
-          className="bg-orange-500 hover:bg-orange-600 text-white h-8 px-3 text-xs"
+          className="bg-orange-500 hover:bg-orange-600 text-white h-7 px-2 text-[10px]"
         >
-          <Plus className="w-4 h-4 mr-1" />
+          <Plus className="w-3 h-3 mr-1" />
           Post
         </Button>
       </div>
 
       {/* Content */}
-      <div className="px-3 py-4 space-y-4">
+      <div className="px-3 py-3 space-y-3">
         {broadcasts.length === 0 ? (
-          <div className="text-center py-12">
-            <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No broadcasts yet</h3>
-            <p className="text-gray-500 mb-6">Be the first to share with the MMian community!</p>
+          <div className="text-center py-8">
+            <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <h3 className="text-base font-medium text-gray-900 mb-1">No broadcasts yet</h3>
+            <p className="text-xs text-gray-500 mb-4">Be the first to share with the MMian community!</p>
             <Button
               onClick={() => setShowCreateDialog(true)}
-              className="bg-orange-500 hover:bg-orange-600 text-white"
+              className="bg-orange-500 hover:bg-orange-600 text-white h-8 px-3 text-xs"
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-3 h-3 mr-1" />
               Create First Post
             </Button>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {broadcasts.map((broadcast: any) => (
               <Card key={broadcast.id} className="shadow-orange border-orange-100">
-                <CardHeader className="pb-2">
+                <CardHeader className="pb-1 px-3 pt-2">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       {getBroadcastTypeIcon(broadcast.type)}
-                      <span className="text-xs font-medium text-gray-600">
+                      <span className="text-[10px] font-medium text-gray-600">
                         {getBroadcastTypeLabel(broadcast.type)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-400">
-                      <Calendar className="w-3 h-3" />
+                    <div className="flex items-center gap-1 text-[9px] text-gray-400">
+                      <Calendar className="w-2 h-2" />
                       {formatDate(broadcast.createdAt)}
                     </div>
                   </div>
-                  <CardTitle className="text-base text-gray-900">{broadcast.title}</CardTitle>
+                  <CardTitle className="text-sm text-gray-900 leading-tight">{broadcast.title}</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-gray-700 mb-3">{broadcast.description}</p>
+                <CardContent className="pt-0 px-3 pb-2">
+                  <p className="text-xs text-gray-700 mb-2 leading-tight">{broadcast.description}</p>
                   
                   {/* Vehicle Details for Sell Posts */}
                   {broadcast.type === "sell" && broadcast.vehicle && (
-                    <div className="bg-orange-50 rounded-lg p-3 mb-3">
-                      <h4 className="text-xs font-medium text-orange-800 mb-2">Vehicle Details:</h4>
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                          <span className="text-gray-600">Model:</span>
-                          <span className="ml-1 font-medium">{broadcast.vehicle.make} {broadcast.vehicle.model}</span>
+                    <div className="bg-orange-50 rounded-lg p-2 mb-2">
+                      <h4 className="text-[10px] font-semibold text-orange-800 mb-1 flex items-center gap-1">
+                        <Car className="w-3 h-3" />
+                        Vehicle Details
+                      </h4>
+                      <div className="grid grid-cols-3 gap-1 text-[9px]">
+                        <div className="bg-white rounded p-1">
+                          <span className="text-gray-500 block leading-none">Model</span>
+                          <span className="font-medium text-gray-800 leading-tight">{broadcast.vehicle.make} {broadcast.vehicle.model}</span>
                         </div>
-                        <div>
-                          <span className="text-gray-600">Year:</span>
-                          <span className="ml-1 font-medium">{broadcast.vehicle.year}</span>
+                        <div className="bg-white rounded p-1">
+                          <span className="text-gray-500 block leading-none">Year</span>
+                          <span className="font-medium text-gray-800 leading-tight">{broadcast.vehicle.year}</span>
                         </div>
-                        <div>
-                          <span className="text-gray-600">Fuel:</span>
-                          <span className="ml-1 font-medium">{broadcast.vehicle.fuelType}</span>
+                        <div className="bg-white rounded p-1">
+                          <span className="text-gray-500 block leading-none">Fuel</span>
+                          <span className="font-medium text-gray-800 leading-tight capitalize">{broadcast.vehicle.fuelType || 'Petrol'}</span>
                         </div>
-                        <div>
-                          <span className="text-gray-600">RC Valid:</span>
-                          <span className="ml-1 font-medium">
-                            {broadcast.vehicle.rcExpiry ? formatDate(broadcast.vehicle.rcExpiry) : "N/A"}
-                          </span>
+                        <div className="bg-white rounded p-1">
+                          <span className="text-gray-500 block leading-none">Registration</span>
+                          <span className="font-medium text-gray-800 leading-tight">{broadcast.vehicle.licenseNumber}</span>
                         </div>
+                        <div className="bg-white rounded p-1">
+                          <span className="text-gray-500 block leading-none">Km Run</span>
+                          <span className="font-medium text-gray-800 leading-tight">{broadcast.vehicle.currentOdometerReading?.toLocaleString() || 'N/A'} km</span>
+                        </div>
+                        <div className="bg-white rounded p-1">
+                          <span className="text-gray-500 block leading-none">Insured Date</span>
+                          <span className="font-medium text-gray-800 leading-tight">{broadcast.vehicle.insuranceExpiry ? formatDate(broadcast.vehicle.insuranceExpiry) : 'N/A'}</span>
+                        </div>
+                        <div className="bg-white rounded p-1 col-span-2">
+                          <span className="text-gray-500 block leading-none">RC Valid Till</span>
+                          <span className="font-medium text-gray-800 leading-tight">{broadcast.vehicle.rcExpiry ? formatDate(broadcast.vehicle.rcExpiry) : 'N/A'}</span>
+                        </div>
+                        {broadcast.vehicle.thumbnailPath && (
+                          <div className="bg-white rounded p-1">
+                            <span className="text-gray-500 block leading-none mb-1">Photo</span>
+                            <img 
+                              src={`/uploads/${broadcast.vehicle.thumbnailPath}`} 
+                              alt="Vehicle" 
+                              className="w-full h-8 object-cover rounded"
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
 
                   {/* Contact and Price Info */}
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-between text-[10px]">
+                    <div className="flex items-center gap-2">
                       {broadcast.contactPhone && (
-                        <span className="text-gray-600">📞 {broadcast.contactPhone}</span>
+                        <span className="text-gray-600 bg-gray-50 px-1 py-0.5 rounded">📞 {broadcast.contactPhone}</span>
                       )}
                       {broadcast.location && (
-                        <span className="text-gray-600">📍 {broadcast.location}</span>
+                        <span className="text-gray-600 bg-gray-50 px-1 py-0.5 rounded">📍 {broadcast.location}</span>
                       )}
                     </div>
                     {broadcast.price && (
-                      <span className="font-semibold text-green-600">
+                      <span className="font-semibold text-green-600 bg-green-50 px-1 py-0.5 rounded">
                         ₹{broadcast.price.toLocaleString()}
                       </span>
                     )}
                   </div>
 
                   {/* View Count */}
-                  <div className="flex items-center justify-end mt-2 pt-2 border-t border-gray-100">
-                    <div className="flex items-center gap-1 text-xs text-gray-400">
-                      <Eye className="w-3 h-3" />
+                  <div className="flex items-center justify-end mt-1 pt-1 border-t border-gray-100">
+                    <div className="flex items-center gap-1 text-[9px] text-gray-400">
+                      <Eye className="w-2 h-2" />
                       {broadcast.viewCount || 0} views
                     </div>
                   </div>
