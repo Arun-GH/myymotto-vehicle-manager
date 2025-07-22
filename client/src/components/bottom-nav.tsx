@@ -47,7 +47,7 @@ export default function BottomNav({ currentPath }: BottomNavProps) {
                 <div className="relative flex-shrink-0">
                   <Icon className="w-5 h-5" />
                   {item.count !== undefined && item.count > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold leading-none">
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[8px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold leading-none">
                       {item.count > 99 ? '99+' : item.count}
                     </span>
                   )}
