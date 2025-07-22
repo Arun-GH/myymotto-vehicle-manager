@@ -271,7 +271,7 @@ export default function BroadcastPage() {
                 <div className="text-base font-bold">
                   <ColorfulLogo />
                 </div>
-                <p className="text-xs text-red-600">Community for MMians</p>
+                <p className="text-sm text-red-600">Community for MMians</p>
               </div>
             </div>
             {!isViewOnly && (
