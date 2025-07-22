@@ -139,20 +139,19 @@ export default function LocalDocuments() {
       {/* Header */}
       <div className="header-gradient-border sticky top-0 z-10 bg-white px-3 py-3">
         <div className="flex items-center justify-between">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setLocation("/")}
-            className="text-gray-600 hover:bg-red-50 h-8"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          
           <div className="flex items-center space-x-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setLocation("/")}
+              className="text-gray-600 hover:bg-red-50 h-8"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
             <img 
               src={logoImage} 
               alt="Myymotto Logo" 
-              className="w-10 h-10 rounded-lg"
+              className="w-8 h-8 rounded-lg"
             />
             <div>
               <div className="text-sm font-bold">
