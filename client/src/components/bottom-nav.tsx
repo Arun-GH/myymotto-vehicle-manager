@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Home, MessageSquare, Users, User } from "lucide-react";
+import { Home, Radio, Users, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface BottomNavProps {
@@ -9,7 +9,7 @@ interface BottomNavProps {
 export default function BottomNav({ currentPath }: BottomNavProps) {
   const navItems = [
     { path: "/", icon: Home, label: "Home" },
-    { path: "/broadcast", icon: MessageSquare, label: "Broadcast" },
+    { path: "/broadcast", icon: Radio, label: "Broadcast" },
     { path: "/emergency-contacts", icon: Users, label: "Emergency" },
     { path: "/profile", icon: User, label: "Profile" },
   ];
