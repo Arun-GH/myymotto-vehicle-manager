@@ -118,9 +118,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-5 gap-2">
             <Link href="/add-vehicle" className="block">
               <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-red-300 transition-all duration-200 h-16 px-1 active:scale-95">
-                <div className="w-5 h-5 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center icon-3d mb-1">
-                  <Plus className="w-3 h-3 text-white" />
-                </div>
+                <Plus className="w-6 h-6 text-red-500 mb-1" />
                 <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Add Vehicle</span>
               </div>
             </Link>
@@ -135,9 +133,7 @@ export default function Dashboard() {
                      alert("Please add a vehicle first");
                    }
                  }}>
-              <div className="w-5 h-5 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-lg flex items-center justify-center icon-3d mb-1">
-                <Files className="w-3 h-3 text-white" />
-              </div>
+              <Files className="w-6 h-6 text-purple-500 mb-1" />
               <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Documents</span>
             </div>
             <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-teal-300 transition-all duration-200 h-16 px-1 active:scale-95"
@@ -151,24 +147,18 @@ export default function Dashboard() {
                      alert("Please add a vehicle first");
                    }
                  }}>
-              <div className="w-5 h-5 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center icon-3d mb-1">
-                <Wrench className="w-3 h-3 text-white" />
-              </div>
+              <Wrench className="w-6 h-6 text-teal-500 mb-1" />
               <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Service Log</span>
             </div>
             <Link href="/traffic-violations" className="block">
               <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-300 transition-all duration-200 h-16 px-1 active:scale-95">
-                <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center icon-3d mb-1">
-                  <Zap className="w-3 h-3 text-white" />
-                </div>
+                <Zap className="w-6 h-6 text-blue-500 mb-1" />
                 <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Violations</span>
               </div>
             </Link>
             <Link href="/insurance-renewals" className="block">
               <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-green-300 transition-all duration-200 h-16 px-1 active:scale-95">
-                <div className="w-5 h-5 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center icon-3d mb-1">
-                  <Shield className="w-3 h-3 text-white" />
-                </div>
+                <Shield className="w-6 h-6 text-green-500 mb-1" />
                 <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Insurance</span>
               </div>
             </Link>
