@@ -106,16 +106,16 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <section className="px-3 py-2">
           <h2 className="text-xs font-semibold mb-3 text-gray-800">Quick Actions</h2>
-          <div className="grid grid-cols-5 gap-3">
+          <div className="grid grid-cols-5 gap-2">
             <Link href="/add-vehicle" className="block">
-              <div className="quick-action-3d rounded-xl py-3 px-2 flex flex-col items-center justify-center space-y-1.5 cursor-pointer hover:border-red-300 transition-all duration-200 min-h-[60px] active:scale-95">
-                <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center icon-3d">
-                  <Plus className="w-3 h-3 text-white" />
+              <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-red-300 transition-all duration-200 h-16 px-1 active:scale-95">
+                <div className="w-5 h-5 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center icon-3d mb-1">
+                  <Plus className="w-2.5 h-2.5 text-white" />
                 </div>
-                <span className="text-[10px] font-medium text-gray-800 text-center leading-tight">Add Vehicle</span>
+                <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Add Vehicle</span>
               </div>
             </Link>
-            <div className="quick-action-3d rounded-xl py-3 px-2 flex flex-col items-center justify-center space-y-1.5 cursor-pointer hover:border-purple-300 transition-all duration-200 min-h-[60px] active:scale-95" 
+            <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-purple-300 transition-all duration-200 h-16 px-1 active:scale-95" 
                  onClick={() => {
                    if (vehicles.length === 1) {
                      window.location.href = `/vehicle/${vehicles[0].id}/local-documents`;
@@ -126,12 +126,12 @@ export default function Dashboard() {
                      alert("Please add a vehicle first");
                    }
                  }}>
-              <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-lg flex items-center justify-center icon-3d">
-                <Files className="w-3 h-3 text-white" />
+              <div className="w-5 h-5 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-lg flex items-center justify-center icon-3d mb-1">
+                <Files className="w-2.5 h-2.5 text-white" />
               </div>
-              <span className="text-[10px] font-medium text-gray-800 text-center leading-tight">Documents</span>
+              <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Documents</span>
             </div>
-            <div className="quick-action-3d rounded-xl py-3 px-2 flex flex-col items-center justify-center space-y-1.5 cursor-pointer hover:border-teal-300 transition-all duration-200 min-h-[60px] active:scale-95"
+            <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-teal-300 transition-all duration-200 h-16 px-1 active:scale-95"
                  onClick={() => {
                    if (vehicles.length === 1) {
                      window.location.href = `/vehicle/${vehicles[0].id}/service-logs`;
@@ -142,25 +142,25 @@ export default function Dashboard() {
                      alert("Please add a vehicle first");
                    }
                  }}>
-              <div className="w-6 h-6 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center icon-3d">
-                <Wrench className="w-3 h-3 text-white" />
+              <div className="w-5 h-5 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center icon-3d mb-1">
+                <Wrench className="w-2.5 h-2.5 text-white" />
               </div>
-              <span className="text-[10px] font-medium text-gray-800 text-center leading-tight">Service Log</span>
+              <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Service Log</span>
             </div>
             <Link href="/traffic-violations" className="block">
-              <div className="quick-action-3d rounded-xl py-3 px-2 flex flex-col items-center justify-center space-y-1.5 cursor-pointer hover:border-blue-300 transition-all duration-200 min-h-[60px] active:scale-95">
-                <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center icon-3d">
-                  <Zap className="w-3 h-3 text-white" />
+              <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-300 transition-all duration-200 h-16 px-1 active:scale-95">
+                <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center icon-3d mb-1">
+                  <Zap className="w-2.5 h-2.5 text-white" />
                 </div>
-                <span className="text-[10px] font-medium text-gray-800 text-center leading-tight">Violations</span>
+                <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Violations</span>
               </div>
             </Link>
             <Link href="/insurance-renewals" className="block">
-              <div className="quick-action-3d rounded-xl py-3 px-2 flex flex-col items-center justify-center space-y-1.5 cursor-pointer hover:border-green-300 transition-all duration-200 min-h-[60px] active:scale-95">
-                <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center icon-3d">
-                  <Shield className="w-3 h-3 text-white" />
+              <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-green-300 transition-all duration-200 h-16 px-1 active:scale-95">
+                <div className="w-5 h-5 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center icon-3d mb-1">
+                  <Shield className="w-2.5 h-2.5 text-white" />
                 </div>
-                <span className="text-[10px] font-medium text-gray-800 text-center leading-tight">Insurance</span>
+                <span className="text-[9px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Insurance</span>
               </div>
             </Link>
           </div>
