@@ -31,16 +31,6 @@ export default function SignIn() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Reset PIN form when entering PIN setup step
-  useEffect(() => {
-    if (step === "set-pin") {
-      setPinForm.reset({
-        pin: "",
-        confirmPin: "",
-      });
-    }
-  }, [step, setPinForm]);
-
   const signInForm = useForm<SignInData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -78,6 +68,16 @@ export default function SignIn() {
       enabled: false,
     },
   });
+
+  // Reset PIN form when entering PIN setup step
+  useEffect(() => {
+    if (step === "set-pin") {
+      setPinForm.reset({
+        pin: "",
+        confirmPin: "",
+      });
+    }
+  }, [step, setPinForm]);
 
   const signInMutation = useMutation({
     mutationFn: async (data: SignInData) => {
