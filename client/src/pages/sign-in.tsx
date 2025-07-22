@@ -143,9 +143,10 @@ export default function SignIn() {
   });
 
   const setPinMutation = useMutation({
-    mutationFn: async (data: { pin: string }) => {
+    mutationFn: async (data: { pin: string; confirmPin: string }) => {
       const response = await apiRequest("POST", "/api/auth/set-pin", {
         pin: data.pin,
+        confirmPin: data.confirmPin,
         userId: userId,
       });
       return response.json();
@@ -309,7 +310,7 @@ export default function SignIn() {
       });
       return;
     }
-    setPinMutation.mutate({ pin: data.pin });
+    setPinMutation.mutate({ pin: data.pin, confirmPin: data.confirmPin });
   };
 
   const onBiometricSubmit = (data: { enabled: boolean }) => {
