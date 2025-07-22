@@ -96,11 +96,11 @@ export default function BroadcastPage() {
     }
   }, [userProfile, form]);
 
-  // Auto-populate when type changes to "buy"
+  // Auto-populate when type changes to "buy" or "query"
   useEffect(() => {
-    if (form.watch("type") === "buy" && userProfile && typeof userProfile === 'object') {
+    if ((form.watch("type") === "buy" || form.watch("type") === "query") && userProfile && typeof userProfile === 'object') {
       const profile = userProfile as any;
-      // Ensure contact details are always populated for buy posts
+      // Ensure contact details are always populated for buy and query posts
       if (profile.alternatePhone) {
         form.setValue("contactPhone", profile.alternatePhone, { shouldValidate: false });
       }
@@ -456,7 +456,15 @@ export default function BroadcastPage() {
                     <FormItem>
                       <FormLabel className="text-[10px] font-medium">Title</FormLabel>
                       <FormControl>
-                        <Input placeholder="Brief title for your post" className="h-7 text-[10px]" {...field} />
+                        <Input 
+                          placeholder={
+                            form.watch("type") === "query" 
+                              ? "Your question or topic" 
+                              : "Brief title for your post"
+                          } 
+                          className="h-7 text-[10px]" 
+                          {...field} 
+                        />
                       </FormControl>
                       <FormMessage className="text-[9px]" />
                     </FormItem>
@@ -475,7 +483,8 @@ export default function BroadcastPage() {
                     <FormItem>
                       <div className="flex justify-between items-center">
                         <FormLabel className="text-[10px] font-medium">
-                          {form.watch("type") === "buy" ? "Vehicle Requirements" : "Description"}
+                          {form.watch("type") === "buy" ? "Vehicle Requirements" : 
+                           form.watch("type") === "query" ? "Your Question" : "Description"}
                         </FormLabel>
                         <span className={`text-[9px] ${wordCount > maxWords ? 'text-red-500' : 'text-gray-400'}`}>
                           {wordCount}/{maxWords} words
@@ -486,6 +495,8 @@ export default function BroadcastPage() {
                           placeholder={
                             form.watch("type") === "buy" 
                               ? "Describe what vehicle you're looking for (make, model, year, budget, etc.)"
+                              : form.watch("type") === "query"
+                              ? "Ask your question or describe your query to the MMian community..."
                               : "Detailed description..."
                           }
                           className="min-h-[50px] text-[10px] resize-none"
@@ -507,39 +518,77 @@ export default function BroadcastPage() {
                 }}
               />
 
-              <div className="grid grid-cols-2 gap-2">
-                <FormField
-                  control={form.control}
-                  name="contactPhone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-[10px] font-medium">
-                        {form.watch("type") === "buy" ? "Your Contact Phone" : "Contact Phone (auto-filled)"}
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Phone number" className="h-7 text-[10px]" {...field} />
-                      </FormControl>
-                      <FormMessage className="text-[9px]" />
-                    </FormItem>
-                  )}
-                />
+              {/* Contact Details for Buy and Query posts */}
+              {(form.watch("type") === "buy" || form.watch("type") === "query") && (
+                <div className="grid grid-cols-2 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="contactPhone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-medium">
+                          {form.watch("type") === "buy" ? "Your Contact Phone" : 
+                           form.watch("type") === "query" ? "Your Contact Phone" : "Contact Phone (auto-filled)"}
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="Phone number" className="h-7 text-[10px]" {...field} />
+                        </FormControl>
+                        <FormMessage className="text-[9px]" />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="contactEmail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-[10px] font-medium">
-                        {form.watch("type") === "buy" ? "Your Email (optional)" : "Email (optional)"}
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="email@example.com" className="h-7 text-[10px]" {...field} />
-                      </FormControl>
-                      <FormMessage className="text-[9px]" />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                  <FormField
+                    control={form.control}
+                    name="contactEmail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-medium">
+                          {form.watch("type") === "buy" ? "Your Email (optional)" : 
+                           form.watch("type") === "query" ? "Your Email (optional)" : "Email (optional)"}
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="email@example.com" className="h-7 text-[10px]" {...field} />
+                        </FormControl>
+                        <FormMessage className="text-[9px]" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+
+              {/* Contact Details for other post types */}
+              {form.watch("type") !== "buy" && form.watch("type") !== "query" && (
+                <div className="grid grid-cols-2 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="contactPhone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-medium">Contact Phone (auto-filled)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Phone number" className="h-7 text-[10px]" {...field} />
+                        </FormControl>
+                        <FormMessage className="text-[9px]" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="contactEmail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-medium">Email (optional)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="email@example.com" className="h-7 text-[10px]" {...field} />
+                        </FormControl>
+                        <FormMessage className="text-[9px]" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-2">
                 <FormField
@@ -547,7 +596,9 @@ export default function BroadcastPage() {
                   name="location"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] font-medium">Location (auto-filled)</FormLabel>
+                      <FormLabel className="text-[10px] font-medium">
+                        {(form.watch("type") === "buy" || form.watch("type") === "query") ? "Your Location" : "Location (auto-filled)"}
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="City" className="h-7 text-[10px]" {...field} />
                       </FormControl>
@@ -599,7 +650,8 @@ export default function BroadcastPage() {
                 >
                   {createBroadcastMutation.isPending ? "Posting..." : 
                    form.watch("type") === "buy" ? "Post Requirement" :
-                   form.watch("type") === "sell" ? "List Vehicle" : "Post"}
+                   form.watch("type") === "sell" ? "List Vehicle" :
+                   form.watch("type") === "query" ? "Ask Community" : "Post"}
                 </Button>
               </div>
             </form>

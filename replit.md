@@ -30,6 +30,10 @@ Preferred communication style: Simple, everyday language.
 - Added 75-word limit to description field with real-time word counter and validation
 - Visual word counter shows current/maximum words with red warning when limit exceeded
 - Form validation prevents submission of posts exceeding 75-word description limit
+- Added "Community Query" option to broadcast types with dedicated question interface
+- Query posts show phone, email, and location fields with auto-population from user profile
+- Enhanced placeholder text and labels specific to community query posts
+- "Ask Community" button for query type submissions with proper contact field display
 - Complete broadcast system fully functional with authentic vehicle data display including color, odometer readings and document dates
 
 **July 21, 2025**: Enhanced dashboard with 3D orange-themed tile effects and updated contact support
