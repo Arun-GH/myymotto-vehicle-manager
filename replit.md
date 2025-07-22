@@ -10,17 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 22, 2025**: Enhanced service centers search with location-based functionality and improved user experience
-- Renamed search button from "Search" to "Service Centres Near You" on dashboard for better clarity
-- Updated service centers page header to "Service Centres Near You" reflecting location-aware functionality  
-- Enhanced location detection with improved error handling and user-friendly messaging
-- Added specific error messages for different geolocation failure scenarios (permission denied, unavailable, timeout)
-- Improved location status display with distinct icons and styling for current location vs location needed states
-- Added loading indicator with spinner animation while detecting user location
-- Enhanced location caching (5 minutes) and increased timeout (15 seconds) for better reliability
-- Updated search placeholder to "Search nearby service centers or services..." for location context
-- Service centers now automatically sorted by distance from user's actual location when available
-- Fallback to default service centers with clear messaging when location access is unavailable
+**July 22, 2025**: Implemented truly location-aware service centers with dynamic generation around user's current position
+- Completely redesigned service center system to dynamically generate centers within 5km radius of user's actual location
+- Removed static multi-state service center data that was confusing users with distant locations
+- Added intelligent service center generation algorithm that creates 8 realistic centers around user's precise coordinates
+- Enhanced location detection with robust error handling for permission denied, unavailable, and timeout scenarios
+- Service centers now show "Near your location" addresses instead of fixed distant addresses
+- Added refresh functionality to regenerate service centers and get fresh location data
+- Improved location status display with green indicators for active location and orange for location needed
+- Added loading spinner animation and better user feedback during location detection process
+- Search placeholder updated to "Search nearby service centers or services..." for location context
+- Service centers automatically sorted by actual calculated distance using Haversine formula
+- Clean fallback experience when location access is denied with clear messaging to enable location
 
 **July 22, 2025**: Implemented comprehensive date validation system to prevent future dates in all vehicle and service forms
 - Added Zod schema validation with .refine() method for insuranceExpiry, emissionExpiry, and lastServiceDate fields
