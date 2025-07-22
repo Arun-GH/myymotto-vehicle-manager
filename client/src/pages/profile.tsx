@@ -71,18 +71,6 @@ export default function Profile() {
   const [licenseImagePreview, setLicenseImagePreview] = useState<string | null>(null);
   const currentUserId = localStorage.getItem("currentUserId");
 
-  // Check authentication with useEffect to avoid infinite re-renders
-  useEffect(() => {
-    if (!currentUserId) {
-      setLocation("/sign-in");
-    }
-  }, [currentUserId, setLocation]);
-
-  // Early return if not authenticated
-  if (!currentUserId) {
-    return null;
-  }
-
   const { data: profile, isLoading } = useQuery<UserProfile>({
     queryKey: ["/api/profile", currentUserId],
     queryFn: async () => {
