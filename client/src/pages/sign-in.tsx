@@ -519,8 +519,13 @@ export default function SignIn() {
                         <div className="relative">
                           <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                           <Input
-                            {...field}
-                            type="password"
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                              field.onChange(value);
+                            }}
+                            type="text"
+                            inputMode="numeric"
                             placeholder="Enter 4-digit PIN"
                             maxLength={4}
                             className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
@@ -542,8 +547,13 @@ export default function SignIn() {
                         <div className="relative">
                           <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                           <Input
-                            {...field}
-                            type="password"
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                              field.onChange(value);
+                            }}
+                            type="text"
+                            inputMode="numeric"
                             placeholder="Confirm 4-digit PIN"
                             maxLength={4}
                             className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
@@ -727,91 +737,7 @@ export default function SignIn() {
     </div>
   );
 
-  // PIN Setup Screen
-  if (step === "set-pin") {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center bg-warm-pattern">
-        <Card className="w-full max-w-md card-hover shadow-orange">
-          <CardHeader className="text-center">
-            <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
-              <Shield className="w-12 h-12 text-primary" />
-            </div>
-            <CardTitle className="text-2xl font-bold gradient-text">Setup PIN</CardTitle>
-            <p className="text-gray-600">Create a 4-digit PIN for quick access</p>
-          </CardHeader>
-          <CardContent>
-            <Form {...setPinForm}>
-              <form onSubmit={setPinForm.handleSubmit(onSetPinSubmit)} className="space-y-6">
-                <FormField
-                  control={setPinForm.control}
-                  name="pin"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-700">Create PIN</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                          <Input
-                            {...field}
-                            type="password"
-                            placeholder="Enter 4-digit PIN"
-                            maxLength={4}
-                            className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
 
-                <FormField
-                  control={setPinForm.control}
-                  name="confirmPin"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-700">Confirm PIN</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                          <Input
-                            {...field}
-                            type="password"
-                            placeholder="Confirm your PIN"
-                            maxLength={4}
-                            className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex gap-4">
-                  <Button 
-                    type="button"
-                    variant="outline"
-                    onClick={skipPinSetup}
-                    className="flex-1 h-12"
-                  >
-                    Skip for Now
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    className="flex-1 h-12 gradient-warm text-white border-0 hover:opacity-90"
-                    disabled={setPinMutation.isPending}
-                  >
-                    {setPinMutation.isPending ? "Setting up..." : "Set PIN"}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   // Biometric Setup Screen
   if (step === "biometric-setup") {
