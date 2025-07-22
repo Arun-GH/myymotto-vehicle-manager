@@ -145,7 +145,13 @@ export default function SignIn() {
         title: "PIN Set Successfully",
         description: "Your PIN has been created for future logins",
       });
-      setStep("biometric-setup");
+      
+      // Store authentication state
+      localStorage.setItem("userId", userId!.toString());
+      localStorage.setItem("authMethod", "pin");
+      
+      // Skip biometric for now and go directly to profile creation
+      setLocation("/profile");
     },
     onError: (error: any) => {
       toast({
@@ -198,9 +204,12 @@ export default function SignIn() {
     },
     onSuccess: (data) => {
       setUserId(data.userId);
-      localStorage.setItem("hasProfile", data.hasProfile.toString());
       
-      // For new users, offer PIN setup
+      // Store authentication state immediately
+      localStorage.setItem("userId", data.userId.toString());
+      localStorage.setItem("authMethod", "otp");
+      
+      // For new users without profile, offer PIN setup
       if (data.userId && !data.hasProfile) {
         setStep("set-pin");
         toast({
@@ -208,14 +217,12 @@ export default function SignIn() {
           description: "Let's set up secure authentication for your account",
         });
       } else {
-        // Existing user with profile - proceed to dashboard
-        localStorage.setItem("currentUserId", data.userId.toString());
-        localStorage.setItem("authMethod", "otp");
-        setLocation("/");
+        // Existing user with profile - go directly to dashboard
         toast({
-          title: "Authentication Successful",
+          title: "Login Successful",
           description: "Welcome back to Myymotto!",
         });
+        setLocation("/");
       }
     },
     onError: (error: any) => {
