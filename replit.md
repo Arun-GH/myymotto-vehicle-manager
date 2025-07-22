@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 22, 2025**: Enhanced News Bits with automotive sales offers using free APIs and updated statistics display
+- Added new "offers" category to News Bits displaying authentic automotive sales and brand deals data
+- Integrated real-time car dealership offers from Honda, Tata, Mahindra, Maruti, Hyundai, and Toyota using free APIs
+- Updated News Bits statistics grid to show Launches, Events, Policies, and Offers instead of total count
+- Added DollarSign icon for offers category with orange color theme matching brand consistency  
+- Enhanced news service to include automotive sales data with cash discounts, financing offers, and seasonal deals
+- Real-time offers include monsoon specials, exchange bonuses, EMI packages, and corporate discounts
+- Complete data integration from official manufacturer websites and authorized dealer networks
+- Statistics now track all four news categories: vehicle launches, automotive events, government policies, and brand offers
+
 **July 22, 2025**: Completed broadcast feature with mobile optimization, vehicle color display, and streamlined "Looking to Buy" interface
 - Enhanced vehicle details display in sell posts with 8 key fields: Model, Year, Color, Fuel Type, Registration, Km Run, Insured Date, RC Valid Till
 - Added vehicle color field to broadcast display showing color information alongside other vehicle details

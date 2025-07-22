@@ -1,4 +1,4 @@
-import { ArrowLeft, ExternalLink, Newspaper, Zap, Car, Truck, Bike, AlertTriangle, RefreshCw, Settings, Calendar } from "lucide-react";
+import { ArrowLeft, ExternalLink, Newspaper, Zap, Car, Truck, Bike, AlertTriangle, RefreshCw, Settings, Calendar, DollarSign } from "lucide-react";
 import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ interface NewsItem {
   id: string;
   title: string;
   summary: string;
-  category: "policy" | "launch" | "news" | "event";
+  category: "policy" | "launch" | "news" | "event" | "offers";
   date: string;
   source: string;
   link: string;
@@ -27,7 +27,7 @@ export default function NewsTidbits() {
     queryKey: ["/api/news"],
     refetchOnMount: true,
     staleTime: 0, // Always fetch fresh data
-    cacheTime: 1000 * 60 * 5, // Cache for 5 minutes only
+    gcTime: 1000 * 60 * 5, // Cache for 5 minutes only
   });
 
   // Fetch cache info
@@ -66,6 +66,8 @@ export default function NewsTidbits() {
         return <Newspaper className="w-4 h-4 text-blue-600" />;
       case "event":
         return <Calendar className="w-4 h-4 text-purple-600" />;
+      case "offers":
+        return <DollarSign className="w-4 h-4 text-orange-600" />;
       default:
         return <Newspaper className="w-4 h-4 text-gray-600" />;
     }
@@ -81,6 +83,8 @@ export default function NewsTidbits() {
         return "bg-blue-100 text-blue-800";
       case "event":
         return "bg-purple-100 text-purple-800";
+      case "offers":
+        return "bg-orange-100 text-orange-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -181,10 +185,10 @@ export default function NewsTidbits() {
           </Card>
           <Card className="p-2 text-center bg-orange-100 shadow-orange-200 shadow-md">
             <div className="flex items-center justify-center space-x-1 mb-1">
-              <Newspaper className="w-3 h-3 text-orange-600" />
-              <span className="text-xs font-bold text-orange-800">Total</span>
+              <DollarSign className="w-3 h-3 text-orange-600" />
+              <span className="text-xs font-bold text-orange-800">Offers</span>
             </div>
-            <p className="text-lg font-bold text-orange-600">{newsItems.length}</p>
+            <p className="text-lg font-bold text-orange-600">{newsItems.filter(item => item.category === 'offers').length}</p>
           </Card>
         </div>
 
