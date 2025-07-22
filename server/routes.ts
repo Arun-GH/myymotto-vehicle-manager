@@ -1552,17 +1552,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/broadcasts", async (req, res) => {
     try {
-      // For demo purposes, using hardcoded userId = 1
-      // In real implementation, get this from authenticated session
+      console.log("Received broadcast request:", req.body);
+      
       const userId = 1;
       
-      const broadcastData: InsertBroadcast & { userId: number } = {
-        ...req.body,
-        userId,
+      const broadcastData = {
+        userId: userId,
+        type: req.body.type || "general",
+        title: req.body.title,
+        description: req.body.description,
+        vehicleId: req.body.vehicleId || null,
+        price: req.body.price || null,
+        contactPhone: req.body.contactPhone,
+        contactEmail: req.body.contactEmail || null,
+        location: req.body.location || null,
+        status: "active",
+        viewCount: 0,
+        isActive: true,
       };
       
-      const validatedData = insertBroadcastSchema.parse(broadcastData);
-      const broadcast = await storage.createBroadcast(validatedData);
+      console.log("Creating broadcast with processed data:", broadcastData);
+      const broadcast = await storage.createBroadcast(broadcastData);
       res.status(201).json(broadcast);
     } catch (error) {
       console.error("Error creating broadcast:", error);

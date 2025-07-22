@@ -1113,7 +1113,7 @@ export class DatabaseStorage implements IStorage {
     return broadcast;
   }
 
-  async createBroadcast(broadcastData: InsertBroadcast & { userId: number }): Promise<Broadcast> {
+  async createBroadcast(broadcastData: any): Promise<Broadcast> {
     const [broadcast] = await db.insert(broadcasts).values(broadcastData).returning();
     return broadcast;
   }
