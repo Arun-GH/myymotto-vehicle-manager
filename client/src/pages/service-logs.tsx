@@ -99,27 +99,29 @@ export default function ServiceLogs() {
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       {/* Header */}
       <header className="header-gradient-border shadow-lg relative z-10">
-        <div className="px-4 py-4">
+        <div className="px-3 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <Link href="/">
-                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
-                  <ArrowLeft className="w-5 h-5" />
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50 h-8 w-8">
+                  <ArrowLeft className="w-4 h-4" />
                 </Button>
               </Link>
-              <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
+              <img src={logoImage} alt="Myymotto Logo" className="w-8 h-8 rounded-lg" />
               <div>
-                <ColorfulLogo />
-                <p className="text-sm text-red-600">Service Logs</p>
+                <div className="text-sm font-bold">
+                  <ColorfulLogo />
+                </div>
+                <p className="text-xs text-red-600">Service Logs</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
-                <Bell className="w-5 h-5" />
+            <div className="flex items-center space-x-1">
+              <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50 h-8 w-8">
+                <Bell className="w-4 h-4" />
               </Button>
               <Link href="/settings">
-                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50">
-                  <Settings className="w-6 h-6" />
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-red-50 h-8 w-8">
+                  <Settings className="w-4 h-4" />
                 </Button>
               </Link>
             </div>
@@ -127,16 +129,16 @@ export default function ServiceLogs() {
         </div>
       </header>
 
-      <main className="container mx-auto max-w-md p-4 space-y-4">
+      <main className="container mx-auto max-w-md p-2 space-y-2">
         {/* Vehicle Info */}
         {vehicle && (
           <Card className="shadow-orange">
-            <CardContent className="p-4">
+            <CardContent className="p-2">
               <div className="text-center">
-                <h2 className="text-lg font-bold text-gray-800">
+                <h2 className="text-sm font-bold text-gray-800">
                   {vehicle.make?.toUpperCase()} {vehicle.model?.toUpperCase()}
                 </h2>
-                <p className="text-sm text-gray-600">{vehicle.licensePlate}</p>
+                <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
               </div>
             </CardContent>
           </Card>
@@ -144,23 +146,23 @@ export default function ServiceLogs() {
 
         {/* Service Logs List */}
         <Card className="shadow-orange">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-gray-800">
-              <Wrench className="w-5 h-5 text-blue-600" />
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center space-x-2 text-gray-800 text-sm">
+              <Wrench className="w-4 h-4 text-blue-600" />
               <span>Service History</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             {(!serviceLogs || serviceLogs.length === 0) && (!maintenanceRecords || maintenanceRecords.length === 0) ? (
-              <div className="text-center py-8 px-4">
-                <NotebookPen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-2">No service logs yet</p>
-                <p className="text-sm text-gray-500 mb-4">
+              <div className="text-center py-4 px-2">
+                <NotebookPen className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 mb-1">No service logs yet</p>
+                <p className="text-xs text-gray-500 mb-3">
                   Start tracking your vehicle's service history
                 </p>
                 <Link href={`/vehicle/${vehicleId}/service`}>
-                  <Button className="bg-green-600 hover:bg-green-700">
-                    <Plus className="w-4 h-4 mr-2" />
+                  <Button className="bg-green-600 hover:bg-green-700 h-8 text-xs">
+                    <Plus className="w-3 h-3 mr-1" />
                     Add First Service Log
                   </Button>
                 </Link>
@@ -171,32 +173,32 @@ export default function ServiceLogs() {
                 {maintenanceRecords?.map((record) => (
                   <div
                     key={`maintenance-${record.id}`}
-                    className="flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
+                    className="flex items-center justify-between p-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
                   >
                     <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <Wrench className="w-4 h-4 text-green-600" />
-                        <h3 className="font-medium text-gray-800">
+                      <div className="flex items-center space-x-1 mb-1">
+                        <Wrench className="w-3 h-3 text-green-600" />
+                        <h3 className="font-medium text-xs text-gray-800">
                           {record.maintenanceType} (Essential Replace) - {record.completedDate ? new Date(record.completedDate).toLocaleDateString() : 'No date'}
                         </h3>
                       </div>
                       
-                      <div className="space-y-1 ml-6">
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <Calendar className="w-3 h-3" />
+                      <div className="space-y-1 ml-4">
+                        <div className="flex items-center space-x-1 text-xs text-gray-600">
+                          <Calendar className="w-2.5 h-2.5" />
                           <span>{record.completedDate ? new Date(record.completedDate).toLocaleDateString('en-GB') : 'No date'}</span>
                         </div>
                         
                         {record.notes && (
-                          <div className="flex items-start space-x-2 text-sm text-gray-600">
-                            <NotebookPen className="w-3 h-3 mt-0.5" />
-                            <span className="text-xs">{record.notes}</span>
+                          <div className="flex items-start space-x-1 text-xs text-gray-600">
+                            <NotebookPen className="w-2.5 h-2.5 mt-0.5" />
+                            <span className="text-[10px]">{record.notes}</span>
                           </div>
                         )}
                       </div>
                     </div>
                     
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
                       {record.warrantyCardPath && (
                         <>
                           <Button
@@ -211,19 +213,19 @@ export default function ServiceLogs() {
                               link.click();
                               document.body.removeChild(link);
                             }}
-                            className="text-blue-600 hover:text-blue-800 p-1"
+                            className="text-blue-600 hover:text-blue-800 h-6 w-6 p-0"
                             title="View Warranty Card"
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-3 h-3" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteMaintenanceRecord(record.id)}
-                            className="text-red-600 hover:text-red-800 p-1"
+                            className="text-red-600 hover:text-red-800 h-6 w-6 p-0"
                             title="Delete Record"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3 h-3" />
                           </Button>
                         </>
                       )}
@@ -241,19 +243,19 @@ export default function ServiceLogs() {
                               link.click();
                               document.body.removeChild(link);
                             }}
-                            className="text-green-600 hover:text-green-800 p-1"
+                            className="text-green-600 hover:text-green-800 h-6 w-6 p-0"
                             title="View Invoice"
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-3 h-3" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteMaintenanceRecord(record.id)}
-                            className="text-red-600 hover:text-red-800 p-1"
+                            className="text-red-600 hover:text-red-800 h-6 w-6 p-0"
                             title="Delete Record"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3 h-3" />
                           </Button>
                         </>
                       )}
@@ -262,10 +264,10 @@ export default function ServiceLogs() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDeleteMaintenanceRecord(record.id)}
-                          className="text-red-600 hover:text-red-800 p-1"
+                          className="text-red-600 hover:text-red-800 h-6 w-6 p-0"
                           title="Delete Record"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3 h-3" />
                         </Button>
                       )}
                     </div>
@@ -276,37 +278,37 @@ export default function ServiceLogs() {
                 {serviceLogs?.map((log) => (
                   <div
                     key={log.id}
-                    className="flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
+                    className="flex items-center justify-between p-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
                   >
                     <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <Wrench className="w-4 h-4 text-blue-600" />
-                        <h3 className="font-medium text-gray-800">
+                      <div className="flex items-center space-x-1 mb-1">
+                        <Wrench className="w-3 h-3 text-blue-600" />
+                        <h3 className="font-medium text-xs text-gray-800">
                           {log.serviceType} - {new Date(log.serviceDate).toLocaleDateString()}
                         </h3>
                       </div>
                       
-                      <div className="space-y-1 ml-6">
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <Calendar className="w-3 h-3" />
+                      <div className="space-y-1 ml-4">
+                        <div className="flex items-center space-x-1 text-xs text-gray-600">
+                          <Calendar className="w-2.5 h-2.5" />
                           <span>{new Date(log.serviceDate).toLocaleDateString('en-GB')}</span>
                         </div>
                         
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <MapPin className="w-3 h-3" />
+                        <div className="flex items-center space-x-1 text-xs text-gray-600">
+                          <MapPin className="w-2.5 h-2.5" />
                           <span>{log.serviceCentre}</span>
                         </div>
                         
                         {log.notes && (
-                          <div className="flex items-start space-x-2 text-sm text-gray-600">
-                            <NotebookPen className="w-3 h-3 mt-0.5" />
-                            <span className="text-xs">{log.notes}</span>
+                          <div className="flex items-start space-x-1 text-xs text-gray-600">
+                            <NotebookPen className="w-2.5 h-2.5 mt-0.5" />
+                            <span className="text-[10px]">{log.notes}</span>
                           </div>
                         )}
                       </div>
                     </div>
                     
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
                       {log.invoicePath && (
                         <Button
                           variant="ghost"
@@ -320,20 +322,20 @@ export default function ServiceLogs() {
                             link.click();
                             document.body.removeChild(link);
                           }}
-                          className="text-green-600 hover:text-green-800 p-1"
+                          className="text-green-600 hover:text-green-800 h-6 w-6 p-0"
                           title="View Invoice"
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye className="w-3 h-3" />
                         </Button>
                       )}
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteServiceLog(log.id)}
-                        className="text-red-600 hover:text-red-800 p-1"
+                        className="text-red-600 hover:text-red-800 h-6 w-6 p-0"
                         title="Delete Service Log"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3" />
                       </Button>
                     </div>
                   </div>
@@ -345,10 +347,10 @@ export default function ServiceLogs() {
 
         {/* Add Service Log Button - Always show when there are existing logs */}
         {((serviceLogs && serviceLogs.length > 0) || (maintenanceRecords && maintenanceRecords.length > 0)) && (
-          <div className="mt-4">
+          <div className="mt-2">
             <Link href={`/vehicle/${vehicleId}/service`}>
-              <Button className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600">
-                <Plus className="w-4 h-4 mr-2" />
+              <Button className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 h-8 text-xs">
+                <Plus className="w-3 h-3 mr-1" />
                 Add New Service Log
               </Button>
             </Link>
@@ -360,10 +362,10 @@ export default function ServiceLogs() {
       <div className="fixed bottom-20 right-4 z-50">
         <Link href={`/vehicle/${vehicleId}/service`}>
           <Button
-            className="h-14 w-14 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-white"
+            className="h-12 w-12 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-white"
             size="icon"
           >
-            <Plus className="h-6 w-6 text-white" />
+            <Plus className="h-5 w-5 text-white" />
           </Button>
         </Link>
       </div>
