@@ -83,12 +83,15 @@ Preferred communication style: Simple, everyday language.
 - Complete data integrity - no fallback synthetic violations, only authentic government sources
 - System ready for official API key integration when available from Karnataka government
 
-**July 21, 2025**: Updated Service Management interface labels for clearer user experience
+**July 21, 2025**: Updated Service Management interface labels and improved vehicle tile layout
 - Changed "Service Management:" label to "Service Log:" on vehicle cards for better clarity
 - Renamed "Service" button to "Add" to clearly indicate adding new service records
 - Fixed service logs page routing issue by standardizing route parameters to use :id consistently
 - Resolved parameter mismatch that was preventing service logs screen from loading
 - All vehicle routes now use consistent :id parameter naming for better maintainability
+- Moved Edit button from Documents section to top-right corner next to Delete button as icon-only for cleaner layout
+- Documents section now shows only "View | Upload" options, reducing visual clutter
+- Edit icon positioned before Delete icon in top-right corner for better user experience
 
 **July 21, 2025**: Streamlined document upload system and removed redundant screens
 - Removed service invoice option from document type dropdown on upload documents page

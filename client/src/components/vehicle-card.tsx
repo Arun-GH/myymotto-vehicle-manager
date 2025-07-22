@@ -173,6 +173,16 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 <StatusIcon className={`w-3 h-3 ${statusColor}`} />
               </div>
               <div className="flex items-center space-x-1">
+                <Link href={`/vehicle/${vehicle.id}/edit`}>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-blue-600 hover:bg-blue-50 p-1 h-auto w-auto"
+                    title="Edit vehicle"
+                  >
+                    <Edit className="w-3 h-3" />
+                  </Button>
+                </Link>
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -257,13 +267,6 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
               <Button variant="ghost" size="sm" className="text-red-600 p-1 h-auto hover:bg-red-50 flex items-center space-x-1">
                 <Eye className="w-3 h-3" />
                 <span className="text-xs">View</span>
-              </Button>
-            </Link>
-            <span className="text-gray-400 text-xs">|</span>
-            <Link href={`/vehicle/${vehicle.id}/edit`}>
-              <Button variant="ghost" size="sm" className="text-blue-600 p-1 h-auto hover:bg-blue-50 flex items-center space-x-1">
-                <Edit className="w-3 h-3" />
-                <span className="text-xs">Edit</span>
               </Button>
             </Link>
             <span className="text-gray-400 text-xs">|</span>
