@@ -1,6 +1,6 @@
 import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, gt, lte, desc } from "drizzle-orm";
+import { eq, and, gt, lte, lt, desc } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -110,6 +110,7 @@ export interface IStorage {
   deleteBroadcast(id: number): Promise<boolean>;
   getBroadcastsByType(type: string): Promise<Broadcast[]>;
   incrementBroadcastViews(id: number): Promise<void>;
+  cleanupExpiredBroadcasts(): Promise<number>;
 
   // Broadcast Response methods
   getBroadcastResponses(broadcastId: number): Promise<BroadcastResponse[]>;
@@ -1119,9 +1120,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateBroadcast(id: number, broadcastUpdate: Partial<InsertBroadcast>): Promise<Broadcast | undefined> {
+    // Convert expiresAt string to Date if present
+    const updateData = { ...broadcastUpdate };
+    if (updateData.expiresAt && typeof updateData.expiresAt === 'string') {
+      updateData.expiresAt = new Date(updateData.expiresAt);
+    }
+    
     const [updated] = await db
       .update(broadcasts)
-      .set({ ...broadcastUpdate, updatedAt: new Date() })
+      .set({ ...updateData, updatedAt: new Date() })
       .where(eq(broadcasts.id, id))
       .returning();
     return updated;
@@ -1130,6 +1137,19 @@ export class DatabaseStorage implements IStorage {
   async deleteBroadcast(id: number): Promise<boolean> {
     const result = await db.delete(broadcasts).where(eq(broadcasts.id, id));
     return (result.rowCount ?? 0) > 0;
+  }
+
+  async cleanupExpiredBroadcasts(): Promise<number> {
+    const now = new Date();
+    const result = await db
+      .delete(broadcasts)
+      .where(lt(broadcasts.expiresAt, now));
+    
+    const deletedCount = result.rowCount ?? 0;
+    if (deletedCount > 0) {
+      console.log(`Cleaned up ${deletedCount} expired broadcasts`);
+    }
+    return deletedCount;
   }
 
   async getBroadcastsByType(type: string): Promise<Broadcast[]> {

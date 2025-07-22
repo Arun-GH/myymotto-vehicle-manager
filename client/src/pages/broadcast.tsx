@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { ArrowLeft, Plus, MessageSquare, Eye, Calendar, User, Car } from "lucide-react";
+import { ArrowLeft, Plus, MessageSquare, Eye, Calendar, User, Car, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -156,6 +156,27 @@ export default function BroadcastPage() {
     },
   });
 
+  // Delete broadcast mutation
+  const deleteBroadcastMutation = useMutation({
+    mutationFn: async (broadcastId: number) => {
+      return apiRequest("DELETE", `/api/broadcasts/${broadcastId}`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Deleted",
+        description: "Your broadcast has been deleted successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/broadcasts"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete broadcast",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleVehicleSelect = (vehicle: any) => {
     setSelectedVehicleForSell(vehicle);
     setShowVehicleSelector(false);
@@ -283,9 +304,27 @@ export default function BroadcastPage() {
                         {getBroadcastTypeLabel(broadcast.type)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 text-[9px] text-gray-400">
-                      <Calendar className="w-2 h-2" />
-                      {formatDate(broadcast.createdAt)}
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 text-[9px] text-gray-400">
+                        <Calendar className="w-2 h-2" />
+                        {formatDate(broadcast.createdAt)}
+                      </div>
+                      {/* Show delete button for user's own posts */}
+                      {broadcast.userId === 1 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            if (window.confirm("Are you sure you want to delete this broadcast?")) {
+                              deleteBroadcastMutation.mutate(broadcast.id);
+                            }
+                          }}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 p-0 h-auto w-auto"
+                          disabled={deleteBroadcastMutation.isPending}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                   <CardTitle className="text-sm text-gray-900 leading-tight">{broadcast.title}</CardTitle>

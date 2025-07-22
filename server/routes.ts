@@ -1556,6 +1556,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const userId = 1;
       
+      // Set expiry date to 7 days from now
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 7);
+
       const broadcastData = {
         userId: userId,
         type: req.body.type || "general",
@@ -1569,6 +1573,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: "active",
         viewCount: 0,
         isActive: true,
+        expiresAt: expiresAt,
       };
       
       console.log("Creating broadcast with processed data:", broadcastData);
@@ -1627,6 +1632,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch broadcasts by type" });
     }
   });
+
+  // Setup automatic cleanup of expired broadcasts (run every hour)
+  setInterval(async () => {
+    try {
+      await storage.cleanupExpiredBroadcasts();
+    } catch (error) {
+      console.error("Error during automatic broadcast cleanup:", error);
+    }
+  }, 60 * 60 * 1000); // 1 hour in milliseconds
+
+  // Run initial cleanup on server start
+  setTimeout(async () => {
+    try {
+      await storage.cleanupExpiredBroadcasts();
+    } catch (error) {
+      console.error("Error during initial broadcast cleanup:", error);
+    }
+  }, 5000); // 5 seconds after server start
 
   const httpServer = createServer(app);
   return httpServer;

@@ -34,6 +34,10 @@ Preferred communication style: Simple, everyday language.
 - Query posts show phone, email, and location fields with auto-population from user profile
 - Enhanced placeholder text and labels specific to community query posts
 - "Ask Community" button for query type submissions with proper contact field display
+- Added delete post functionality with confirmation dialog for user's own broadcasts
+- Implemented automatic 7-day expiry for all broadcast posts with server-side cleanup
+- Posts automatically expire and are deleted one week after creation
+- Hourly cleanup routine removes expired broadcasts from database
 - Complete broadcast system fully functional with authentic vehicle data display including color, odometer readings and document dates
 
 **July 21, 2025**: Enhanced dashboard with 3D orange-themed tile effects and updated contact support
