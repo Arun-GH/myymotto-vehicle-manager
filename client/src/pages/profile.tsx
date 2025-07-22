@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, Link } from "wouter";
 import { useForm } from "react-hook-form";
@@ -114,17 +114,20 @@ export default function Profile() {
 
   // Watch state changes to update city options
   const selectedState = form.watch("state");
-  const availableCities = selectedState ? stateCityMapping[selectedState] || [] : [];
+  const availableCities = useMemo(() => {
+    return selectedState ? stateCityMapping[selectedState] || [] : [];
+  }, [selectedState]);
 
   // Clear city when state changes
   useEffect(() => {
-    if (selectedState && form.getValues().city) {
+    if (selectedState) {
       const currentCity = form.getValues().city;
-      if (!availableCities.includes(currentCity)) {
+      const cities = stateCityMapping[selectedState] || [];
+      if (currentCity && !cities.includes(currentCity)) {
         form.setValue("city", "");
       }
     }
-  }, [selectedState, availableCities, form]);
+  }, [selectedState, form]);
 
   // Handle file upload
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
