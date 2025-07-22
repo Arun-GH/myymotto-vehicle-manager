@@ -204,6 +204,7 @@ export const userProfiles = pgTable("user_profiles", {
   userId: integer("user_id").references(() => users.id).notNull(),
   name: text("name").notNull(),
   age: integer("age").notNull(),
+  gender: text("gender"), // "male", "female", "other", "prefer_not_to_say"
   address: text("address").notNull(),
   bloodGroup: text("blood_group").notNull(),
   state: text("state").notNull(),
@@ -289,6 +290,7 @@ export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
 }).extend({
   name: z.string().min(1, "Name is required"),
   age: z.number().min(1, "Age must be greater than 0").max(120, "Age must be reasonable"),
+  gender: z.string().optional(),
   address: z.string().min(1, "Address is required"),
   bloodGroup: z.string().min(1, "Blood group is required"),
   state: z.string().min(1, "State is required"),

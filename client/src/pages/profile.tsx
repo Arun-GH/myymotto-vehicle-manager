@@ -64,6 +64,7 @@ export default function Profile() {
     defaultValues: {
       name: "",
       age: 25,
+      gender: "",
       address: "",
       bloodGroup: "",
       state: "",
@@ -134,6 +135,7 @@ export default function Profile() {
       form.reset({
         name: profile.name,
         age: profile.age,
+        gender: profile.gender || "",
         address: profile.address,
         bloodGroup: profile.bloodGroup,
         state: profile.state,
@@ -442,6 +444,12 @@ export default function Profile() {
                   <label className="text-sm text-muted-foreground">Age</label>
                   <p className="font-medium">{profile.age} years</p>
                 </div>
+                {profile.gender && (
+                  <div>
+                    <label className="text-sm text-muted-foreground">Gender</label>
+                    <p className="font-medium">{profile.gender}</p>
+                  </div>
+                )}
                 <div>
                   <label className="text-sm text-muted-foreground">Blood Group</label>
                   <p className="font-medium">{profile.bloodGroup}</p>
@@ -644,22 +652,21 @@ export default function Profile() {
                     />
                     <FormField
                       control={form.control}
-                      name="bloodGroup"
+                      name="gender"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Blood Group</FormLabel>
+                          <FormLabel>Gender</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select blood group" />
+                                <SelectValue placeholder="Select gender" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {bloodGroups.map((group) => (
-                                <SelectItem key={group} value={group}>
-                                  {group}
-                                </SelectItem>
-                              ))}
+                              <SelectItem value="male">Male</SelectItem>
+                              <SelectItem value="female">Female</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                              <SelectItem value="prefer_not_to_say">Prefer not to say</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -667,6 +674,31 @@ export default function Profile() {
                       )}
                     />
                   </div>
+                  
+                  <FormField
+                    control={form.control}
+                    name="bloodGroup"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Blood Group</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select blood group" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {bloodGroups.map((group) => (
+                              <SelectItem key={group} value={group}>
+                                {group}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
                     control={form.control}
