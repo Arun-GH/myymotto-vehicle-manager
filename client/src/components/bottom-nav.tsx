@@ -24,15 +24,15 @@ export default function BottomNav({ currentPath }: BottomNavProps) {
 
   return (
     <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 max-w-md w-full bg-white/95 backdrop-blur-sm border-t border-red-100 z-20 shadow-lg">
-      <div className="grid grid-cols-4 py-3 px-1">
+      <div className="grid grid-cols-4 py-2 px-2">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = currentPath === item.path;
           const colors = [
-            { active: "text-red-600 bg-red-50", inactive: "text-gray-600 hover:text-red-600 hover:bg-red-50" },
-            { active: "text-orange-600 bg-orange-50", inactive: "text-gray-600 hover:text-orange-600 hover:bg-orange-50" },
-            { active: "text-yellow-600 bg-yellow-50", inactive: "text-gray-600 hover:text-yellow-600 hover:bg-yellow-50" },
-            { active: "text-red-600 bg-red-50", inactive: "text-gray-600 hover:text-red-600 hover:bg-red-50" }
+            { active: "text-red-600 bg-red-50", inactive: "text-gray-500 hover:text-red-600 hover:bg-red-50" },
+            { active: "text-orange-600 bg-orange-50", inactive: "text-gray-500 hover:text-orange-600 hover:bg-orange-50" },
+            { active: "text-yellow-600 bg-yellow-50", inactive: "text-gray-500 hover:text-yellow-600 hover:bg-yellow-50" },
+            { active: "text-red-600 bg-red-50", inactive: "text-gray-500 hover:text-red-600 hover:bg-red-50" }
           ];
           
           return (
@@ -40,19 +40,23 @@ export default function BottomNav({ currentPath }: BottomNavProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className={`flex flex-col items-center py-3 h-auto space-y-1 mx-1 rounded-xl relative ${
+                className={`flex flex-col items-center justify-center py-2 px-1 h-16 space-y-0.5 mx-0.5 rounded-lg relative transition-all duration-200 ${
                   isActive ? colors[index].active : colors[index].inactive
                 }`}
               >
-                <div className="relative">
-                  <Icon className="w-6 h-6" />
+                <div className="relative flex-shrink-0">
+                  <Icon className="w-5 h-5" />
                   {item.count !== undefined && item.count > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold leading-none">
                       {item.count > 99 ? '99+' : item.count}
                     </span>
                   )}
                 </div>
-                <span className="text-xs font-medium">{item.label}</span>
+                <span className={`text-[10px] font-medium leading-tight text-center ${
+                  isActive ? 'text-current' : 'text-gray-500'
+                }`}>
+                  {item.label}
+                </span>
               </Button>
             </Link>
           );
