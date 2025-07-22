@@ -18,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
-type AuthStep = "signin" | "verify-otp" | "pin-login" | "set-pin" | "biometric-setup" | "register";
+type AuthStep = "signin" | "verify-otp" | "pin-login" | "direct-pin" | "set-pin" | "biometric-setup" | "register";
 
 export default function SignIn() {
   const [, setLocation] = useLocation();
@@ -30,6 +30,20 @@ export default function SignIn() {
   const [isExistingUser, setIsExistingUser] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Check for saved user data on component mount
+  useEffect(() => {
+    const savedIdentifier = localStorage.getItem("lastUsedIdentifier");
+    const hasPin = localStorage.getItem("hasPin") === "true";
+    
+    if (savedIdentifier && hasPin) {
+      // User has previously set up PIN, go directly to simplified PIN screen
+      setIdentifier(savedIdentifier);
+      pinForm.setValue("identifier", savedIdentifier);
+      setStep("direct-pin");
+      setIsExistingUser(true);
+    }
+  }, []);
 
   const signInForm = useForm<SignInData>({
     resolver: zodResolver(signInSchema),
@@ -123,15 +137,18 @@ export default function SignIn() {
     },
     onSuccess: (data) => {
       setUserId(data.userId);
-      // Store authentication state
+      // Store authentication state and user data
       localStorage.setItem("userId", data.userId.toString());
       localStorage.setItem("authMethod", "pin");
+      localStorage.setItem("lastUsedIdentifier", identifier);
+      localStorage.setItem("hasPin", "true");
       
-      if (data.hasProfile) {
-        setLocation("/");
-      } else {
-        setLocation("/profile");
-      }
+      // Always go to dashboard for PIN login users (they already have profiles)
+      toast({
+        title: "Welcome Back!",
+        description: "Successfully signed in with PIN",
+      });
+      setLocation("/");
     },
     onError: (error: any) => {
       toast({
@@ -157,9 +174,11 @@ export default function SignIn() {
         description: "You can now use PIN for future logins. Welcome to Myymotto!",
       });
       
-      // Store authentication state
+      // Store authentication state and user data
       localStorage.setItem("userId", userId!.toString());
       localStorage.setItem("authMethod", "pin");
+      localStorage.setItem("lastUsedIdentifier", identifier);
+      localStorage.setItem("hasPin", "true");
       
       // Take user to dashboard after PIN setup
       setLocation("/");
@@ -730,6 +749,85 @@ export default function SignIn() {
   );
 
 
+
+  // Direct PIN Login Screen for Returning Users
+  if (step === "direct-pin") {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center bg-warm-pattern">
+        <Card className="w-full max-w-md card-hover shadow-orange">
+          <CardHeader className="text-center">
+            <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-16 h-16 rounded-full"
+              />
+            </div>
+            <CardTitle className="text-2xl font-bold text-gray-800">Welcome Back!</CardTitle>
+            <p className="text-gray-600">Enter your PIN to continue</p>
+            <div className="bg-gray-50 px-3 py-2 rounded-lg mt-4">
+              <p className="text-sm text-gray-700">{identifier}</p>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Form {...pinForm}>
+              <form onSubmit={pinForm.handleSubmit(onPinSubmit)} className="space-y-6">
+                <FormField
+                  control={pinForm.control}
+                  name="pin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-700">Enter PIN</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                          <Input
+                            {...field}
+                            type="password"
+                            placeholder="Enter your 4-digit PIN"
+                            maxLength={4}
+                            className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 gradient-warm text-white border-0 hover:opacity-90"
+                  size="lg"
+                  disabled={pinLoginMutation.isPending}
+                >
+                  {pinLoginMutation.isPending ? "Verifying..." : "Sign In"}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+
+                <div className="text-center">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      localStorage.removeItem("lastUsedIdentifier");
+                      localStorage.removeItem("hasPin");
+                      setStep("signin");
+                      setIdentifier("");
+                      setIsExistingUser(false);
+                    }}
+                    className="text-sm text-gray-600 hover:text-gray-800"
+                  >
+                    Sign in with different account
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // Biometric Setup Screen
   if (step === "biometric-setup") {
