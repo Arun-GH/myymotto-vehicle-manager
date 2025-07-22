@@ -7,7 +7,7 @@ export default function FloatingActionButton() {
   const [showOptions, setShowOptions] = useState(false);
 
   return (
-    <div className="fixed bottom-20 right-4 z-30">
+    <div className="fixed bottom-24 right-4 z-30">
       {/* Action Options - shown when main button is clicked */}
       {showOptions && (
         <div className="absolute bottom-16 right-0 space-y-2 mb-2">

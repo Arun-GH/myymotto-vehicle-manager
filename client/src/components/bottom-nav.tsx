@@ -24,7 +24,7 @@ export default function BottomNav({ currentPath }: BottomNavProps) {
 
   return (
     <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 max-w-md w-full bg-white/95 backdrop-blur-sm border-t border-red-100 z-20 shadow-lg">
-      <div className="grid grid-cols-4 py-2">
+      <div className="grid grid-cols-4 py-3 px-1">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = currentPath === item.path;
@@ -40,19 +40,19 @@ export default function BottomNav({ currentPath }: BottomNavProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className={`flex flex-col items-center py-2 h-auto space-y-1 mx-1 rounded-xl relative ${
+                className={`flex flex-col items-center py-3 h-auto space-y-1 mx-1 rounded-xl relative ${
                   isActive ? colors[index].active : colors[index].inactive
                 }`}
               >
                 <div className="relative">
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-6 h-6" />
                   {item.count !== undefined && item.count > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] rounded-full w-3 h-3 flex items-center justify-center font-bold">
+                    <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                       {item.count > 99 ? '99+' : item.count}
                     </span>
                   )}
                 </div>
-                <span className="text-xs">{item.label}</span>
+                <span className="text-xs font-medium">{item.label}</span>
               </Button>
             </Link>
           );
