@@ -205,7 +205,12 @@ export default function Profile() {
 
   const createProfileMutation = useMutation({
     mutationFn: async (data: InsertUserProfile) => {
-      if (!currentUserId) throw new Error("Not authenticated");
+      const userId = localStorage.getItem("currentUserId");
+      console.log("Creating profile with userId:", userId);
+      if (!userId) {
+        console.error("No currentUserId found in localStorage");
+        throw new Error("Not authenticated");
+      }
       
       // Upload profile image first if exists
       let profilePicturePath = undefined;
@@ -254,11 +259,12 @@ export default function Profile() {
           delete (profileData as any)[key];
         }
       });
-      const response = await apiRequest("POST", `/api/profile/${currentUserId}`, profileData);
+      const response = await apiRequest("POST", `/api/profile/${userId}`, profileData);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/profile", currentUserId] });
+      const userId = localStorage.getItem("currentUserId");
+      queryClient.invalidateQueries({ queryKey: ["/api/profile", userId] });
       toast({
         title: "Profile Created",
         description: "Your profile has been successfully created.",
@@ -277,7 +283,12 @@ export default function Profile() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: InsertUserProfile) => {
-      if (!currentUserId) throw new Error("Not authenticated");
+      const userId = localStorage.getItem("currentUserId");
+      console.log("Updating profile with userId:", userId);
+      if (!userId) {
+        console.error("No currentUserId found in localStorage for update");
+        throw new Error("Not authenticated");
+      }
       
       // Upload profile image first if a new one exists
       let profilePicturePath = profile?.profilePicture || undefined;
@@ -326,11 +337,12 @@ export default function Profile() {
           delete (profileData as any)[key];
         }
       });
-      const response = await apiRequest("PUT", `/api/profile/${currentUserId}`, profileData);
+      const response = await apiRequest("PUT", `/api/profile/${userId}`, profileData);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/profile", currentUserId] });
+      const userId = localStorage.getItem("currentUserId");
+      queryClient.invalidateQueries({ queryKey: ["/api/profile", userId] });
       toast({
         title: "Profile Updated",
         description: "Your profile has been successfully updated.",
