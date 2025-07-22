@@ -71,9 +71,15 @@ export default function Profile() {
   const [licenseImagePreview, setLicenseImagePreview] = useState<string | null>(null);
   const currentUserId = localStorage.getItem("currentUserId");
 
-  // Check authentication
+  // Check authentication with useEffect to avoid infinite re-renders
+  useEffect(() => {
+    if (!currentUserId) {
+      setLocation("/sign-in");
+    }
+  }, [currentUserId, setLocation]);
+
+  // Early return if not authenticated
   if (!currentUserId) {
-    setLocation("/sign-in");
     return null;
   }
 
@@ -254,10 +260,10 @@ export default function Profile() {
         driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
         driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? data.driversLicenseValidTill : undefined,
       };
-      // Remove undefined values to avoid validation issues
+      // Remove undefined values to avoid validation issues  
       Object.keys(profileData).forEach(key => {
-        if (profileData[key] === undefined) {
-          delete profileData[key];
+        if ((profileData as any)[key] === undefined) {
+          delete (profileData as any)[key];
         }
       });
       const response = await apiRequest("POST", `/api/profile/${currentUserId}`, profileData);
@@ -328,8 +334,8 @@ export default function Profile() {
       };
       // Remove undefined values to avoid validation issues
       Object.keys(profileData).forEach(key => {
-        if (profileData[key] === undefined) {
-          delete profileData[key];
+        if ((profileData as any)[key] === undefined) {
+          delete (profileData as any)[key];
         }
       });
       const response = await apiRequest("PUT", `/api/profile/${currentUserId}`, profileData);
