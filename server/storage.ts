@@ -612,6 +612,10 @@ export class DatabaseStorage implements IStorage {
       const notificationsDeleted = await db.delete(notifications).where(eq(notifications.vehicleId, id));
       console.log(`Deleted ${notificationsDeleted.rowCount || 0} notifications`);
       
+      // Delete related service alerts
+      const serviceAlertsDeleted = await db.delete(serviceAlerts).where(eq(serviceAlerts.vehicleId, id));
+      console.log(`Deleted ${serviceAlertsDeleted.rowCount || 0} service alerts`);
+      
       // Then delete related documents
       const documentsDeleted = await db.delete(documents).where(eq(documents.vehicleId, id));
       console.log(`Deleted ${documentsDeleted.rowCount || 0} documents`);
