@@ -55,7 +55,7 @@ export default function SignIn() {
   });
 
   const setPinForm = useForm<{ pin: string; confirmPin: string }>({
-    resolver: zodResolver(setPinSchema),
+    mode: "onChange",
     defaultValues: {
       pin: "",
       confirmPin: "",
@@ -537,33 +537,24 @@ export default function SignIn() {
                   )}
                 />
 
-                <FormField
-                  control={setPinForm.control}
-                  name="confirmPin"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-700">Confirm PIN</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                          <Input
-                            value={field.value || ""}
-                            onChange={(e) => {
-                              const value = e.target.value.replace(/\D/g, '').slice(0, 4);
-                              field.onChange(value);
-                            }}
-                            type="text"
-                            inputMode="numeric"
-                            placeholder="Confirm 4-digit PIN"
-                            maxLength={4}
-                            className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">Confirm PIN</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                    <Input
+                      value={setPinForm.watch("confirmPin") || ""}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                        setPinForm.setValue("confirmPin", value);
+                      }}
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="Confirm 4-digit PIN"
+                      maxLength={4}
+                      className="h-12 pl-10 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
+                    />
+                  </div>
+                </div>
 
                 <Button 
                   type="submit" 
