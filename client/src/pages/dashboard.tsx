@@ -108,14 +108,14 @@ export default function Dashboard() {
           <h2 className="text-xs font-semibold mb-2 text-gray-800">Quick Actions</h2>
           <div className="grid grid-cols-5 gap-2">
             <Link href="/add-vehicle">
-              <div className="quick-action-3d rounded-lg p-1.5 flex flex-col items-center space-y-1 cursor-pointer hover:border-red-300 transition-colors min-h-[68px]">
+              <div className="quick-action-3d rounded-lg py-2 px-1 flex flex-col items-center justify-center space-y-1 cursor-pointer hover:border-red-300 transition-colors h-14">
                 <div className="w-5 h-5 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center icon-3d">
                   <Plus className="w-2.5 h-2.5 text-white" />
                 </div>
                 <span className="text-[10px] font-medium text-gray-800 text-center leading-tight">Add Vehicle</span>
               </div>
             </Link>
-            <div className="quick-action-3d rounded-lg p-1.5 flex flex-col items-center space-y-1 cursor-pointer hover:border-purple-300 transition-colors min-h-[68px]" 
+            <div className="quick-action-3d rounded-lg py-2 px-1 flex flex-col items-center justify-center space-y-1 cursor-pointer hover:border-purple-300 transition-colors h-14" 
                  onClick={() => {
                    if (vehicles.length === 1) {
                      window.location.href = `/vehicle/${vehicles[0].id}/local-documents`;
@@ -131,7 +131,7 @@ export default function Dashboard() {
               </div>
               <span className="text-[10px] font-medium text-gray-800 text-center leading-tight">Documents</span>
             </div>
-            <div className="quick-action-3d rounded-lg p-1.5 flex flex-col items-center space-y-1 cursor-pointer hover:border-teal-300 transition-colors min-h-[68px]"
+            <div className="quick-action-3d rounded-lg py-2 px-1 flex flex-col items-center justify-center space-y-1 cursor-pointer hover:border-teal-300 transition-colors h-14"
                  onClick={() => {
                    if (vehicles.length === 1) {
                      window.location.href = `/vehicle/${vehicles[0].id}/service-logs`;
@@ -148,7 +148,7 @@ export default function Dashboard() {
               <span className="text-[10px] font-medium text-gray-800 text-center leading-tight">Service Log</span>
             </div>
             <Link href="/traffic-violations">
-              <div className="quick-action-3d rounded-lg p-1.5 flex flex-col items-center space-y-1 cursor-pointer hover:border-blue-300 transition-colors min-h-[68px]">
+              <div className="quick-action-3d rounded-lg py-2 px-1 flex flex-col items-center justify-center space-y-1 cursor-pointer hover:border-blue-300 transition-colors h-14">
                 <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center icon-3d">
                   <Zap className="w-2.5 h-2.5 text-white" />
                 </div>
@@ -156,7 +156,7 @@ export default function Dashboard() {
               </div>
             </Link>
             <Link href="/insurance-renewals">
-              <div className="quick-action-3d rounded-lg p-1.5 flex flex-col items-center space-y-1 cursor-pointer hover:border-green-300 transition-colors min-h-[68px]">
+              <div className="quick-action-3d rounded-lg py-2 px-1 flex flex-col items-center justify-center space-y-1 cursor-pointer hover:border-green-300 transition-colors h-14">
                 <div className="w-5 h-5 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center icon-3d">
                   <Shield className="w-2.5 h-2.5 text-white" />
                 </div>
