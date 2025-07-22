@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Home, Radio, Users, User } from "lucide-react";
+import { Home, Megaphone, Users, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 
@@ -17,7 +17,7 @@ export default function BottomNav({ currentPath }: BottomNavProps) {
   
   const navItems = [
     { path: "/", icon: Home, label: "Home" },
-    { path: "/broadcast?view=only", icon: Radio, label: "Broadcast", count: broadcastCount },
+    { path: "/broadcast?view=only", icon: Megaphone, label: "Broadcast", count: broadcastCount },
     { path: "/emergency-contacts", icon: Users, label: "Emergency" },
     { path: "/profile", icon: User, label: "Profile" },
   ];
