@@ -608,7 +608,9 @@ export class DatabaseStorage implements IStorage {
     try {
       console.log(`Attempting to delete vehicle ${id} and related records`);
       
-      // First delete related notifications
+      // Delete all related records in order to avoid foreign key constraints
+      
+      // Delete related notifications
       const notificationsDeleted = await db.delete(notifications).where(eq(notifications.vehicleId, id));
       console.log(`Deleted ${notificationsDeleted.rowCount || 0} notifications`);
       
@@ -616,7 +618,23 @@ export class DatabaseStorage implements IStorage {
       const serviceAlertsDeleted = await db.delete(serviceAlerts).where(eq(serviceAlerts.vehicleId, id));
       console.log(`Deleted ${serviceAlertsDeleted.rowCount || 0} service alerts`);
       
-      // Then delete related documents
+      // Delete related broadcasts (vehicleId can be null for some broadcasts)
+      const broadcastsDeleted = await db.delete(broadcasts).where(eq(broadcasts.vehicleId, id));
+      console.log(`Deleted ${broadcastsDeleted.rowCount || 0} broadcasts`);
+      
+      // Delete related maintenance records
+      const maintenanceDeleted = await db.delete(maintenanceRecords).where(eq(maintenanceRecords.vehicleId, id));
+      console.log(`Deleted ${maintenanceDeleted.rowCount || 0} maintenance records`);
+      
+      // Delete related service logs
+      const serviceLogsDeleted = await db.delete(serviceLogs).where(eq(serviceLogs.vehicleId, id));
+      console.log(`Deleted ${serviceLogsDeleted.rowCount || 0} service logs`);
+      
+      // Delete related traffic violations
+      const violationsDeleted = await db.delete(trafficViolations).where(eq(trafficViolations.vehicleId, id));
+      console.log(`Deleted ${violationsDeleted.rowCount || 0} traffic violations`);
+      
+      // Delete related documents
       const documentsDeleted = await db.delete(documents).where(eq(documents.vehicleId, id));
       console.log(`Deleted ${documentsDeleted.rowCount || 0} documents`);
       
