@@ -226,160 +226,112 @@ export default function Insurance() {
 
                   {/* Expanded Details */}
                   {isExpanded && (
-                    <div className="border-t border-gray-100 p-2 space-y-2">
-                      {/* Insurance Status Details */}
-                      <div className="bg-gray-50 p-2 rounded-lg">
-                        <div className="flex items-center space-x-1 mb-2">
-                          <Shield className="w-4 h-4 text-orange-600" />
-                          <span className="text-sm font-medium text-gray-900">Insurance Status</span>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-2 mb-2">
-                          <div className="bg-blue-50 p-2 rounded border border-blue-100">
-                            <div className="flex items-center space-x-1 mb-1">
-                              <Calendar className="w-3 h-3 text-blue-600" />
-                              <span className="text-[10px] text-blue-600 font-medium">Issue Date</span>
-                            </div>
-                            <div className="text-xs font-medium">
-                              {vehicle.insuranceExpiry 
-                                ? format(new Date(vehicle.insuranceExpiry), 'dd/MM/yyyy')
-                                : 'Not available'
-                              }
-                            </div>
-                          </div>
-                          <div className="bg-red-50 p-2 rounded border border-red-100">
-                            <div className="flex items-center space-x-1 mb-1">
-                              <Calendar className="w-3 h-3 text-red-600" />
-                              <span className="text-[10px] text-red-600 font-medium">Policy Expires</span>
-                            </div>
-                            <div className="text-xs font-medium">
-                              {vehicle.insuranceExpiryDate 
-                                ? format(new Date(vehicle.insuranceExpiryDate), 'dd/MM/yyyy')
-                                : 'Not available'
-                              }
-                            </div>
+                    <div className="border-t border-gray-100 p-1.5 space-y-1.5">
+                      {/* Dates & Provider in single row */}
+                      <div className="grid grid-cols-3 gap-1.5">
+                        <div className="bg-blue-50 p-1.5 rounded text-center">
+                          <div className="text-[9px] text-blue-600 font-medium">Issue</div>
+                          <div className="text-[10px] font-semibold">
+                            {vehicle.insuranceExpiry ? format(new Date(vehicle.insuranceExpiry), 'dd/MM/yy') : 'N/A'}
                           </div>
                         </div>
-
-                        {vehicle.insuranceCompany && (
-                          <div className="bg-green-50 p-2 rounded border border-green-100 mb-2">
-                            <div className="flex items-center space-x-1 mb-1">
-                              <Building2 className="w-3 h-3 text-green-600" />
-                              <span className="text-[10px] text-green-600 font-medium">Provider</span>
-                            </div>
-                            <div className="text-xs font-medium">{vehicle.insuranceCompany}</div>
+                        <div className="bg-red-50 p-1.5 rounded text-center">
+                          <div className="text-[9px] text-red-600 font-medium">Expires</div>
+                          <div className="text-[10px] font-semibold">
+                            {vehicle.insuranceExpiryDate ? format(new Date(vehicle.insuranceExpiryDate), 'dd/MM/yy') : 'N/A'}
                           </div>
-                        )}
+                        </div>
+                        <div className="bg-green-50 p-1.5 rounded text-center">
+                          <div className="text-[9px] text-green-600 font-medium">Provider</div>
+                          <div className="text-[9px] font-semibold truncate">
+                            {vehicle.insuranceCompany ? vehicle.insuranceCompany.split(' ')[0] : 'N/A'}
+                          </div>
+                        </div>
+                      </div>
 
-                        {/* Insurance Documents */}
-                        {insuranceDocuments[vehicle.id] && insuranceDocuments[vehicle.id].length > 0 && (
-                          <div className="bg-orange-50 p-2 rounded-lg">
-                            <div className="flex items-center space-x-1 mb-2">
-                              <FileText className="w-3 h-3 text-orange-600" />
-                              <span className="text-xs text-orange-600 font-medium">Documents</span>
+                      {/* Financial Details - Single Row */}
+                      {(vehicle.insuranceSumInsured || vehicle.insurancePremiumAmount || vehicle.ocrSumInsured || vehicle.ocrPremiumAmount) && (
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {(vehicle.insuranceSumInsured || vehicle.ocrSumInsured) && (
+                            <div className="bg-green-50 p-1.5 rounded text-center">
+                              <div className="text-[9px] text-green-600 font-medium">Sum Insured</div>
+                              <div className="text-[10px] font-bold text-green-700">
+                                ₹{Number(vehicle.insuranceSumInsured || vehicle.ocrSumInsured).toLocaleString('en-IN')}
+                              </div>
                             </div>
-                            <div className="space-y-1">
-                              {insuranceDocuments[vehicle.id].map((doc, index) => (
-                                <div 
+                          )}
+                          {(vehicle.insurancePremiumAmount || vehicle.ocrPremiumAmount) && (
+                            <div className="bg-blue-50 p-1.5 rounded text-center">
+                              <div className="text-[9px] text-blue-600 font-medium">Premium</div>
+                              <div className="text-[10px] font-bold text-blue-700">
+                                ₹{Number(vehicle.insurancePremiumAmount || vehicle.ocrPremiumAmount).toLocaleString('en-IN')}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Policy Info - Inline */}
+                      {(vehicle.ocrPolicyNumber || vehicle.ocrInsuredName) && (
+                        <div className="bg-purple-50 p-1.5 rounded">
+                          <div className="flex justify-between items-center text-[9px]">
+                            {vehicle.ocrPolicyNumber && (
+                              <div>
+                                <span className="text-purple-600 font-medium">Policy: </span>
+                                <span className="font-semibold">{vehicle.ocrPolicyNumber}</span>
+                              </div>
+                            )}
+                            {vehicle.ocrInsuredName && (
+                              <div className="text-right">
+                                <span className="text-purple-600 font-medium">Name: </span>
+                                <span className="font-semibold truncate max-w-20">{vehicle.ocrInsuredName}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Documents - Compact */}
+                      {insuranceDocuments[vehicle.id] && insuranceDocuments[vehicle.id].length > 0 && (
+                        <div className="bg-orange-50 p-1.5 rounded">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] text-orange-600 font-medium">
+                              {insuranceDocuments[vehicle.id].length} Document(s)
+                            </span>
+                            <div className="flex space-x-1">
+                              {insuranceDocuments[vehicle.id].slice(0, 2).map((doc, index) => (
+                                <Button
                                   key={index}
-                                  className="flex items-center justify-between bg-white p-1.5 rounded border border-orange-100"
+                                  onClick={() => openDocument(doc)}
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-4 w-4 p-0 hover:bg-orange-100"
                                 >
-                                  <div className="flex items-center space-x-1">
-                                    <FileText className="w-3 h-3 text-orange-500" />
-                                    <span className="text-[10px] text-gray-700 truncate max-w-[120px]">
-                                      {doc.fileName}
-                                    </span>
-                                  </div>
-                                  <Button
-                                    onClick={() => openDocument(doc)}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-5 w-5 p-0 hover:bg-orange-100"
-                                  >
-                                    <Eye className="w-3 h-3 text-orange-600" />
-                                  </Button>
-                                </div>
+                                  <Eye className="w-2.5 h-2.5 text-orange-600" />
+                                </Button>
                               ))}
                             </div>
                           </div>
-                        )}
+                        </div>
+                      )}
 
-                        {/* Financial Details - Combined from form data and OCR */}
-                        {(vehicle.insuranceSumInsured || vehicle.insurancePremiumAmount || vehicle.ocrSumInsured || vehicle.ocrPremiumAmount || vehicle.insuranceExpiryDate) && (
-                          <div className="bg-green-50 p-2 rounded-lg">
-                            <div className="flex items-center space-x-2 mb-2">
-                              <Shield className="w-4 h-4 text-green-600" />
-                              <span className="text-xs text-green-600 font-medium">Financial Details</span>
-                            </div>
-                            <div className="grid grid-cols-2 gap-2">
-                              {/* Sum Insured - prioritize form data over OCR */}
-                              {(vehicle.insuranceSumInsured || vehicle.ocrSumInsured) && (
-                                <div className="bg-white p-2 rounded border border-green-100">
-                                  <div className="text-[10px] text-gray-500 uppercase tracking-wide">Sum Insured</div>
-                                  <div className="font-semibold text-sm text-green-700">
-                                    ₹{Number(vehicle.insuranceSumInsured || vehicle.ocrSumInsured).toLocaleString('en-IN')}
-                                  </div>
-                                </div>
-                              )}
-                              {/* Premium Amount - prioritize form data over OCR */}
-                              {(vehicle.insurancePremiumAmount || vehicle.ocrPremiumAmount) && (
-                                <div className="bg-white p-2 rounded border border-green-100">
-                                  <div className="text-[10px] text-gray-500 uppercase tracking-wide">Premium Paid</div>
-                                  <div className="font-semibold text-sm text-blue-700">
-                                    ₹{Number(vehicle.insurancePremiumAmount || vehicle.ocrPremiumAmount).toLocaleString('en-IN')}
-                                  </div>
-                                </div>
-                              )}
-
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Policy Details - OCR extracted information */}
-                        {(vehicle.ocrPolicyNumber || vehicle.ocrInsuredName) && (
-                          <div className="bg-purple-50 p-2 rounded-lg">
-                            <div className="flex items-center space-x-2 mb-2">
-                              <FileText className="w-4 h-4 text-purple-600" />
-                              <span className="text-xs text-purple-600 font-medium">Policy Information</span>
-                            </div>
-                            <div className="space-y-2">
-                              {vehicle.ocrPolicyNumber && (
-                                <div className="bg-white p-2 rounded border border-purple-100">
-                                  <div className="text-[10px] text-gray-500 uppercase tracking-wide">Policy Number</div>
-                                  <div className="font-medium text-sm text-purple-700">{vehicle.ocrPolicyNumber}</div>
-                                </div>
-                              )}
-                              {vehicle.ocrInsuredName && (
-                                <div className="bg-white p-2 rounded border border-purple-100">
-                                  <div className="text-[10px] text-gray-500 uppercase tracking-wide">Insured Name</div>
-                                  <div className="font-medium text-sm text-purple-700">{vehicle.ocrInsuredName}</div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="space-y-2">
-                        {/* PolicyBazaar Link */}
+                      {/* Action Buttons - Horizontal */}
+                      <div className="flex space-x-1.5">
                         <Button 
                           onClick={() => window.open('https://www.policybazaar.com/motor-insurance/', '_blank')}
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white h-8 text-xs"
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white h-7 text-[9px] px-1"
                         >
-                          <ExternalLink className="w-3 h-3 mr-1" />
-                          Compare & Renew on PolicyBazaar
+                          <ExternalLink className="w-2.5 h-2.5 mr-1" />
+                          PolicyBazaar
                         </Button>
-
-                        {/* Official Insurer Website */}
                         {vehicle.insuranceCompany && (
                           <Button 
                             onClick={() => window.open(getProviderWebsite(vehicle.insuranceCompany!), '_blank')}
                             variant="outline"
-                            className="w-full border-orange-200 text-orange-700 hover:bg-orange-50 h-8 text-xs"
+                            className="flex-1 border-orange-200 text-orange-700 hover:bg-orange-50 h-7 text-[9px] px-1"
                           >
-                            <ExternalLink className="w-3 h-3 mr-1" />
-                            Visit {vehicle.insuranceCompany.split(' ')[0]} Website
+                            <ExternalLink className="w-2.5 h-2.5 mr-1" />
+                            {vehicle.insuranceCompany.split(' ')[0]}
                           </Button>
                         )}
                       </div>
