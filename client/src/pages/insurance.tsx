@@ -296,7 +296,7 @@ export default function Insurance() {
                         <div className="bg-orange-50 p-1.5 rounded">
                           <div className="flex items-center justify-between">
                             <span className="text-[9px] text-orange-600 font-medium">
-                              {insuranceDocuments[vehicle.id].length} Document(s)
+                              Policy Document
                             </span>
                             <div className="flex space-x-1">
                               {insuranceDocuments[vehicle.id].slice(0, 2).map((doc, index) => (
@@ -322,7 +322,7 @@ export default function Insurance() {
                           className="flex-1 bg-blue-600 hover:bg-blue-700 text-white h-7 text-[9px] px-1"
                         >
                           <ExternalLink className="w-2.5 h-2.5 mr-1" />
-                          PolicyBazaar
+                          Renew via PolicyBazaar
                         </Button>
                         {vehicle.insuranceCompany && (
                           <Button 
