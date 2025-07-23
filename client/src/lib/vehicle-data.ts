@@ -195,3 +195,29 @@ export const getVehicleTypes = (): string[] => {
 export const getAllMakes = (): string[] => {
   return Object.keys(vehicleDataByType["4-wheeler"]);
 };
+
+// Common vehicle colors available in Indian market
+export function getVehicleColors(): string[] {
+  return [
+    "White",
+    "Silver", 
+    "Black",
+    "Red",
+    "Blue",
+    "Gray",
+    "Brown",
+    "Green",
+    "Yellow",
+    "Orange",
+    "Gold",
+    "Maroon",
+    "Pearl White",
+    "Metallic Silver",
+    "Midnight Black",
+    "Deep Blue",
+    "Ruby Red",
+    "Champagne Gold",
+    "Titanium Gray",
+    "Other"
+  ];
+}

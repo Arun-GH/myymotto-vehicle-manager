@@ -7,7 +7,7 @@ import { ArrowLeft, Car, Save, FileText, Calendar, Camera, Settings, AlertTriang
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { getAllMakesForType, getModelsForMake, getVehicleTypes } from "@/lib/vehicle-data";
+import { getAllMakesForType, getModelsForMake, getVehicleTypes, getVehicleColors } from "@/lib/vehicle-data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -51,6 +51,7 @@ export default function AddVehicle() {
   const [selectedMake, setSelectedMake] = useState<string>("");
   const [isCustomMake, setIsCustomMake] = useState(false);
   const [isCustomModel, setIsCustomModel] = useState(false);
+  const [isCustomColor, setIsCustomColor] = useState(false);
   const [isCustomInsuranceProvider, setIsCustomInsuranceProvider] = useState(false);
   const [showReferralDialog, setShowReferralDialog] = useState(false);
   
@@ -144,6 +145,16 @@ export default function AddVehicle() {
     } else {
       setIsCustomInsuranceProvider(false);
       form.setValue("insuranceCompany", provider);
+    }
+  };
+
+  const handleColorChange = (value: string) => {
+    if (value === "Other") {
+      setIsCustomColor(true);
+      form.setValue("color", "");
+    } else {
+      setIsCustomColor(false);
+      form.setValue("color", value);
     }
   };
 
@@ -537,8 +548,42 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-xs font-medium">Color</FormLabel>
                         <FormControl>
-                          <Input placeholder="Red" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
+                          {isCustomColor ? (
+                            <Input 
+                              placeholder="Enter color manually" 
+                              className="h-9" 
+                              {...field}
+                              onChange={(e) => field.onChange(e.target.value.trim())}
+                            />
+                          ) : (
+                            <Select onValueChange={handleColorChange} value={field.value}>
+                              <SelectTrigger className="h-9">
+                                <SelectValue placeholder="Select color" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {getVehicleColors().map((color) => (
+                                  <SelectItem key={color} value={color}>
+                                    {color}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
                         </FormControl>
+                        {isCustomColor && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            <button 
+                              type="button" 
+                              onClick={() => {
+                                setIsCustomColor(false);
+                                form.setValue("color", "");
+                              }}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              ← Back to dropdown
+                            </button>
+                          </p>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}
