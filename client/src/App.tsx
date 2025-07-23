@@ -22,6 +22,7 @@ import Subscribe from "@/pages/subscribe";
 import SignIn from "@/pages/sign-in";
 import TrafficViolations from "@/pages/traffic-violations";
 import InsuranceRenewals from "@/pages/insurance-renewals";
+import Insurance from "@/pages/insurance";
 import Settings from "@/pages/settings";
 import ClimbingGame from "@/pages/climbing-game";
 import CombinedServicePage from "@/pages/combined-service";
@@ -123,6 +124,7 @@ function Router() {
       <Route path="/dashboard/customize" component={DashboardCustomize} />
       <Route path="/traffic-violations" component={TrafficViolations} />
       <Route path="/insurance-renewals" component={InsuranceRenewals} />
+      <Route path="/insurance" component={Insurance} />
       <Route path="/broadcast" component={BroadcastPage} />
       <Route path="/admin-dashboard" component={AdminDashboard} />
       <Route component={NotFound} />

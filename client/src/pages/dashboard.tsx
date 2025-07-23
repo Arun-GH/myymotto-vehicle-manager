@@ -156,7 +156,7 @@ export default function Dashboard() {
                 <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Violations</span>
               </div>
             </Link>
-            <Link href="/insurance-renewals" className="block">
+            <Link href="/insurance" className="block">
               <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-green-300 transition-all duration-200 h-16 px-1 active:scale-95">
                 <Shield className="w-6 h-6 text-green-500 mb-1" />
                 <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Insurance</span>
