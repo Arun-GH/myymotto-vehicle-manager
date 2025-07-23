@@ -483,7 +483,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
       }
-      const vehicle = await storage.getVehicle(id, parseInt(userId));
+      
+      const parsedUserId = parseInt(userId);
+      if (isNaN(parsedUserId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
+      
+      const vehicle = await storage.getVehicle(id, parsedUserId);
       
       if (!vehicle) {
         return res.status(404).json({ message: "Vehicle not found" });
@@ -491,6 +497,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(vehicle);
     } catch (error) {
+      console.error("Error fetching vehicle:", error);
       res.status(500).json({ message: "Failed to fetch vehicle" });
     }
   });
@@ -543,15 +550,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const userId = parseInt(req.query.userId as string) || req.body.userId || 1; // Check query first, then body
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
+      
       const validatedData = insertVehicleSchema.partial().parse(req.body);
       const vehicle = await storage.updateVehicle(id, userId, validatedData);
       
       if (!vehicle) {
-        return res.status(404).json({ message: "Vehicle not found" });
+        return res.status(404).json({ message: "Vehicle not found or you don't have permission to edit it" });
       }
       
       res.json(vehicle);
     } catch (error) {
+      console.error("Error updating vehicle:", error);
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
       } else {
