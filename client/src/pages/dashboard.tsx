@@ -117,96 +117,118 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <section className="px-3 py-2">
-          <h2 className="text-sm font-semibold mb-3 text-gray-800">Quick Actions</h2>
-          <div className="grid grid-cols-5 gap-2">
-            <Link href="/add-vehicle" className="block">
-              <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-red-300 transition-all duration-200 h-16 px-1 active:scale-95">
-                <Plus className="w-6 h-6 text-red-500 mb-1" />
-                <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Add Vehicle</span>
-              </div>
-            </Link>
-            <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-purple-300 transition-all duration-200 h-16 px-1 active:scale-95" 
-                 onClick={() => {
-                   if (vehicles.length === 1) {
-                     window.location.href = `/vehicle/${vehicles[0].id}/local-documents`;
-                   } else if (vehicles.length > 1) {
-                     setSelectorActionType('documents');
-                     setShowVehicleSelector(true);
-                   } else {
-                     alert("Please add a vehicle first");
-                   }
-                 }}>
-              <Files className="w-6 h-6 text-purple-500 mb-1" />
-              <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Documents</span>
+        {/* Quick Actions - Show different layout for new users vs existing users */}
+        {vehicles.length === 0 ? (
+          /* Clean slate for new users */
+          <section className="px-3 py-4">
+            <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 text-center shadow-md">
+              <Car className="w-16 h-16 text-orange-500 mx-auto mb-4" />
+              <h2 className="text-lg font-semibold text-gray-800 mb-2">Welcome to Myymotto!</h2>
+              <p className="text-sm text-gray-600 mb-4">Start managing your vehicle by adding your first one</p>
+              <Link href="/add-vehicle">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Your First Vehicle
+                </Button>
+              </Link>
             </div>
-            <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-teal-300 transition-all duration-200 h-16 px-1 active:scale-95"
-                 onClick={() => {
-                   if (vehicles.length === 1) {
-                     window.location.href = `/vehicle/${vehicles[0].id}/service-logs`;
-                   } else if (vehicles.length > 1) {
-                     setSelectorActionType('service-logs');
-                     setShowVehicleSelector(true);
-                   } else {
-                     alert("Please add a vehicle first");
-                   }
-                 }}>
-              <Wrench className="w-6 h-6 text-teal-500 mb-1" />
-              <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Service Log</span>
+            
+            {/* Additional engagement options for new users */}
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              <Link href="/broadcast" className="block">
+                <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                  <Radio className="w-8 h-8 text-blue-500 mb-2" />
+                  <h3 className="text-sm font-semibold text-gray-800">Community</h3>
+                  <p className="text-xs text-gray-600">Connect with fellow vehicle owners</p>
+                </div>
+              </Link>
+              <Link href="/news-tidbits" className="block">
+                <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                  <Newspaper className="w-8 h-8 text-green-500 mb-2" />
+                  <h3 className="text-sm font-semibold text-gray-800">News & Updates</h3>
+                  <p className="text-xs text-gray-600">Latest automotive news and policies</p>
+                </div>
+              </Link>
             </div>
-            <Link href="/traffic-violations" className="block">
-              <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-300 transition-all duration-200 h-16 px-1 active:scale-95">
-                <Zap className="w-6 h-6 text-blue-500 mb-1" />
-                <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Violations</span>
+          </section>
+        ) : (
+          /* Full Quick Actions for existing users */
+          <section className="px-3 py-2">
+            <h2 className="text-sm font-semibold mb-3 text-gray-800">Quick Actions</h2>
+            <div className="grid grid-cols-5 gap-2">
+              <Link href="/add-vehicle" className="block">
+                <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-red-300 transition-all duration-200 h-16 px-1 active:scale-95">
+                  <Plus className="w-6 h-6 text-red-500 mb-1" />
+                  <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Add Vehicle</span>
+                </div>
+              </Link>
+              <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-purple-300 transition-all duration-200 h-16 px-1 active:scale-95" 
+                   onClick={() => {
+                     if (vehicles.length === 1) {
+                       window.location.href = `/vehicle/${vehicles[0].id}/local-documents`;
+                     } else if (vehicles.length > 1) {
+                       setSelectorActionType('documents');
+                       setShowVehicleSelector(true);
+                     }
+                   }}>
+                <Files className="w-6 h-6 text-purple-500 mb-1" />
+                <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Documents</span>
               </div>
-            </Link>
-            <Link href="/insurance" className="block">
-              <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-green-300 transition-all duration-200 h-16 px-1 active:scale-95">
-                <Shield className="w-6 h-6 text-green-500 mb-1" />
-                <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Insurance</span>
+              <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-teal-300 transition-all duration-200 h-16 px-1 active:scale-95"
+                   onClick={() => {
+                     if (vehicles.length === 1) {
+                       window.location.href = `/vehicle/${vehicles[0].id}/service-logs`;
+                     } else if (vehicles.length > 1) {
+                       setSelectorActionType('service-logs');
+                       setShowVehicleSelector(true);
+                     }
+                   }}>
+                <Wrench className="w-6 h-6 text-teal-500 mb-1" />
+                <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Service Log</span>
               </div>
-            </Link>
-          </div>
-          
+              <Link href="/traffic-violations" className="block">
+                <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-300 transition-all duration-200 h-16 px-1 active:scale-95">
+                  <Zap className="w-6 h-6 text-blue-500 mb-1" />
+                  <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Violations</span>
+                </div>
+              </Link>
+              <Link href="/insurance" className="block">
+                <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-green-300 transition-all duration-200 h-16 px-1 active:scale-95">
+                  <Shield className="w-6 h-6 text-green-500 mb-1" />
+                  <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Insurance</span>
+                </div>
+              </Link>
+            </div>
+          </section>
+        )}
 
-        </section>
-
-        {/* Vehicle List */}
-        <section className="px-3 py-2">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-semibold">Your Vehicles</h2>
-            {vehicles.length > 0 && (
+        {/* Vehicle List - Only show for existing users */}
+        {vehicles.length > 0 && (
+          <section className="px-3 py-2">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-base font-semibold">Your Vehicles</h2>
               <Button variant="ghost" size="sm" className="text-primary text-sm h-7 px-2">
                 View All
               </Button>
+            </div>
+            
+            {isLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="bg-card rounded-xl p-3 shadow-card animate-pulse">
+                    <div className="h-16 bg-muted rounded"></div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {vehicles.map((vehicle) => (
+                  <VehicleCard key={vehicle.id} vehicle={vehicle} />
+                ))}
+              </div>
             )}
-          </div>
-          
-          {isLoading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-card rounded-xl p-3 shadow-card animate-pulse">
-                  <div className="h-16 bg-muted rounded"></div>
-                </div>
-              ))}
-            </div>
-          ) : vehicles.length === 0 ? (
-            <div className="text-center py-6">
-              <Car className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">No vehicles added yet</p>
-              <Link href="/add-vehicle">
-                <Button className="mt-3 text-sm h-8">Add Your First Vehicle</Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {vehicles.map((vehicle) => (
-                <VehicleCard key={vehicle.id} vehicle={vehicle} />
-              ))}
-            </div>
-          )}
-        </section>
+          </section>
+        )}
 
 
       </main>
