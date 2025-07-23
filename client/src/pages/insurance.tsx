@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Car, Calendar, Building2, FileText, ExternalLink, Shield } from "lucide-react";
+import { ArrowLeft, Car, Calendar, Building2, FileText, ExternalLink, Shield, Eye } from "lucide-react";
 import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { apiRequest } from "@/lib/queryClient";
 import { type Vehicle } from "@shared/schema";
 import ColorfulLogo from "@/components/colorful-logo";
+import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
 import { format, addDays } from "date-fns";
 
 // Insurance provider data with official websites
@@ -33,6 +34,7 @@ const insuranceProviders = {
 export default function Insurance() {
   const [, setLocation] = useLocation();
   const [expandedVehicleId, setExpandedVehicleId] = useState<number | null>(null);
+  const [insuranceDocuments, setInsuranceDocuments] = useState<Record<number, LocalDocument[]>>({});
 
   const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
 
@@ -45,8 +47,42 @@ export default function Insurance() {
     },
   });
 
+  // Fetch insurance documents for all vehicles
+  useEffect(() => {
+    const fetchInsuranceDocuments = async () => {
+      if (vehicles.length > 0) {
+        const documentsByVehicle: Record<number, LocalDocument[]> = {};
+        
+        for (const vehicle of vehicles) {
+          try {
+            const docs = await localDocumentStorage.getDocumentsByVehicle(vehicle.id);
+            const insuranceDocs = docs.filter((doc: LocalDocument) => doc.type === 'insurance');
+            documentsByVehicle[vehicle.id] = insuranceDocs;
+          } catch (error) {
+            console.error(`Error fetching insurance documents for vehicle ${vehicle.id}:`, error);
+            documentsByVehicle[vehicle.id] = [];
+          }
+        }
+        
+        setInsuranceDocuments(documentsByVehicle);
+      }
+    };
+
+    fetchInsuranceDocuments();
+  }, [vehicles]);
+
   const handleVehicleToggle = (vehicleId: number) => {
     setExpandedVehicleId(expandedVehicleId === vehicleId ? null : vehicleId);
+  };
+
+  const openDocument = async (document: LocalDocument) => {
+    try {
+      const blob = new Blob([document.fileData], { type: document.mimeType });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Error opening document:', error);
+    }
   };
 
   const getExpiryDate = (insuredDate: string) => {
@@ -224,6 +260,39 @@ export default function Insurance() {
                           </div>
                         )}
 
+                        {/* Insurance Documents */}
+                        {insuranceDocuments[vehicle.id] && insuranceDocuments[vehicle.id].length > 0 && (
+                          <div className="bg-orange-50 p-2 rounded-lg mb-3">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <FileText className="w-3 h-3 text-orange-600" />
+                              <span className="text-[10px] text-orange-600 font-medium">Insurance Documents</span>
+                            </div>
+                            <div className="space-y-1">
+                              {insuranceDocuments[vehicle.id].map((doc, index) => (
+                                <div 
+                                  key={index}
+                                  className="flex items-center justify-between bg-white p-1.5 rounded border border-orange-100"
+                                >
+                                  <div className="flex items-center space-x-2">
+                                    <FileText className="w-3 h-3 text-orange-500" />
+                                    <span className="text-[9px] text-gray-700 truncate max-w-[120px]">
+                                      {doc.fileName}
+                                    </span>
+                                  </div>
+                                  <Button
+                                    onClick={() => openDocument(doc)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-5 w-5 p-0 hover:bg-orange-100"
+                                  >
+                                    <Eye className="w-2.5 h-2.5 text-orange-600" />
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                         {/* OCR Policy Details if available */}
                         {(vehicle.ocrPolicyNumber || vehicle.ocrSumInsured || vehicle.ocrPremiumAmount || vehicle.ocrInsuredName) && (
                           <div className="bg-purple-50 p-2 rounded-lg">
@@ -272,29 +341,17 @@ export default function Insurance() {
                           Compare & Renew on PolicyBazaar
                         </Button>
 
-                        <div className="grid grid-cols-2 gap-2">
-                          {/* Official Insurer Website */}
-                          {vehicle.insuranceCompany && (
-                            <Button 
-                              onClick={() => window.open(getProviderWebsite(vehicle.insuranceCompany!), '_blank')}
-                              variant="outline"
-                              className="border-orange-200 text-orange-700 hover:bg-orange-50 h-8 text-[10px]"
-                            >
-                              <ExternalLink className="w-3 h-3 mr-1" />
-                              Visit {vehicle.insuranceCompany.split(' ')[0]} Site
-                            </Button>
-                          )}
-
-                          {/* Update Insurance Info */}
+                        {/* Official Insurer Website */}
+                        {vehicle.insuranceCompany && (
                           <Button 
-                            onClick={() => setLocation(`/vehicle/${vehicle.id}/upload-documents`)}
+                            onClick={() => window.open(getProviderWebsite(vehicle.insuranceCompany!), '_blank')}
                             variant="outline"
-                            className="border-gray-200 text-gray-700 hover:bg-gray-50 h-8 text-[10px]"
+                            className="w-full border-orange-200 text-orange-700 hover:bg-orange-50 h-8 text-xs"
                           >
-                            <FileText className="w-3 h-3 mr-1" />
-                            Update Documents
+                            <ExternalLink className="w-3 h-3 mr-2" />
+                            Visit {vehicle.insuranceCompany.split(' ')[0]} Website
                           </Button>
-                        </div>
+                        )}
                       </div>
                     </div>
                   )}
