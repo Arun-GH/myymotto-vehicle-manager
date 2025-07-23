@@ -145,10 +145,11 @@ export default function Insurance() {
               >
                 <ArrowLeft className="w-4 h-4" />
               </Button>
+              <div className="w-10 h-10">
+                <ColorfulLogo />
+              </div>
               <div>
-                <div className="text-base font-bold">
-                  <ColorfulLogo />
-                </div>
+                <div className="text-base font-bold">Myymotto</div>
                 <p className="text-xs text-red-600">Timely Care For Your Carrier</p>
               </div>
             </div>
