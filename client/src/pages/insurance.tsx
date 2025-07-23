@@ -330,15 +330,7 @@ export default function Insurance() {
                                   </div>
                                 </div>
                               )}
-                              {/* Expiry Date from new field */}
-                              {vehicle.insuranceExpiryDate && (
-                                <div className="bg-white p-2 rounded border border-green-100">
-                                  <div className="text-[10px] text-gray-500 uppercase tracking-wide">Policy Expires</div>
-                                  <div className="font-semibold text-sm text-red-700">
-                                    {format(new Date(vehicle.insuranceExpiryDate), 'dd/MM/yyyy')}
-                                  </div>
-                                </div>
-                              )}
+
                             </div>
                           </div>
                         )}
