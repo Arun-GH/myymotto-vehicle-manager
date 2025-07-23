@@ -5,7 +5,10 @@ const config: CapacitorConfig = {
   appName: 'Myymotto',
   webDir: 'dist/public',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    // For development with live reload
+    url: 'http://localhost:5000',
+    cleartext: true
   },
   plugins: {
     Camera: {
@@ -16,9 +19,21 @@ const config: CapacitorConfig = {
     },
     LocalNotifications: {
       smallIcon: 'ic_stat_icon_config_sample',
-      iconColor: '#488AFF',
+      iconColor: '#F97316',
       sound: 'beep.wav'
+    },
+    Device: {
+      // Required for device information
+    },
+    Filesystem: {
+      // Required for document storage
     }
+  },
+  android: {
+    allowMixedContent: true
+  },
+  ios: {
+    contentInset: 'automatic'
   }
 };
 

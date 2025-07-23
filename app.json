@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "Myymotto",
+    "slug": "myymotto-vehicle-manager",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./attached_assets/Mymotto_Logo_Green_Revised_1752603344750.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./attached_assets/Splash Screen_1752730437491.PNG",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.myymotto.vehiclemanager"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./attached_assets/Mymotto_Logo_Green_Revised_1752603344750.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.myymotto.vehiclemanager",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "web": {
+      "favicon": "./attached_assets/Mymotto_Logo_Green_Revised_1752603344750.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Myymotto to access your camera to capture vehicle documents and photos."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Myymotto to use your location to find nearby service centers and traffic violations."
+        }
+      ]
+    ]
+  }
+}
