@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Car, Save, FileText, Calendar, Camera, Settings, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Car, Save, FileText, Calendar, Camera, Settings, AlertTriangle, Shield } from "lucide-react";
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +19,31 @@ import ColorfulLogo from "@/components/colorful-logo";
 import ReferralDialog from "@/components/referral-dialog";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
+// Top Indian Insurance Providers
+const indianInsuranceProviders = [
+  "HDFC ERGO General Insurance",
+  "ICICI Lombard General Insurance",
+  "Bajaj Allianz General Insurance",
+  "Reliance General Insurance",
+  "Tata AIG General Insurance",
+  "New India Assurance",
+  "United India Insurance",
+  "National Insurance Company",
+  "Oriental Insurance Company",
+  "SBI General Insurance",
+  "Future Generali India Insurance",
+  "Cholamandalam MS General Insurance",
+  "Royal Sundaram General Insurance",
+  "Bharti AXA General Insurance",
+  "IFFCO Tokio General Insurance",
+  "Kotak Mahindra General Insurance",
+  "Universal Sompo General Insurance",
+  "Shriram General Insurance",
+  "Acko General Insurance",
+  "Digit Insurance",
+  "Other (Enter manually)"
+];
+
 export default function AddVehicle() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -26,6 +51,7 @@ export default function AddVehicle() {
   const [selectedMake, setSelectedMake] = useState<string>("");
   const [isCustomMake, setIsCustomMake] = useState(false);
   const [isCustomModel, setIsCustomModel] = useState(false);
+  const [isCustomInsuranceProvider, setIsCustomInsuranceProvider] = useState(false);
   const [showReferralDialog, setShowReferralDialog] = useState(false);
   
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
@@ -56,6 +82,9 @@ export default function AddVehicle() {
       ownerPhone: "",
       insuranceCompany: "",
       insuranceExpiry: "",
+      insuranceExpiryDate: "",
+      insuranceSumInsured: "",
+      insurancePremiumAmount: "",
       emissionExpiry: "",
       rcExpiry: "",
       lastServiceDate: "",
@@ -91,6 +120,16 @@ export default function AddVehicle() {
     } else {
       setIsCustomModel(false);
       form.setValue("model", model);
+    }
+  };
+
+  const handleInsuranceProviderChange = (provider: string) => {
+    if (provider === "Other (Enter manually)") {
+      setIsCustomInsuranceProvider(true);
+      form.setValue("insuranceCompany", "");
+    } else {
+      setIsCustomInsuranceProvider(false);
+      form.setValue("insuranceCompany", provider);
     }
   };
 
@@ -626,6 +665,150 @@ export default function AddVehicle() {
                     )}
                   />
                 </div>
+
+                {/* Insurance Details Section */}
+                <Card className="mt-4 shadow-orange border-l-4 border-l-orange-500">
+                  <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-t-lg py-3">
+                    <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
+                      <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                        <Shield className="w-4 h-4 text-orange-600" />
+                      </div>
+                      <span>Insurance Details</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <div className="space-y-3">
+                      <FormField
+                        control={form.control}
+                        name="insuranceCompany"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">Insurance Provider</FormLabel>
+                            <FormControl>
+                              {isCustomInsuranceProvider ? (
+                                <Input 
+                                  placeholder="Enter insurance company name" 
+                                  className="h-9" 
+                                  {...field}
+                                  value={field.value || ""}
+                                />
+                              ) : (
+                                <Select onValueChange={handleInsuranceProviderChange} value={field.value || ""}>
+                                  <SelectTrigger className="h-9">
+                                    <SelectValue placeholder="Select insurance provider" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {indianInsuranceProviders.map((provider) => (
+                                      <SelectItem key={provider} value={provider}>
+                                        {provider}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              )}
+                            </FormControl>
+                            {isCustomInsuranceProvider && (
+                              <p className="text-xs text-gray-500 mt-1">
+                                <button 
+                                  type="button" 
+                                  onClick={() => {
+                                    setIsCustomInsuranceProvider(false);
+                                    form.setValue("insuranceCompany", "");
+                                  }}
+                                  className="text-blue-600 hover:text-blue-800"
+                                >
+                                  ← Back to dropdown
+                                </button>
+                              </p>
+                            )}
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <FormField
+                          control={form.control}
+                          name="insuranceExpiry"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium">Issue Date</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="date" 
+                                  max={new Date().toISOString().split('T')[0]}
+                                  {...field} 
+                                  value={field.value || ""} 
+                                  onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                  className="h-9"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="insuranceExpiryDate"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium">Expiry Date</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="date" 
+                                  {...field} 
+                                  value={field.value || ""} 
+                                  onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                  className="h-9"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <FormField
+                          control={form.control}
+                          name="insuranceSumInsured"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium">Sum Insured (₹)</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="e.g., 500000" 
+                                  className="h-9"
+                                  {...field}
+                                  value={field.value || ""}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="insurancePremiumAmount"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-sm font-medium">Premium Amount (₹)</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="e.g., 15000" 
+                                  className="h-9"
+                                  {...field}
+                                  value={field.value || ""}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
                 {/* Service Details Section */}
                 <Card className="mt-4 shadow-orange border-l-4 border-l-blue-500">

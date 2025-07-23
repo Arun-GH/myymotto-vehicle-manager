@@ -16,7 +16,10 @@ export const vehicles = pgTable("vehicles", {
   ownerPhone: text("owner_phone"),
   thumbnailPath: text("thumbnail_path"),
   insuranceCompany: text("insurance_company"),
-  insuranceExpiry: date("insurance_expiry"),
+  insuranceExpiry: date("insurance_expiry"), // Issue date
+  insuranceExpiryDate: date("insurance_expiry_date"), // Actual expiry date
+  insuranceSumInsured: text("insurance_sum_insured"), // User-entered sum insured
+  insurancePremiumAmount: text("insurance_premium_amount"), // User-entered premium
   emissionExpiry: date("emission_expiry"),
   rcExpiry: date("rc_expiry"),
   lastServiceDate: date("last_service_date"),
@@ -133,7 +136,10 @@ export const insertVehicleSchema = createInsertSchema(vehicles).omit({
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
     return selectedDate <= today;
-  }, "Insurance date cannot be in the future"),
+  }, "Insurance issue date cannot be in the future"),
+  insuranceExpiryDate: z.string().optional().nullable(),
+  insuranceSumInsured: z.string().optional(),
+  insurancePremiumAmount: z.string().optional(),
   emissionExpiry: z.string().optional().nullable().refine((date) => {
     if (!date) return true; // Allow empty/null dates
     const selectedDate = new Date(date);

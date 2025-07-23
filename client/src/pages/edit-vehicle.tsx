@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Car, Save, Camera, Settings } from "lucide-react";
+import { ArrowLeft, Car, Save, Camera, Settings, Shield } from "lucide-react";
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -16,6 +16,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
+// Top Indian Insurance Providers
+const indianInsuranceProviders = [
+  "HDFC ERGO General Insurance",
+  "ICICI Lombard General Insurance",
+  "Bajaj Allianz General Insurance",
+  "Reliance General Insurance",
+  "Tata AIG General Insurance",
+  "New India Assurance",
+  "United India Insurance",
+  "National Insurance Company",
+  "Oriental Insurance Company",
+  "SBI General Insurance",
+  "Future Generali India Insurance",
+  "Cholamandalam MS General Insurance",
+  "Royal Sundaram General Insurance",
+  "Bharti AXA General Insurance",
+  "IFFCO Tokio General Insurance",
+  "Kotak Mahindra General Insurance",
+  "Universal Sompo General Insurance",
+  "Shriram General Insurance",
+  "Acko General Insurance",
+  "Digit Insurance",
+  "Other (Enter manually)"
+];
+
 export default function EditVehicle() {
   const [, setLocation] = useLocation();
   const params = useParams();
@@ -25,6 +50,7 @@ export default function EditVehicle() {
   const [selectedMake, setSelectedMake] = useState<string>("");
   const [isCustomMake, setIsCustomMake] = useState(false);
   const [isCustomModel, setIsCustomModel] = useState(false);
+  const [isCustomInsuranceProvider, setIsCustomInsuranceProvider] = useState(false);
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
 
@@ -52,6 +78,9 @@ export default function EditVehicle() {
       ownerName: "",
       ownerPhone: "",
       insuranceExpiry: "",
+      insuranceExpiryDate: "",
+      insuranceSumInsured: "",
+      insurancePremiumAmount: "",
       emissionExpiry: "",
       rcExpiry: "",
       lastServiceDate: "",
@@ -78,6 +107,9 @@ export default function EditVehicle() {
         ownerName: vehicle.ownerName || "",
         ownerPhone: vehicle.ownerPhone || "",
         insuranceExpiry: vehicle.insuranceExpiry || "",
+        insuranceExpiryDate: vehicle.insuranceExpiryDate || "",
+        insuranceSumInsured: vehicle.insuranceSumInsured || "",
+        insurancePremiumAmount: vehicle.insurancePremiumAmount || "",
         emissionExpiry: vehicle.emissionExpiry || "",
         rcExpiry: vehicle.rcExpiry || "",
         lastServiceDate: vehicle.lastServiceDate || "",
@@ -106,6 +138,13 @@ export default function EditVehicle() {
         setIsCustomModel(true);
       } else {
         setIsCustomModel(false);
+      }
+
+      // Check if insurance company is custom (not in dropdown)
+      if (vehicle.insuranceCompany && !indianInsuranceProviders.includes(vehicle.insuranceCompany)) {
+        setIsCustomInsuranceProvider(true);
+      } else {
+        setIsCustomInsuranceProvider(false);
       }
       
       if (vehicle.thumbnailPath) {
@@ -137,6 +176,16 @@ export default function EditVehicle() {
     } else {
       setIsCustomModel(false);
       form.setValue("model", model);
+    }
+  };
+
+  const handleInsuranceProviderChange = (provider: string) => {
+    if (provider === "Other (Enter manually)") {
+      setIsCustomInsuranceProvider(true);
+      form.setValue("insuranceCompany", "");
+    } else {
+      setIsCustomInsuranceProvider(false);
+      form.setValue("insuranceCompany", provider);
     }
   };
 
@@ -609,108 +658,218 @@ export default function EditVehicle() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="insuranceCompany"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs">Insurance Company Name</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="text" 
-                          {...field} 
-                          value={field.value || ""} 
-                          placeholder="e.g., HDFC ERGO, ICICI Lombard, Bajaj Allianz"
-                          className="h-8"
-                          onChange={(e) => field.onChange(e.target.value.toUpperCase())}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Insurance Details Section */}
+                <Card className="mt-4">
+                  <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-t-lg py-3">
+                    <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
+                      <Shield className="w-4 h-4 text-orange-600" />
+                      <span>Insurance Details</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-3 space-y-3">
+                    <FormField
+                      control={form.control}
+                      name="insuranceCompany"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Insurance Provider</FormLabel>
+                          <FormControl>
+                            {isCustomInsuranceProvider ? (
+                              <Input 
+                                placeholder="Enter insurance company name" 
+                                className="h-8" 
+                                {...field}
+                                value={field.value || ""}
+                              />
+                            ) : (
+                              <Select onValueChange={handleInsuranceProviderChange} value={field.value || ""}>
+                                <SelectTrigger className="h-8">
+                                  <SelectValue placeholder="Select insurance provider" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {indianInsuranceProviders.map((provider) => (
+                                    <SelectItem key={provider} value={provider}>
+                                      {provider}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            )}
+                          </FormControl>
+                          {isCustomInsuranceProvider && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              <button 
+                                type="button" 
+                                onClick={() => {
+                                  setIsCustomInsuranceProvider(false);
+                                  form.setValue("insuranceCompany", "");
+                                }}
+                                className="text-blue-600 hover:text-blue-800"
+                              >
+                                ← Back to dropdown
+                              </button>
+                            </p>
+                          )}
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <FormField
+                        control={form.control}
+                        name="insuranceExpiry"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Issue Date</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="date" 
+                                max={new Date().toISOString().split('T')[0]}
+                                {...field} 
+                                value={field.value || ""} 
+                                onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                className="h-8"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="insuranceExpiryDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Expiry Date</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="date" 
+                                {...field} 
+                                value={field.value || ""} 
+                                onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                className="h-8"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <FormField
-                    control={form.control}
-                    name="insuranceExpiry"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">Insured date</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="date" 
-                            max={new Date().toISOString().split('T')[0]}
-                            {...field} 
-                            value={field.value || ""} 
-                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
-                            className="h-8"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="emissionExpiry"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">Latest Emission</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="date" 
-                            max={new Date().toISOString().split('T')[0]}
-                            {...field} 
-                            value={field.value || ""} 
-                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
-                            className="h-8"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="rcExpiry"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">RC Expiry</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="date" 
-                            {...field} 
-                            value={field.value || ""} 
-                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
-                            className="h-8"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="lastServiceDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">Last Service Date</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="date" 
-                            max={new Date().toISOString().split('T')[0]}
-                            {...field} 
-                            value={field.value || ""} 
-                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
-                            className="h-8"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <FormField
+                        control={form.control}
+                        name="insuranceSumInsured"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Sum Insured (₹)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="e.g., 500000" 
+                                className="h-8"
+                                {...field}
+                                value={field.value || ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="insurancePremiumAmount"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Premium Amount (₹)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="e.g., 15000" 
+                                className="h-8"
+                                {...field}
+                                value={field.value || ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Document & Date Section */}
+                <Card className="mt-4">
+                  <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-t-lg py-3">
+                    <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
+                      <Car className="w-4 h-4 text-gray-600" />
+                      <span>Document Dates</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-3 space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <FormField
+                        control={form.control}
+                        name="emissionExpiry"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Latest Emission</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="date" 
+                                max={new Date().toISOString().split('T')[0]}
+                                {...field} 
+                                value={field.value || ""} 
+                                onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                className="h-8"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="rcExpiry"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">RC Expiry</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="date" 
+                                {...field} 
+                                value={field.value || ""} 
+                                onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                className="h-8"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="lastServiceDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Last Service Date</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="date" 
+                                max={new Date().toISOString().split('T')[0]}
+                                {...field} 
+                                value={field.value || ""} 
+                                onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                className="h-8"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
 
                 {/* Service Details Section */}
                 <Card className="mt-4">
