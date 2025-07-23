@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export const vehicles = pgTable("vehicles", {
   id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id), // Link to user - temporarily nullable for migration
   make: text("make").notNull(),
   model: text("model").notNull(),
   year: integer("year").notNull(),

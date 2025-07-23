@@ -467,9 +467,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Vehicle routes
   app.get("/api/vehicles", async (req, res) => {
     try {
-      const vehicles = await storage.getVehicles();
+      const userId = req.query.userId as string || "1"; // Default to user 1 for backward compatibility
+      const vehicles = await storage.getVehicles(parseInt(userId));
       res.json(vehicles);
     } catch (error) {
+      console.error("Error fetching vehicles:", error);
       res.status(500).json({ message: "Failed to fetch vehicles" });
     }
   });
@@ -477,7 +479,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/vehicles/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const vehicle = await storage.getVehicle(id);
+      const userId = req.query.userId as string;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      const vehicle = await storage.getVehicle(id, parseInt(userId));
       
       if (!vehicle) {
         return res.status(404).json({ message: "Vehicle not found" });
@@ -491,12 +497,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/vehicles", async (req, res) => {
     try {
-      // Get current user (hardcoded for demo - should come from session)
-      const userId = 1;
+      // Get userId from request body 
+      const userId = req.body.userId || 1; // Fallback to 1 for backward compatibility
       const user = await storage.getUser(userId);
       
       // Check vehicle count limit with subscription logic
-      const vehicles = await storage.getVehicles();
+      const vehicles = await storage.getVehicles(userId);
       const vehicleCount = vehicles.length;
       
       // Free users: max 2 vehicles
@@ -521,7 +527,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const validatedData = insertVehicleSchema.parse(req.body);
-      const vehicle = await storage.createVehicle(validatedData);
+      const vehicleWithUser = { ...validatedData, userId };
+      const vehicle = await storage.createVehicle(vehicleWithUser);
       res.status(201).json(vehicle);
     } catch (error) {
       if (error instanceof Error) {
@@ -535,8 +542,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/vehicles/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      const userId = req.body.userId || 1; // Fallback to 1 for backward compatibility
       const validatedData = insertVehicleSchema.partial().parse(req.body);
-      const vehicle = await storage.updateVehicle(id, validatedData);
+      const vehicle = await storage.updateVehicle(id, userId, validatedData);
       
       if (!vehicle) {
         return res.status(404).json({ message: "Vehicle not found" });
@@ -555,12 +563,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/vehicles/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      const userId = parseInt(req.query.userId as string) || 1; // Fallback to 1 for backward compatibility
       
       if (isNaN(id)) {
         return res.status(400).json({ message: "Invalid vehicle ID" });
       }
       
-      const deleted = await storage.deleteVehicle(id);
+      const deleted = await storage.deleteVehicle(id, userId);
       
       if (!deleted) {
         return res.status(404).json({ message: "Vehicle not found" });
@@ -768,7 +777,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Notification routes
   app.get("/api/notifications", async (req, res) => {
     try {
-      const notifications = await storage.getNotifications();
+      const userId = req.query.userId as string || "1"; // Default to user 1 for backward compatibility
+      const notifications = await storage.getNotifications(parseInt(userId));
       res.json(notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -778,7 +788,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/notifications/generate", async (req, res) => {
     try {
-      await storage.generateRenewalNotifications();
+      const userId = req.body.userId || 1; // Default to user 1 for backward compatibility
+      await storage.generateRenewalNotifications(userId);
       res.json({ success: true, message: "Notifications generated successfully" });
     } catch (error) {
       console.error("Error generating notifications:", error);

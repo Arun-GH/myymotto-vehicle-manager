@@ -1,6 +1,6 @@
 import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, gt, lte, lt, desc } from "drizzle-orm";
+import { eq, and, gt, lte, lt, desc, gte, isNull, or, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -24,11 +24,11 @@ export interface IStorage {
   updateUserProfile(userId: number, profile: Partial<InsertUserProfile>): Promise<UserProfile | undefined>;
   
   // Vehicle methods
-  getVehicles(): Promise<Vehicle[]>;
-  getVehicle(id: number): Promise<Vehicle | undefined>;
-  createVehicle(vehicle: InsertVehicle): Promise<Vehicle>;
-  updateVehicle(id: number, vehicle: Partial<InsertVehicle>): Promise<Vehicle | undefined>;
-  deleteVehicle(id: number): Promise<boolean>;
+  getVehicles(userId: number): Promise<Vehicle[]>;
+  getVehicle(id: number, userId: number): Promise<Vehicle | undefined>;
+  createVehicle(vehicle: InsertVehicle & { userId: number }): Promise<Vehicle>;
+  updateVehicle(id: number, userId: number, vehicle: Partial<InsertVehicle>): Promise<Vehicle | undefined>;
+  deleteVehicle(id: number, userId: number): Promise<boolean>;
   
   // Document methods
   getDocumentsByVehicle(vehicleId: number): Promise<Document[]>;
@@ -37,11 +37,11 @@ export interface IStorage {
   deleteDocument(id: number): Promise<boolean>;
   
   // Notification methods
-  getNotifications(): Promise<Notification[]>;
-  getNotificationsByVehicle(vehicleId: number): Promise<Notification[]>;
+  getNotifications(userId: number): Promise<Notification[]>;
+  getNotificationsByVehicle(vehicleId: number, userId: number): Promise<Notification[]>;
   createNotification(notification: InsertNotification): Promise<Notification>;
   markNotificationAsRead(id: number): Promise<void>;
-  generateRenewalNotifications(): Promise<void>;
+  generateRenewalNotifications(userId: number): Promise<void>;
   
   // Emergency Contact methods
   getEmergencyContact(userId: number): Promise<EmergencyContact | undefined>;
@@ -585,26 +585,26 @@ export class DatabaseStorage implements IStorage {
     return profile || undefined;
   }
 
-  async getVehicles(): Promise<Vehicle[]> {
-    return await db.select().from(vehicles);
+  async getVehicles(userId: number): Promise<Vehicle[]> {
+    return await db.select().from(vehicles).where(eq(vehicles.userId, userId)).orderBy(vehicles.createdAt);
   }
 
-  async getVehicle(id: number): Promise<Vehicle | undefined> {
-    const [vehicle] = await db.select().from(vehicles).where(eq(vehicles.id, id));
+  async getVehicle(id: number, userId: number): Promise<Vehicle | undefined> {
+    const [vehicle] = await db.select().from(vehicles).where(and(eq(vehicles.id, id), eq(vehicles.userId, userId)));
     return vehicle || undefined;
   }
 
-  async createVehicle(insertVehicle: InsertVehicle): Promise<Vehicle> {
+  async createVehicle(insertVehicle: InsertVehicle & { userId: number }): Promise<Vehicle> {
     const [vehicle] = await db.insert(vehicles).values(insertVehicle).returning();
     return vehicle;
   }
 
-  async updateVehicle(id: number, vehicleUpdate: Partial<InsertVehicle>): Promise<Vehicle | undefined> {
-    const [vehicle] = await db.update(vehicles).set(vehicleUpdate).where(eq(vehicles.id, id)).returning();
+  async updateVehicle(id: number, userId: number, vehicleUpdate: Partial<InsertVehicle>): Promise<Vehicle | undefined> {
+    const [vehicle] = await db.update(vehicles).set(vehicleUpdate).where(and(eq(vehicles.id, id), eq(vehicles.userId, userId))).returning();
     return vehicle || undefined;
   }
 
-  async deleteVehicle(id: number): Promise<boolean> {
+  async deleteVehicle(id: number, userId: number): Promise<boolean> {
     try {
       console.log(`Attempting to delete vehicle ${id} and related records`);
       
@@ -638,8 +638,8 @@ export class DatabaseStorage implements IStorage {
       const documentsDeleted = await db.delete(documents).where(eq(documents.vehicleId, id));
       console.log(`Deleted ${documentsDeleted.rowCount || 0} documents`);
       
-      // Finally delete the vehicle
-      const result = await db.delete(vehicles).where(eq(vehicles.id, id));
+      // Finally delete the vehicle  
+      const result = await db.delete(vehicles).where(and(eq(vehicles.id, id), eq(vehicles.userId, userId)));
       console.log(`Deleted ${result.rowCount || 0} vehicles`);
       
       return (result.rowCount || 0) > 0;
@@ -668,8 +668,18 @@ export class DatabaseStorage implements IStorage {
     return (result.rowCount || 0) > 0;
   }
 
-  async getNotifications(): Promise<Notification[]> {
-    return await db.select().from(notifications).orderBy(notifications.createdAt);
+  async getNotifications(userId: number): Promise<Notification[]> {
+    // Get notifications for vehicles owned by this user
+    const userVehicles = await this.getVehicles(userId);
+    const vehicleIds = userVehicles.map(v => v.id);
+    
+    if (vehicleIds.length === 0) {
+      return [];
+    }
+    
+    return await db.select().from(notifications)
+      .where(inArray(notifications.vehicleId, vehicleIds))
+      .orderBy(notifications.createdAt);
   }
 
   async getNotificationsByVehicle(vehicleId: number): Promise<Notification[]> {
@@ -690,9 +700,9 @@ export class DatabaseStorage implements IStorage {
       .where(eq(notifications.id, id));
   }
 
-  async generateRenewalNotifications(): Promise<void> {
-    // Get all vehicles with expiry dates
-    const allVehicles = await db.select().from(vehicles);
+  async generateRenewalNotifications(userId: number): Promise<void> {
+    // Get vehicles for specific user only
+    const allVehicles = await this.getVehicles(userId);
     
     const today = new Date();
     
