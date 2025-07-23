@@ -250,11 +250,11 @@ export default function Insurance() {
                           <div className="bg-red-50 p-2 rounded border border-red-100">
                             <div className="flex items-center space-x-1 mb-1">
                               <Calendar className="w-3 h-3 text-red-600" />
-                              <span className="text-[10px] text-red-600 font-medium">Calculated Expiry</span>
+                              <span className="text-[10px] text-red-600 font-medium">Policy Expires</span>
                             </div>
                             <div className="text-xs font-medium">
-                              {expiryDate 
-                                ? format(expiryDate, 'dd/MM/yyyy')
+                              {vehicle.insuranceExpiryDate 
+                                ? format(new Date(vehicle.insuranceExpiryDate), 'dd/MM/yyyy')
                                 : 'Not available'
                               }
                             </div>
