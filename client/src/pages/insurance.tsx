@@ -13,6 +13,7 @@ import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
 import { format, addDays } from "date-fns";
 import NotificationBell from "@/components/notification-bell";
 import InfoDropdown from "@/components/info-dropdown";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 // Insurance provider data with official websites
 const insuranceProviders = {
@@ -145,11 +146,15 @@ export default function Insurance() {
               >
                 <ArrowLeft className="w-4 h-4" />
               </Button>
-              <div className="w-10 h-10">
-                <ColorfulLogo />
-              </div>
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-10 h-10 rounded-lg"
+              />
               <div>
-                <div className="text-base font-bold">Myymotto</div>
+                <div className="text-base font-bold">
+                  <ColorfulLogo />
+                </div>
                 <p className="text-xs text-red-600">Timely Care For Your Carrier</p>
               </div>
             </div>
