@@ -61,7 +61,10 @@ export default function AddVehicle() {
   // Get current vehicle count to check vehicle limit and referral trigger
   const { data: vehicles = [] } = useQuery({
     queryKey: ["/api/vehicles"],
-    queryFn: () => apiRequest("GET", "/api/vehicles").then(res => res.json()),
+    queryFn: () => {
+      const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+      return apiRequest("GET", `/api/vehicles?userId=${currentUserId}`).then(res => res.json());
+    },
   });
 
   // Check vehicle limits and subscription requirements
@@ -147,9 +150,11 @@ export default function AddVehicle() {
         thumbnailPath = thumbnailResult.filePath;
       }
 
-      // Clean up date fields - convert empty strings to null
+      // Clean up date fields - convert empty strings to null and add userId
+      const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
       const cleanedData = {
         ...data,
+        userId: parseInt(currentUserId),
         thumbnailPath,
         insuranceExpiry: data.insuranceExpiry?.trim() || null,
         emissionExpiry: data.emissionExpiry?.trim() || null,
