@@ -18,6 +18,11 @@ export default function ServiceLogs() {
 
   const { data: vehicle, isLoading: vehicleLoading } = useQuery<Vehicle>({
     queryKey: [`/api/vehicles/${vehicleId}`],
+    queryFn: async () => {
+      const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+      const response = await apiRequest("GET", `/api/vehicles/${vehicleId}?userId=${currentUserId}`);
+      return response.json();
+    },
   });
 
   const { data: serviceLogs, isLoading: logsLoading } = useQuery<ServiceLog[]>({

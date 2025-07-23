@@ -25,7 +25,8 @@ export default function LocalDocuments() {
   const { data: vehicle, isLoading: vehicleLoading } = useQuery({
     queryKey: ["/api/vehicles", vehicleId],
     queryFn: async () => {
-      const response = await apiRequest("GET", `/api/vehicles/${vehicleId}`);
+      const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+      const response = await apiRequest("GET", `/api/vehicles/${vehicleId}?userId=${currentUserId}`);
       return response.json();
     },
     enabled: !!vehicleId,
