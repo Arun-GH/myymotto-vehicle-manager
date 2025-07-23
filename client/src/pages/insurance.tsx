@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Car, Calendar, Building2, FileText, ExternalLink, Shield, Eye, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, Car, Calendar, Building2, FileText, ExternalLink, Shield, Eye, ChevronDown, ChevronUp, Settings } from "lucide-react";
 import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import { type Vehicle } from "@shared/schema";
 import ColorfulLogo from "@/components/colorful-logo";
 import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
 import { format, addDays } from "date-fns";
+import NotificationBell from "@/components/notification-bell";
+import InfoDropdown from "@/components/info-dropdown";
 
 // Insurance provider data with official websites
 const insuranceProviders = {
@@ -131,32 +133,44 @@ export default function Insurance() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="header-gradient-border px-2 py-2 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setLocation('/')}
-            className="text-gray-600 hover:bg-red-50 h-7 w-7 p-0"
-          >
-            <ArrowLeft className="w-3 h-3" />
-          </Button>
-          <div className="w-8 h-8">
-            <ColorfulLogo />
-          </div>
-          <div>
-            <div className="font-bold text-xs">Myymotto</div>
-            <div className="text-red-600 text-[9px] font-medium">
-              Timely Care For Your Carrier
+      <header className="header-gradient-border shadow-lg relative z-10">
+        <div className="px-3 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setLocation('/')}
+                className="text-gray-600 hover:bg-red-50 p-1"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <div>
+                <div className="text-base font-bold">
+                  <ColorfulLogo />
+                </div>
+                <p className="text-xs text-red-600">Timely Care For Your Carrier</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-gray-600 hover:bg-red-50 p-1"
+              >
+                <Settings className="w-4 h-4" />
+              </Button>
+              <NotificationBell />
+              <InfoDropdown />
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="p-2">
-        <div className="mb-3">
-          <h2 className="text-base font-semibold text-gray-900 mb-1">Insurance Details</h2>
-          <p className="text-[10px] text-gray-600">Tap a vehicle to view insurance information and financial details</p>
+      <div className="p-3">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Insurance Details</h2>
+          <p className="text-xs text-gray-600">Tap a vehicle to view insurance information and financial details</p>
         </div>
 
         {vehicles.length === 0 ? (
@@ -167,14 +181,14 @@ export default function Insurance() {
               <p className="text-sm text-gray-600 mb-4">Add a vehicle first to view insurance details</p>
               <Button 
                 onClick={() => setLocation('/add-vehicle')}
-                className="bg-orange-500 hover:bg-orange-600 text-white h-8 text-xs"
+                className="bg-orange-500 hover:bg-orange-600 text-white h-9 text-sm"
               >
                 Add Vehicle
               </Button>
             </div>
           </Card>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {vehicles.map((vehicle: Vehicle) => {
               const insuranceStatus = getInsuranceStatus(vehicle.insuranceExpiry || "");
               const expiryDate = getExpiryDate(vehicle.insuranceExpiry || "");
@@ -184,40 +198,40 @@ export default function Insurance() {
                 <Card key={vehicle.id} className="shadow-orange transition-all">
                   {/* Vehicle Header - Always Visible */}
                   <CardContent 
-                    className="p-2 cursor-pointer hover:bg-gray-50"
+                    className="p-3 cursor-pointer hover:bg-gray-50"
                     onClick={() => handleVehicleToggle(vehicle.id)}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
-                          <Car className="w-3 h-3 text-orange-600" />
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                          <Car className="w-4 h-4 text-orange-600" />
                         </div>
                         <div>
-                          <div className="font-medium text-sm text-gray-900">
+                          <div className="font-medium text-base text-gray-900">
                             {vehicle.make.toUpperCase()} {vehicle.model}
                           </div>
-                          <div className="text-xs text-gray-600">{vehicle.licensePlate}</div>
+                          <div className="text-sm text-gray-600">{vehicle.licensePlate}</div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-3">
                         <div className="text-right">
                           <Badge 
                             variant="outline" 
-                            className={`text-[10px] px-1 py-0.5 border-${insuranceStatus.color}-200 text-${insuranceStatus.color}-700 bg-${insuranceStatus.color}-50`}
+                            className={`text-xs px-2 py-1 border-${insuranceStatus.color}-200 text-${insuranceStatus.color}-700 bg-${insuranceStatus.color}-50`}
                           >
                             {insuranceStatus.status}
                           </Badge>
                           {vehicle.insuranceCompany && (
-                            <div className="text-[9px] text-gray-500 mt-0.5 max-w-20 truncate">
+                            <div className="text-xs text-gray-500 mt-1 max-w-24 truncate">
                               {vehicle.insuranceCompany}
                             </div>
                           )}
                         </div>
                         <div className="flex items-center">
                           {isExpanded ? (
-                            <ChevronUp className="w-4 h-4 text-gray-400" />
+                            <ChevronUp className="w-5 h-5 text-gray-400" />
                           ) : (
-                            <ChevronDown className="w-4 h-4 text-gray-400" />
+                            <ChevronDown className="w-5 h-5 text-gray-400" />
                           )}
                         </div>
                       </div>
@@ -226,24 +240,24 @@ export default function Insurance() {
 
                   {/* Expanded Details */}
                   {isExpanded && (
-                    <div className="border-t border-gray-100 p-1.5 space-y-1.5">
+                    <div className="border-t border-gray-100 p-2 space-y-2">
                       {/* Dates & Provider in single row */}
-                      <div className="grid grid-cols-3 gap-1.5">
-                        <div className="bg-blue-50 p-1.5 rounded text-center">
-                          <div className="text-[9px] text-blue-600 font-medium">Issue</div>
-                          <div className="text-[10px] font-semibold">
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="bg-blue-50 p-2 rounded text-center">
+                          <div className="text-xs text-blue-600 font-medium">Issue</div>
+                          <div className="text-sm font-semibold">
                             {vehicle.insuranceExpiry ? format(new Date(vehicle.insuranceExpiry), 'dd/MM/yy') : 'N/A'}
                           </div>
                         </div>
-                        <div className="bg-red-50 p-1.5 rounded text-center">
-                          <div className="text-[9px] text-red-600 font-medium">Expires</div>
-                          <div className="text-[10px] font-semibold">
+                        <div className="bg-red-50 p-2 rounded text-center">
+                          <div className="text-xs text-red-600 font-medium">Expires</div>
+                          <div className="text-sm font-semibold">
                             {vehicle.insuranceExpiryDate ? format(new Date(vehicle.insuranceExpiryDate), 'dd/MM/yy') : 'N/A'}
                           </div>
                         </div>
-                        <div className="bg-green-50 p-1.5 rounded text-center">
-                          <div className="text-[9px] text-green-600 font-medium">Provider</div>
-                          <div className="text-[9px] font-semibold truncate">
+                        <div className="bg-green-50 p-2 rounded text-center">
+                          <div className="text-xs text-green-600 font-medium">Provider</div>
+                          <div className="text-xs font-semibold truncate">
                             {vehicle.insuranceCompany ? vehicle.insuranceCompany.split(' ')[0] : 'N/A'}
                           </div>
                         </div>
@@ -251,19 +265,19 @@ export default function Insurance() {
 
                       {/* Financial Details - Single Row */}
                       {(vehicle.insuranceSumInsured || vehicle.insurancePremiumAmount || vehicle.ocrSumInsured || vehicle.ocrPremiumAmount) && (
-                        <div className="grid grid-cols-2 gap-1.5">
+                        <div className="grid grid-cols-2 gap-2">
                           {(vehicle.insuranceSumInsured || vehicle.ocrSumInsured) && (
-                            <div className="bg-green-50 p-1.5 rounded text-center">
-                              <div className="text-[9px] text-green-600 font-medium">Sum Insured</div>
-                              <div className="text-[10px] font-bold text-green-700">
+                            <div className="bg-green-50 p-2 rounded text-center">
+                              <div className="text-xs text-green-600 font-medium">Sum Insured</div>
+                              <div className="text-sm font-bold text-green-700">
                                 ₹{Number(vehicle.insuranceSumInsured || vehicle.ocrSumInsured).toLocaleString('en-IN')}
                               </div>
                             </div>
                           )}
                           {(vehicle.insurancePremiumAmount || vehicle.ocrPremiumAmount) && (
-                            <div className="bg-blue-50 p-1.5 rounded text-center">
-                              <div className="text-[9px] text-blue-600 font-medium">Premium</div>
-                              <div className="text-[10px] font-bold text-blue-700">
+                            <div className="bg-blue-50 p-2 rounded text-center">
+                              <div className="text-xs text-blue-600 font-medium">Premium</div>
+                              <div className="text-sm font-bold text-blue-700">
                                 ₹{Number(vehicle.insurancePremiumAmount || vehicle.ocrPremiumAmount).toLocaleString('en-IN')}
                               </div>
                             </div>
@@ -273,8 +287,8 @@ export default function Insurance() {
 
                       {/* Policy Info - Inline */}
                       {(vehicle.ocrPolicyNumber || vehicle.ocrInsuredName) && (
-                        <div className="bg-purple-50 p-1.5 rounded">
-                          <div className="flex justify-between items-center text-[9px]">
+                        <div className="bg-purple-50 p-2 rounded">
+                          <div className="flex justify-between items-center text-xs">
                             {vehicle.ocrPolicyNumber && (
                               <div>
                                 <span className="text-purple-600 font-medium">Policy: </span>
@@ -284,7 +298,7 @@ export default function Insurance() {
                             {vehicle.ocrInsuredName && (
                               <div className="text-right">
                                 <span className="text-purple-600 font-medium">Name: </span>
-                                <span className="font-semibold truncate max-w-20">{vehicle.ocrInsuredName}</span>
+                                <span className="font-semibold truncate max-w-24">{vehicle.ocrInsuredName}</span>
                               </div>
                             )}
                           </div>
@@ -293,9 +307,9 @@ export default function Insurance() {
 
                       {/* Documents - Compact */}
                       {insuranceDocuments[vehicle.id] && insuranceDocuments[vehicle.id].length > 0 && (
-                        <div className="bg-orange-50 p-1.5 rounded">
+                        <div className="bg-orange-50 p-2 rounded">
                           <div className="flex items-center justify-between">
-                            <span className="text-[9px] text-orange-600 font-medium">
+                            <span className="text-xs text-orange-600 font-medium">
                               Policy Document
                             </span>
                             <div className="flex space-x-1">
@@ -305,9 +319,9 @@ export default function Insurance() {
                                   onClick={() => openDocument(doc)}
                                   variant="ghost"
                                   size="sm"
-                                  className="h-4 w-4 p-0 hover:bg-orange-100"
+                                  className="h-6 w-6 p-0 hover:bg-orange-100"
                                 >
-                                  <Eye className="w-2.5 h-2.5 text-orange-600" />
+                                  <Eye className="w-3 h-3 text-orange-600" />
                                 </Button>
                               ))}
                             </div>
@@ -316,21 +330,21 @@ export default function Insurance() {
                       )}
 
                       {/* Action Buttons - Horizontal */}
-                      <div className="flex space-x-1.5">
+                      <div className="flex space-x-2">
                         <Button 
                           onClick={() => window.open('https://www.policybazaar.com/motor-insurance/', '_blank')}
-                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white h-7 text-[9px] px-1"
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white h-8 text-xs px-2"
                         >
-                          <ExternalLink className="w-2.5 h-2.5 mr-1" />
+                          <ExternalLink className="w-3 h-3 mr-1" />
                           Renew via PolicyBazaar
                         </Button>
                         {vehicle.insuranceCompany && (
                           <Button 
                             onClick={() => window.open(getProviderWebsite(vehicle.insuranceCompany!), '_blank')}
                             variant="outline"
-                            className="flex-1 border-orange-200 text-orange-700 hover:bg-orange-50 h-7 text-[9px] px-1"
+                            className="flex-1 border-orange-200 text-orange-700 hover:bg-orange-50 h-8 text-xs px-2"
                           >
-                            <ExternalLink className="w-2.5 h-2.5 mr-1" />
+                            <ExternalLink className="w-3 h-3 mr-1" />
                             {vehicle.insuranceCompany.split(' ')[0]}
                           </Button>
                         )}
