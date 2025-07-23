@@ -838,8 +838,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Notification routes
   app.get("/api/notifications", async (req, res) => {
     try {
-      const userId = req.query.userId as string || "1"; // Default to user 1 for backward compatibility
-      const notifications = await storage.getNotifications(parseInt(userId));
+      const userId = req.query.userId as string;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const parsedUserId = parseInt(userId);
+      if (isNaN(parsedUserId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
+      
+      // Check if user has at least one vehicle before showing notifications
+      const userVehicles = await storage.getVehicles(parsedUserId);
+      if (userVehicles.length === 0) {
+        return res.json([]); // Return empty array if user has no vehicles
+      }
+      
+      const notifications = await storage.getNotifications(parsedUserId);
       res.json(notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -1619,6 +1634,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Broadcast API routes
   app.get("/api/broadcasts", async (req, res) => {
     try {
+      const userId = req.query.userId as string;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const parsedUserId = parseInt(userId);
+      if (isNaN(parsedUserId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
+      
+      // Check if user has at least one vehicle before showing broadcasts
+      const userVehicles = await storage.getVehicles(parsedUserId);
+      if (userVehicles.length === 0) {
+        return res.json([]); // Return empty array if user has no vehicles
+      }
+      
       const broadcasts = await storage.getBroadcasts();
       res.json(broadcasts);
     } catch (error) {

@@ -39,8 +39,8 @@ export default function BroadcastPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   
-  // Get current user ID (defaulting to 1 for backward compatibility)
-  const currentUserId = 1;
+  // Get current user ID from localStorage
+  const currentUserId = parseInt(localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1");
   
   // Check if this is view-only mode from URL parameters
   const urlParams = new URLSearchParams(window.location.search);
@@ -76,16 +76,24 @@ export default function BroadcastPage() {
   // Fetch all broadcasts
   const { data: broadcasts = [], isLoading } = useQuery({
     queryKey: ["/api/broadcasts"],
+    queryFn: async () => {
+      const response = await apiRequest("GET", `/api/broadcasts?userId=${currentUserId}`);
+      return response.json();
+    },
   });
 
   // Fetch user vehicles for selling
   const { data: userVehicles = [] } = useQuery({
     queryKey: ["/api/vehicles"],
+    queryFn: async () => {
+      const response = await apiRequest("GET", `/api/vehicles?userId=${currentUserId}`);
+      return response.json();
+    },
   });
 
   // Fetch user profile for auto-populating contact details
   const { data: userProfile } = useQuery({
-    queryKey: ["/api/profile/1"],
+    queryKey: [`/api/profile/${currentUserId}`],
   });
 
   // Auto-populate form with profile data when available
@@ -144,7 +152,7 @@ export default function BroadcastPage() {
   // Create broadcast mutation
   const createBroadcastMutation = useMutation({
     mutationFn: async (data: BroadcastFormData & { vehicleId?: number }) => {
-      return apiRequest("POST", "/api/broadcasts", data);
+      return apiRequest("POST", "/api/broadcasts", { ...data, userId: currentUserId });
     },
     onSuccess: () => {
       toast({

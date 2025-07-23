@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import NotificationsPanel from "./notifications-panel";
 
 interface Notification {
@@ -14,6 +15,11 @@ export default function NotificationBell() {
 
   const { data: notifications = [] } = useQuery<Notification[]>({
     queryKey: ["/api/notifications"],
+    queryFn: async () => {
+      const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+      const response = await apiRequest("GET", `/api/notifications?userId=${currentUserId}`);
+      return response.json();
+    },
     refetchInterval: 30000, // Check every 30 seconds
     staleTime: 10000 // Consider data stale after 10 seconds
   });
