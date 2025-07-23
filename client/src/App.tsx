@@ -106,6 +106,7 @@ function Router() {
       <Route path="/add-vehicle" component={AddVehicle} />
       <Route path="/vehicle/:id/edit" component={EditVehicle} />
       <Route path="/vehicle/:id/upload" component={UploadDocuments} />
+      <Route path="/vehicle/:id/upload-documents" component={UploadDocuments} />
       <Route path="/vehicle/:id/local-documents" component={LocalDocuments} />
       <Route path="/vehicle/:id/service" component={CombinedServicePage} />
       <Route path="/vehicle/:id/service-logs" component={ServiceLogs} />
