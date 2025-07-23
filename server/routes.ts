@@ -1633,7 +1633,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/broadcasts/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const deleted = await storage.deleteBroadcast(id);
+      const userId = parseInt(req.query.userId as string) || 1; // Default to user 1 for backward compatibility
+      
+      // First check if the broadcast exists and belongs to the user
+      const broadcast = await storage.getBroadcast(id);
+      if (!broadcast) {
+        return res.status(404).json({ message: "Broadcast not found" });
+      }
+      
+      if (broadcast.userId !== userId) {
+        return res.status(403).json({ message: "You can only delete your own posts" });
+      }
+      
+      const deleted = await storage.deleteBroadcast(id, userId);
       
       if (!deleted) {
         return res.status(404).json({ message: "Broadcast not found" });

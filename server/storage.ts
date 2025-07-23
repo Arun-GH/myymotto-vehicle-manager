@@ -107,7 +107,7 @@ export interface IStorage {
   getBroadcast(id: number): Promise<Broadcast | undefined>;
   createBroadcast(broadcast: InsertBroadcast & { userId: number }): Promise<Broadcast>;
   updateBroadcast(id: number, broadcast: Partial<InsertBroadcast>): Promise<Broadcast | undefined>;
-  deleteBroadcast(id: number): Promise<boolean>;
+  deleteBroadcast(id: number, userId: number): Promise<boolean>;
   getBroadcastsByType(type: string): Promise<Broadcast[]>;
   incrementBroadcastViews(id: number): Promise<void>;
   cleanupExpiredBroadcasts(): Promise<number>;
@@ -1166,8 +1166,8 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async deleteBroadcast(id: number): Promise<boolean> {
-    const result = await db.delete(broadcasts).where(eq(broadcasts.id, id));
+  async deleteBroadcast(id: number, userId: number): Promise<boolean> {
+    const result = await db.delete(broadcasts).where(and(eq(broadcasts.id, id), eq(broadcasts.userId, userId)));
     return (result.rowCount ?? 0) > 0;
   }
 

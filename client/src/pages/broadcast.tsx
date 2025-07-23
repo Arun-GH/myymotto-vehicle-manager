@@ -39,6 +39,9 @@ export default function BroadcastPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   
+  // Get current user ID (defaulting to 1 for backward compatibility)
+  const currentUserId = 1;
+  
   // Check if this is view-only mode from URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const isViewOnly = urlParams.get('view') === 'only';
@@ -165,7 +168,7 @@ export default function BroadcastPage() {
   // Delete broadcast mutation
   const deleteBroadcastMutation = useMutation({
     mutationFn: async (broadcastId: number) => {
-      return apiRequest("DELETE", `/api/broadcasts/${broadcastId}`);
+      return apiRequest("DELETE", `/api/broadcasts/${broadcastId}?userId=${currentUserId}`);
     },
     onSuccess: () => {
       toast({
@@ -327,8 +330,8 @@ export default function BroadcastPage() {
                         <Calendar className="w-2 h-2" />
                         {formatDate(broadcast.createdAt)}
                       </div>
-                      {/* Show delete button for user's own posts */}
-                      {broadcast.userId === 1 && (
+                      {/* Show delete button only for user's own posts */}
+                      {broadcast.userId === currentUserId && (
                         <Button
                           variant="ghost"
                           size="sm"
