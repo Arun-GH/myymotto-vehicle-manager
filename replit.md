@@ -10,6 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 23, 2025**: Implemented OCR functionality for insurance policy document scanning
+- Added Tesseract.js OCR library for client-side text recognition from uploaded insurance documents
+- Created comprehensive OCR utility that extracts insurance provider, policy number, dates, sum insured, premium amount, and insured name
+- Built OCRInsuranceScanner component with image upload, camera capture, and real-time data extraction editing
+- Enhanced upload documents page with "Scan Policy" button specifically for insurance documents
+- Added OCR data fields to vehicle database schema (ocrPolicyNumber, ocrSumInsured, ocrPremiumAmount, ocrInsuredName)
+- Created API endpoint for saving extracted OCR data to vehicle records with automatic form field population
+- OCR system uses intelligent pattern recognition for Indian insurance providers (HDFC ERGO, ICICI Lombard, Bajaj Allianz, etc.)
+- Advanced date parsing handles multiple formats (DD/MM/YYYY, MM/DD/YYYY, text dates) with automatic conversion
+- Extracted data displays in organized cards with provider, policy details, sum insured, and premium information
+- Complete OCR workflow: Upload image → Extract text → Parse insurance data → Auto-fill form → Save to database
+
 **July 23, 2025**: Fixed vehicle edit functionality by adding required userId parameter to API requests
 - Fixed "User ID is required" error when clicking edit button on vehicle tiles from dashboard
 - Updated edit vehicle page to include userId parameter in both GET and PUT API requests for proper vehicle data retrieval and updates

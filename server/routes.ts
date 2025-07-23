@@ -542,7 +542,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/vehicles/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const userId = req.body.userId || 1; // Fallback to 1 for backward compatibility
+      const userId = parseInt(req.query.userId as string) || req.body.userId || 1; // Check query first, then body
       const validatedData = insertVehicleSchema.partial().parse(req.body);
       const vehicle = await storage.updateVehicle(id, userId, validatedData);
       
@@ -557,6 +557,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         res.status(500).json({ message: "Failed to update vehicle" });
       }
+    }
+  });
+
+  app.put("/api/vehicles/:id/ocr-data", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const userId = parseInt(req.query.userId as string) || 1;
+      const { ocrPolicyNumber, ocrSumInsured, ocrPremiumAmount, ocrInsuredName } = req.body;
+      
+      // Update vehicle with OCR data
+      const vehicle = await storage.updateVehicle(id, userId, {
+        ocrPolicyNumber,
+        ocrSumInsured,
+        ocrPremiumAmount,
+        ocrInsuredName,
+      });
+      
+      if (!vehicle) {
+        return res.status(404).json({ message: "Vehicle not found" });
+      }
+      
+      res.json({
+        success: true,
+        message: "OCR data saved successfully",
+        vehicle
+      });
+    } catch (error) {
+      console.error("OCR data update error:", error);
+      res.status(500).json({ message: "Failed to save OCR data" });
     }
   });
 

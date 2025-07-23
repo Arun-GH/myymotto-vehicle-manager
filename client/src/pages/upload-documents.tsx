@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams, Link } from "wouter";
-import { ArrowLeft, Upload, Camera, FileText, Calendar, CheckCircle, Bell, Settings } from "lucide-react";
+import { ArrowLeft, Upload, Camera, FileText, Calendar, CheckCircle, Bell, Settings, Scan } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import CameraCapture from "@/components/camera-capture";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
+import { OCRInsuranceScanner } from "@/components/ocr-insurance-scanner";
+import { type InsurancePolicyData } from "@/lib/ocr-utils";
 
 type DocumentType = "emission" | "insurance" | "rc";
 
@@ -34,7 +36,9 @@ export default function UploadDocuments() {
   const [expiryDate, setExpiryDate] = useState<string>("");
 
   const [showCamera, setShowCamera] = useState(false);
+  const [showOCRScanner, setShowOCRScanner] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [ocrData, setOcrData] = useState<InsurancePolicyData | null>(null);
 
   // Fetch vehicle data
   const { data: vehicle, isLoading } = useQuery({
@@ -62,6 +66,33 @@ export default function UploadDocuments() {
   const handleCameraCapture = (file: File) => {
     setSelectedFiles(prev => [...prev, file]);
     setShowCamera(false);
+  };
+
+  const handleOCRDataExtracted = async (data: InsurancePolicyData) => {
+    setOcrData(data);
+    
+    // Auto-fill form fields with OCR data if available
+    if (data.expiryDate) {
+      setExpiryDate(data.expiryDate);
+    }
+    
+    // Update vehicle with OCR data via API
+    try {
+      const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+      await apiRequest("PUT", `/api/vehicles/${vehicleId}/ocr-data?userId=${currentUserId}`, {
+        ocrPolicyNumber: data.policyNumber,
+        ocrSumInsured: data.sumInsured,
+        ocrPremiumAmount: data.premiumAmount,
+        ocrInsuredName: data.insuredName,
+      });
+      
+      toast({
+        title: "Insurance Data Extracted",
+        description: "Policy information has been automatically extracted and saved.",
+      });
+    } catch (error) {
+      console.error('Failed to save OCR data:', error);
+    }
   };
 
   const removeFile = (index: number) => {
@@ -277,15 +308,28 @@ export default function UploadDocuments() {
                     className="h-8 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-medium file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                   />
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowCamera(true)}
-                  className="h-8 flex items-center justify-center"
-                >
-                  <Camera className="w-3 h-3 mr-1" />
-                  <span className="text-xs">Camera</span>
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowCamera(true)}
+                    className="h-8 flex items-center justify-center flex-1"
+                  >
+                    <Camera className="w-3 h-3 mr-1" />
+                    <span className="text-xs">Camera</span>
+                  </Button>
+                  {selectedType === "insurance" && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowOCRScanner(true)}
+                      className="h-8 flex items-center justify-center flex-1 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200"
+                    >
+                      <Scan className="w-3 h-3 mr-1" />
+                      <span className="text-xs">Scan Policy</span>
+                    </Button>
+                  )}
+                </div>
               </div>
               
               <p className="text-[10px] text-gray-500">
@@ -364,6 +408,62 @@ export default function UploadDocuments() {
           onCapture={handleCameraCapture}
           onClose={() => setShowCamera(false)}
         />
+      )}
+
+      {/* OCR Scanner Modal */}
+      {showOCRScanner && (
+        <OCRInsuranceScanner
+          onDataExtracted={handleOCRDataExtracted}
+          onClose={() => setShowOCRScanner(false)}
+        />
+      )}
+
+      {/* OCR Extracted Data Display */}
+      {ocrData && selectedType === "insurance" && (
+        <Card className="mt-2 mx-2 shadow-orange border-l-4 border-l-purple-500">
+          <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-t-lg py-1.5">
+            <CardTitle className="flex items-center space-x-2 text-gray-800 text-xs">
+              <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-3 h-3 text-purple-600" />
+              </div>
+              <span>Extracted Insurance Data</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-2">
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              {ocrData.provider && (
+                <div>
+                  <Label className="text-[10px] text-gray-600">Provider</Label>
+                  <p className="font-medium">{ocrData.provider}</p>
+                </div>
+              )}
+              {ocrData.policyNumber && (
+                <div>
+                  <Label className="text-[10px] text-gray-600">Policy Number</Label>
+                  <p className="font-medium">{ocrData.policyNumber}</p>
+                </div>
+              )}
+              {ocrData.sumInsured && (
+                <div>
+                  <Label className="text-[10px] text-gray-600">Sum Insured</Label>
+                  <p className="font-medium text-green-600">{ocrData.sumInsured}</p>
+                </div>
+              )}
+              {ocrData.premiumAmount && (
+                <div>
+                  <Label className="text-[10px] text-gray-600">Premium</Label>
+                  <p className="font-medium text-blue-600">{ocrData.premiumAmount}</p>
+                </div>
+              )}
+              {ocrData.insuredName && (
+                <div className="col-span-2">
+                  <Label className="text-[10px] text-gray-600">Insured Name</Label>
+                  <p className="font-medium">{ocrData.insuredName}</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
