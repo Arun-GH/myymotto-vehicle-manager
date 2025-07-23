@@ -467,8 +467,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Vehicle routes
   app.get("/api/vehicles", async (req, res) => {
     try {
-      const userId = req.query.userId as string || "1"; // Default to user 1 for backward compatibility
-      const vehicles = await storage.getVehicles(parseInt(userId));
+      const userId = req.query.userId as string;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const parsedUserId = parseInt(userId);
+      if (isNaN(parsedUserId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
+      
+      const vehicles = await storage.getVehicles(parsedUserId);
       res.json(vehicles);
     } catch (error) {
       console.error("Error fetching vehicles:", error);

@@ -23,6 +23,11 @@ export default function Dashboard() {
   
   const { data: vehicles = [], isLoading } = useQuery<Vehicle[]>({
     queryKey: ["/api/vehicles"],
+    queryFn: async () => {
+      const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+      const response = await apiRequest("GET", `/api/vehicles?userId=${currentUserId}`);
+      return response.json();
+    },
   });
 
   const generateNotificationsMutation = useMutation({
@@ -171,9 +176,11 @@ export default function Dashboard() {
         <section className="px-3 py-2">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-semibold">Your Vehicles</h2>
-            <Button variant="ghost" size="sm" className="text-primary text-sm h-7 px-2">
-              View All
-            </Button>
+            {vehicles.length > 0 && (
+              <Button variant="ghost" size="sm" className="text-primary text-sm h-7 px-2">
+                View All
+              </Button>
+            )}
           </div>
           
           {isLoading ? (
