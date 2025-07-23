@@ -10,6 +10,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 23, 2025**: Fixed vehicle edit functionality by adding required userId parameter to API requests
+- Fixed "User ID is required" error when clicking edit button on vehicle tiles from dashboard
+- Updated edit vehicle page to include userId parameter in both GET and PUT API requests for proper vehicle data retrieval and updates
+- Vehicle edit functionality now works correctly with proper user authentication and ownership validation
+- Maintained consistent userId parameter passing pattern across all vehicle-related API endpoints
+
 **July 23, 2025**: Implemented complete user ownership validation for broadcast posts with enhanced security
 - Added comprehensive ownership checks for post deletion - users can only delete posts they created
 - Updated delete broadcast API route to validate userId ownership before allowing deletion

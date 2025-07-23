@@ -32,7 +32,8 @@ export default function EditVehicle() {
   const { data: vehicle, isLoading } = useQuery({
     queryKey: ["/api/vehicles", vehicleId],
     queryFn: async () => {
-      const response = await apiRequest("GET", `/api/vehicles/${vehicleId}`);
+      const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+      const response = await apiRequest("GET", `/api/vehicles/${vehicleId}?userId=${currentUserId}`);
       return response.json();
     },
     enabled: !!vehicleId,
@@ -185,7 +186,8 @@ export default function EditVehicle() {
         serviceIntervalKms: data.serviceIntervalKms || null,
         serviceIntervalMonths: data.serviceIntervalMonths || null,
       };
-      const response = await apiRequest("PUT", `/api/vehicles/${vehicleId}`, cleanedData);
+      const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+      const response = await apiRequest("PUT", `/api/vehicles/${vehicleId}?userId=${currentUserId}`, cleanedData);
       return response.json();
     },
     onSuccess: () => {
