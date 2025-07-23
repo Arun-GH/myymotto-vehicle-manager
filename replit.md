@@ -10,6 +10,19 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 23, 2025**: Enhanced Insurance Details page with financial information display and mobile optimization
+- Added comprehensive financial details section displaying sum insured and premium amount from both form data and OCR extraction
+- Implemented smart data prioritization: form-entered data takes precedence over OCR-extracted information for accuracy
+- Enhanced insurance details page with ultra-compact mobile-friendly design: reduced padding, smaller icons, compressed layouts
+- Added proper Indian currency formatting with thousands separators for all financial amounts (₹5,00,000 format)
+- Created organized Financial Details section with dedicated cards for Sum Insured, Premium Amount, and Policy Expiry Date
+- Separated Policy Information section for OCR-extracted data like policy number and insured name
+- Optimized header design with smaller logo (w-8 h-8), reduced button sizes (h-7 w-7), and compact spacing (px-2 py-2)
+- Made vehicle cards ultra-compact with smaller icons (w-6 h-6), reduced text sizes (text-sm, text-xs), and tighter spacing
+- Enhanced expanded details with compact grid layouts, smaller padding (p-2), and micro text labels (text-[10px])
+- Reduced action button heights to h-8 with text-xs for mobile optimization while maintaining functionality
+- Insurance page now displays comprehensive financial information in mobile-optimized interface with authentic data priority
+
 **July 23, 2025**: Implemented OCR functionality for insurance policy document scanning
 - Added Tesseract.js OCR library for client-side text recognition from uploaded insurance documents
 - Created comprehensive OCR utility that extracts insurance provider, policy number, dates, sum insured, premium amount, and insured name
