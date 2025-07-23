@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Info, Phone, MessageCircle, Star, ChevronDown, ExternalLink, MoreVertical, X, LogOut } from "lucide-react";
+import { Info, Phone, MessageCircle, Star, ChevronDown, ExternalLink, MoreVertical, X, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,6 +21,7 @@ import { insertRatingSchema, type InsertRating } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import {
   DialogDescription,
 } from "@/components/ui/dialog";
@@ -30,6 +31,11 @@ export default function InfoDropdown() {
   const [showFeedback, setShowFeedback] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
+  
+  // Check if current user is admin (user ID 1 for demo)
+  const currentUserId = localStorage.getItem("currentUserId") || "1";
+  const isAdmin = currentUserId === "1";
 
   const form = useForm<Pick<InsertRating, 'rating' | 'feedback'>>({
     resolver: zodResolver(insertRatingSchema.pick({ rating: true, feedback: true })),
@@ -78,6 +84,10 @@ export default function InfoDropdown() {
     setShowRating(true);
   };
 
+  const handleAdminDashboard = () => {
+    setLocation("/admin-dashboard");
+  };
+
   const handleLogout = () => {
     // Clear all localStorage data for logout
     localStorage.clear();
@@ -123,6 +133,12 @@ export default function InfoDropdown() {
             <Star className="w-4 h-4 mr-2" />
             Rate & Review
           </DropdownMenuItem>
+          {isAdmin && (
+            <DropdownMenuItem onClick={handleAdminDashboard} className="cursor-pointer text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+              <Shield className="w-4 h-4 mr-2" />
+              Admin Dashboard
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50">
             <LogOut className="w-4 h-4 mr-2" />
             Logout

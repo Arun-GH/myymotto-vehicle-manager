@@ -205,6 +205,8 @@ export const users = pgTable("users", {
   subscriptionExpiry: timestamp("subscription_expiry"),
   razorpayOrderId: text("razorpay_order_id"),
   razorpayPaymentId: text("razorpay_payment_id"),
+  isAdmin: boolean("is_admin").default(false), // Admin access flag
+  adminRole: text("admin_role").default("user"), // 'user', 'admin', 'super_admin'
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

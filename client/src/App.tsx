@@ -31,6 +31,7 @@ import VehicleAlerts from "@/pages/vehicle-alerts";
 import NewsTidbits from "@/pages/news-tidbits";
 import DashboardCustomize from "@/pages/dashboard-customize";
 import BroadcastPage from "@/pages/broadcast";
+import AdminDashboard from "@/pages/admin-dashboard";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -122,6 +123,7 @@ function Router() {
       <Route path="/traffic-violations" component={TrafficViolations} />
       <Route path="/insurance-renewals" component={InsuranceRenewals} />
       <Route path="/broadcast" component={BroadcastPage} />
+      <Route path="/admin-dashboard" component={AdminDashboard} />
       <Route component={NotFound} />
     </Switch>
   );

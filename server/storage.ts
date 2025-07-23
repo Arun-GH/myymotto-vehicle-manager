@@ -116,6 +116,17 @@ export interface IStorage {
   getBroadcastResponses(broadcastId: number): Promise<BroadcastResponse[]>;
   createBroadcastResponse(response: InsertBroadcastResponse & { userId: number }): Promise<BroadcastResponse>;
   markResponseAsRead(id: number): Promise<void>;
+  
+  // Admin methods
+  getAdminStats(): Promise<any>;
+  getRecentUsers(limit?: number): Promise<User[]>;
+  getRecentVehicles(limit?: number): Promise<Vehicle[]>;
+  getRecentBroadcasts(limit?: number): Promise<Broadcast[]>;
+  getRecentRatings(limit?: number): Promise<Rating[]>;
+  getAllUsersData(): Promise<User[]>;
+  getAllVehiclesData(): Promise<Vehicle[]>;
+  getAllBroadcastsData(): Promise<Broadcast[]>;
+  getAllRatingsData(): Promise<Rating[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -1221,6 +1232,70 @@ export class DatabaseStorage implements IStorage {
       .update(broadcastResponses)
       .set({ isRead: true })
       .where(eq(broadcastResponses.id, id));
+  }
+
+  // Admin methods implementation
+  async getAdminStats(): Promise<any> {
+    const [
+      totalUsersResult,
+      totalVehiclesResult,
+      totalBroadcastsResult,
+      totalRatingsResult,
+      subscriptionRevenueResult,
+      newUsersThisMonthResult,
+      newVehiclesThisMonthResult
+    ] = await Promise.all([
+      db.select().from(users),
+      db.select().from(vehicles),
+      db.select().from(broadcasts),
+      db.select().from(ratings),
+      db.select().from(users).where(eq(users.subscriptionStatus, "paid")),
+      db.select().from(users).where(gte(users.createdAt, new Date(new Date().setDate(1)))),
+      db.select().from(vehicles).where(gte(vehicles.createdAt, new Date(new Date().setDate(1))))
+    ]);
+
+    return {
+      totalUsers: totalUsersResult.length,
+      totalVehicles: totalVehiclesResult.length,
+      totalBroadcasts: totalBroadcastsResult.length,
+      totalRatings: totalRatingsResult.length,
+      subscriptionRevenue: subscriptionRevenueResult.length * 100, // ₹100 per subscription
+      newUsersThisMonth: newUsersThisMonthResult.length,
+      newVehiclesThisMonth: newVehiclesThisMonthResult.length,
+      activeUsers: totalUsersResult.filter(u => u.isVerified).length
+    };
+  }
+
+  async getRecentUsers(limit: number = 10): Promise<User[]> {
+    return await db.select().from(users).orderBy(desc(users.createdAt)).limit(limit);
+  }
+
+  async getRecentVehicles(limit: number = 10): Promise<Vehicle[]> {
+    return await db.select().from(vehicles).orderBy(desc(vehicles.createdAt)).limit(limit);
+  }
+
+  async getRecentBroadcasts(limit: number = 10): Promise<Broadcast[]> {
+    return await db.select().from(broadcasts).orderBy(desc(broadcasts.createdAt)).limit(limit);
+  }
+
+  async getRecentRatings(limit: number = 10): Promise<Rating[]> {
+    return await db.select().from(ratings).orderBy(desc(ratings.createdAt)).limit(limit);
+  }
+
+  async getAllUsersData(): Promise<User[]> {
+    return await db.select().from(users).orderBy(desc(users.createdAt));
+  }
+
+  async getAllVehiclesData(): Promise<Vehicle[]> {
+    return await db.select().from(vehicles).orderBy(desc(vehicles.createdAt));
+  }
+
+  async getAllBroadcastsData(): Promise<Broadcast[]> {
+    return await db.select().from(broadcasts).orderBy(desc(broadcasts.createdAt));
+  }
+
+  async getAllRatingsData(): Promise<Rating[]> {
+    return await db.select().from(ratings).orderBy(desc(ratings.createdAt));
   }
 }
 

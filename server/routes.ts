@@ -614,7 +614,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Creating document with data:", documentData);
       
       // Verify vehicle exists
-      const vehicle = await storage.getVehicle(documentData.vehicleId);
+      const vehicle = await storage.getVehicle(documentData.vehicleId, 1); // Default to user 1 for compatibility
       if (!vehicle) {
         return res.status(404).json({ message: "Vehicle not found" });
       }
@@ -654,7 +654,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Verify vehicle exists
-      const vehicle = await storage.getVehicle(vehicleId);
+      const vehicle = await storage.getVehicle(vehicleId, 1); // Default to user 1 for compatibility
       if (!vehicle) {
         return res.status(404).json({ message: "Vehicle not found" });
       }
@@ -737,7 +737,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stats endpoint
   app.get("/api/stats", async (req, res) => {
     try {
-      const vehicles = await storage.getVehicles();
+      const vehicles = await storage.getVehicles(1); // Default to user 1 for compatibility
       const currentDate = new Date();
       const thirtyDaysFromNow = new Date();
       thirtyDaysFromNow.setDate(currentDate.getDate() + 30);
@@ -864,7 +864,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/vehicles/:vehicleId/check-violations", async (req, res) => {
     try {
       const vehicleId = parseInt(req.params.vehicleId);
-      const vehicle = await storage.getVehicle(vehicleId);
+      const vehicle = await storage.getVehicle(vehicleId, 1); // Default to user 1 for compatibility
       
       if (!vehicle) {
         return res.status(404).json({ error: "Vehicle not found" });
@@ -1686,6 +1686,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error during initial broadcast cleanup:", error);
     }
   }, 5000); // 5 seconds after server start
+
+  // Admin routes - Protected by admin middleware
+  const isAdmin = (req: any, res: any, next: any) => {
+    // For now, check if user ID 1 is admin (we'll update this with proper auth later)
+    const userId = parseInt(req.query.userId as string) || 1;
+    if (userId === 1) {
+      next();
+    } else {
+      res.status(403).json({ message: "Admin access required" });
+    }
+  };
+
+  app.get("/api/admin/stats", isAdmin, async (req, res) => {
+    try {
+      const stats = await storage.getAdminStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching admin stats:", error);
+      res.status(500).json({ error: "Failed to fetch admin stats" });
+    }
+  });
+
+  app.get("/api/admin/users/recent", isAdmin, async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const users = await storage.getRecentUsers(limit);
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching recent users:", error);
+      res.status(500).json({ error: "Failed to fetch recent users" });
+    }
+  });
+
+  app.get("/api/admin/vehicles/recent", isAdmin, async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const vehicles = await storage.getRecentVehicles(limit);
+      res.json(vehicles);
+    } catch (error) {
+      console.error("Error fetching recent vehicles:", error);
+      res.status(500).json({ error: "Failed to fetch recent vehicles" });
+    }
+  });
+
+  app.get("/api/admin/broadcasts/recent", isAdmin, async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const broadcasts = await storage.getRecentBroadcasts(limit);
+      res.json(broadcasts);
+    } catch (error) {
+      console.error("Error fetching recent broadcasts:", error);
+      res.status(500).json({ error: "Failed to fetch recent broadcasts" });
+    }
+  });
+
+  app.get("/api/admin/ratings/recent", isAdmin, async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const ratings = await storage.getRecentRatings(limit);
+      res.json(ratings);
+    } catch (error) {
+      console.error("Error fetching recent ratings:", error);
+      res.status(500).json({ error: "Failed to fetch recent ratings" });
+    }
+  });
+
+  app.get("/api/admin/export/:dataType", isAdmin, async (req, res) => {
+    try {
+      const { dataType } = req.params;
+      let data;
+
+      switch (dataType) {
+        case "users":
+          data = await storage.getAllUsersData();
+          break;
+        case "vehicles":
+          data = await storage.getAllVehiclesData();
+          break;
+        case "broadcasts":
+          data = await storage.getAllBroadcastsData();
+          break;
+        case "ratings":
+          data = await storage.getAllRatingsData();
+          break;
+        default:
+          return res.status(400).json({ error: "Invalid data type" });
+      }
+
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename="${dataType}-${new Date().toISOString().split('T')[0]}.json"`);
+      res.json(data);
+    } catch (error) {
+      console.error("Error exporting data:", error);
+      res.status(500).json({ error: "Failed to export data" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
