@@ -788,7 +788,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stats endpoint
   app.get("/api/stats", async (req, res) => {
     try {
-      const vehicles = await storage.getVehicles(1); // Default to user 1 for compatibility
+      const userId = req.query.userId as string;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const parsedUserId = parseInt(userId);
+      if (isNaN(parsedUserId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
+      
+      const vehicles = await storage.getVehicles(parsedUserId);
       const currentDate = new Date();
       const thirtyDaysFromNow = new Date();
       thirtyDaysFromNow.setDate(currentDate.getDate() + 30);
@@ -839,8 +849,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/notifications/generate", async (req, res) => {
     try {
-      const userId = req.body.userId || 1; // Default to user 1 for backward compatibility
-      await storage.generateRenewalNotifications(userId);
+      const userId = req.body.userId;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const parsedUserId = parseInt(userId);
+      if (isNaN(parsedUserId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
+      
+      await storage.generateRenewalNotifications(parsedUserId);
       res.json({ success: true, message: "Notifications generated successfully" });
     } catch (error) {
       console.error("Error generating notifications:", error);
@@ -1629,14 +1648,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("Received broadcast request:", req.body);
       
-      const userId = 1;
+      const userId = req.body.userId;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const parsedUserId = parseInt(userId);
+      if (isNaN(parsedUserId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
       
       // Set expiry date to 7 days from now
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 7);
 
       const broadcastData = {
-        userId: userId,
+        userId: parsedUserId,
         type: req.body.type || "general",
         title: req.body.title,
         description: req.body.description,

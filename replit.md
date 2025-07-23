@@ -35,9 +35,17 @@ Preferred communication style: Simple, everyday language.
 - Extracted data displays in organized cards with provider, policy details, sum insured, and premium information
 - Complete OCR workflow: Upload image → Extract text → Parse insurance data → Auto-fill form → Save to database
 
-**July 23, 2025**: Fixed vehicle edit functionality by adding required userId parameter to API requests
+**July 23, 2025**: Fixed critical data isolation bug preventing new users from adding vehicles
 - Fixed "User ID is required" error when clicking edit button on vehicle tiles from dashboard
 - Updated edit vehicle page to include userId parameter in both GET and PUT API requests for proper vehicle data retrieval and updates
+- Fixed critical data isolation bug: stats, notifications, and broadcast endpoints were not properly filtering by userId
+- Updated stats endpoint to require userId parameter, preventing new users from seeing other users' vehicle counts
+- Fixed notification generation to only create notifications for the current user's vehicles
+- Updated broadcast creation to use correct userId from request body instead of hardcoded user 1
+- Fixed vehicle counter and broadcast counter display that was preventing new users from adding vehicles
+- Created complete clean slate dashboard experience for new users with welcoming design and "Add Your First Vehicle" call-to-action
+- Hidden Quick Actions section (Documents, Service Log, Violations, Insurance) and "View All" button for users with no vehicles
+- Removed "Your Vehicles" section entirely for new users to eliminate confusion and added Community/News engagement options
 - Vehicle edit functionality now works correctly with proper user authentication and ownership validation
 - Maintained consistent userId parameter passing pattern across all vehicle-related API endpoints
 

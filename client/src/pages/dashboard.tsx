@@ -31,7 +31,10 @@ export default function Dashboard() {
   });
 
   const generateNotificationsMutation = useMutation({
-    mutationFn: () => apiRequest("POST", "/api/notifications/generate"),
+    mutationFn: () => {
+      const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+      return apiRequest("POST", "/api/notifications/generate", { userId: currentUserId });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
     }
