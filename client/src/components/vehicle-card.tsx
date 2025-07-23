@@ -165,11 +165,6 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             </div>
             <div className="flex items-center space-x-2">
               <div className="flex items-center space-x-1">
-                <div className={`w-2 h-2 rounded-full ${
-                  overallStatus === "expired" ? "bg-red-500" :
-                  overallStatus === "expiring" ? "bg-orange-500" :
-                  "bg-green-500"
-                } shadow-sm`}></div>
                 <StatusIcon className={`w-3 h-3 ${statusColor}`} />
               </div>
               <div className="flex items-center space-x-1">
