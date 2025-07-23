@@ -7,7 +7,7 @@ import { ArrowLeft, Car, Save, FileText, Calendar, Camera, Settings, AlertTriang
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { getAllMakes, getModelsForMake } from "@/lib/vehicle-data";
+import { getAllMakesForType, getModelsForMake, getVehicleTypes } from "@/lib/vehicle-data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -101,6 +101,17 @@ export default function AddVehicle() {
   });
 
   const watchedMake = form.watch("make");
+  const watchedVehicleType = form.watch("vehicleType");
+
+  // Reset make and model when vehicle type changes
+  const handleVehicleTypeChange = (vehicleType: string) => {
+    form.setValue("vehicleType", vehicleType);
+    form.setValue("make", ""); // Reset make when vehicle type changes
+    form.setValue("model", ""); // Reset model when vehicle type changes
+    setSelectedMake("");
+    setIsCustomMake(false);
+    setIsCustomModel(false);
+  };
 
   // Reset model when make changes
   const handleMakeChange = (make: string) => {
@@ -376,6 +387,30 @@ export default function AddVehicle() {
                     </div>
                   </div>
                 </div>
+                {/* Vehicle Type - First Field */}
+                <FormField
+                  control={form.control}
+                  name="vehicleType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-medium">Vehicle Type *</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={handleVehicleTypeChange} value={field.value}>
+                          <SelectTrigger className="h-9">
+                            <SelectValue placeholder="Select vehicle type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="2-wheeler">2-Wheeler</SelectItem>
+                            <SelectItem value="3-wheeler">3-Wheeler</SelectItem>
+                            <SelectItem value="4-wheeler">4-Wheeler</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <FormField
                     control={form.control}
@@ -397,7 +432,7 @@ export default function AddVehicle() {
                                 <SelectValue placeholder="Select make" />
                               </SelectTrigger>
                               <SelectContent>
-                                {getAllMakes().map((make) => (
+                                {getAllMakesForType(watchedVehicleType || "4-wheeler").map((make) => (
                                   <SelectItem key={make} value={make}>
                                     {make.toUpperCase()}
                                   </SelectItem>
@@ -446,7 +481,7 @@ export default function AddVehicle() {
                                 <SelectValue placeholder="Select model" />
                               </SelectTrigger>
                               <SelectContent>
-                                {getModelsForMake(watchedMake).map((model) => (
+                                {getModelsForMake(watchedMake, watchedVehicleType || "4-wheeler").map((model) => (
                                   <SelectItem key={model} value={model}>
                                     {model}
                                   </SelectItem>
@@ -782,10 +817,22 @@ export default function AddVehicle() {
                               <FormLabel className="text-sm font-medium">Sum Insured (₹)</FormLabel>
                               <FormControl>
                                 <Input 
+                                  type="text"
+                                  inputMode="numeric"
+                                  pattern="[0-9]*"
                                   placeholder="e.g., 500000" 
                                   className="h-9"
                                   {...field}
                                   value={field.value || ""}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                                    field.onChange(value);
+                                  }}
+                                  onKeyPress={(e) => {
+                                    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                                      e.preventDefault();
+                                    }
+                                  }}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -800,10 +847,22 @@ export default function AddVehicle() {
                               <FormLabel className="text-sm font-medium">Premium Amount (₹)</FormLabel>
                               <FormControl>
                                 <Input 
+                                  type="text"
+                                  inputMode="numeric"
+                                  pattern="[0-9]*"
                                   placeholder="e.g., 15000" 
                                   className="h-9"
                                   {...field}
                                   value={field.value || ""}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                                    field.onChange(value);
+                                  }}
+                                  onKeyPress={(e) => {
+                                    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                                      e.preventDefault();
+                                    }
+                                  }}
                                 />
                               </FormControl>
                               <FormMessage />

@@ -7,7 +7,7 @@ import { ArrowLeft, Car, Save, Camera, Settings, Shield } from "lucide-react";
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { getAllMakes, getModelsForMake } from "@/lib/vehicle-data";
+import { getAllMakesForType, getModelsForMake, getVehicleTypes } from "@/lib/vehicle-data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -122,7 +122,8 @@ export default function EditVehicle() {
       });
       
       // Check if make or model are custom (not in dropdown)
-      const availableMakes = getAllMakes();
+      const vehicleType = vehicle.vehicleType || "4-wheeler";
+      const availableMakes = getAllMakesForType(vehicleType);
       const vehicleMake = vehicle.make || "";
       const vehicleModel = vehicle.model || "";
       
@@ -134,7 +135,7 @@ export default function EditVehicle() {
         setSelectedMake(vehicleMake);
       }
       
-      if (vehicleModel && vehicleMake && !getModelsForMake(vehicleMake).includes(vehicleModel)) {
+      if (vehicleModel && vehicleMake && !getModelsForMake(vehicleMake, vehicleType).includes(vehicleModel)) {
         setIsCustomModel(true);
       } else {
         setIsCustomModel(false);
@@ -154,6 +155,17 @@ export default function EditVehicle() {
   }, [vehicle, form]);
 
   const watchedMake = form.watch("make");
+  const watchedVehicleType = form.watch("vehicleType");
+
+  // Reset make and model when vehicle type changes
+  const handleVehicleTypeChange = (vehicleType: string) => {
+    form.setValue("vehicleType", vehicleType);
+    form.setValue("make", ""); // Reset make when vehicle type changes
+    form.setValue("model", ""); // Reset model when vehicle type changes
+    setSelectedMake("");
+    setIsCustomMake(false);
+    setIsCustomModel(false);
+  };
 
   // Reset model when make changes
   const handleMakeChange = (make: string) => {
@@ -374,6 +386,34 @@ export default function EditVehicle() {
                   </div>
                 </div>
 
+                {/* Vehicle Type Section - First and Mandatory */}
+                <div className="mb-4">
+                  <FormField
+                    control={form.control}
+                    name="vehicleType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-semibold">Vehicle Type *</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={handleVehicleTypeChange} value={field.value}>
+                            <SelectTrigger className="h-8">
+                              <SelectValue placeholder="Select vehicle type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {getVehicleTypes().map((type) => (
+                                <SelectItem key={type} value={type}>
+                                  {type}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <FormField
                     control={form.control}
@@ -395,7 +435,7 @@ export default function EditVehicle() {
                                 <SelectValue placeholder="Select make" />
                               </SelectTrigger>
                               <SelectContent>
-                                {getAllMakes().map((make) => (
+                                {getAllMakesForType(watchedVehicleType || "4-wheeler").map((make) => (
                                   <SelectItem key={make} value={make}>
                                     {make.toUpperCase()}
                                   </SelectItem>
@@ -444,7 +484,7 @@ export default function EditVehicle() {
                                 <SelectValue placeholder="Select model" />
                               </SelectTrigger>
                               <SelectContent>
-                                {watchedMake && getModelsForMake(watchedMake).map((model) => (
+                                {watchedMake && getModelsForMake(watchedMake, watchedVehicleType || "4-wheeler").map((model) => (
                                   <SelectItem key={model} value={model}>
                                     {model}
                                   </SelectItem>
@@ -766,10 +806,22 @@ export default function EditVehicle() {
                             <FormLabel className="text-xs">Sum Insured (₹)</FormLabel>
                             <FormControl>
                               <Input 
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
                                 placeholder="e.g., 500000" 
                                 className="h-8"
                                 {...field}
                                 value={field.value || ""}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                                  field.onChange(value);
+                                }}
+                                onKeyPress={(e) => {
+                                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                                    e.preventDefault();
+                                  }
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -784,10 +836,22 @@ export default function EditVehicle() {
                             <FormLabel className="text-xs">Premium Amount (₹)</FormLabel>
                             <FormControl>
                               <Input 
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
                                 placeholder="e.g., 15000" 
                                 className="h-8"
                                 {...field}
                                 value={field.value || ""}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                                  field.onChange(value);
+                                }}
+                                onKeyPress={(e) => {
+                                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                                    e.preventDefault();
+                                  }
+                                }}
                               />
                             </FormControl>
                             <FormMessage />

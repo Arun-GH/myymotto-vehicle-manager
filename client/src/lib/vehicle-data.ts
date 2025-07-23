@@ -1,5 +1,6 @@
-// Vehicle makes and models data for Indian market (4-wheelers and 2-wheelers)
-export const vehicleData = {
+// Vehicle makes and models data organized by vehicle type for Indian market
+export const vehicleDataByType = {
+  "4-wheeler": {
   // 4-Wheeler Cars
   "Maruti Suzuki": [
     "Alto", "Swift", "Baleno", "Wagon R", "Dzire", "Vitara Brezza", "Ertiga", 
@@ -72,10 +73,10 @@ export const vehicleData = {
   ],
   "Land Rover": [
     "Discovery", "Range Rover", "Range Rover Sport", "Range Rover Evoque", "Defender"
-  ],
-  
-  // 2-Wheeler Motorcycles
-  "Hero MotoCorp": [
+  ]
+  },
+  "2-wheeler": {
+    "Hero MotoCorp": [
     "Splendor Plus", "HF Deluxe", "Passion Pro", "Glamour", "Super Splendor", 
     "Xtreme 160R", "Xtreme 200S", "Xpulse 200", "Karizma XMR", "Destini 125", 
     "Maestro Edge", "Pleasure Plus"
@@ -161,12 +162,36 @@ export const vehicleData = {
   "Ampere": [
     "Magnus", "Zeal", "V48"
   ]
+  },
+  "3-wheeler": {
+    "Bajaj": ["RE Compact", "RE 60", "Maxima Z", "Maxima C"],
+    "Mahindra": ["Alfa", "Treo", "Treo Zor"],
+    "Piaggio": ["Ape Auto", "Ape City", "Ape Xtra LDX"],
+    "TVS": ["King", "King Deluxe", "King Duramax"],
+    "Force": ["Trax", "Toofan"],
+    "Tata": ["Magic", "Ace Gold"],
+    "Ashok Leyland": ["Dost", "Bada Dost"],
+    "Eicher": ["Pro 1049", "Pro 1110"]
+  }
 };
 
-export const getModelsForMake = (make: string): string[] => {
-  return vehicleData[make as keyof typeof vehicleData] || [];
+export const getModelsForMake = (make: string, vehicleType: string): string[] => {
+  const typeData = vehicleDataByType[vehicleType as keyof typeof vehicleDataByType];
+  if (!typeData) return [];
+  return typeData[make as keyof typeof typeData] || [];
 };
 
+export const getAllMakesForType = (vehicleType: string): string[] => {
+  const typeData = vehicleDataByType[vehicleType as keyof typeof vehicleDataByType];
+  if (!typeData) return [];
+  return Object.keys(typeData);
+};
+
+export const getVehicleTypes = (): string[] => {
+  return Object.keys(vehicleDataByType);
+};
+
+// Legacy functions for backward compatibility
 export const getAllMakes = (): string[] => {
-  return Object.keys(vehicleData);
+  return Object.keys(vehicleDataByType["4-wheeler"]);
 };

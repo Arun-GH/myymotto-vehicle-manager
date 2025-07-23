@@ -27,7 +27,7 @@ export const vehicles = pgTable("vehicles", {
   averageUsagePerMonth: integer("average_usage_per_month"),
   serviceIntervalKms: integer("service_interval_kms"),
   serviceIntervalMonths: integer("service_interval_months"),
-  vehicleType: text("vehicle_type"), // "2-wheeler", "3-wheeler", "4-wheeler"
+  vehicleType: text("vehicle_type").notNull(), // "2-wheeler", "3-wheeler", "4-wheeler" - REQUIRED
   fuelType: text("fuel_type"), // "petrol", "diesel", "electric", "hybrid"
   // OCR extracted insurance data
   ocrPolicyNumber: text("ocr_policy_number"),
