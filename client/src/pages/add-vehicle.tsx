@@ -780,13 +780,32 @@ export default function AddVehicle() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <FormField
                     control={form.control}
                     name="rcExpiry"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-medium">RC Expiry</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="date" 
+                            className="h-9"
+                            {...field} 
+                            value={convertToDateInputFormat(field.value || "")} 
+                            onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="emissionExpiry"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">Latest Emission</FormLabel>
                         <FormControl>
                           <Input 
                             type="date" 
@@ -888,7 +907,7 @@ export default function AddVehicle() {
                           name="insuranceExpiry"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-sm font-medium">Issue Date</FormLabel>
+                              <FormLabel className="text-sm font-medium">Issue Date (When policy was issued)</FormLabel>
                               <FormControl>
                                 <Input 
                                   type="date" 
@@ -908,7 +927,7 @@ export default function AddVehicle() {
                           name="insuranceExpiryDate"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-sm font-medium">Expiry Date</FormLabel>
+                              <FormLabel className="text-sm font-medium">Expiry Date (When policy expires)</FormLabel>
                               <FormControl>
                                 <Input 
                                   type="date" 

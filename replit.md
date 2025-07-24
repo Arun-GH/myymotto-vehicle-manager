@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 24, 2025**: Fixed critical date validation and camera functionality issues in vehicle management system
+- CRITICAL FIX: Resolved date validation logic to allow future dates for insurance expiry, RC expiry, and emission expiry fields while keeping past-only validation for insurance issue dates and last service dates
+- Fixed Zod schema validation by removing incorrect future date restrictions from expiry fields that should naturally be in the future
+- Added missing emission expiry field to add-vehicle form with proper date handling and 3-column layout for better mobile experience
+- Enhanced date field labels with clear explanations: "Issue Date (When policy was issued)" vs "Expiry Date (When policy expires)" to eliminate user confusion
+- Fixed camera functionality runtime error by removing unused modal code and ensuring device's native camera app opens correctly
+- Resolved completeness tracker accuracy issues with proper field name mapping for insurance providers, chassis/engine numbers, and service details
+- Enhanced completeness calculation to include thumbnail image detection and accurate progress tracking
+- Database date format properly handled to prevent "date/time field value out of range" errors with yyyy-mm-dd format compatibility
+
 **July 24, 2025**: Implemented camera functionality for vehicle photo capture in add-vehicle page
 - Added device camera integration that opens native camera app when camera icon is clicked
 - Enhanced camera button to trigger hidden HTML file input with capture="environment" attribute for proper mobile camera access
