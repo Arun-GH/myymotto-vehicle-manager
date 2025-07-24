@@ -1132,21 +1132,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Maintenance records by vehicle route for timeline
-  app.get("/api/maintenance-records", async (req, res) => {
-    try {
-      const vehicleId = parseInt(req.query.vehicleId as string);
-      if (!vehicleId) {
-        return res.status(400).json({ message: "Vehicle ID is required" });
-      }
-      const records = await storage.getMaintenanceRecords(vehicleId);
-      res.json(records);
-    } catch (error) {
-      console.error("Error fetching maintenance records:", error);
-      res.status(500).json({ message: "Failed to fetch maintenance records" });
-    }
-  });
-
   // Service log routes
   app.get("/api/service-logs/:vehicleId", async (req, res) => {
     try {
