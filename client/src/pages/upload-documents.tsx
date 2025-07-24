@@ -161,7 +161,7 @@ export default function UploadDocuments() {
       setSelectedFiles([]);
       setExpiryDate("");
       setDocumentName("");
-      setLocation("/");
+      setLocation(`/vehicle/${vehicleId}/local-documents`);
     },
     onError: (error) => {
       toast({
