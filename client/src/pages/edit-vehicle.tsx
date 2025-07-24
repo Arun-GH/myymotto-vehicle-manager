@@ -258,47 +258,28 @@ export default function EditVehicle() {
     }
   };
 
-  const handleCameraCapture = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      });
+  const handleCameraCapture = () => {
+    // Trigger the hidden camera input to open device camera app
+    const cameraInput = document.getElementById('camera-input') as HTMLInputElement;
+    if (cameraInput) {
+      cameraInput.click();
+    }
+  };
+
+  const handleCameraInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setThumbnailImage(file);
+      const previewUrl = URL.createObjectURL(file);
+      setThumbnailPreview(previewUrl);
       
-      // Create a video element to capture from camera
-      const video = document.createElement('video');
-      video.srcObject = stream;
-      video.play();
-      
-      video.onloadedmetadata = () => {
-        // Create canvas to capture frame
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        
-        if (ctx) {
-          ctx.drawImage(video, 0, 0);
-          
-          // Convert to blob and create file
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const file = new File([blob], `vehicle-photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
-              setThumbnailImage(file);
-              setThumbnailPreview(canvas.toDataURL());
-            }
-          }, 'image/jpeg', 0.8);
-        }
-        
-        // Stop camera stream
-        stream.getTracks().forEach(track => track.stop());
-      };
-    } catch (error) {
       toast({
-        title: "Camera Error",
-        description: "Unable to access camera. Please use file upload instead.",
-        variant: "destructive",
+        title: "Photo Captured",
+        description: "Vehicle photo has been successfully captured from camera.",
       });
     }
+    // Reset the input value so the same file can be selected again
+    event.target.value = '';
   };
 
   const removeThumbnail = () => {
@@ -465,6 +446,15 @@ export default function EditVehicle() {
                     )}
                     <div className="flex-1 space-y-2">
                       <div className="flex gap-2">
+                        {/* Hidden camera input that opens device camera app */}
+                        <input
+                          id="camera-input"
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          onChange={handleCameraInputChange}
+                          className="hidden"
+                        />
                         <Button 
                           type="button" 
                           variant="outline" 
@@ -497,7 +487,7 @@ export default function EditVehicle() {
                           </Button>
                         </label>
                       </div>
-                      <p className="text-xs text-gray-500">Take a photo or upload from gallery</p>
+                      <p className="text-xs text-gray-500">Take a photo with camera app or upload from gallery</p>
                     </div>
                   </div>
                 </div>

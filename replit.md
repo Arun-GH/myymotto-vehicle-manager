@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 24, 2025**: Updated camera functionality to open device camera app instead of direct photo capture
+- Modified camera button to use HTML file input with capture="environment" attribute for proper camera app integration
+- Replaced complex camera stream implementation with simple file input that launches device's native camera app
+- Added handleCameraInputChange function to process photos captured from camera app
+- Enhanced user experience with "Take a photo with camera app or upload from gallery" instruction text
+- Camera functionality now works like standard mobile apps - clicking Camera opens device camera app for photo capture
+- Maintained separate Upload button for selecting photos from device gallery
+- Added success toast notification when photo is captured from camera app
+- Camera input resets after each use allowing multiple photo captures without page reload
+
 **July 24, 2025**: Enhanced About, Contact Support, Send Feedback, and Rate & Review popups with premium mobile-friendly styling
 - MAJOR REDESIGN: All info dropdown dialogs now use professional center-aligned layout with w-[90%] max-w-md responsive width
 - Added premium styling with backdrop-blur, white/95% opacity backgrounds, and shadow-2xl with orange shadow effects
