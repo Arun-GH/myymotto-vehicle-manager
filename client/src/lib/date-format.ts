@@ -101,3 +101,56 @@ export function getMaxDateForInput(): string {
   const day = today.getDate().toString().padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
+
+export function formatToDDMMMYYYY(date: Date | string | null | undefined): string {
+  if (!date) return "";
+  
+  try {
+    let dateObj: Date;
+    
+    if (typeof date === 'string') {
+      // Handle different input formats
+      if (date.includes('/')) {
+        // Already in dd/mm/yyyy or mm/dd/yyyy format
+        const parts = date.split('/');
+        if (parts.length === 3) {
+          // Assume dd/mm/yyyy if day <= 12, otherwise mm/dd/yyyy
+          const [first, second, year] = parts;
+          if (parseInt(first) <= 12 && parseInt(second) > 12) {
+            // Likely mm/dd/yyyy, convert to dd/mm/yyyy
+            dateObj = new Date(parseInt(year), parseInt(first) - 1, parseInt(second));
+          } else {
+            // Assume dd/mm/yyyy
+            dateObj = new Date(parseInt(year), parseInt(second) - 1, parseInt(first));
+          }
+        } else {
+          return "";
+        }
+      } else if (date.includes('-')) {
+        // ISO format (yyyy-mm-dd)
+        dateObj = new Date(date);
+      } else {
+        return "";
+      }
+    } else {
+      dateObj = date;
+    }
+    
+    if (isNaN(dateObj.getTime())) {
+      return "";
+    }
+    
+    const day = dateObj.getDate().toString().padStart(2, '0');
+    const monthNames = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    const month = monthNames[dateObj.getMonth()];
+    const year = dateObj.getFullYear();
+    
+    return `${day}-${month}-${year}`;
+  } catch (error) {
+    console.error('Date formatting error:', error);
+    return "";
+  }
+}

@@ -7,7 +7,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { type Vehicle } from "@shared/schema";
 import { formatDistanceToNow, getExpiryStatus, getServiceStatus, calculateNextServiceDate } from "@/lib/date-utils";
-import { formatToddmmyyyy } from "@/lib/date-format";
+import { formatToddmmyyyy, formatToDDMMMYYYY } from "@/lib/date-format";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -217,13 +217,13 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             <div className="flex flex-col">
               <span className="text-amber-800 font-bold text-xs">Insured date:</span>
               <span className="text-gray-800 text-xs">
-                {vehicle.insuranceExpiry ? formatToddmmyyyy(new Date(vehicle.insuranceExpiry)) : "Not set"}
+                {vehicle.insuranceExpiry ? formatToDDMMMYYYY(new Date(vehicle.insuranceExpiry)) : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-amber-800 font-bold text-xs">Latest Emission:</span>
               <span className="text-gray-800 text-xs">
-                {vehicle.emissionExpiry ? formatToddmmyyyy(new Date(vehicle.emissionExpiry)) : "Not set"}
+                {vehicle.emissionExpiry ? formatToDDMMMYYYY(new Date(vehicle.emissionExpiry)) : "Not set"}
               </span>
             </div>
           </div>
@@ -231,7 +231,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             <div className="flex flex-col">
               <span className="text-amber-800 font-bold text-xs">Last Service Date:</span>
               <span className="text-gray-800 text-xs">
-                {vehicle.lastServiceDate ? formatToddmmyyyy(new Date(vehicle.lastServiceDate)) : "Not set"}
+                {vehicle.lastServiceDate ? formatToDDMMMYYYY(new Date(vehicle.lastServiceDate)) : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
@@ -242,7 +242,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 nextServiceInfo.status === "due_month" ? "text-yellow-600" :
                 "text-gray-800"
               }`}>
-                {nextServiceInfo.date ? formatToddmmyyyy(new Date(nextServiceInfo.date)) : "Not set"}
+                {nextServiceInfo.date ? formatToDDMMMYYYY(new Date(nextServiceInfo.date)) : "Not set"}
               </span>
             </div>
           </div>

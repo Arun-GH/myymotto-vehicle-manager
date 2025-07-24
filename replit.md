@@ -10,6 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 24, 2025**: Updated vehicle tile date format to DD-MMM-YYYY display format
+- Changed all date displays on vehicle dashboard tiles from dd/mm/yyyy to DD-MMM-YYYY format (e.g., 24-Jan-2025)
+- Added formatToDDMMMYYYY function to date-format.ts for consistent month name abbreviation
+- Updated Insured date, Latest Emission, Last Service Date, and Next Service Date to use new format
+- Enhanced readability with three-letter month abbreviations (Jan, Feb, Mar, etc.) for clearer date recognition
+- Maintained all underlying date functionality while improving user experience with more readable date format
+
 **July 24, 2025**: Updated camera functionality to open device camera app instead of direct photo capture
 - Modified camera button to use HTML file input with capture="environment" attribute for proper camera app integration
 - Replaced complex camera stream implementation with simple file input that launches device's native camera app
