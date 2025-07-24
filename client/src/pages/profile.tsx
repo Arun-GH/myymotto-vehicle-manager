@@ -555,10 +555,10 @@ export default function Profile() {
               {/* Header with Progress */}
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-1.5">
-                  <TrendingUp className="w-3.5 h-3.5 text-orange-500" />
-                  <h3 className="text-xs font-semibold text-gray-800">Profile</h3>
+                  <TrendingUp className="w-4 h-4 text-orange-500" />
+                  <h3 className="text-sm font-semibold text-gray-800">Profile</h3>
                 </div>
-                <span className="text-sm font-bold text-orange-600">{completeness.percentage}%</span>
+                <span className="text-base font-bold text-orange-600">{completeness.percentage}%</span>
               </div>
               
               {/* Compact Progress Bar */}
@@ -570,7 +570,7 @@ export default function Profile() {
               </div>
               
               {/* Inline Stats */}
-              <div className="flex items-center justify-between text-[10px] text-gray-600">
+              <div className="flex items-center justify-between text-xs text-gray-600">
                 <span>{completeness.completedFields}/{completeness.totalFields} fields</span>
                 <span>{completeness.vehicleCount} vehicle{completeness.vehicleCount !== 1 ? 's' : ''} (+{completeness.vehicleBonus}%)</span>
               </div>
@@ -579,10 +579,10 @@ export default function Profile() {
               {completeness.missingFields.length > 0 && completeness.percentage < 100 && (
                 <div className="mt-2 pt-2 border-t border-gray-200">
                   <div className="flex items-center space-x-1 mb-1">
-                    <AlertCircle className="w-3 h-3 text-amber-500" />
-                    <span className="text-[10px] font-medium text-gray-700">Missing:</span>
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-500" />
+                    <span className="text-xs font-medium text-gray-700">Missing:</span>
                   </div>
-                  <div className="text-[9px] text-gray-600 leading-tight">
+                  <div className="text-[10px] text-gray-600 leading-tight">
                     {completeness.missingFields.slice(0, 3).map((field, idx) => field.name).join(', ')}
                     {completeness.missingFields.length > 3 && ` +${completeness.missingFields.length - 3} more`}
                   </div>
@@ -593,8 +593,8 @@ export default function Profile() {
               {completeness.percentage >= 90 && (
                 <div className="mt-2 pt-2 border-t border-green-200 bg-green-50 rounded p-1.5">
                   <div className="flex items-center space-x-1">
-                    <CheckCircle className="w-3 h-3 text-green-600" />
-                    <span className="text-[10px] font-medium text-green-800">
+                    <CheckCircle className="w-3.5 h-3.5 text-green-600" />
+                    <span className="text-xs font-medium text-green-800">
                       {completeness.percentage === 100 ? 'Complete!' : 'Almost done!'}
                     </span>
                   </div>
