@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, Link } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, Save, ArrowLeft, Heart, MapPin, Phone, Camera, Upload, X, Settings } from "lucide-react";
+import { User, Save, ArrowLeft, Heart, MapPin, Phone, Camera, Upload, X, Settings, CheckCircle, AlertCircle, TrendingUp } from "lucide-react";
 import { insertUserProfileSchema, type InsertUserProfile, type UserProfile } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { formatForDatabase, convertToDateInputFormat, convertFromDateInputFormat } from "@/lib/date-format";
@@ -59,6 +59,48 @@ const stateCityMapping: Record<string, string[]> = {
 
 const states = Object.keys(stateCityMapping);
 
+// Profile completeness calculation function
+const calculateProfileCompleteness = (profile: UserProfile | undefined, vehicleCount: number = 0) => {
+  if (!profile) return { percentage: 0, completedFields: 0, totalFields: 0, missingFields: [] };
+
+  const fields = [
+    { name: "Profile Picture", value: profile.profilePicture, weight: 10, category: "Basic Info" },
+    { name: "Name", value: profile.name, weight: 15, category: "Basic Info" },
+    { name: "Age", value: profile.age, weight: 10, category: "Basic Info" },
+    { name: "Gender", value: profile.gender, weight: 5, category: "Basic Info" },
+    { name: "Address", value: profile.address, weight: 10, category: "Contact Info" },
+    { name: "City", value: profile.city, weight: 8, category: "Contact Info" },
+    { name: "State", value: profile.state, weight: 8, category: "Contact Info" },
+    { name: "Pin Code", value: profile.pinCode, weight: 5, category: "Contact Info" },
+    { name: "Email", value: profile.email, weight: 10, category: "Contact Info" },
+    { name: "Blood Group", value: profile.bloodGroup, weight: 5, category: "Health Info" },
+    { name: "Alternate Phone", value: profile.alternatePhone, weight: 5, category: "Contact Info" },
+    { name: "Driver's License Number", value: profile.driversLicenseNumber, weight: 8, category: "Documents" },
+    { name: "Driver's License Copy", value: profile.driversLicenseCopy, weight: 6, category: "Documents" },
+  ];
+
+  const completedFields = fields.filter(field => field.value && field.value.toString().trim() !== '');
+  const totalWeight = fields.reduce((sum, field) => sum + field.weight, 0);
+  const completedWeight = completedFields.reduce((sum, field) => sum + field.weight, 0);
+  
+  // Add vehicle bonus (up to 15% for having vehicles)
+  const vehicleBonus = Math.min(vehicleCount * 5, 15);
+  
+  const basePercentage = (completedWeight / totalWeight) * 85; // 85% max for profile fields
+  const totalPercentage = Math.min(Math.round(basePercentage + vehicleBonus), 100);
+
+  const missingFields = fields.filter(field => !field.value || field.value.toString().trim() === '');
+
+  return {
+    percentage: totalPercentage,
+    completedFields: completedFields.length,
+    totalFields: fields.length,
+    missingFields: missingFields.map(field => ({ name: field.name, category: field.category })),
+    vehicleCount,
+    vehicleBonus
+  };
+};
+
 export default function Profile() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -86,6 +128,20 @@ export default function Profile() {
     },
     enabled: !!currentUserId,
   });
+
+  // Fetch user's vehicles for completeness calculation
+  const { data: vehicles = [] } = useQuery({
+    queryKey: ["/api/vehicles", currentUserId],
+    queryFn: async () => {
+      if (!currentUserId) return [];
+      const response = await apiRequest("GET", `/api/vehicles?userId=${currentUserId}`);
+      return response.json();
+    },
+    enabled: !!currentUserId,
+  });
+
+  // Calculate profile completeness
+  const completeness = calculateProfileCompleteness(profile, vehicles.length);
 
   const form = useForm<InsertUserProfile>({
     resolver: zodResolver(insertUserProfileSchema),
@@ -280,7 +336,7 @@ export default function Profile() {
         alternatePhone: data.alternatePhone || "",
         email: data.email, // Required field
         driversLicenseNumber: data.driversLicenseNumber || "",
-        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? formatForDatabase(data.driversLicenseValidTill) : "",
+        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? formatForDatabase(data.driversLicenseValidTill) : null,
       };
       const response = await apiRequest("POST", `/api/profile/${userId}`, profileData);
       return response.json();
@@ -492,6 +548,78 @@ export default function Profile() {
       </header>
 
       <div className="p-2 pb-20">
+        {/* Profile Completeness Tracker */}
+        {profile && (
+          <Card className="shadow-orange mb-4">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-2">
+                  <TrendingUp className="w-5 h-5 text-orange-500" />
+                  <h3 className="text-sm font-semibold text-gray-800">Profile Completeness</h3>
+                </div>
+                <div className="text-right">
+                  <span className="text-lg font-bold text-orange-600">{completeness.percentage}%</span>
+                </div>
+              </div>
+              
+              {/* Progress Bar */}
+              <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
+                <div 
+                  className="bg-gradient-to-r from-orange-400 to-orange-600 h-3 rounded-full transition-all duration-500"
+                  style={{ width: `${completeness.percentage}%` }}
+                ></div>
+              </div>
+              
+              {/* Completion Stats */}
+              <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
+                <span>{completeness.completedFields}/{completeness.totalFields} fields completed</span>
+                <span>{completeness.vehicleCount} vehicle{completeness.vehicleCount !== 1 ? 's' : ''} added (+{completeness.vehicleBonus}%)</span>
+              </div>
+              
+              {/* Missing Fields & Suggestions */}
+              {completeness.missingFields.length > 0 && completeness.percentage < 100 && (
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <div className="flex items-center space-x-1 mb-2">
+                    <AlertCircle className="w-4 h-4 text-amber-500" />
+                    <span className="text-xs font-medium text-gray-700">Complete your profile:</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1">
+                    {completeness.missingFields.slice(0, 4).map((field, idx) => (
+                      <div key={idx} className="flex items-center space-x-1">
+                        <div className="w-1 h-1 bg-amber-400 rounded-full"></div>
+                        <span className="text-xs text-gray-600">{field.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {completeness.missingFields.length > 4 && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      +{completeness.missingFields.length - 4} more fields
+                    </p>
+                  )}
+                </div>
+              )}
+              
+              {/* Completion Achievement */}
+              {completeness.percentage >= 90 && (
+                <div className="mt-3 pt-3 border-t border-green-200 bg-green-50 rounded-lg p-2">
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span className="text-xs font-medium text-green-800">
+                      {completeness.percentage === 100 ? 'Profile Complete!' : 'Almost there!'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-green-700 mt-1">
+                    {completeness.percentage === 100 
+                      ? 'You have a fully complete profile with excellent vehicle management setup!'
+                      : 'Your profile is nearly complete. Add the remaining details for 100%!'
+                    }
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         {!isEditing && profile ? (
           // Display Mode
           <Card className="shadow-orange">
