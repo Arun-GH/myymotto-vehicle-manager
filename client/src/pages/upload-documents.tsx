@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams, Link } from "wouter";
-import { ArrowLeft, Upload, Camera, FileText, Calendar, CheckCircle, Bell, Settings, Scan } from "lucide-react";
+import { ArrowLeft, Upload, Camera, FileText, Calendar, CheckCircle, Bell, Settings, Scan, DollarSign, File } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ export default function UploadDocuments() {
   const [selectedType, setSelectedType] = useState<DocumentType>("emission");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [expiryDate, setExpiryDate] = useState<string>("");
+  const [documentName, setDocumentName] = useState<string>("");
 
   const [showCamera, setShowCamera] = useState(false);
   const [showOCRScanner, setShowOCRScanner] = useState(false);
@@ -56,8 +57,8 @@ export default function UploadDocuments() {
     { value: "emission" as DocumentType, label: "Emission Certificate", icon: FileText, requiresExpiry: true },
     { value: "insurance" as DocumentType, label: "Insurance Copy", icon: FileText, requiresExpiry: true },
     { value: "rc" as DocumentType, label: "RC Book Copy", icon: FileText, requiresExpiry: true },
-    { value: "fuel" as DocumentType, label: "Fuel Bills", icon: FileText, requiresExpiry: false },
-    { value: "miscellaneous" as DocumentType, label: "Miscellaneous", icon: FileText, requiresExpiry: false },
+    { value: "fuel" as DocumentType, label: "Fuel Bills", icon: DollarSign, requiresExpiry: false },
+    { value: "miscellaneous" as DocumentType, label: "Miscellaneous", icon: File, requiresExpiry: false },
   ];
 
   const selectedDocumentType = documentTypes.find(type => type.value === selectedType);
@@ -148,6 +149,7 @@ export default function UploadDocuments() {
       // Reset form
       setSelectedFiles([]);
       setExpiryDate("");
+      setDocumentName("");
       setLocation("/");
     },
     onError: (error) => {
@@ -268,7 +270,12 @@ export default function UploadDocuments() {
             {/* Document Type Selection */}
             <div className="space-y-1">
               <Label htmlFor="document-type" className="text-xs font-medium">Document Type</Label>
-              <Select value={selectedType} onValueChange={(value: DocumentType) => setSelectedType(value)}>
+              <Select value={selectedType} onValueChange={(value: DocumentType) => {
+                setSelectedType(value);
+                // Reset form fields when document type changes
+                setExpiryDate("");
+                setDocumentName("");
+              }}>
                 <SelectTrigger className="h-8">
                   <SelectValue placeholder="Select document type" />
                 </SelectTrigger>
@@ -285,7 +292,7 @@ export default function UploadDocuments() {
               </Select>
             </div>
 
-            {/* Expiry Date (if required) */}
+            {/* Date Fields */}
             {selectedDocumentType?.requiresExpiry && (
               <div className="space-y-1">
                 <Label htmlFor="expiry-date" className="text-xs font-medium">
@@ -299,12 +306,51 @@ export default function UploadDocuments() {
                 </Label>
                 <Input
                   id="expiry-date"
-                  type="text"
+                  type="date"
                   className="h-8"
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
-                  placeholder="dd/mm/yyyy"
-                  maxLength={10}
+                  max={selectedType === "emission" ? new Date().toISOString().split('T')[0] : undefined}
+                />
+              </div>
+            )}
+
+            {/* Bill Date for Fuel Bills */}
+            {selectedType === "fuel" && (
+              <div className="space-y-1">
+                <Label htmlFor="bill-date" className="text-xs font-medium">
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="w-3 h-3" />
+                    <span>Bill Date</span>
+                  </div>
+                </Label>
+                <Input
+                  id="bill-date"
+                  type="date"
+                  className="h-8"
+                  value={expiryDate}
+                  onChange={(e) => setExpiryDate(e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+            )}
+
+            {/* Document Type/Name for Miscellaneous */}
+            {selectedType === "miscellaneous" && (
+              <div className="space-y-1">
+                <Label htmlFor="document-name" className="text-xs font-medium">
+                  <div className="flex items-center space-x-1">
+                    <File className="w-3 h-3" />
+                    <span>Document Type/Name</span>
+                  </div>
+                </Label>
+                <Input
+                  id="document-name"
+                  type="text"
+                  className="h-8"
+                  value={documentName}
+                  onChange={(e) => setDocumentName(e.target.value)}
+                  placeholder="Enter document type or name"
                 />
               </div>
             )}
