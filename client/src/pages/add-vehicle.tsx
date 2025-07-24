@@ -15,7 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import CameraCapture from "@/components/camera-capture";
+
 import ColorfulLogo from "@/components/colorful-logo";
 import ReferralDialog from "@/components/referral-dialog";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
@@ -1095,13 +1095,7 @@ export default function AddVehicle() {
         </Card>
       </div>
 
-      {/* Camera Modal */}
-      {showCamera && (
-        <CameraCapture
-          onCapture={handleCameraCapture}
-          onClose={() => setShowCamera(false)}
-        />
-      )}
+
 
       {/* Referral Dialog */}
       <ReferralDialog 
