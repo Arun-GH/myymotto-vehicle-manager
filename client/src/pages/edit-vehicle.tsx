@@ -3,12 +3,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Car, Save, Camera, Settings, Shield, Upload } from "lucide-react";
+import { ArrowLeft, Car, Save, Camera, Settings, Shield, Upload, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { getAllMakesForType, getModelsForMake, getVehicleTypes, getVehicleColors } from "@/lib/vehicle-data";
-import { formatToddmmyyyy, parseFromddmmyyyy, formatForDatabase } from "@/lib/date-format";
+import { formatToddmmyyyy, parseFromddmmyyyy, formatForDatabase, calculateVehicleCompleteness } from "@/lib/date-format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -345,6 +345,9 @@ export default function EditVehicle() {
     updateVehicleMutation.mutate(data);
   };
 
+  // Calculate vehicle completeness
+  const completeness = vehicle ? calculateVehicleCompleteness(vehicle) : null;
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -415,6 +418,59 @@ export default function EditVehicle() {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Vehicle Completeness Tracker */}
+            {completeness && (
+              <div className="mb-4 p-3 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-1.5">
+                    <TrendingUp className="w-4 h-4 text-orange-500" />
+                    <h3 className="text-sm font-semibold text-gray-800">Vehicle Info</h3>
+                  </div>
+                  <span className="text-base font-bold text-orange-600">{completeness.percentage}%</span>
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                  <div 
+                    className="bg-gradient-to-r from-orange-400 to-orange-600 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${completeness.percentage}%` }}
+                  ></div>
+                </div>
+                
+                {/* Stats */}
+                <div className="flex items-center justify-between text-xs text-gray-600 mb-2">
+                  <span>{completeness.completedFields}/{completeness.totalFields} fields completed</span>
+                  <span>Vehicle information completeness</span>
+                </div>
+                
+                {/* Missing Fields */}
+                {completeness.missingFields.length > 0 && completeness.percentage < 100 && (
+                  <div className="pt-2 border-t border-orange-200">
+                    <div className="flex items-center space-x-1 mb-1">
+                      <AlertCircle className="w-3.5 h-3.5 text-amber-500" />
+                      <span className="text-xs font-medium text-gray-700">Missing:</span>
+                    </div>
+                    <div className="text-[10px] text-gray-600 leading-tight">
+                      {completeness.missingFields.slice(0, 4).map((field, idx) => field.name).join(', ')}
+                      {completeness.missingFields.length > 4 && ` +${completeness.missingFields.length - 4} more`}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Achievement */}
+                {completeness.percentage >= 90 && (
+                  <div className="pt-2 border-t border-green-200 bg-green-50 rounded p-1.5 mt-2">
+                    <div className="flex items-center space-x-1">
+                      <CheckCircle className="w-3.5 h-3.5 text-green-600" />
+                      <span className="text-xs font-medium text-green-800">
+                        {completeness.percentage === 100 ? 'Complete Vehicle Info!' : 'Almost complete!'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
                 

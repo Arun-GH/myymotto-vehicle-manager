@@ -186,3 +186,78 @@ export function convertFromDateInputFormat(dateString: string): string {
     return "";
   }
 }
+
+// Vehicle completeness calculation
+export interface VehicleCompletenessResult {
+  percentage: number;
+  completedFields: number;
+  totalFields: number;
+  missingFields: { name: string; category: string; weight: number }[];
+}
+
+export function calculateVehicleCompleteness(vehicle: any): VehicleCompletenessResult {
+  const fields = [
+    // Essential Vehicle Information (Higher Weight)
+    { key: 'make', name: 'Vehicle Make', category: 'Basic Info', weight: 3 },
+    { key: 'model', name: 'Vehicle Model', category: 'Basic Info', weight: 3 },
+    { key: 'licensePlate', name: 'License Plate', category: 'Basic Info', weight: 3 },
+    { key: 'vehicleType', name: 'Vehicle Type', category: 'Basic Info', weight: 2 },
+    { key: 'fuelType', name: 'Fuel Type', category: 'Basic Info', weight: 2 },
+    
+    // Vehicle Identification
+    { key: 'chassisNumber', name: 'Chassis Number', category: 'Documentation', weight: 2 },
+    { key: 'engineNumber', name: 'Engine Number', category: 'Documentation', weight: 2 },
+    
+    // Registration & Insurance (Critical)
+    { key: 'rcExpiry', name: 'RC Expiry Date', category: 'Legal Documents', weight: 3 },
+    { key: 'insuranceExpiry', name: 'Insurance Expiry', category: 'Legal Documents', weight: 3 },
+    { key: 'insuranceProvider', name: 'Insurance Provider', category: 'Legal Documents', weight: 2 },
+    
+    // Emission & Environment
+    { key: 'emissionExpiry', name: 'Emission Certificate', category: 'Environmental', weight: 2 },
+    
+    // Service & Maintenance
+    { key: 'lastServiceDate', name: 'Last Service Date', category: 'Maintenance', weight: 2 },
+    { key: 'currentOdometerReading', name: 'Odometer Reading', category: 'Maintenance', weight: 1 },
+    { key: 'averageUsage', name: 'Average Usage', category: 'Maintenance', weight: 1 },
+    
+    // Visual & Optional
+    { key: 'color', name: 'Vehicle Color', category: 'Basic Info', weight: 1 },
+    { key: 'vehiclePhoto', name: 'Vehicle Photo', category: 'Visual', weight: 1 },
+  ];
+
+  let totalWeight = 0;
+  let completedWeight = 0;
+  const missingFields: { name: string; category: string; weight: number }[] = [];
+
+  fields.forEach(field => {
+    totalWeight += field.weight;
+    
+    const value = vehicle?.[field.key];
+    const isCompleted = value !== null && value !== undefined && value !== '' && 
+                       (typeof value !== 'string' || value.trim() !== '');
+    
+    if (isCompleted) {
+      completedWeight += field.weight;
+    } else {
+      missingFields.push({
+        name: field.name,
+        category: field.category,
+        weight: field.weight
+      });
+    }
+  });
+
+  // Sort missing fields by weight (importance) descending
+  missingFields.sort((a, b) => b.weight - a.weight);
+
+  const percentage = Math.round((completedWeight / totalWeight) * 100);
+  const completedFields = fields.length - missingFields.length;
+
+  return {
+    percentage,
+    completedFields,
+    totalFields: fields.length,
+    missingFields,
+  };
+}
