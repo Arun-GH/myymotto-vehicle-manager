@@ -418,7 +418,7 @@ export default function AddVehicle() {
                           {completeness.missingFields.slice(0, 3).map((field, index) => (
                             <div key={index} className="flex items-center space-x-1 text-xs text-gray-600">
                               <div className="w-1 h-1 bg-orange-400 rounded-full"></div>
-                              <span className="truncate">{field}</span>
+                              <span className="truncate">{field.name}</span>
                             </div>
                           ))}
                           {completeness.missingFields.length > 3 && (
