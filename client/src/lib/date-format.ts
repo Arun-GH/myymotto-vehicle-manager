@@ -154,3 +154,35 @@ export function formatToDDMMMYYYY(date: Date | string | null | undefined): strin
     return "";
   }
 }
+
+// Convert dd/mm/yyyy to yyyy-mm-dd for HTML date input
+export function convertToDateInputFormat(dateString: string): string {
+  if (!dateString || dateString.trim() === "") return "";
+  
+  try {
+    const parts = dateString.split('/');
+    if (parts.length !== 3) return "";
+    
+    const [day, month, year] = parts;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  } catch (error) {
+    console.error('Date conversion error:', error);
+    return "";
+  }
+}
+
+// Convert yyyy-mm-dd from HTML date input to dd/mm/yyyy
+export function convertFromDateInputFormat(dateString: string): string {
+  if (!dateString || dateString.trim() === "") return "";
+  
+  try {
+    const parts = dateString.split('-');
+    if (parts.length !== 3) return "";
+    
+    const [year, month, day] = parts;
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    console.error('Date conversion error:', error);
+    return "";
+  }
+}

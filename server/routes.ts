@@ -1797,12 +1797,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }, 5000); // 5 seconds after server start
 
   // Admin routes - Protected by admin middleware
-  const isAdmin = (req: any, res: any, next: any) => {
-    // For now, check if user ID 1 is admin (we'll update this with proper auth later)
-    const userId = parseInt(req.query.userId as string) || 1;
-    if (userId === 1) {
-      next();
-    } else {
+  const isAdmin = async (req: any, res: any, next: any) => {
+    try {
+      const userId = parseInt(req.query.userId as string) || 1;
+      const user = await storage.getUser(userId.toString());
+      
+      // Grant admin access to phone number 9880105082 or user ID 1, or users with isAdmin flag
+      if (userId === 1 || (user && (user.mobile === '9880105082' || user.isAdmin))) {
+        next();
+      } else {
+        res.status(403).json({ message: "Admin access required" });
+      }
+    } catch (error) {
+      console.error("Error checking admin access:", error);
       res.status(403).json({ message: "Admin access required" });
     }
   };

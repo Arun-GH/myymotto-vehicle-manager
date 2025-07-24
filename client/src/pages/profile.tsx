@@ -430,7 +430,7 @@ export default function Profile() {
                   className="w-16 h-16 rounded-full"
                 />
               </div>
-              <h2 className="text-2xl font-bold mb-2 text-gray-800">Welcome to <ColorfulLogo className="inline" />!</h2>
+              <h2 className="text-2xl font-bold mb-2 text-gray-800">Welcome to <ColorfulLogo />!</h2>
               <p className="text-gray-600 mb-6">
                 Let's create your profile to get started with timely care for your carrier.
               </p>
@@ -981,12 +981,14 @@ export default function Profile() {
                             <FormLabel className="text-xs">Valid Till</FormLabel>
                             <FormControl>
                               <Input 
-                                type="text"
-                                placeholder="dd/mm/yyyy"
+                                type="date"
                                 className="h-8 text-sm text-black"
                                 {...field}
-                                value={field.value || ""}
-                                maxLength={10}
+                                value={field.value ? convertToDateInputFormat(field.value) : ""}
+                                onChange={(e) => {
+                                  const dateValue = e.target.value;
+                                  field.onChange(dateValue ? convertFromDateInputFormat(dateValue) : "");
+                                }}
                               />
                             </FormControl>
                             <FormMessage className="text-xs" />
