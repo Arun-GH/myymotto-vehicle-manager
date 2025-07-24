@@ -8,7 +8,7 @@ import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { getAllMakesForType, getModelsForMake, getVehicleTypes, getVehicleColors } from "@/lib/vehicle-data";
-import { formatForDatabase, calculateVehicleCompleteness, convertToDateInputFormat, convertFromDateInputFormat } from "@/lib/date-format";
+import { formatForDatabase, calculateVehicleCompleteness, toStandardDateFormat } from "@/lib/date-format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -188,20 +188,18 @@ export default function AddVehicle() {
       // Helper function to convert date to database format
       const formatDateForDb = (dateStr: string | null | undefined) => {
         if (!dateStr || dateStr.trim() === '') return null;
-        // HTML date inputs return yyyy-mm-dd format
-        // Validate the format and ensure it's a valid date
-        const trimmedDate = dateStr.trim();
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedDate)) {
-          return null;
-        }
+        
+        // Use standardized date format conversion
+        const standardDate = toStandardDateFormat(dateStr);
+        if (!standardDate) return null;
         
         // Verify it's a valid date
-        const testDate = new Date(trimmedDate);
+        const testDate = new Date(standardDate);
         if (isNaN(testDate.getTime())) {
           return null;
         }
         
-        return trimmedDate;
+        return standardDate;
       };
       
       const cleanedData = {
@@ -796,8 +794,8 @@ export default function AddVehicle() {
                             type="date" 
                             className="h-9"
                             {...field} 
-                            value={convertToDateInputFormat(field.value || "")} 
-                            onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                            value={toStandardDateFormat(field.value) || ""} 
+                            onChange={(e) => field.onChange(e.target.value)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -815,8 +813,8 @@ export default function AddVehicle() {
                             type="date" 
                             className="h-9"
                             {...field} 
-                            value={convertToDateInputFormat(field.value || "")} 
-                            onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                            value={toStandardDateFormat(field.value) || ""} 
+                            onChange={(e) => field.onChange(e.target.value)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -834,8 +832,8 @@ export default function AddVehicle() {
                             type="date" 
                             className="h-9"
                             {...field} 
-                            value={convertToDateInputFormat(field.value || "")} 
-                            onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                            value={toStandardDateFormat(field.value) || ""} 
+                            onChange={(e) => field.onChange(e.target.value)}
                             max={new Date().toISOString().split('T')[0]}
                           />
                         </FormControl>
@@ -917,8 +915,8 @@ export default function AddVehicle() {
                                   type="date" 
                                   className="h-9"
                                   {...field} 
-                                  value={convertToDateInputFormat(field.value || "")} 
-                                  onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                                  value={toStandardDateFormat(field.value) || ""} 
+                                  onChange={(e) => field.onChange(e.target.value)}
                                   max={new Date().toISOString().split('T')[0]}
                                 />
                               </FormControl>
@@ -937,8 +935,8 @@ export default function AddVehicle() {
                                   type="date" 
                                   className="h-9"
                                   {...field} 
-                                  value={convertToDateInputFormat(field.value || "")} 
-                                  onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                                  value={toStandardDateFormat(field.value) || ""} 
+                                  onChange={(e) => field.onChange(e.target.value)}
                                 />
                               </FormControl>
                               <FormMessage />

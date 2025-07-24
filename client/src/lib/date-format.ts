@@ -155,34 +155,66 @@ export function formatToDDMMMYYYY(date: Date | string | null | undefined): strin
   }
 }
 
-// Convert dd/mm/yyyy to yyyy-mm-dd for HTML date input
-export function convertToDateInputFormat(dateString: string): string {
+// Convert between different date formats for standardization
+
+// Convert any date string to HTML5 date input format (yyyy-mm-dd)
+export function toStandardDateFormat(dateString: string | null | undefined): string {
   if (!dateString || dateString.trim() === "") return "";
   
   try {
-    const parts = dateString.split('/');
-    if (parts.length !== 3) return "";
+    const trimmed = dateString.trim();
     
-    const [day, month, year] = parts;
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    // If already in yyyy-mm-dd format, return as-is
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+      const testDate = new Date(trimmed);
+      return isNaN(testDate.getTime()) ? "" : trimmed;
+    }
+    
+    // If in dd/mm/yyyy format, convert to yyyy-mm-dd
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(trimmed)) {
+      const [day, month, year] = trimmed.split('/');
+      const formatted = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      const testDate = new Date(formatted);
+      return isNaN(testDate.getTime()) ? "" : formatted;
+    }
+    
+    // Try parsing as a regular date string
+    const testDate = new Date(trimmed);
+    if (!isNaN(testDate.getTime())) {
+      const year = testDate.getFullYear();
+      const month = (testDate.getMonth() + 1).toString().padStart(2, '0');
+      const day = testDate.getDate().toString().padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    
+    return "";
   } catch (error) {
     console.error('Date conversion error:', error);
     return "";
   }
 }
 
-// Convert yyyy-mm-dd from HTML date input to dd/mm/yyyy
-export function convertFromDateInputFormat(dateString: string): string {
+// Convert yyyy-mm-dd to dd/mm/yyyy for display purposes
+export function toDisplayDateFormat(dateString: string | null | undefined): string {
   if (!dateString || dateString.trim() === "") return "";
   
   try {
-    const parts = dateString.split('-');
-    if (parts.length !== 3) return "";
+    const trimmed = dateString.trim();
     
-    const [year, month, day] = parts;
-    return `${day}/${month}/${year}`;
+    // If in yyyy-mm-dd format, convert to dd/mm/yyyy
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+      const [year, month, day] = trimmed.split('-');
+      return `${day}/${month}/${year}`;
+    }
+    
+    // If already in dd/mm/yyyy format, return as-is
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(trimmed)) {
+      return trimmed;
+    }
+    
+    return "";
   } catch (error) {
-    console.error('Date conversion error:', error);
+    console.error('Date display conversion error:', error);
     return "";
   }
 }

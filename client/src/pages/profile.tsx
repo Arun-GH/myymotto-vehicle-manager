@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { User, Save, ArrowLeft, Heart, MapPin, Phone, Camera, Upload, X, Settings, CheckCircle, AlertCircle, TrendingUp } from "lucide-react";
 import { insertUserProfileSchema, type InsertUserProfile, type UserProfile } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
-import { formatForDatabase, convertToDateInputFormat, convertFromDateInputFormat } from "@/lib/date-format";
+import { formatForDatabase, toStandardDateFormat } from "@/lib/date-format";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -1084,10 +1084,9 @@ export default function Profile() {
                                 type="date"
                                 className="h-8 text-sm text-black"
                                 {...field}
-                                value={field.value ? convertToDateInputFormat(field.value) : ""}
+                                value={toStandardDateFormat(field.value) || ""}
                                 onChange={(e) => {
-                                  const dateValue = e.target.value;
-                                  field.onChange(dateValue ? convertFromDateInputFormat(dateValue) : "");
+                                  field.onChange(e.target.value);
                                 }}
                               />
                             </FormControl>

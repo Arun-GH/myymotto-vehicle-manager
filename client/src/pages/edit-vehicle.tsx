@@ -8,7 +8,7 @@ import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { getAllMakesForType, getModelsForMake, getVehicleTypes, getVehicleColors } from "@/lib/vehicle-data";
-import { formatToddmmyyyy, parseFromddmmyyyy, formatForDatabase, calculateVehicleCompleteness } from "@/lib/date-format";
+import { formatToddmmyyyy, parseFromddmmyyyy, formatForDatabase, calculateVehicleCompleteness, toStandardDateFormat } from "@/lib/date-format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -17,28 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
-// Helper function to convert dd/mm/yyyy to yyyy-mm-dd for HTML date input
-const convertToDateInputFormat = (ddmmyyyy: string): string => {
-  if (!ddmmyyyy || ddmmyyyy.trim() === "") return "";
-  const parsedDate = parseFromddmmyyyy(ddmmyyyy);
-  if (!parsedDate) return "";
-  
-  const year = parsedDate.getFullYear();
-  const month = (parsedDate.getMonth() + 1).toString().padStart(2, '0');
-  const day = parsedDate.getDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
-// Helper function to convert yyyy-mm-dd from HTML date input to dd/mm/yyyy
-const convertFromDateInputFormat = (yyyymmdd: string): string => {
-  if (!yyyymmdd || yyyymmdd.trim() === "") return "";
-  try {
-    const [year, month, day] = yyyymmdd.split('-');
-    return `${day}/${month}/${year}`;
-  } catch {
-    return "";
-  }
-};
+// Date conversion functions moved to standardized utilities
 
 // Top Indian Insurance Providers
 const indianInsuranceProviders = [
@@ -933,8 +912,8 @@ export default function EditVehicle() {
                               <Input 
                                 type="date" 
                                 {...field} 
-                                value={convertToDateInputFormat(field.value || "")} 
-                                onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                                value={toStandardDateFormat(field.value) || ""} 
+                                onChange={(e) => field.onChange(e.target.value)}
                                 className="h-8"
                               />
                             </FormControl>
@@ -952,8 +931,8 @@ export default function EditVehicle() {
                               <Input 
                                 type="date" 
                                 {...field} 
-                                value={convertToDateInputFormat(field.value || "")} 
-                                onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                                value={toStandardDateFormat(field.value) || ""} 
+                                onChange={(e) => field.onChange(e.target.value)}
                                 className="h-8"
                               />
                             </FormControl>
@@ -1048,8 +1027,8 @@ export default function EditVehicle() {
                               <Input 
                                 type="date" 
                                 {...field} 
-                                value={convertToDateInputFormat(field.value || "")} 
-                                onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                                value={toStandardDateFormat(field.value) || ""} 
+                                onChange={(e) => field.onChange(e.target.value)}
                                 className="h-8"
                               />
                             </FormControl>
@@ -1067,8 +1046,8 @@ export default function EditVehicle() {
                               <Input 
                                 type="date" 
                                 {...field} 
-                                value={convertToDateInputFormat(field.value || "")} 
-                                onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                                value={toStandardDateFormat(field.value) || ""} 
+                                onChange={(e) => field.onChange(e.target.value)}
                                 className="h-8"
                               />
                             </FormControl>
@@ -1086,8 +1065,8 @@ export default function EditVehicle() {
                               <Input 
                                 type="date" 
                                 {...field} 
-                                value={convertToDateInputFormat(field.value || "")} 
-                                onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                                value={toStandardDateFormat(field.value) || ""} 
+                                onChange={(e) => field.onChange(e.target.value)}
                                 className="h-8"
                               />
                             </FormControl>
