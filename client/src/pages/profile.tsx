@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import ColorfulLogo from "@/components/colorful-logo";
 import NotificationBell from "@/components/notification-bell";
-import CameraCapture from "@/components/camera-capture";
+
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 // Authentication is now handled via localStorage
@@ -64,10 +64,8 @@ export default function Profile() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
-  const [showCamera, setShowCamera] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
-  const [showLicenseCamera, setShowLicenseCamera] = useState(false);
   const [licenseImage, setLicenseImage] = useState<File | null>(null);
   const [licenseImagePreview, setLicenseImagePreview] = useState<string | null>(null);
   const currentUserId = localStorage.getItem("currentUserId");
@@ -135,13 +133,28 @@ export default function Profile() {
     }
   };
 
-  // Handle camera capture
-  const handleCameraCapture = (file: File) => {
-    setProfileImage(file);
-    const reader = new FileReader();
-    reader.onload = () => setProfileImagePreview(reader.result as string);
-    reader.readAsDataURL(file);
-    setShowCamera(false);
+  // Handle camera input change (from device camera app)
+  const handleCameraInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setProfileImage(file);
+      const reader = new FileReader();
+      reader.onload = () => setProfileImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+      
+      toast({
+        title: "Photo captured!",
+        description: "Profile photo captured successfully from camera.",
+      });
+      
+      // Reset the input so the same file can be selected again
+      event.target.value = '';
+    }
+  };
+
+  // Handle camera capture button click
+  const handleCameraCapture = () => {
+    document.getElementById('profile-camera-input')?.click();
   };
 
   // Remove profile image
@@ -161,13 +174,28 @@ export default function Profile() {
     }
   };
 
-  // Handle license camera capture
-  const handleLicenseCameraCapture = (file: File) => {
-    setLicenseImage(file);
-    const reader = new FileReader();
-    reader.onload = () => setLicenseImagePreview(reader.result as string);
-    reader.readAsDataURL(file);
-    setShowLicenseCamera(false);
+  // Handle license camera input change (from device camera app)
+  const handleLicenseCameraInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setLicenseImage(file);
+      const reader = new FileReader();
+      reader.onload = () => setLicenseImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+      
+      toast({
+        title: "Photo captured!",
+        description: "License photo captured successfully from camera.",
+      });
+      
+      // Reset the input so the same file can be selected again
+      event.target.value = '';
+    }
+  };
+
+  // Handle license camera capture button click
+  const handleLicenseCameraCapture = () => {
+    document.getElementById('license-camera-input')?.click();
   };
 
   // Remove license image
@@ -635,11 +663,20 @@ export default function Profile() {
 
                     {/* Upload Options */}
                     <div className="flex gap-1.5 justify-center">
+                      {/* Hidden camera input that opens device camera app with front camera */}
+                      <input
+                        id="profile-camera-input"
+                        type="file"
+                        accept="image/*"
+                        capture="user"
+                        onChange={handleCameraInputChange}
+                        className="hidden"
+                      />
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => setShowCamera(true)}
+                        onClick={handleCameraCapture}
                         className="flex items-center gap-1.5 h-7 text-xs px-2"
                       >
                         <Camera className="w-3 h-3" />
@@ -993,11 +1030,20 @@ export default function Profile() {
 
                       {/* License Upload Buttons */}
                       <div className="flex gap-1.5 justify-center">
+                        {/* Hidden camera input that opens device camera app with front camera */}
+                        <input
+                          id="license-camera-input"
+                          type="file"
+                          accept="image/*"
+                          capture="user"
+                          onChange={handleLicenseCameraInputChange}
+                          className="hidden"
+                        />
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
-                          onClick={() => setShowLicenseCamera(true)}
+                          onClick={handleLicenseCameraCapture}
                           className="flex items-center gap-1.5 h-7 text-xs px-2"
                         >
                           <Camera className="w-3 h-3" />
@@ -1056,21 +1102,7 @@ export default function Profile() {
         )}
       </div>
 
-      {/* Camera Modal */}
-      {showCamera && (
-        <CameraCapture
-          onCapture={handleCameraCapture}
-          onClose={() => setShowCamera(false)}
-        />
-      )}
 
-      {/* License Camera Modal */}
-      {showLicenseCamera && (
-        <CameraCapture
-          onCapture={handleLicenseCameraCapture}
-          onClose={() => setShowLicenseCamera(false)}
-        />
-      )}
     </div>
   );
 }
