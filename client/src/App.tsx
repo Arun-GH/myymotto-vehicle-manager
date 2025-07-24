@@ -33,6 +33,7 @@ import NewsTidbits from "@/pages/news-tidbits";
 import DashboardCustomize from "@/pages/dashboard-customize";
 import BroadcastPage from "@/pages/broadcast";
 import AdminDashboard from "@/pages/admin-dashboard";
+import ServiceTimeline from "@/pages/service-timeline";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -142,6 +143,7 @@ function Router() {
       <Route path="/vehicle/:id/service" component={CombinedServicePage} />
       <Route path="/vehicle/:id/service-logs" component={ServiceLogs} />
       <Route path="/vehicle/:id/add-service-log" component={AddServiceLog} />
+      <Route path="/vehicle/:id/timeline" component={ServiceTimeline} />
       <Route path="/vehicle/:id/alerts" component={VehicleAlerts} />
 
       <Route path="/service-centers" component={ServiceCenters} />

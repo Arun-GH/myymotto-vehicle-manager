@@ -248,6 +248,38 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
         </div>
         
+        {/* Service Management Section */}
+        <div className="mt-3 pt-2 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-gray-700">Service Management:</span>
+          </div>
+          <div className="grid grid-cols-3 gap-1">
+            <Link href={`/vehicle/${vehicle.id}/timeline`}>
+              <Button 
+                size="sm" 
+                className="w-full h-6 text-xs bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white"
+              >
+                Timeline
+              </Button>
+            </Link>
+            <Link href={`/vehicle/${vehicle.id}/service-logs`}>
+              <Button 
+                size="sm" 
+                className="w-full h-6 text-xs bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white"
+              >
+                View Logs
+              </Button>
+            </Link>
+            <Link href={`/vehicle/${vehicle.id}/service`}>
+              <Button 
+                size="sm" 
+                className="w-full h-6 text-xs bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
+              >
+                Add Service
+              </Button>
+            </Link>
+          </div>
+        </div>
 
       </CardContent>
     </Card>
