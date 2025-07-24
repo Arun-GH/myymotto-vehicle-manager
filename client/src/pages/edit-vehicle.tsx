@@ -301,15 +301,30 @@ export default function EditVehicle() {
       const cleanedData = {
         ...data,
         thumbnailPath,
-        insuranceExpiry: formatForDatabase(data.insuranceExpiry?.trim() || ""),
-        emissionExpiry: formatForDatabase(data.emissionExpiry?.trim() || ""),
-        rcExpiry: formatForDatabase(data.rcExpiry?.trim() || ""),
-        lastServiceDate: formatForDatabase(data.lastServiceDate?.trim() || ""),
+        insuranceExpiry: formatForDatabase(data.insuranceExpiry?.trim() || "") || null,
+        insuranceExpiryDate: formatForDatabase(data.insuranceExpiryDate?.trim() || "") || null,
+        emissionExpiry: formatForDatabase(data.emissionExpiry?.trim() || "") || null,
+        rcExpiry: formatForDatabase(data.rcExpiry?.trim() || "") || null,
+        lastServiceDate: formatForDatabase(data.lastServiceDate?.trim() || "") || null,
         currentOdometerReading: data.currentOdometerReading || null,
         averageUsagePerMonth: data.averageUsagePerMonth || null,
         serviceIntervalKms: data.serviceIntervalKms || null,
         serviceIntervalMonths: data.serviceIntervalMonths || null,
       };
+
+      // Debug logging
+      console.log('Date conversion debug:', {
+        originalInsuranceExpiry: data.insuranceExpiry,
+        convertedInsuranceExpiry: formatForDatabase(data.insuranceExpiry?.trim() || ""),
+        originalInsuranceExpiryDate: data.insuranceExpiryDate,
+        convertedInsuranceExpiryDate: formatForDatabase(data.insuranceExpiryDate?.trim() || ""),
+        originalEmissionExpiry: data.emissionExpiry,
+        convertedEmissionExpiry: formatForDatabase(data.emissionExpiry?.trim() || ""),
+        originalRcExpiry: data.rcExpiry,
+        convertedRcExpiry: formatForDatabase(data.rcExpiry?.trim() || ""),
+        originalLastServiceDate: data.lastServiceDate,
+        convertedLastServiceDate: formatForDatabase(data.lastServiceDate?.trim() || "")
+      });
       const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
       const response = await apiRequest("PUT", `/api/vehicles/${vehicleId}?userId=${currentUserId}`, cleanedData);
       return response.json();
