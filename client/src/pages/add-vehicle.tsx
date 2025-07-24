@@ -188,23 +188,45 @@ export default function AddVehicle() {
       // Helper function to convert date to database format
       const formatDateForDb = (dateStr: string | null | undefined) => {
         if (!dateStr || dateStr.trim() === '') return null;
-        // HTML date inputs return yyyy-mm-dd which should work for PostgreSQL date type
-        return dateStr.trim();
+        // HTML date inputs return yyyy-mm-dd format
+        // Validate the format and ensure it's a valid date
+        const trimmedDate = dateStr.trim();
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedDate)) {
+          return null;
+        }
+        
+        // Verify it's a valid date
+        const testDate = new Date(trimmedDate);
+        if (isNaN(testDate.getTime())) {
+          return null;
+        }
+        
+        return trimmedDate;
       };
       
       const cleanedData = {
         ...data,
         userId: parseInt(currentUserId),
         thumbnailPath,
-        // Convert dates to proper database format
+        // Convert dates to proper database format - ensure dates are properly formatted or null
         insuranceExpiry: formatDateForDb(data.insuranceExpiry),
+        insuranceExpiryDate: formatDateForDb(data.insuranceExpiryDate),
         emissionExpiry: formatDateForDb(data.emissionExpiry),
         rcExpiry: formatDateForDb(data.rcExpiry),
         lastServiceDate: formatDateForDb(data.lastServiceDate),
+        // Ensure numeric fields are properly null if empty
         currentOdometerReading: data.currentOdometerReading || null,
         averageUsagePerMonth: data.averageUsagePerMonth || null,
         serviceIntervalKms: data.serviceIntervalKms || null,
         serviceIntervalMonths: data.serviceIntervalMonths || null,
+        // Ensure string fields are properly null if empty
+        insuranceSumInsured: data.insuranceSumInsured?.trim() || null,
+        insurancePremiumAmount: data.insurancePremiumAmount?.trim() || null,
+        chassisNumber: data.chassisNumber?.trim() || null,
+        engineNumber: data.engineNumber?.trim() || null,
+        ownerPhone: data.ownerPhone?.trim() || null,
+        insuranceCompany: data.insuranceCompany?.trim() || null,
+        fuelType: data.fuelType?.trim() || null,
       };
       const response = await apiRequest("POST", "/api/vehicles", cleanedData);
       if (!response.ok) {
