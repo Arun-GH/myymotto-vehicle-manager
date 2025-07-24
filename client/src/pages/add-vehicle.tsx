@@ -58,7 +58,6 @@ export default function AddVehicle() {
   
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
-  const [showCamera, setShowCamera] = useState(false);
 
   // Get current vehicle count to check vehicle limit and referral trigger
   const { data: vehicles = [] } = useQuery({
@@ -265,17 +264,28 @@ export default function AddVehicle() {
     setThumbnailPreview(null);
   };
 
-  const handleCameraCapture = (file: File) => {
-    setThumbnailImage(file);
-    
-    // Create preview URL
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setThumbnailPreview(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
-    
-    setShowCamera(false);
+  const handleCameraCapture = () => {
+    // Trigger the hidden camera input to open device camera app
+    const cameraInput = document.getElementById('camera-input') as HTMLInputElement;
+    if (cameraInput) {
+      cameraInput.click();
+    }
+  };
+
+  const handleCameraInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setThumbnailImage(file);
+      const previewUrl = URL.createObjectURL(file);
+      setThumbnailPreview(previewUrl);
+      
+      toast({
+        title: "Photo Captured",
+        description: "Vehicle photo has been successfully captured from camera.",
+      });
+    }
+    // Reset the input value so the same file can be selected again
+    event.target.value = '';
   };
 
   return (
@@ -446,15 +456,25 @@ export default function AddVehicle() {
                           type="button"
                           variant="outline"
                           size="icon"
-                          onClick={() => setShowCamera(true)}
+                          onClick={handleCameraCapture}
                           className="shrink-0"
                         >
                           <Camera className="w-4 h-4" />
                         </Button>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">Upload a photo of your vehicle or use camera</p>
+                      <p className="text-xs text-gray-500 mt-1">Take a photo with camera app or upload from gallery</p>
                     </div>
                   </div>
+                  
+                  {/* Hidden camera input for device camera access */}
+                  <input
+                    id="camera-input"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleCameraInputChange}
+                    style={{ display: 'none' }}
+                  />
                 </div>
                 {/* Vehicle Type - First Field */}
                 <FormField
