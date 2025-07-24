@@ -134,7 +134,13 @@ export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   insuranceExpiryDate: z.string().optional().nullable(),
   insuranceSumInsured: z.string().optional().nullable(),
   insurancePremiumAmount: z.string().optional().nullable(),
-  emissionExpiry: z.string().optional().nullable(), // Emission expiry can be in future
+  emissionExpiry: z.string().optional().nullable().refine((date) => {
+    if (!date) return true; // Allow empty/null dates
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+    return selectedDate <= today;
+  }, "Emission date cannot be in the future"),
   rcExpiry: z.string().optional().nullable(), // RC expiry can be in future
   lastServiceDate: z.string().optional().nullable().refine((date) => {
     if (!date) return true; // Allow empty/null dates

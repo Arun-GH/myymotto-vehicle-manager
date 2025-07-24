@@ -87,15 +87,15 @@ export default function AddVehicle() {
       insuranceCompany: "",
       insuranceExpiry: "",
       insuranceExpiryDate: "",
-      insuranceSumInsured: "",
-      insurancePremiumAmount: "",
+      insuranceSumInsured: "000",
+      insurancePremiumAmount: "000",
       emissionExpiry: "",
       rcExpiry: "",
       lastServiceDate: "",
-      currentOdometerReading: null,
-      averageUsagePerMonth: null,
-      serviceIntervalKms: null,
-      serviceIntervalMonths: null,
+      currentOdometerReading: 0,
+      averageUsagePerMonth: 0, 
+      serviceIntervalKms: 0,
+      serviceIntervalMonths: 0,
       vehicleType: "4-wheeler",
       fuelType: "",
     },
@@ -212,14 +212,14 @@ export default function AddVehicle() {
         emissionExpiry: formatDateForDb(data.emissionExpiry),
         rcExpiry: formatDateForDb(data.rcExpiry),
         lastServiceDate: formatDateForDb(data.lastServiceDate),
-        // Ensure numeric fields are properly converted or null if empty
-        currentOdometerReading: data.currentOdometerReading ? Number(data.currentOdometerReading) : null,
-        averageUsagePerMonth: data.averageUsagePerMonth ? Number(data.averageUsagePerMonth) : null,
-        serviceIntervalKms: data.serviceIntervalKms ? Number(data.serviceIntervalKms) : null,
-        serviceIntervalMonths: data.serviceIntervalMonths ? Number(data.serviceIntervalMonths) : null,
-        // Ensure string fields are properly null if empty
-        insuranceSumInsured: data.insuranceSumInsured?.trim() || null,
-        insurancePremiumAmount: data.insurancePremiumAmount?.trim() || null,
+        // Ensure numeric fields are properly converted or null if empty (skip if default 0)
+        currentOdometerReading: (data.currentOdometerReading && data.currentOdometerReading !== 0) ? Number(data.currentOdometerReading) : null,
+        averageUsagePerMonth: (data.averageUsagePerMonth && data.averageUsagePerMonth !== 0) ? Number(data.averageUsagePerMonth) : null,
+        serviceIntervalKms: (data.serviceIntervalKms && data.serviceIntervalKms !== 0) ? Number(data.serviceIntervalKms) : null,
+        serviceIntervalMonths: (data.serviceIntervalMonths && data.serviceIntervalMonths !== 0) ? Number(data.serviceIntervalMonths) : null,
+        // Ensure string fields are properly null if empty (skip if default "000")
+        insuranceSumInsured: (data.insuranceSumInsured?.trim() && data.insuranceSumInsured !== "000") ? data.insuranceSumInsured.trim() : null,
+        insurancePremiumAmount: (data.insurancePremiumAmount?.trim() && data.insurancePremiumAmount !== "000") ? data.insurancePremiumAmount.trim() : null,
         chassisNumber: data.chassisNumber?.trim() || null,
         engineNumber: data.engineNumber?.trim() || null,
         ownerPhone: data.ownerPhone?.trim() || null,
@@ -242,11 +242,6 @@ export default function AddVehicle() {
       queryClient.invalidateQueries({ queryKey: ["/api/vehicles"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       
-      toast({
-        title: "Vehicle Added",
-        description: "Your vehicle has been successfully added.",
-      });
-
       // Show referral dialog for every vehicle addition
       setShowReferralDialog(true);
     },
@@ -315,10 +310,7 @@ export default function AddVehicle() {
       const previewUrl = URL.createObjectURL(file);
       setThumbnailPreview(previewUrl);
       
-      toast({
-        title: "Photo Captured",
-        description: "Vehicle photo has been successfully captured from camera.",
-      });
+      // Photo captured successfully - no popup needed
     }
     // Reset the input value so the same file can be selected again
     event.target.value = '';
@@ -817,6 +809,7 @@ export default function AddVehicle() {
                             {...field} 
                             value={toStandardDateFormat(field.value) || ""} 
                             onChange={(e) => field.onChange(e.target.value)}
+                            max={new Date().toISOString().split('T')[0]}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1034,11 +1027,11 @@ export default function AddVehicle() {
                             <FormControl>
                               <Input 
                                 type="number" 
-                                placeholder="85000" 
+                                placeholder="000" 
                                 className="h-9"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
-                                value={field.value || ""}
+                                value={field.value === 0 ? "" : field.value || ""}
                               />
                             </FormControl>
                             <FormMessage />
@@ -1054,11 +1047,11 @@ export default function AddVehicle() {
                             <FormControl>
                               <Input 
                                 type="number" 
-                                placeholder="1200" 
+                                placeholder="000" 
                                 className="h-9"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
-                                value={field.value || ""}
+                                value={field.value === 0 ? "" : field.value || ""}
                               />
                             </FormControl>
                             <FormMessage />
@@ -1074,11 +1067,11 @@ export default function AddVehicle() {
                             <FormControl>
                               <Input 
                                 type="number" 
-                                placeholder="10000" 
+                                placeholder="000" 
                                 className="h-9"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
-                                value={field.value || ""}
+                                value={field.value === 0 ? "" : field.value || ""}
                               />
                             </FormControl>
                             <FormMessage />
@@ -1094,11 +1087,11 @@ export default function AddVehicle() {
                             <FormControl>
                               <Input 
                                 type="number" 
-                                placeholder="6" 
+                                placeholder="000" 
                                 className="h-9"
                                 {...field} 
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
-                                value={field.value || ""}
+                                value={field.value === 0 ? "" : field.value || ""}
                               />
                             </FormControl>
                             <FormMessage />
