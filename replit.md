@@ -19,6 +19,9 @@ Preferred communication style: Simple, everyday language.
 - Resolved completeness tracker accuracy issues with proper field name mapping for insurance providers, chassis/engine numbers, and service details
 - Enhanced completeness calculation to include thumbnail image detection and accurate progress tracking
 - Database date format properly handled to prevent "date/time field value out of range" errors with yyyy-mm-dd format compatibility
+- Set optional fields (sum insured, premium amount, current odometer, monthly usage, service intervals) to blank defaults as requested
+- Made completeness tracker floating and visible during scroll for improved user experience while filling forms
+- Fixed TypeScript type errors by changing numeric field defaults from empty strings to null values for proper form validation
 
 **July 24, 2025**: Implemented camera functionality for vehicle photo capture in add-vehicle page
 - Added device camera integration that opens native camera app when camera icon is clicked
