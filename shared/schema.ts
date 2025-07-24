@@ -147,7 +147,7 @@ export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   averageUsagePerMonth: z.number().optional().nullable(),
   serviceIntervalKms: z.number().optional().nullable(),
   serviceIntervalMonths: z.number().optional().nullable(),
-  vehicleType: z.string().optional(),
+  vehicleType: z.string().min(1, "Vehicle type is required"),
   fuelType: z.string().optional(),
 });
 

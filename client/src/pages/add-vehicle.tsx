@@ -96,7 +96,7 @@ export default function AddVehicle() {
       averageUsagePerMonth: null,
       serviceIntervalKms: null,
       serviceIntervalMonths: null,
-      vehicleType: "",
+      vehicleType: "4-wheeler",
       fuelType: "",
     },
   });
