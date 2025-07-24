@@ -333,7 +333,7 @@ export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
   profilePicture: z.string().optional().nullable(),
   driversLicenseNumber: z.string().optional(),
   driversLicenseCopy: z.string().optional().nullable(),
-  driversLicenseValidTill: z.string().optional(),
+  driversLicenseValidTill: z.string().optional().nullable(),
 });
 
 export const insertServiceAlertSchema = createInsertSchema(serviceAlerts).omit({

@@ -276,18 +276,12 @@ export default function Profile() {
         driversLicenseCopy: licenseCopyPath,
         // Ensure required fields have proper types
         age: typeof data.age === 'number' ? data.age : parseInt(String(data.age)) || 25,
-        // Handle optional fields properly - send undefined for empty strings
-        alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
+        // Handle optional fields properly - send empty string for empty values to avoid null issues
+        alternatePhone: data.alternatePhone || "",
         email: data.email, // Required field
-        driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
-        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? formatForDatabase(data.driversLicenseValidTill) : undefined,
+        driversLicenseNumber: data.driversLicenseNumber || "",
+        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? formatForDatabase(data.driversLicenseValidTill) : "",
       };
-      // Remove undefined values to avoid validation issues  
-      Object.keys(profileData).forEach(key => {
-        if ((profileData as any)[key] === undefined) {
-          delete (profileData as any)[key];
-        }
-      });
       const response = await apiRequest("POST", `/api/profile/${userId}`, profileData);
       return response.json();
     },
@@ -354,18 +348,12 @@ export default function Profile() {
         driversLicenseCopy: licenseCopyPath,
         // Ensure required fields have proper types
         age: typeof data.age === 'number' ? data.age : parseInt(String(data.age)) || 25,
-        // Handle optional fields properly - send undefined for empty strings
-        alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
+        // Handle optional fields properly - send empty string for empty values to avoid null issues
+        alternatePhone: data.alternatePhone || "",
         email: data.email, // Required field
-        driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
-        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? formatForDatabase(data.driversLicenseValidTill) : undefined,
+        driversLicenseNumber: data.driversLicenseNumber || "",
+        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? formatForDatabase(data.driversLicenseValidTill) : "",
       };
-      // Remove undefined values to avoid validation issues
-      Object.keys(profileData).forEach(key => {
-        if ((profileData as any)[key] === undefined) {
-          delete (profileData as any)[key];
-        }
-      });
       const response = await apiRequest("PUT", `/api/profile/${userId}`, profileData);
       return response.json();
     },
