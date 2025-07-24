@@ -10,6 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 24, 2025**: Fixed popup transitions to eliminate blinking and ensure smooth fade animations
+- Replaced Tailwind animate classes with custom CSS transitions using duration-300 ease-in-out for smooth fading
+- Updated toast variants to use opacity-based transitions instead of scale-based animations that cause blinking
+- Enhanced ToastClose component with duration-200 ease-in-out transitions for smoother hover effects
+- Fixed 2-second auto-dismiss with seamless fade-out animation without flickering or blinking
+- Toast notifications now have professional smooth transitions matching mobile app standards
+
 **July 24, 2025**: Updated vehicle tile date format to DD-MMM-YYYY display format
 - Changed all date displays on vehicle dashboard tiles from dd/mm/yyyy to DD-MMM-YYYY format (e.g., 24-Jan-2025)
 - Added formatToDDMMMYYYY function to date-format.ts for consistent month name abbreviation
