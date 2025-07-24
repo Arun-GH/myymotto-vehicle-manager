@@ -74,17 +74,25 @@ export function formatForDatabase(dateString: string): string | null {
   if (!dateString || dateString.trim() === "") return null;
   
   try {
+    console.log(`formatForDatabase input: "${dateString}"`);
     const parsedDate = parseFromddmmyyyy(dateString);
-    if (!parsedDate) return null;
+    console.log(`parsedDate result:`, parsedDate);
+    
+    if (!parsedDate) {
+      console.error(`Failed to parse date: "${dateString}"`);
+      return null;
+    }
     
     // Return in PostgreSQL date format (yyyy-mm-dd)
     const year = parsedDate.getFullYear();
     const month = (parsedDate.getMonth() + 1).toString().padStart(2, '0');
     const day = parsedDate.getDate().toString().padStart(2, '0');
     
-    return `${year}-${month}-${day}`;
+    const result = `${year}-${month}-${day}`;
+    console.log(`formatForDatabase output: "${result}"`);
+    return result;
   } catch (error) {
-    console.error('Database date formatting error:', error);
+    console.error('Database date formatting error:', error, 'for input:', dateString);
     return null;
   }
 }

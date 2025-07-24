@@ -313,18 +313,15 @@ export default function EditVehicle() {
       };
 
       // Debug logging
-      console.log('Date conversion debug:', {
-        originalInsuranceExpiry: data.insuranceExpiry,
-        convertedInsuranceExpiry: formatForDatabase(data.insuranceExpiry?.trim() || ""),
-        originalInsuranceExpiryDate: data.insuranceExpiryDate,
-        convertedInsuranceExpiryDate: formatForDatabase(data.insuranceExpiryDate?.trim() || ""),
-        originalEmissionExpiry: data.emissionExpiry,
-        convertedEmissionExpiry: formatForDatabase(data.emissionExpiry?.trim() || ""),
-        originalRcExpiry: data.rcExpiry,
-        convertedRcExpiry: formatForDatabase(data.rcExpiry?.trim() || ""),
-        originalLastServiceDate: data.lastServiceDate,
-        convertedLastServiceDate: formatForDatabase(data.lastServiceDate?.trim() || "")
-      });
+      console.log('=== DATE CONVERSION DEBUG ===');
+      console.log('Raw form data:', data);
+      console.log('Insurance Expiry:', data.insuranceExpiry, '→', formatForDatabase(data.insuranceExpiry?.trim() || ""));
+      console.log('Insurance Expiry Date:', data.insuranceExpiryDate, '→', formatForDatabase(data.insuranceExpiryDate?.trim() || ""));
+      console.log('Emission Expiry:', data.emissionExpiry, '→', formatForDatabase(data.emissionExpiry?.trim() || ""));
+      console.log('RC Expiry:', data.rcExpiry, '→', formatForDatabase(data.rcExpiry?.trim() || ""));
+      console.log('Last Service Date:', data.lastServiceDate, '→', formatForDatabase(data.lastServiceDate?.trim() || ""));
+      console.log('Cleaned data being sent to API:', cleanedData);
+      console.log('=== END DEBUG ===');
       const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
       const response = await apiRequest("PUT", `/api/vehicles/${vehicleId}?userId=${currentUserId}`, cleanedData);
       return response.json();
