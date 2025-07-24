@@ -8,7 +8,7 @@ import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { getAllMakesForType, getModelsForMake, getVehicleTypes, getVehicleColors } from "@/lib/vehicle-data";
-import { formatForDatabase, calculateVehicleCompleteness } from "@/lib/date-format";
+import { formatForDatabase, calculateVehicleCompleteness, convertToDateInputFormat, convertFromDateInputFormat } from "@/lib/date-format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -585,10 +585,11 @@ export default function AddVehicle() {
                     name="year"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xs font-medium">Year *</FormLabel>
+                        <FormLabel className="text-xs font-medium">Year * (e.g. 2020)</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
+                            placeholder="2020"
                             className="h-9"
                             {...field} 
                             onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : "")}
@@ -660,29 +661,7 @@ export default function AddVehicle() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <FormField
-                    control={form.control}
-                    name="vehicleType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs font-medium">Vehicle Type</FormLabel>
-                        <FormControl>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <SelectTrigger className="h-9">
-                              <SelectValue placeholder="Select vehicle type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="2-wheeler">2-Wheeler</SelectItem>
-                              <SelectItem value="3-wheeler">3-Wheeler</SelectItem>
-                              <SelectItem value="4-wheeler">4-Wheeler</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <div className="grid grid-cols-1 gap-3">
                   <FormField
                     control={form.control}
                     name="fuelType"
@@ -775,13 +754,11 @@ export default function AddVehicle() {
                         <FormLabel className="text-sm font-medium">RC Expiry</FormLabel>
                         <FormControl>
                           <Input 
-                            type="text" 
-                            placeholder="dd/mm/yyyy"
+                            type="date" 
                             className="h-9"
                             {...field} 
-                            value={field.value || ""} 
-                            onChange={(e) => field.onChange(e.target.value.trim() || "")}
-                            maxLength={10}
+                            value={convertToDateInputFormat(field.value || "")} 
+                            onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
                           />
                         </FormControl>
                         <FormMessage />
@@ -796,13 +773,12 @@ export default function AddVehicle() {
                         <FormLabel className="text-sm font-medium">Last Service Date</FormLabel>
                         <FormControl>
                           <Input 
-                            type="text" 
-                            placeholder="dd/mm/yyyy"
+                            type="date" 
                             className="h-9"
                             {...field} 
-                            value={field.value || ""} 
-                            onChange={(e) => field.onChange(e.target.value.trim() || "")}
-                            maxLength={10}
+                            value={convertToDateInputFormat(field.value || "")} 
+                            onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                            max={new Date().toISOString().split('T')[0]}
                           />
                         </FormControl>
                         <FormMessage />
@@ -880,13 +856,12 @@ export default function AddVehicle() {
                               <FormLabel className="text-sm font-medium">Issue Date</FormLabel>
                               <FormControl>
                                 <Input 
-                                  type="text" 
-                                  placeholder="dd/mm/yyyy"
-                                  {...field} 
-                                  value={field.value || ""} 
-                                  onChange={(e) => field.onChange(e.target.value.trim() || "")}
+                                  type="date" 
                                   className="h-9"
-                                  maxLength={10}
+                                  {...field} 
+                                  value={convertToDateInputFormat(field.value || "")} 
+                                  onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
+                                  max={new Date().toISOString().split('T')[0]}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -901,13 +876,11 @@ export default function AddVehicle() {
                               <FormLabel className="text-sm font-medium">Expiry Date</FormLabel>
                               <FormControl>
                                 <Input 
-                                  type="text" 
-                                  placeholder="dd/mm/yyyy"
-                                  {...field} 
-                                  value={field.value || ""} 
-                                  onChange={(e) => field.onChange(e.target.value.trim() || "")}
+                                  type="date" 
                                   className="h-9"
-                                  maxLength={10}
+                                  {...field} 
+                                  value={convertToDateInputFormat(field.value || "")} 
+                                  onChange={(e) => field.onChange(convertFromDateInputFormat(e.target.value))}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -922,13 +895,13 @@ export default function AddVehicle() {
                           name="insuranceSumInsured"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-sm font-medium">Sum Insured (₹)</FormLabel>
+                              <FormLabel className="text-sm font-medium">Sum Insured (₹) (e.g. 500000)</FormLabel>
                               <FormControl>
                                 <Input 
                                   type="text"
                                   inputMode="numeric"
                                   pattern="[0-9]*"
-                                  placeholder="e.g., 500000" 
+                                  placeholder="500000" 
                                   className="h-9"
                                   {...field}
                                   value={field.value || ""}
@@ -952,13 +925,13 @@ export default function AddVehicle() {
                           name="insurancePremiumAmount"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-sm font-medium">Premium Amount (₹)</FormLabel>
+                              <FormLabel className="text-sm font-medium">Premium Amount (₹) (e.g. 15000)</FormLabel>
                               <FormControl>
                                 <Input 
                                   type="text"
                                   inputMode="numeric"
                                   pattern="[0-9]*"
-                                  placeholder="e.g., 15000" 
+                                  placeholder="15000" 
                                   className="h-9"
                                   {...field}
                                   value={field.value || ""}
@@ -999,7 +972,7 @@ export default function AddVehicle() {
                         name="currentOdometerReading"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-sm font-medium">Current Odometer (km)</FormLabel>
+                            <FormLabel className="text-sm font-medium">Current Odometer (km) (e.g. 85000)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
@@ -1019,7 +992,7 @@ export default function AddVehicle() {
                         name="averageUsagePerMonth"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-sm font-medium">Monthly Usage (km)</FormLabel>
+                            <FormLabel className="text-sm font-medium">Monthly Usage (km) (e.g. 1200)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
@@ -1039,7 +1012,7 @@ export default function AddVehicle() {
                         name="serviceIntervalKms"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-sm font-medium">Service Interval (km)</FormLabel>
+                            <FormLabel className="text-sm font-medium">Service Interval (km) (e.g. 10000)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
@@ -1059,7 +1032,7 @@ export default function AddVehicle() {
                         name="serviceIntervalMonths"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-sm font-medium">Service Interval (mths)</FormLabel>
+                            <FormLabel className="text-sm font-medium">Service Interval (mths) (e.g. 6)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
