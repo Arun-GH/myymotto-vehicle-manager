@@ -17,7 +17,7 @@ import { OCRInsuranceScanner } from "@/components/ocr-insurance-scanner";
 import { type InsurancePolicyData } from "@/lib/ocr-utils";
 import { formatForDatabase } from "@/lib/date-format";
 
-type DocumentType = "emission" | "insurance" | "rc";
+type DocumentType = "emission" | "insurance" | "rc" | "fuel" | "miscellaneous";
 
 interface DocumentUpload {
   type: DocumentType;
@@ -56,6 +56,8 @@ export default function UploadDocuments() {
     { value: "emission" as DocumentType, label: "Emission Certificate", icon: FileText, requiresExpiry: true },
     { value: "insurance" as DocumentType, label: "Insurance Copy", icon: FileText, requiresExpiry: true },
     { value: "rc" as DocumentType, label: "RC Book Copy", icon: FileText, requiresExpiry: true },
+    { value: "fuel" as DocumentType, label: "Fuel Bills", icon: FileText, requiresExpiry: false },
+    { value: "miscellaneous" as DocumentType, label: "Miscellaneous", icon: FileText, requiresExpiry: false },
   ];
 
   const selectedDocumentType = documentTypes.find(type => type.value === selectedType);
@@ -65,9 +67,22 @@ export default function UploadDocuments() {
     setSelectedFiles(prev => [...prev, ...files]);
   };
 
-  const handleCameraCapture = (file: File) => {
-    setSelectedFiles(prev => [...prev, file]);
-    setShowCamera(false);
+  const handleCameraCapture = () => {
+    // Trigger the hidden camera input to open device camera app
+    const cameraInput = document.getElementById('camera-input') as HTMLInputElement;
+    if (cameraInput) {
+      cameraInput.click();
+    }
+  };
+
+  const handleCameraInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFiles(prev => [...prev, file]);
+      // Photo captured successfully - no popup needed
+    }
+    // Reset the input value so the same file can be selected again
+    event.target.value = '';
   };
 
   const handleOCRDataExtracted = async (data: InsurancePolicyData) => {
@@ -314,12 +329,21 @@ export default function UploadDocuments() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setShowCamera(true)}
+                    onClick={handleCameraCapture}
                     className="h-8 flex items-center justify-center flex-1"
                   >
                     <Camera className="w-3 h-3 mr-1" />
                     <span className="text-xs">Camera</span>
                   </Button>
+                  {/* Hidden camera input */}
+                  <input
+                    id="camera-input"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleCameraInputChange}
+                    style={{ display: 'none' }}
+                  />
                   {selectedType === "insurance" && (
                     <Button
                       type="button"
@@ -404,13 +428,7 @@ export default function UploadDocuments() {
         </Card>
       </div>
 
-      {/* Camera Modal */}
-      {showCamera && (
-        <CameraCapture
-          onCapture={handleCameraCapture}
-          onClose={() => setShowCamera(false)}
-        />
-      )}
+
 
       {/* OCR Scanner Modal */}
       {showOCRScanner && (

@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { Calendar, Camera, Upload, File, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import CameraCapture from "./camera-capture";
 
 interface VehicleDocumentSectionProps {
   title: string;
@@ -33,7 +31,6 @@ export default function VehicleDocumentSection({
   textLabel,
   textPlaceholder
 }: VehicleDocumentSectionProps) {
-  const [showCamera, setShowCamera] = useState(false);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -41,9 +38,22 @@ export default function VehicleDocumentSection({
     event.target.value = ""; // Reset input
   };
 
-  const handleCameraCapture = (file: File) => {
-    onDocumentsChange([...documents, file]);
-    setShowCamera(false);
+  const handleCameraCapture = () => {
+    // Trigger the hidden camera input to open device camera app
+    const cameraInput = document.getElementById(`camera-${documentType}`) as HTMLInputElement;
+    if (cameraInput) {
+      cameraInput.click();
+    }
+  };
+
+  const handleCameraInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      onDocumentsChange([...documents, file]);
+      // Photo captured successfully - no popup needed
+    }
+    // Reset the input value so the same file can be selected again
+    event.target.value = '';
   };
 
   const removeDocument = (index: number) => {
@@ -120,11 +130,20 @@ export default function VehicleDocumentSection({
           <Button
             type="button"
             variant="outline"
-            onClick={() => setShowCamera(true)}
+            onClick={handleCameraCapture}
           >
             <Camera className="w-4 h-4 mr-2" />
             Camera
           </Button>
+          {/* Hidden camera input */}
+          <input
+            id={`camera-${documentType}`}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleCameraInputChange}
+            style={{ display: 'none' }}
+          />
         </div>
 
         {/* Document List */}
@@ -158,13 +177,7 @@ export default function VehicleDocumentSection({
           </div>
         )}
 
-        {/* Camera Modal */}
-        {showCamera && (
-          <CameraCapture
-            onCapture={handleCameraCapture}
-            onClose={() => setShowCamera(false)}
-          />
-        )}
+
       </CardContent>
     </Card>
   );
