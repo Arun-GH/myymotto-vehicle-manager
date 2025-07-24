@@ -212,11 +212,11 @@ export default function AddVehicle() {
         emissionExpiry: formatDateForDb(data.emissionExpiry),
         rcExpiry: formatDateForDb(data.rcExpiry),
         lastServiceDate: formatDateForDb(data.lastServiceDate),
-        // Ensure numeric fields are properly null if empty
-        currentOdometerReading: data.currentOdometerReading || null,
-        averageUsagePerMonth: data.averageUsagePerMonth || null,
-        serviceIntervalKms: data.serviceIntervalKms || null,
-        serviceIntervalMonths: data.serviceIntervalMonths || null,
+        // Ensure numeric fields are properly converted or null if empty
+        currentOdometerReading: data.currentOdometerReading ? Number(data.currentOdometerReading) : null,
+        averageUsagePerMonth: data.averageUsagePerMonth ? Number(data.averageUsagePerMonth) : null,
+        serviceIntervalKms: data.serviceIntervalKms ? Number(data.serviceIntervalKms) : null,
+        serviceIntervalMonths: data.serviceIntervalMonths ? Number(data.serviceIntervalMonths) : null,
         // Ensure string fields are properly null if empty
         insuranceSumInsured: data.insuranceSumInsured?.trim() || null,
         insurancePremiumAmount: data.insurancePremiumAmount?.trim() || null,
@@ -225,6 +225,8 @@ export default function AddVehicle() {
         ownerPhone: data.ownerPhone?.trim() || null,
         insuranceCompany: data.insuranceCompany?.trim() || null,
         fuelType: data.fuelType?.trim() || null,
+        // Ensure year is a number
+        year: Number(data.year),
       };
       const response = await apiRequest("POST", "/api/vehicles", cleanedData);
       if (!response.ok) {

@@ -542,11 +542,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
+      console.log("🚗 Vehicle creation request body:", JSON.stringify(req.body, null, 2));
       const validatedData = insertVehicleSchema.parse(req.body);
       const vehicleWithUser = { ...validatedData, userId };
       const vehicle = await storage.createVehicle(vehicleWithUser);
       res.status(201).json(vehicle);
     } catch (error) {
+      console.error("🚨 Vehicle creation validation error:", error);
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
       } else {
@@ -1800,7 +1802,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const isAdmin = async (req: any, res: any, next: any) => {
     try {
       const userId = parseInt(req.query.userId as string) || 1;
-      const user = await storage.getUser(userId.toString());
+      const user = await storage.getUser(userId);
       
       // Grant admin access to phone number 9880105082 or user ID 1, or users with isAdmin flag
       if (userId === 1 || (user && (user.mobile === '9880105082' || user.isAdmin))) {
