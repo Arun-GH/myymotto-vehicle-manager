@@ -124,16 +124,16 @@ export const insertVehicleSchema = createInsertSchema(vehicles).omit({
 }).extend({
   year: z.number().min(1900).max(new Date().getFullYear() + 1),
   licensePlate: z.string().min(1, "License plate is required"),
-  chassisNumber: z.string().optional(),
-  engineNumber: z.string().optional(),
+  chassisNumber: z.string().optional().nullable(),
+  engineNumber: z.string().optional().nullable(),
   ownerName: z.string().min(1, "Owner name is required"),
-  ownerPhone: z.string().optional(),
+  ownerPhone: z.string().optional().nullable(),
   thumbnailPath: z.string().optional().nullable(),
-  insuranceCompany: z.string().optional(),
+  insuranceCompany: z.string().optional().nullable(),
   insuranceExpiry: z.string().optional().nullable(), // Insurance expiry can be in future
   insuranceExpiryDate: z.string().optional().nullable(),
-  insuranceSumInsured: z.string().optional(),
-  insurancePremiumAmount: z.string().optional(),
+  insuranceSumInsured: z.string().optional().nullable(),
+  insurancePremiumAmount: z.string().optional().nullable(),
   emissionExpiry: z.string().optional().nullable(), // Emission expiry can be in future
   rcExpiry: z.string().optional().nullable(), // RC expiry can be in future
   lastServiceDate: z.string().optional().nullable().refine((date) => {
@@ -148,7 +148,7 @@ export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   serviceIntervalKms: z.number().optional().nullable(),
   serviceIntervalMonths: z.number().optional().nullable(),
   vehicleType: z.string().min(1, "Vehicle type is required"),
-  fuelType: z.string().optional(),
+  fuelType: z.string().optional().nullable(),
 });
 
 export const insertDocumentSchema = createInsertSchema(documents).omit({

@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 24, 2025**: CRITICAL FIX - Resolved "invalid type" vehicle creation error by fixing schema validation for optional fields
+- Fixed Zod schema validation to properly handle null values for optional string fields (ownerPhone, chassisNumber, engineNumber, etc.)
+- Updated all optional string fields to use .optional().nullable() pattern for proper null handling
+- Enhanced numeric field conversion to properly parse numbers or set to null for empty values
+- Added comprehensive server-side logging to debug validation issues and track successful vehicle creation
+- Fixed admin middleware LSP error by correcting type conversion for user lookup
+- Vehicle creation now works seamlessly with proper validation for all optional and required fields
+
 **July 24, 2025**: Implemented standardized date format handling across vehicle forms for consistent data capture and validation
 - CRITICAL FIX: Standardized all date input fields to use HTML5 date inputs with yyyy-mm-dd format throughout the application
 - Replaced complex date conversion functions with simplified toStandardDateFormat() utility for consistent date handling
