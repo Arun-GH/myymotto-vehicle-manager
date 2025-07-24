@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { User, Save, ArrowLeft, Heart, MapPin, Phone, Camera, Upload, X, Settings } from "lucide-react";
 import { insertUserProfileSchema, type InsertUserProfile, type UserProfile } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
-import { formatForDatabase } from "@/lib/date-format";
+import { formatForDatabase, convertToDateInputFormat, convertFromDateInputFormat } from "@/lib/date-format";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
