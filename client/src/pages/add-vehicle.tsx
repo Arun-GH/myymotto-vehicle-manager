@@ -376,71 +376,34 @@ export default function AddVehicle() {
               </div>
             )}
             
-            {/* Floating Vehicle Completeness Tracker */}
-            <div className="fixed top-4 right-4 z-50 w-72 max-w-[calc(100vw-2rem)]">
-              <Card className="shadow-2xl border-2 border-orange-400 bg-white/95 backdrop-blur-sm">
-                <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-t-lg py-2">
-                  <CardTitle className="flex items-center space-x-2 text-gray-800 text-sm">
-                    <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
-                      <TrendingUp className="w-3 h-3 text-orange-600" />
+            {/* Floating Vehicle Completeness Tracker - Ultra Compact */}
+            <div className="fixed top-4 right-4 z-50 w-56 max-w-[calc(100vw-2rem)]">
+              <Card className="shadow-lg border border-orange-300 bg-white/90 backdrop-blur-sm">
+                <CardContent className="p-2">
+                  {/* Inline Header with Progress */}
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center space-x-1">
+                      <TrendingUp className="w-3 h-3 text-orange-500" />
+                      <span className="text-xs font-medium text-gray-700">Complete</span>
                     </div>
-                    <span>Profile Completeness</span>
-                    <div className="ml-auto text-base font-bold text-orange-600">
-                      {completeness.percentage}%
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-3 pb-3">
-                  <div className="space-y-2">
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-200 rounded-full h-1.5">
-                      <div 
-                        className="bg-gradient-to-r from-orange-500 to-amber-500 h-1.5 rounded-full transition-all duration-300 ease-in-out"
-                        style={{ width: `${completeness.percentage}%` }}
-                      ></div>
-                    </div>
-                    
-                    {/* Completion Stats */}
-                    <div className="flex justify-between text-xs text-gray-600">
-                      <span>{completeness.completedFields}/{completeness.totalFields} complete</span>
-                      <span className="text-orange-600 font-medium">
-                        {completeness.percentage >= 90 ? "Almost done!" : 
-                         completeness.percentage >= 70 ? "Good progress" : 
-                         completeness.percentage >= 50 ? "Halfway" : "Keep going"}
-                      </span>
-                    </div>
-                    
-                    {/* Missing Fields - Compact Display */}
-                    {completeness.missingFields.length > 0 && completeness.percentage < 100 && (
-                      <div className="mt-2">
-                        <h4 className="text-xs font-medium text-gray-700 mb-1">Next to complete:</h4>
-                        <div className="space-y-0.5">
-                          {completeness.missingFields.slice(0, 3).map((field, index) => (
-                            <div key={index} className="flex items-center space-x-1 text-xs text-gray-600">
-                              <div className="w-1 h-1 bg-orange-400 rounded-full"></div>
-                              <span className="truncate">{field.name}</span>
-                            </div>
-                          ))}
-                          {completeness.missingFields.length > 3 && (
-                            <div className="text-xs text-gray-500 ml-2">
-                              +{completeness.missingFields.length - 3} more
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Achievement Message */}
-                    {completeness.percentage === 100 && (
-                      <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded">
-                        <div className="flex items-center space-x-1">
-                          <div className="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center">
-                            <span className="text-green-600 text-xs">✓</span>
-                          </div>
-                          <span className="text-green-800 text-xs font-medium">Perfect! 100% complete</span>
-                        </div>
-                      </div>
-                    )}
+                    <span className="text-sm font-bold text-orange-600">{completeness.percentage}%</span>
+                  </div>
+                  
+                  {/* Compact Progress Bar */}
+                  <div className="w-full bg-gray-200 rounded-full h-1 mb-1">
+                    <div 
+                      className="bg-gradient-to-r from-orange-500 to-amber-500 h-1 rounded-full transition-all duration-300"
+                      style={{ width: `${completeness.percentage}%` }}
+                    ></div>
+                  </div>
+                  
+                  {/* Single Line Stats */}
+                  <div className="flex justify-between text-[10px] text-gray-600">
+                    <span>{completeness.completedFields}/{completeness.totalFields} fields</span>
+                    <span className="text-orange-600 font-medium">
+                      {completeness.percentage >= 90 ? "Almost done!" : 
+                       completeness.percentage >= 50 ? "Keep going" : "Getting started"}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
