@@ -19,6 +19,14 @@ Preferred communication style: Simple, everyday language.
 - Added comprehensive input validation preventing text entry in numeric fields
 - Enhanced mobile user experience with intuitive photo capture and streamlined form design
 
+**July 24, 2025**: Updated confirmation popups to be centered, mobile-friendly, and auto-fade after 2 seconds
+- Made toast notifications perfectly centered on screen using transform positioning for all device sizes
+- Reduced toast auto-dismiss delay from 1,000,000ms to 2,000ms for automatic fade-away after 2 seconds
+- Enhanced toast styling with professional backdrop-blur, rounded corners, and orange-themed shadows
+- Updated dialog and alert dialog components with 90% screen width constraint and mobile-optimized padding
+- Improved dialog typography with smaller fonts for mobile (text-base on small screens, text-lg on larger)
+- Added professional styling with white/95% opacity background and enhanced shadow effects for depth
+
 **July 23, 2025**: Enhanced Insurance Details page with ultra-compact mobile design and comprehensive financial information
 - Added comprehensive financial details section displaying sum insured and premium amount from both form data and OCR extraction
 - Implemented smart data prioritization: form-entered data takes precedence over OCR-extracted information for accuracy
