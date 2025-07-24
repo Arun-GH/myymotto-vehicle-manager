@@ -1,5 +1,5 @@
 // Local document storage using IndexedDB for secure client-side storage
-interface LocalDocument {
+export interface LocalDocument {
   id: string;
   vehicleId: number;
   type: string;
@@ -8,6 +8,11 @@ interface LocalDocument {
   mimeType: string;
   fileSize: number;
   uploadedAt: string;
+  metadata?: {
+    billDate?: string;
+    documentName?: string;
+    expiryDate?: string;
+  };
 }
 
 class LocalDocumentStorage {
@@ -36,7 +41,8 @@ class LocalDocumentStorage {
   async storeDocument(
     vehicleId: number,
     type: string,
-    file: File
+    file: File,
+    metadata?: { billDate?: string; documentName?: string; expiryDate?: string }
   ): Promise<LocalDocument> {
     const db = await this.openDB();
     const arrayBuffer = await file.arrayBuffer();
@@ -50,6 +56,7 @@ class LocalDocumentStorage {
       mimeType: file.type,
       fileSize: file.size,
       uploadedAt: new Date().toISOString(),
+      metadata,
     };
 
     return new Promise((resolve, reject) => {
@@ -143,4 +150,3 @@ class LocalDocumentStorage {
 }
 
 export const localDocumentStorage = new LocalDocumentStorage();
-export type { LocalDocument };

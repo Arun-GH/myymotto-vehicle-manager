@@ -127,7 +127,18 @@ export default function UploadDocuments() {
 
       // Store documents locally on device instead of server upload
       for (const file of selectedFiles) {
-        const localDoc = await localDocumentStorage.storeDocument(vehicleId, selectedType, file);
+        const metadata: { billDate?: string; documentName?: string; expiryDate?: string } = {};
+        
+        // Add metadata based on document type
+        if (selectedType === "fuel" && expiryDate) {
+          metadata.billDate = expiryDate;
+        } else if (selectedType === "miscellaneous" && documentName) {
+          metadata.documentName = documentName;
+        } else if (selectedDocumentType?.requiresExpiry && expiryDate) {
+          metadata.expiryDate = expiryDate;
+        }
+        
+        const localDoc = await localDocumentStorage.storeDocument(vehicleId, selectedType, file, metadata);
         uploadedDocuments.push(localDoc);
       }
 

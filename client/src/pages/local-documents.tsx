@@ -37,6 +37,8 @@ export default function LocalDocuments() {
     insurance: { label: "Insurance Documents", color: "bg-blue-500" },
     service: { label: "Service Invoices", color: "bg-orange-500" },
     rc: { label: "RC Book Copies", color: "bg-purple-500" },
+    fuel: { label: "Fuel Bills", color: "bg-yellow-500" },
+    miscellaneous: { label: "Miscellaneous Documents", color: "bg-gray-500" },
   };
 
   useEffect(() => {
@@ -249,10 +251,26 @@ export default function LocalDocuments() {
                   <div key={document.id} className="border rounded-lg p-1.5 space-y-1">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-1 mb-1">
+                          <span className="text-[9px] font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-sm">
+                            {documentTypes[document.type]?.label || document.type}
+                          </span>
+                          {document.metadata?.documentName && (
+                            <span className="text-[9px] text-gray-600 bg-gray-50 px-1.5 py-0.5 rounded-sm">
+                              {document.metadata.documentName}
+                            </span>
+                          )}
+                        </div>
                         <p className="font-medium text-[10px] truncate">{document.fileName}</p>
-                        <p className="text-[9px] text-muted-foreground">
-                          {formatFileSize(document.fileSize)} • {formatDate(document.uploadedAt)}
-                        </p>
+                        <div className="text-[9px] text-muted-foreground flex items-center space-x-2">
+                          <span>{formatFileSize(document.fileSize)} • {formatDate(document.uploadedAt)}</span>
+                          {document.metadata?.billDate && (
+                            <span className="text-yellow-600">Bill: {formatDate(document.metadata.billDate)}</span>
+                          )}
+                          {document.metadata?.expiryDate && (
+                            <span className="text-green-600">Expiry: {formatDate(document.metadata.expiryDate)}</span>
+                          )}
+                        </div>
                       </div>
                     </div>
                     
