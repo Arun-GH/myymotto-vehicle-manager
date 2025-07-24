@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { formatForDatabase } from '@/lib/date-format';
 import { type ServiceAlert } from '@shared/schema';
 
 const serviceAlertSchema = z.object({
@@ -138,10 +139,14 @@ export default function ServiceAlerts({ vehicleId }: ServiceAlertsProps) {
   });
 
   const onSubmit = (data: ServiceAlertForm) => {
+    const formattedData = {
+      ...data,
+      scheduledDate: formatForDatabase(data.scheduledDate) || data.scheduledDate,
+    };
     if (editingAlert) {
-      updateAlertMutation.mutate({ ...data, id: editingAlert.id });
+      updateAlertMutation.mutate({ ...formattedData, id: editingAlert.id });
     } else {
-      createAlertMutation.mutate(data);
+      createAlertMutation.mutate(formattedData);
     }
   };
 
@@ -343,10 +348,11 @@ export default function ServiceAlerts({ vehicleId }: ServiceAlertsProps) {
               </Label>
               <Input
                 id="scheduledDate"
-                type="date"
+                type="text"
+                placeholder="dd/mm/yyyy"
                 {...form.register("scheduledDate")}
-                min={new Date().toISOString().split('T')[0]}
                 className="h-8 text-sm mt-1"
+                maxLength={10}
               />
               {form.formState.errors.scheduledDate && (
                 <p className="text-xs text-red-600 mt-1">

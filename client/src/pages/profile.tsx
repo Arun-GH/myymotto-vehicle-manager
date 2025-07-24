@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { User, Save, ArrowLeft, Heart, MapPin, Phone, Camera, Upload, X, Settings } from "lucide-react";
 import { insertUserProfileSchema, type InsertUserProfile, type UserProfile } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import { formatForDatabase } from "@/lib/date-format";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -251,7 +252,7 @@ export default function Profile() {
         alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
         email: data.email, // Required field
         driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
-        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? data.driversLicenseValidTill : undefined,
+        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? formatForDatabase(data.driversLicenseValidTill) : undefined,
       };
       // Remove undefined values to avoid validation issues  
       Object.keys(profileData).forEach(key => {
@@ -329,7 +330,7 @@ export default function Profile() {
         alternatePhone: data.alternatePhone && data.alternatePhone.trim() !== '' ? data.alternatePhone : undefined,
         email: data.email, // Required field
         driversLicenseNumber: data.driversLicenseNumber && data.driversLicenseNumber.trim() !== '' ? data.driversLicenseNumber : undefined,
-        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? data.driversLicenseValidTill : undefined,
+        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? formatForDatabase(data.driversLicenseValidTill) : undefined,
       };
       // Remove undefined values to avoid validation issues
       Object.keys(profileData).forEach(key => {
@@ -943,10 +944,12 @@ export default function Profile() {
                             <FormLabel className="text-xs">Valid Till</FormLabel>
                             <FormControl>
                               <Input 
-                                type="date"
+                                type="text"
+                                placeholder="dd/mm/yyyy"
                                 className="h-8 text-sm text-black"
                                 {...field}
                                 value={field.value || ""}
+                                maxLength={10}
                               />
                             </FormControl>
                             <FormMessage className="text-xs" />

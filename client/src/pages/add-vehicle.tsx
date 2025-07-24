@@ -8,6 +8,7 @@ import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { getAllMakesForType, getModelsForMake, getVehicleTypes, getVehicleColors } from "@/lib/vehicle-data";
+import { formatForDatabase } from "@/lib/date-format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -178,10 +179,10 @@ export default function AddVehicle() {
         ...data,
         userId: parseInt(currentUserId),
         thumbnailPath,
-        insuranceExpiry: data.insuranceExpiry?.trim() || null,
-        emissionExpiry: data.emissionExpiry?.trim() || null,
-        rcExpiry: data.rcExpiry?.trim() || null,
-        lastServiceDate: data.lastServiceDate?.trim() || null,
+        insuranceExpiry: formatForDatabase(data.insuranceExpiry?.trim() || ""),
+        emissionExpiry: formatForDatabase(data.emissionExpiry?.trim() || ""),
+        rcExpiry: formatForDatabase(data.rcExpiry?.trim() || ""),
+        lastServiceDate: formatForDatabase(data.lastServiceDate?.trim() || ""),
         currentOdometerReading: data.currentOdometerReading || null,
         averageUsagePerMonth: data.averageUsagePerMonth || null,
         serviceIntervalKms: data.serviceIntervalKms || null,
@@ -718,11 +719,13 @@ export default function AddVehicle() {
                         <FormLabel className="text-sm font-medium">RC Expiry</FormLabel>
                         <FormControl>
                           <Input 
-                            type="date" 
+                            type="text" 
+                            placeholder="dd/mm/yyyy"
                             className="h-9"
                             {...field} 
                             value={field.value || ""} 
-                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                            onChange={(e) => field.onChange(e.target.value.trim() || "")}
+                            maxLength={10}
                           />
                         </FormControl>
                         <FormMessage />
@@ -737,12 +740,13 @@ export default function AddVehicle() {
                         <FormLabel className="text-sm font-medium">Last Service Date</FormLabel>
                         <FormControl>
                           <Input 
-                            type="date" 
-                            max={new Date().toISOString().split('T')[0]}
+                            type="text" 
+                            placeholder="dd/mm/yyyy"
                             className="h-9"
                             {...field} 
                             value={field.value || ""} 
-                            onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                            onChange={(e) => field.onChange(e.target.value.trim() || "")}
+                            maxLength={10}
                           />
                         </FormControl>
                         <FormMessage />
@@ -820,12 +824,13 @@ export default function AddVehicle() {
                               <FormLabel className="text-sm font-medium">Issue Date</FormLabel>
                               <FormControl>
                                 <Input 
-                                  type="date" 
-                                  max={new Date().toISOString().split('T')[0]}
+                                  type="text" 
+                                  placeholder="dd/mm/yyyy"
                                   {...field} 
                                   value={field.value || ""} 
-                                  onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                  onChange={(e) => field.onChange(e.target.value.trim() || "")}
                                   className="h-9"
+                                  maxLength={10}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -840,11 +845,13 @@ export default function AddVehicle() {
                               <FormLabel className="text-sm font-medium">Expiry Date</FormLabel>
                               <FormControl>
                                 <Input 
-                                  type="date" 
+                                  type="text" 
+                                  placeholder="dd/mm/yyyy"
                                   {...field} 
                                   value={field.value || ""} 
-                                  onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                  onChange={(e) => field.onChange(e.target.value.trim() || "")}
                                   className="h-9"
+                                  maxLength={10}
                                 />
                               </FormControl>
                               <FormMessage />

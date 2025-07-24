@@ -12,6 +12,7 @@ import ColorfulLogo from '@/components/colorful-logo';
 import logoImage from '@assets/Mymotto_Logo_Green_Revised_1752603344750.png';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { formatForDatabase } from '@/lib/date-format';
 import type { Vehicle, MaintenanceRecord } from '@shared/schema';
 
 interface MaintenanceItem {
@@ -217,7 +218,7 @@ export default function MaintenancePage() {
     const formData = new FormData();
     formData.append('vehicleId', id!);
     formData.append('maintenanceType', selectedMaintenance.type);
-    formData.append('completedDate', completedDate);
+    formData.append('completedDate', formatForDatabase(completedDate) || "");
     formData.append('notes', notes);
     
     if (warrantyFile) {
@@ -408,11 +409,12 @@ export default function MaintenancePage() {
               <Label htmlFor="completedDate" className="text-sm">Date Completed</Label>
               <Input
                 id="completedDate"
-                type="date"
-                max={new Date().toISOString().split('T')[0]}
+                type="text"
+                placeholder="dd/mm/yyyy"
                 value={completedDate}
                 onChange={(e) => setCompletedDate(e.target.value)}
                 className="h-8 text-sm"
+                maxLength={10}
               />
             </div>
 

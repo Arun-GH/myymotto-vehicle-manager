@@ -13,6 +13,7 @@ import ColorfulLogo from "@/components/colorful-logo";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { type Vehicle } from "@shared/schema";
+import { formatForDatabase } from "@/lib/date-format";
 import { useState, useRef } from "react";
 
 const serviceLogSchema = z.object({
@@ -56,7 +57,7 @@ export default function AddServiceLog() {
       const formData = new FormData();
       formData.append("vehicleId", vehicleId);
       formData.append("serviceType", data.serviceType);
-      formData.append("serviceDate", data.serviceDate);
+      formData.append("serviceDate", formatForDatabase(data.serviceDate) || "");
       formData.append("serviceCentre", data.serviceCentre);
       if (data.notes) formData.append("notes", data.notes);
       if (data.invoice) formData.append("invoice", data.invoice);
@@ -210,10 +211,11 @@ export default function AddServiceLog() {
                   <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
                     id="serviceDate"
-                    type="date"
-                    max={new Date().toISOString().split('T')[0]}
+                    type="text"
+                    placeholder="dd/mm/yyyy"
                     className="h-9 pl-10"
                     {...form.register("serviceDate")}
+                    maxLength={10}
                   />
                 </div>
                 {form.formState.errors.serviceDate && (

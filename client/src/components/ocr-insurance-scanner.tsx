@@ -232,20 +232,24 @@ export function OCRInsuranceScanner({ onDataExtracted, onClose }: OCRInsuranceSc
                 <div>
                   <Label className="text-xs">Insured Date</Label>
                   <Input
-                    type="date"
+                    type="text"
+                    placeholder="dd/mm/yyyy"
                     value={extractedData.insuredDate || ''}
                     onChange={(e) => updateExtractedData('insuredDate', e.target.value)}
                     className="h-8"
+                    maxLength={10}
                   />
                 </div>
                 
                 <div>
                   <Label className="text-xs">Expiry Date</Label>
                   <Input
-                    type="date"
+                    type="text"
+                    placeholder="dd/mm/yyyy"
                     value={extractedData.expiryDate || ''}
                     onChange={(e) => updateExtractedData('expiryDate', e.target.value)}
                     className="h-8"
+                    maxLength={10}
                   />
                 </div>
                 

@@ -8,6 +8,7 @@ import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { getAllMakesForType, getModelsForMake, getVehicleTypes, getVehicleColors } from "@/lib/vehicle-data";
+import { formatToddmmyyyy, parseFromddmmyyyy, formatForDatabase } from "@/lib/date-format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -107,13 +108,13 @@ export default function EditVehicle() {
         engineNumber: vehicle.engineNumber || "",
         ownerName: vehicle.ownerName || "",
         ownerPhone: vehicle.ownerPhone || "",
-        insuranceExpiry: vehicle.insuranceExpiry || "",
-        insuranceExpiryDate: vehicle.insuranceExpiryDate || "",
+        insuranceExpiry: formatToddmmyyyy(vehicle.insuranceExpiry) || "",
+        insuranceExpiryDate: formatToddmmyyyy(vehicle.insuranceExpiryDate) || "",
         insuranceSumInsured: vehicle.insuranceSumInsured || "",
         insurancePremiumAmount: vehicle.insurancePremiumAmount || "",
-        emissionExpiry: vehicle.emissionExpiry || "",
-        rcExpiry: vehicle.rcExpiry || "",
-        lastServiceDate: vehicle.lastServiceDate || "",
+        emissionExpiry: formatToddmmyyyy(vehicle.emissionExpiry) || "",
+        rcExpiry: formatToddmmyyyy(vehicle.rcExpiry) || "",
+        lastServiceDate: formatToddmmyyyy(vehicle.lastServiceDate) || "",
         currentOdometerReading: vehicle.currentOdometerReading || null,
         averageUsagePerMonth: vehicle.averageUsagePerMonth || null,
         serviceIntervalKms: vehicle.serviceIntervalKms || null,
@@ -296,14 +297,14 @@ export default function EditVehicle() {
         thumbnailPath = thumbnailResult.filePath;
       }
 
-      // Clean up date fields - convert empty strings to null
+      // Clean up date fields - convert dd/mm/yyyy to database format
       const cleanedData = {
         ...data,
         thumbnailPath,
-        insuranceExpiry: data.insuranceExpiry?.trim() || null,
-        emissionExpiry: data.emissionExpiry?.trim() || null,
-        rcExpiry: data.rcExpiry?.trim() || null,
-        lastServiceDate: data.lastServiceDate?.trim() || null,
+        insuranceExpiry: formatForDatabase(data.insuranceExpiry?.trim() || ""),
+        emissionExpiry: formatForDatabase(data.emissionExpiry?.trim() || ""),
+        rcExpiry: formatForDatabase(data.rcExpiry?.trim() || ""),
+        lastServiceDate: formatForDatabase(data.lastServiceDate?.trim() || ""),
         currentOdometerReading: data.currentOdometerReading || null,
         averageUsagePerMonth: data.averageUsagePerMonth || null,
         serviceIntervalKms: data.serviceIntervalKms || null,
@@ -858,12 +859,13 @@ export default function EditVehicle() {
                             <FormLabel className="text-xs">Issue Date</FormLabel>
                             <FormControl>
                               <Input 
-                                type="date" 
-                                max={new Date().toISOString().split('T')[0]}
+                                type="text" 
+                                placeholder="dd/mm/yyyy"
                                 {...field} 
                                 value={field.value || ""} 
-                                onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                onChange={(e) => field.onChange(e.target.value.trim() || "")}
                                 className="h-8"
+                                maxLength={10}
                               />
                             </FormControl>
                             <FormMessage />
@@ -878,11 +880,13 @@ export default function EditVehicle() {
                             <FormLabel className="text-xs">Expiry Date</FormLabel>
                             <FormControl>
                               <Input 
-                                type="date" 
+                                type="text" 
+                                placeholder="dd/mm/yyyy"
                                 {...field} 
                                 value={field.value || ""} 
-                                onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                onChange={(e) => field.onChange(e.target.value.trim() || "")}
                                 className="h-8"
+                                maxLength={10}
                               />
                             </FormControl>
                             <FormMessage />
@@ -974,12 +978,13 @@ export default function EditVehicle() {
                             <FormLabel className="text-xs">Latest Emission</FormLabel>
                             <FormControl>
                               <Input 
-                                type="date" 
-                                max={new Date().toISOString().split('T')[0]}
+                                type="text" 
+                                placeholder="dd/mm/yyyy"
                                 {...field} 
                                 value={field.value || ""} 
-                                onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                onChange={(e) => field.onChange(e.target.value.trim() || "")}
                                 className="h-8"
+                                maxLength={10}
                               />
                             </FormControl>
                             <FormMessage />
@@ -994,11 +999,13 @@ export default function EditVehicle() {
                             <FormLabel className="text-xs">RC Expiry</FormLabel>
                             <FormControl>
                               <Input 
-                                type="date" 
+                                type="text" 
+                                placeholder="dd/mm/yyyy"
                                 {...field} 
                                 value={field.value || ""} 
-                                onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                onChange={(e) => field.onChange(e.target.value.trim() || "")}
                                 className="h-8"
+                                maxLength={10}
                               />
                             </FormControl>
                             <FormMessage />
@@ -1013,12 +1020,13 @@ export default function EditVehicle() {
                             <FormLabel className="text-xs">Last Service Date</FormLabel>
                             <FormControl>
                               <Input 
-                                type="date" 
-                                max={new Date().toISOString().split('T')[0]}
+                                type="text" 
+                                placeholder="dd/mm/yyyy"
                                 {...field} 
                                 value={field.value || ""} 
-                                onChange={(e) => field.onChange(e.target.value.trim() || null)}
+                                onChange={(e) => field.onChange(e.target.value.trim() || "")}
                                 className="h-8"
+                                maxLength={10}
                               />
                             </FormControl>
                             <FormMessage />

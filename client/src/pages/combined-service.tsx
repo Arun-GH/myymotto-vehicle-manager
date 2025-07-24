@@ -17,6 +17,7 @@ import ColorfulLogo from '@/components/colorful-logo';
 import logoImage from '@assets/Mymotto_Logo_Green_Revised_1752603344750.png';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { formatForDatabase } from '@/lib/date-format';
 import type { Vehicle, MaintenanceRecord } from '@shared/schema';
 
 interface MaintenanceItem {
@@ -204,7 +205,7 @@ export default function CombinedServicePage() {
       const formData = new FormData();
       formData.append("vehicleId", id!);
       formData.append("serviceType", data.serviceType);
-      formData.append("serviceDate", data.serviceDate);
+      formData.append("serviceDate", formatForDatabase(data.serviceDate) || "");
       formData.append("serviceCentre", data.serviceCentre);
       if (data.notes) formData.append("notes", data.notes);
       if (data.invoice) formData.append("invoice", data.invoice);
@@ -270,7 +271,7 @@ export default function CombinedServicePage() {
     const formData = new FormData();
     formData.append('vehicleId', id!);
     formData.append('maintenanceType', selectedMaintenance.type);
-    formData.append('completedDate', completedDate);
+    formData.append('completedDate', formatForDatabase(completedDate) || "");
     formData.append('notes', notes);
 
     if (warrantyFile) {
@@ -433,9 +434,11 @@ export default function CombinedServicePage() {
                     <Label htmlFor="serviceDate" className="text-xs">Service Date</Label>
                     <Input
                       id="serviceDate"
-                      type="date"
+                      type="text"
+                      placeholder="dd/mm/yyyy"
                       {...serviceForm.register("serviceDate")}
                       className="h-8"
+                      maxLength={10}
                     />
                     {serviceForm.formState.errors.serviceDate && (
                       <p className="text-sm text-red-600">{serviceForm.formState.errors.serviceDate.message}</p>
@@ -642,11 +645,12 @@ export default function CombinedServicePage() {
               <Label htmlFor="completedDate" className="text-sm">Date Completed</Label>
               <Input
                 id="completedDate"
-                type="date"
-                max={new Date().toISOString().split('T')[0]}
+                type="text"
+                placeholder="dd/mm/yyyy"
                 value={completedDate}
                 onChange={(e) => setCompletedDate(e.target.value)}
                 className="h-8 text-sm"
+                maxLength={10}
               />
             </div>
 

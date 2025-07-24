@@ -15,6 +15,7 @@ import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
 import { OCRInsuranceScanner } from "@/components/ocr-insurance-scanner";
 import { type InsurancePolicyData } from "@/lib/ocr-utils";
+import { formatForDatabase } from "@/lib/date-format";
 
 type DocumentType = "emission" | "insurance" | "rc";
 
@@ -283,12 +284,12 @@ export default function UploadDocuments() {
                 </Label>
                 <Input
                   id="expiry-date"
-                  type="date"
+                  type="text"
                   className="h-8"
-                  max={selectedType === "emission" || selectedType === "insurance" ? new Date().toISOString().split('T')[0] : undefined}
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
-                  placeholder="Select expiry date"
+                  placeholder="dd/mm/yyyy"
+                  maxLength={10}
                 />
               </div>
             )}

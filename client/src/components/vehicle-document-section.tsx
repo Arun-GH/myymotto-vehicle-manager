@@ -86,10 +86,12 @@ export default function VehicleDocumentSection({
             </Label>
             <Input
               id={`${documentType}-date`}
-              type="date"
+              type="text"
+              placeholder="dd/mm/yyyy"
               value={dateValue || ""}
               onChange={(e) => onDateChange(e.target.value)}
               className="h-9"
+              maxLength={10}
             />
           </div>
         )}
