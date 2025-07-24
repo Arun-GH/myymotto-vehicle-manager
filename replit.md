@@ -24,6 +24,13 @@ Preferred communication style: Simple, everyday language.
 - Enhanced readability with three-letter month abbreviations (Jan, Feb, Mar, etc.) for clearer date recognition
 - Maintained all underlying date functionality while improving user experience with more readable date format
 
+**July 24, 2025**: Enhanced authentication flow to prevent existing users from seeing new user login screen
+- Added vehicle check logic to immediately detect existing users and route them directly to dashboard
+- Implemented loading screen while checking authentication status to prevent UI flicker
+- Fixed vehicles API query to include userId parameter for proper data retrieval
+- Existing users with vehicles now skip permissions screen and go straight to dashboard
+- Prevented temporary display of new user interface for returning users with data
+
 **July 24, 2025**: Updated camera functionality to open device camera app instead of direct photo capture
 - Modified camera button to use HTML file input with capture="environment" attribute for proper camera app integration
 - Replaced complex camera stream implementation with simple file input that launches device's native camera app

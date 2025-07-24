@@ -75,20 +75,38 @@ function Router() {
     enabled: isAuthenticated,
   });
 
+  // Check if user has vehicles
+  const { data: vehicles, isLoading: vehiclesLoading } = useQuery({
+    queryKey: ["/api/vehicles", currentUserId],
+    queryFn: async () => {
+      const response = await apiRequest("GET", `/api/vehicles?userId=${currentUserId}`);
+      return response.json();
+    },
+    enabled: isAuthenticated && !!currentUserId,
+  });
+
   // Authentication and routing logic
   useEffect(() => {
     if (!isAuthenticated && location !== "/sign-in") {
       setLocation("/sign-in");
-    } else if (isAuthenticated && !isLoading && !profile && location !== "/profile") {
-      setLocation("/profile");
-    } else if (isAuthenticated && !isLoading && profile) {
-      // Check if this is a new user who needs permissions setup
-      const permissionsCompleted = localStorage.getItem(`permissionsCompleted_${currentUserId}`);
-      if (!permissionsCompleted && !showPermissions && !showSplash) {
-        setShowPermissions(true);
+    } else if (isAuthenticated && !isLoading && !vehiclesLoading) {
+      if (!profile && location !== "/profile") {
+        setLocation("/profile");
+      } else if (profile) {
+        // For existing users with vehicles, skip permissions and go directly to dashboard
+        if (vehicles && vehicles.length > 0 && location === "/") {
+          // User has vehicles, they are an existing user - no need for permissions
+          return;
+        }
+        
+        // Check if this is a new user who needs permissions setup
+        const permissionsCompleted = localStorage.getItem(`permissionsCompleted_${currentUserId}`);
+        if (!permissionsCompleted && !showPermissions && !showSplash && (!vehicles || vehicles.length === 0)) {
+          setShowPermissions(true);
+        }
       }
     }
-  }, [isAuthenticated, isLoading, profile, location, setLocation, currentUserId, showPermissions, showSplash]);
+  }, [isAuthenticated, isLoading, vehiclesLoading, profile, vehicles, location, setLocation, currentUserId, showPermissions, showSplash]);
 
   // Show splash screen for 2 seconds on app start
   if (showSplash) {
@@ -98,6 +116,18 @@ function Router() {
   // Show permissions screen
   if (showPermissions) {
     return <PermissionsScreen onComplete={handlePermissionsComplete} />;
+  }
+
+  // Show loading while checking authentication and profile for existing users
+  if (isAuthenticated && (isLoading || vehiclesLoading)) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
