@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 24, 2025**: Enhanced About, Contact Support, Send Feedback, and Rate & Review popups with premium mobile-friendly styling
+- MAJOR REDESIGN: All info dropdown dialogs now use professional center-aligned layout with w-[90%] max-w-md responsive width
+- Added premium styling with backdrop-blur, white/95% opacity backgrounds, and shadow-2xl with orange shadow effects
+- Enhanced About dialog with organized feature list using checkmarks, benefit highlights, and decorative orange divider lines
+- Redesigned Send Feedback with gradient backgrounds, selectable email address in bordered container, and professional styling
+- Updated Rate & Review with larger interactive star rating (w-10 h-10), enhanced feedback textarea, and improved button styling
+- All popups now perfectly centered with rounded-xl corners, larger icons (w-5 h-5), and enhanced visual hierarchy
+- Improved mobile usability with consistent spacing, professional typography, and orange brand color theming throughout
+
 **July 24, 2025**: Completed universal dd/mm/yyyy date format implementation with HTML date picker functionality
 - Successfully converted ALL remaining date input fields to consistent dd/mm/yyyy format throughout the entire application
 - Updated OCR insurance scanner component with dd/mm/yyyy format for insured date and expiry date fields
@@ -26,6 +35,14 @@ Preferred communication style: Simple, everyday language.
 - All date updates now successfully save to database with proper format conversion and validation
 - Enhanced edit vehicle page with native HTML date picker for all date fields: insurance dates, emission date, RC expiry, last service date
 - Final implementation covers: edit-vehicle.tsx, add-service-log.tsx, combined-service.tsx, vehicle-document-section.tsx, profile.tsx, maintenance.tsx, ocr-insurance-scanner.tsx, service-alerts.tsx, and vehicle-card.tsx
+
+**July 24, 2025**: Updated confirmation popups to be centered, mobile-friendly, and auto-fade after 2 seconds
+- Made toast notifications perfectly centered on screen using transform positioning for all device sizes
+- Reduced toast auto-dismiss delay from 1,000,000ms to 2,000ms for automatic fade-away after 2 seconds
+- Enhanced toast styling with professional backdrop-blur, rounded corners, and orange-themed shadows
+- Updated dialog and alert dialog components with 90% screen width constraint and mobile-optimized padding
+- Improved dialog typography with smaller fonts for mobile (text-base on small screens, text-lg on larger)
+- Added professional styling with white/95% opacity background and enhanced shadow effects for depth
 
 **July 24, 2025**: Enhanced edit vehicle page with camera capture, streamlined form, and number-only validation
 - Added camera capture functionality for vehicle photos alongside file upload option

@@ -148,32 +148,40 @@ export default function InfoDropdown() {
 
       {/* About Dialog */}
       <Dialog open={showAbout} onOpenChange={setShowAbout}>
-        <DialogContent className="max-w-sm mx-4 sm:mx-auto p-4">
-          <DialogHeader className="pb-2">
-            <DialogTitle className="text-center text-base font-semibold text-orange-600 flex items-center justify-center gap-2">
-              <Info className="w-4 h-4" />
+        <DialogContent className="w-[90%] max-w-md mx-auto p-6 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl shadow-orange-500/20 border-0">
+          <DialogHeader className="pb-4 text-center">
+            <DialogTitle className="text-lg font-bold text-orange-600 flex items-center justify-center gap-2 mb-2">
+              <Info className="w-5 h-5" />
               About Myymotto
             </DialogTitle>
+            <div className="w-12 h-0.5 bg-orange-500 mx-auto rounded-full"></div>
           </DialogHeader>
-          <div className="text-center space-y-2 py-2">
-            <p className="text-sm text-gray-700 leading-snug">
-              <strong>Myymotto</strong> is your complete mobile vehicle management companion with "Timely Care for your carrier".
+          <div className="text-center space-y-3 py-2">
+            <p className="text-base text-gray-800 leading-relaxed font-medium">
+              <span className="text-orange-600 font-bold">Myymotto</span> - your complete mobile vehicle management companion
             </p>
-            <p className="text-sm text-gray-700 leading-snug">
-              Store documents securely, track service schedules, and get renewal reminders for insurance and emissions.
-            </p>
-            <p className="text-sm text-gray-700 leading-snug">
-              Check authentic traffic violations through government APIs and find nearby service centers effortlessly.
-            </p>
-            <p className="text-sm text-gray-700 leading-snug">
-              Features include subscription plans, puzzle games, automotive news, and comprehensive maintenance tracking.
+            <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+              <p className="text-sm text-gray-700 leading-relaxed mb-2">
+                <strong>✓ Secure Document Storage</strong> - Store certificates safely on your device
+              </p>
+              <p className="text-sm text-gray-700 leading-relaxed mb-2">
+                <strong>✓ Smart Reminders</strong> - Get timely alerts for renewals and services
+              </p>
+              <p className="text-sm text-gray-700 leading-relaxed mb-2">
+                <strong>✓ Government APIs</strong> - Check authentic traffic violations
+              </p>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                <strong>✓ Complete Tracking</strong> - Maintenance schedules and service history
+              </p>
+            </div>
+            <p className="text-xs text-orange-600 font-medium italic">
+              "Timely Care For Your Carrier"
             </p>
           </div>
-          <div className="flex justify-center pt-3">
+          <div className="flex justify-center pt-4">
             <Button 
               onClick={() => setShowAbout(false)}
-              size="sm"
-              className="px-4"
+              className="px-8 py-2 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg shadow-lg transition-all duration-200"
             >
               Got it
             </Button>
@@ -183,34 +191,38 @@ export default function InfoDropdown() {
 
       {/* Feedback Dialog */}
       <Dialog open={showFeedback} onOpenChange={setShowFeedback}>
-        <DialogContent className="max-w-sm mx-4 sm:mx-auto p-4">
-          <DialogHeader className="pb-2">
-            <DialogTitle className="text-center text-base font-semibold text-orange-600 flex items-center justify-center gap-2">
-              <MessageCircle className="w-4 h-4" />
+        <DialogContent className="w-[90%] max-w-md mx-auto p-6 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl shadow-orange-500/20 border-0">
+          <DialogHeader className="pb-4 text-center">
+            <DialogTitle className="text-lg font-bold text-orange-600 flex items-center justify-center gap-2 mb-2">
+              <MessageCircle className="w-5 h-5" />
               Send Feedback
             </DialogTitle>
+            <div className="w-12 h-0.5 bg-orange-500 mx-auto rounded-full"></div>
           </DialogHeader>
-          <div className="text-center space-y-3 py-2">
-            <p className="text-sm text-gray-700 leading-snug">
+          <div className="text-center space-y-4 py-2">
+            <p className="text-base text-gray-800 leading-relaxed font-medium">
               We'd love to hear your feedback and suggestions!
             </p>
-            <div className="bg-orange-50 p-3 rounded-lg">
-              <p className="text-sm font-medium text-gray-800">
-                Share your thoughts with us at:
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-xl border border-orange-200 shadow-sm">
+              <p className="text-sm font-medium text-gray-800 mb-2">
+                📧 Share your thoughts with us:
               </p>
-              <p className="text-sm font-semibold text-orange-600 mt-1">
-                info@arudhihsolutions.com
+              <div className="bg-white p-3 rounded-lg border border-orange-300">
+                <p className="text-base font-bold text-orange-600 select-all">
+                  info@arudhihsolutions.com
+                </p>
+              </div>
+            </div>
+            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+              <p className="text-xs text-blue-700 font-medium">
+                💡 Your feedback helps us improve Myymotto for everyone!
               </p>
             </div>
-            <p className="text-xs text-gray-600">
-              Your feedback helps us improve Myymotto for everyone!
-            </p>
           </div>
-          <div className="flex justify-center pt-3">
+          <div className="flex justify-center pt-4">
             <Button 
               onClick={() => setShowFeedback(false)}
-              size="sm"
-              className="px-4"
+              className="px-8 py-2 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg shadow-lg transition-all duration-200"
             >
               Got it
             </Button>
@@ -220,66 +232,69 @@ export default function InfoDropdown() {
 
       {/* Rating Dialog */}
       <Dialog open={showRating} onOpenChange={setShowRating}>
-        <DialogContent className="max-w-xs mx-3 sm:mx-auto p-3">
-          <DialogHeader className="pb-1">
-            <DialogTitle className="text-center text-sm font-semibold text-orange-600 flex items-center justify-center gap-1">
-              <Star className="w-3 h-3" />
+        <DialogContent className="w-[90%] max-w-md mx-auto p-6 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl shadow-orange-500/20 border-0">
+          <DialogHeader className="pb-4 text-center">
+            <DialogTitle className="text-lg font-bold text-orange-600 flex items-center justify-center gap-2 mb-2">
+              <Star className="w-5 h-5" />
               Rate Myymotto
             </DialogTitle>
+            <div className="w-12 h-0.5 bg-orange-500 mx-auto rounded-full"></div>
           </DialogHeader>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             {/* Star Rating */}
             <div className="text-center">
-              <p className="text-xs text-gray-700 mb-2 leading-tight">Rate your overall experience and usefulness of Myymotto</p>
-              <div className="flex justify-center gap-1 mb-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className={`w-7 h-7 cursor-pointer transition-colors ${
-                      star <= form.watch("rating")
-                        ? "text-orange-500 fill-orange-500"
-                        : "text-gray-300 hover:text-orange-400"
-                    }`}
-                    onClick={() => handleStarClick(star)}
-                  />
-                ))}
-              </div>
-              <p className="text-xs text-gray-500">
-                {form.watch("rating")} of 5 stars
+              <p className="text-sm text-gray-700 mb-4 leading-relaxed font-medium">
+                Rate your overall experience and usefulness of Myymotto
               </p>
+              <div className="bg-orange-50 p-4 rounded-xl border border-orange-200">
+                <div className="flex justify-center gap-2 mb-3">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`w-10 h-10 cursor-pointer transition-all duration-200 hover:scale-110 ${
+                        star <= form.watch("rating")
+                          ? "text-orange-500 fill-orange-500 drop-shadow-sm"
+                          : "text-gray-300 hover:text-orange-400"
+                      }`}
+                      onClick={() => handleStarClick(star)}
+                    />
+                  ))}
+                </div>
+                <p className="text-sm text-orange-600 font-semibold">
+                  {form.watch("rating")} of 5 stars selected
+                </p>
+              </div>
             </div>
 
             {/* Feedback Section */}
             <div>
-              <label className="text-xs font-medium text-gray-700 mb-1 block">
-                Share your thoughts (Optional)
+              <label className="text-sm font-medium text-gray-800 mb-2 block">
+                Share your thoughts <span className="text-gray-500 font-normal">(Optional)</span>
               </label>
               <Textarea
                 {...form.register("feedback")}
-                placeholder="What do you love? How can we improve?"
-                rows={3}
-                className="text-xs resize-none"
+                placeholder="What do you love about Myymotto? How can we make it even better?"
+                rows={4}
+                className="text-sm resize-none border-orange-200 focus:border-orange-400 focus:ring-orange-400"
               />
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2 pt-1">
+            <div className="flex gap-3 pt-2">
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
-                className="flex-1 h-8 text-xs"
+                className="flex-1 h-10 text-sm border-gray-300 hover:bg-gray-50"
                 onClick={() => setShowRating(false)}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                size="sm"
-                className="flex-1 h-8 text-xs"
+                className="flex-1 h-10 text-sm bg-orange-600 hover:bg-orange-700 shadow-lg transition-all duration-200"
                 disabled={ratingMutation.isPending}
               >
-                {ratingMutation.isPending ? "Sending..." : "Submit"}
+                {ratingMutation.isPending ? "Sending..." : "Submit Rating"}
               </Button>
             </div>
           </form>
