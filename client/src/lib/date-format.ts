@@ -219,11 +219,11 @@ export function calculateVehicleCompleteness(vehicle: any): VehicleCompletenessR
     // Service & Maintenance
     { key: 'lastServiceDate', name: 'Last Service Date', category: 'Maintenance', weight: 2 },
     { key: 'currentOdometerReading', name: 'Odometer Reading', category: 'Maintenance', weight: 1 },
-    { key: 'averageUsage', name: 'Average Usage', category: 'Maintenance', weight: 1 },
+    { key: 'averageUsagePerMonth', name: 'Average Usage', category: 'Maintenance', weight: 1 },
     
     // Visual & Optional
     { key: 'color', name: 'Vehicle Color', category: 'Basic Info', weight: 1 },
-    { key: 'vehiclePhoto', name: 'Vehicle Photo', category: 'Visual', weight: 1 },
+    { key: 'thumbnailPath', name: 'Vehicle Photo', category: 'Visual', weight: 1 },
   ];
 
   let totalWeight = 0;

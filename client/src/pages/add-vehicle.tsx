@@ -106,7 +106,13 @@ export default function AddVehicle() {
 
   // Calculate vehicle completeness based on current form values
   const formValues = form.watch();
-  const completeness = calculateVehicleCompleteness(formValues);
+  // Include thumbnail image and insurance provider info for completeness calculation
+  const completenessData = {
+    ...formValues,
+    thumbnailPath: thumbnailImage ? 'photo-selected' : null,
+    insuranceProvider: formValues.insuranceCompany,
+  };
+  const completeness = calculateVehicleCompleteness(completenessData);
 
   // Reset make and model when vehicle type changes
   const handleVehicleTypeChange = (vehicleType: string) => {
@@ -176,17 +182,25 @@ export default function AddVehicle() {
         thumbnailPath = thumbnailResult.filePath;
       }
 
-      // Clean up date fields - convert empty strings to null and add userId
+      // Clean up date fields and convert to proper database format if needed
       const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+      
+      // Helper function to convert date to database format
+      const formatDateForDb = (dateStr: string | null | undefined) => {
+        if (!dateStr || dateStr.trim() === '') return null;
+        // HTML date inputs return yyyy-mm-dd which should work for PostgreSQL date type
+        return dateStr.trim();
+      };
+      
       const cleanedData = {
         ...data,
         userId: parseInt(currentUserId),
         thumbnailPath,
-        insuranceExpiry: data.insuranceExpiry?.trim() || null,
-        insuranceExpiryDate: data.insuranceExpiryDate?.trim() || null,
-        emissionExpiry: data.emissionExpiry?.trim() || null,
-        rcExpiry: data.rcExpiry?.trim() || null,
-        lastServiceDate: data.lastServiceDate?.trim() || null,
+        // Convert dates to proper database format
+        insuranceExpiry: formatDateForDb(data.insuranceExpiry),
+        emissionExpiry: formatDateForDb(data.emissionExpiry),
+        rcExpiry: formatDateForDb(data.rcExpiry),
+        lastServiceDate: formatDateForDb(data.lastServiceDate),
         currentOdometerReading: data.currentOdometerReading || null,
         averageUsagePerMonth: data.averageUsagePerMonth || null,
         serviceIntervalKms: data.serviceIntervalKms || null,
