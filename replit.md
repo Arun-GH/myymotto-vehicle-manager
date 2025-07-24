@@ -10,18 +10,22 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 24, 2025**: Completed universal dd/mm/yyyy date format implementation across entire application with critical bug fix
+**July 24, 2025**: Completed universal dd/mm/yyyy date format implementation with HTML date picker functionality
 - Successfully converted ALL remaining date input fields to consistent dd/mm/yyyy format throughout the entire application
 - Updated OCR insurance scanner component with dd/mm/yyyy format for insured date and expiry date fields
 - Enhanced service alerts component with dd/mm/yyyy format and proper date formatting for database storage
 - Added formatForDatabase function integration to service-alerts.tsx for consistent date handling
-- All date inputs now use type="text" with dd/mm/yyyy placeholder, maxLength=10, and consistent validation
+- MAJOR ENHANCEMENT: Replaced text inputs with HTML date inputs (type="date") for improved user experience
+- Implemented format conversion helpers: convertToDateInputFormat (dd/mm/yyyy → yyyy-mm-dd) and convertFromDateInputFormat (yyyy-mm-dd → dd/mm/yyyy)
+- All date fields now show native date picker calendar while maintaining dd/mm/yyyy internal format
+- Fixed vehicle tile display to show dates in dd/mm/yyyy format using formatToddmmyyyy function
 - Achieved complete date format standardization: vehicle forms, documents, service logs, maintenance, OCR scanner, and service alerts
 - Universal date handling ensures consistent user experience and database storage format across all components
 - CRITICAL BUG FIX: Resolved "date field out of range" error in edit vehicle page by properly implementing formatForDatabase function
 - Fixed date conversion pipeline to correctly transform dd/mm/yyyy user input to YYYY-MM-DD database format
 - All date updates now successfully save to database with proper format conversion and validation
-- Final implementation covers: edit-vehicle.tsx, add-service-log.tsx, combined-service.tsx, vehicle-document-section.tsx, profile.tsx, maintenance.tsx, ocr-insurance-scanner.tsx, and service-alerts.tsx
+- Enhanced edit vehicle page with native HTML date picker for all date fields: insurance dates, emission date, RC expiry, last service date
+- Final implementation covers: edit-vehicle.tsx, add-service-log.tsx, combined-service.tsx, vehicle-document-section.tsx, profile.tsx, maintenance.tsx, ocr-insurance-scanner.tsx, service-alerts.tsx, and vehicle-card.tsx
 
 **July 24, 2025**: Enhanced edit vehicle page with camera capture, streamlined form, and number-only validation
 - Added camera capture functionality for vehicle photos alongside file upload option
