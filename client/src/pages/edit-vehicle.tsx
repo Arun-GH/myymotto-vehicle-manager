@@ -312,16 +312,7 @@ export default function EditVehicle() {
         serviceIntervalMonths: data.serviceIntervalMonths || null,
       };
 
-      // Debug logging
-      console.log('=== DATE CONVERSION DEBUG ===');
-      console.log('Raw form data:', data);
-      console.log('Insurance Expiry:', data.insuranceExpiry, '→', formatForDatabase(data.insuranceExpiry?.trim() || ""));
-      console.log('Insurance Expiry Date:', data.insuranceExpiryDate, '→', formatForDatabase(data.insuranceExpiryDate?.trim() || ""));
-      console.log('Emission Expiry:', data.emissionExpiry, '→', formatForDatabase(data.emissionExpiry?.trim() || ""));
-      console.log('RC Expiry:', data.rcExpiry, '→', formatForDatabase(data.rcExpiry?.trim() || ""));
-      console.log('Last Service Date:', data.lastServiceDate, '→', formatForDatabase(data.lastServiceDate?.trim() || ""));
-      console.log('Cleaned data being sent to API:', cleanedData);
-      console.log('=== END DEBUG ===');
+
       const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
       const response = await apiRequest("PUT", `/api/vehicles/${vehicleId}?userId=${currentUserId}`, cleanedData);
       return response.json();
