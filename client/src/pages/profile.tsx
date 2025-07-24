@@ -548,72 +548,56 @@ export default function Profile() {
       </header>
 
       <div className="p-2 pb-20">
-        {/* Profile Completeness Tracker */}
+        {/* Profile Completeness Tracker - Compact Mobile */}
         {profile && (
-          <Card className="shadow-orange mb-4">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center space-x-2">
-                  <TrendingUp className="w-5 h-5 text-orange-500" />
-                  <h3 className="text-sm font-semibold text-gray-800">Profile Completeness</h3>
+          <Card className="shadow-orange mb-3">
+            <CardContent className="p-2">
+              {/* Header with Progress */}
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-1.5">
+                  <TrendingUp className="w-3.5 h-3.5 text-orange-500" />
+                  <h3 className="text-xs font-semibold text-gray-800">Profile</h3>
                 </div>
-                <div className="text-right">
-                  <span className="text-lg font-bold text-orange-600">{completeness.percentage}%</span>
-                </div>
+                <span className="text-sm font-bold text-orange-600">{completeness.percentage}%</span>
               </div>
               
-              {/* Progress Bar */}
-              <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
+              {/* Compact Progress Bar */}
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                 <div 
-                  className="bg-gradient-to-r from-orange-400 to-orange-600 h-3 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-orange-400 to-orange-600 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${completeness.percentage}%` }}
                 ></div>
               </div>
               
-              {/* Completion Stats */}
-              <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
-                <span>{completeness.completedFields}/{completeness.totalFields} fields completed</span>
-                <span>{completeness.vehicleCount} vehicle{completeness.vehicleCount !== 1 ? 's' : ''} added (+{completeness.vehicleBonus}%)</span>
+              {/* Inline Stats */}
+              <div className="flex items-center justify-between text-[10px] text-gray-600">
+                <span>{completeness.completedFields}/{completeness.totalFields} fields</span>
+                <span>{completeness.vehicleCount} vehicle{completeness.vehicleCount !== 1 ? 's' : ''} (+{completeness.vehicleBonus}%)</span>
               </div>
               
-              {/* Missing Fields & Suggestions */}
+              {/* Compact Missing Fields */}
               {completeness.missingFields.length > 0 && completeness.percentage < 100 && (
-                <div className="mt-3 pt-3 border-t border-gray-200">
-                  <div className="flex items-center space-x-1 mb-2">
-                    <AlertCircle className="w-4 h-4 text-amber-500" />
-                    <span className="text-xs font-medium text-gray-700">Complete your profile:</span>
+                <div className="mt-2 pt-2 border-t border-gray-200">
+                  <div className="flex items-center space-x-1 mb-1">
+                    <AlertCircle className="w-3 h-3 text-amber-500" />
+                    <span className="text-[10px] font-medium text-gray-700">Missing:</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-1">
-                    {completeness.missingFields.slice(0, 4).map((field, idx) => (
-                      <div key={idx} className="flex items-center space-x-1">
-                        <div className="w-1 h-1 bg-amber-400 rounded-full"></div>
-                        <span className="text-xs text-gray-600">{field.name}</span>
-                      </div>
-                    ))}
+                  <div className="text-[9px] text-gray-600 leading-tight">
+                    {completeness.missingFields.slice(0, 3).map((field, idx) => field.name).join(', ')}
+                    {completeness.missingFields.length > 3 && ` +${completeness.missingFields.length - 3} more`}
                   </div>
-                  {completeness.missingFields.length > 4 && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      +{completeness.missingFields.length - 4} more fields
-                    </p>
-                  )}
                 </div>
               )}
               
-              {/* Completion Achievement */}
+              {/* Compact Achievement */}
               {completeness.percentage >= 90 && (
-                <div className="mt-3 pt-3 border-t border-green-200 bg-green-50 rounded-lg p-2">
+                <div className="mt-2 pt-2 border-t border-green-200 bg-green-50 rounded p-1.5">
                   <div className="flex items-center space-x-1">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span className="text-xs font-medium text-green-800">
-                      {completeness.percentage === 100 ? 'Profile Complete!' : 'Almost there!'}
+                    <CheckCircle className="w-3 h-3 text-green-600" />
+                    <span className="text-[10px] font-medium text-green-800">
+                      {completeness.percentage === 100 ? 'Complete!' : 'Almost done!'}
                     </span>
                   </div>
-                  <p className="text-xs text-green-700 mt-1">
-                    {completeness.percentage === 100 
-                      ? 'You have a fully complete profile with excellent vehicle management setup!'
-                      : 'Your profile is nearly complete. Add the remaining details for 100%!'
-                    }
-                  </p>
                 </div>
               )}
             </CardContent>
