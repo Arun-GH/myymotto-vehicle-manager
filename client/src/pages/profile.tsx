@@ -352,7 +352,7 @@ export default function Profile() {
         alternatePhone: data.alternatePhone || "",
         email: data.email, // Required field
         driversLicenseNumber: data.driversLicenseNumber || "",
-        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? formatForDatabase(data.driversLicenseValidTill) : "",
+        driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? formatForDatabase(data.driversLicenseValidTill) : null,
       };
       const response = await apiRequest("PUT", `/api/profile/${userId}`, profileData);
       return response.json();
