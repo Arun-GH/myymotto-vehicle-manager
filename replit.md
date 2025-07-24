@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 24, 2025**: Enhanced edit vehicle page with camera capture, streamlined form, and number-only validation
+- Added camera capture functionality for vehicle photos alongside file upload option
+- Implemented mobile camera access with environment facing mode for better vehicle photography
+- Enhanced photo section with separate Camera and Upload buttons for improved user experience
+- Removed redundant vehicle type field that appeared after license plate input for cleaner form flow
+- Made all service details fields number-only: odometer reading, average usage, service intervals
+- Added comprehensive input validation preventing text entry in numeric fields
+- Enhanced mobile user experience with intuitive photo capture and streamlined form design
+
 **July 23, 2025**: Enhanced Insurance Details page with ultra-compact mobile design and comprehensive financial information
 - Added comprehensive financial details section displaying sum insured and premium amount from both form data and OCR extraction
 - Implemented smart data prioritization: form-entered data takes precedence over OCR-extracted information for accuracy

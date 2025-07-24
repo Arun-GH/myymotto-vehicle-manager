@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Car, Save, Camera, Settings, Shield } from "lucide-react";
+import { ArrowLeft, Car, Save, Camera, Settings, Shield, Upload } from "lucide-react";
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -234,6 +234,49 @@ export default function EditVehicle() {
     }
   };
 
+  const handleCameraCapture = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } 
+      });
+      
+      // Create a video element to capture from camera
+      const video = document.createElement('video');
+      video.srcObject = stream;
+      video.play();
+      
+      video.onloadedmetadata = () => {
+        // Create canvas to capture frame
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        
+        if (ctx) {
+          ctx.drawImage(video, 0, 0);
+          
+          // Convert to blob and create file
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const file = new File([blob], `vehicle-photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
+              setThumbnailImage(file);
+              setThumbnailPreview(canvas.toDataURL());
+            }
+          }, 'image/jpeg', 0.8);
+        }
+        
+        // Stop camera stream
+        stream.getTracks().forEach(track => track.stop());
+      };
+    } catch (error) {
+      toast({
+        title: "Camera Error",
+        description: "Unable to access camera. Please use file upload instead.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const removeThumbnail = () => {
     setThumbnailImage(null);
     setThumbnailPreview(vehicle?.thumbnailPath || null);
@@ -393,14 +436,41 @@ export default function EditVehicle() {
                         <Camera className="w-8 h-8 text-gray-400" />
                       </div>
                     )}
-                    <div className="flex-1">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleThumbnailChange}
-                        className="file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Upload a photo of your vehicle</p>
+                    <div className="flex-1 space-y-2">
+                      <div className="flex gap-2">
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          size="sm"
+                          className="h-8 text-xs px-3"
+                          onClick={handleCameraCapture}
+                        >
+                          <Camera className="w-3 h-3 mr-1" />
+                          Camera
+                        </Button>
+                        <label className="block">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleThumbnailChange}
+                            className="hidden"
+                          />
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            size="sm"
+                            className="h-8 text-xs px-3"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              (e.target as HTMLElement).parentElement?.querySelector('input')?.click();
+                            }}
+                          >
+                            <Upload className="w-3 h-3 mr-1" />
+                            Upload
+                          </Button>
+                        </label>
+                      </div>
+                      <p className="text-xs text-gray-500">Take a photo or upload from gallery</p>
                     </div>
                   </div>
                 </div>
@@ -621,53 +691,29 @@ export default function EditVehicle() {
                   )}
                 />
 
-                <div className="grid grid-cols-2 gap-3">
-                  <FormField
-                    control={form.control}
-                    name="vehicleType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">Vehicle Type</FormLabel>
-                        <FormControl>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <SelectTrigger className="h-8">
-                              <SelectValue placeholder="Select vehicle type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="2-wheeler">2-Wheeler</SelectItem>
-                              <SelectItem value="3-wheeler">3-Wheeler</SelectItem>
-                              <SelectItem value="4-wheeler">4-Wheeler</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="fuelType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">Fuel Type</FormLabel>
-                        <FormControl>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <SelectTrigger className="h-8">
-                              <SelectValue placeholder="Select fuel type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="petrol">Petrol</SelectItem>
-                              <SelectItem value="diesel">Diesel</SelectItem>
-                              <SelectItem value="electric">Electric (EV)</SelectItem>
-                              <SelectItem value="hybrid">Hybrid</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="fuelType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Fuel Type</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger className="h-8">
+                            <SelectValue placeholder="Select fuel type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="petrol">Petrol</SelectItem>
+                            <SelectItem value="diesel">Diesel</SelectItem>
+                            <SelectItem value="electric">Electric (EV)</SelectItem>
+                            <SelectItem value="hybrid">Hybrid</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <div className="grid grid-cols-2 gap-3">
                   <FormField
@@ -1001,12 +1047,22 @@ export default function EditVehicle() {
                             <FormLabel className="text-xs">Current Odometer Reading (km)</FormLabel>
                             <FormControl>
                               <Input 
-                                type="number" 
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
                                 placeholder="85000" 
                                 className="h-8"
                                 {...field} 
-                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                                  field.onChange(value ? parseInt(value) : null);
+                                }}
+                                onKeyPress={(e) => {
+                                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                                    e.preventDefault();
+                                  }
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -1021,12 +1077,22 @@ export default function EditVehicle() {
                             <FormLabel className="text-xs">Average Usage per Month (km)</FormLabel>
                             <FormControl>
                               <Input 
-                                type="number" 
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
                                 placeholder="1200" 
                                 className="h-8"
                                 {...field} 
-                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                                  field.onChange(value ? parseInt(value) : null);
+                                }}
+                                onKeyPress={(e) => {
+                                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                                    e.preventDefault();
+                                  }
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -1041,12 +1107,22 @@ export default function EditVehicle() {
                             <FormLabel className="text-xs">Service Interval (km)</FormLabel>
                             <FormControl>
                               <Input 
-                                type="number" 
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
                                 placeholder="10000" 
                                 className="h-8"
                                 {...field} 
-                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                                  field.onChange(value ? parseInt(value) : null);
+                                }}
+                                onKeyPress={(e) => {
+                                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                                    e.preventDefault();
+                                  }
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -1061,12 +1137,22 @@ export default function EditVehicle() {
                             <FormLabel className="text-xs">Service Interval (mths)</FormLabel>
                             <FormControl>
                               <Input 
-                                type="number" 
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
                                 placeholder="6" 
                                 className="h-8"
                                 {...field} 
-                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                                 value={field.value || ""}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                                  field.onChange(value ? parseInt(value) : null);
+                                }}
+                                onKeyPress={(e) => {
+                                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                                    e.preventDefault();
+                                  }
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
