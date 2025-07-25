@@ -131,14 +131,9 @@ export default function Profile() {
 
   // Fetch user's vehicles for completeness calculation
   const { data: vehicles = [] } = useQuery({
-    queryKey: ["/api/vehicles", currentUserId],
-    queryFn: async () => {
-      if (!currentUserId) return [];
-      const response = await apiRequest("GET", `/api/vehicles?userId=${currentUserId}`);
-      return response.json();
-    },
+    queryKey: ["/api/vehicles"],
     enabled: !!currentUserId,
-  });
+  }) as { data: any[] };
 
   // Calculate profile completeness
   const completeness = calculateProfileCompleteness(profile, vehicles.length);
