@@ -109,18 +109,24 @@ export default function SearchPage() {
         const tags = element.tags || {};
         const name = tags.name || tags.brand || `${category.charAt(0).toUpperCase() + category.slice(1)} Location`;
         
-        // Enhanced address generation with detailed components
-        const houseNumber = tags['addr:housenumber'] || Math.floor(Math.random() * 999) + 1;
-        const street = tags['addr:street'] || tags['addr:road'] || ['Main Road', '1st Cross', '2nd Main', 'Service Road', 'Ring Road'][Math.floor(Math.random() * 5)];
-        const area = tags['addr:suburb'] || tags['addr:district'] || tags['addr:neighbourhood'] || 
-                    ['Koramangala', 'Indiranagar', 'BTM Layout', 'HSR Layout', 'Whitefield', 'Marathahalli'][Math.floor(Math.random() * 6)];
-        const city = tags['addr:city'] || 'Bangalore';
-        const postcode = tags['addr:postcode'] || (Math.floor(Math.random() * 125) + 560001);
-        const landmark = ['Metro Station', 'Bus Stop', 'Mall', 'Hospital', 'Bank Branch'][Math.floor(Math.random() * 5)];
+        // Use real address data from OpenStreetMap, enhance only when missing
+        const addressParts = [];
         
-        // Create detailed address format
-        const detailedAddress = `${houseNumber}, ${street}, ${area}, Near ${landmark}, ${city}, ${postcode}`;
-        const address = detailedAddress;
+        if (tags['addr:housenumber']) addressParts.push(tags['addr:housenumber']);
+        if (tags['addr:street'] || tags['addr:road']) addressParts.push(tags['addr:street'] || tags['addr:road']);
+        if (tags['addr:suburb'] || tags['addr:district'] || tags['addr:neighbourhood']) {
+          addressParts.push(tags['addr:suburb'] || tags['addr:district'] || tags['addr:neighbourhood']);
+        }
+        
+        const city = tags['addr:city'] || 'Bangalore';
+        if (city) addressParts.push(city);
+        
+        if (tags['addr:postcode']) addressParts.push(tags['addr:postcode']);
+        
+        // If we have real address data, use it. Otherwise, create a basic location reference
+        const address = addressParts.length > 1 
+          ? addressParts.join(', ')
+          : `${distance.toFixed(1)}km from your location, ${city}`;
 
         // Generate appropriate services based on category
         const categoryServices = {
