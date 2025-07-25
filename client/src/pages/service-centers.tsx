@@ -1,444 +1,255 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
-import { ArrowLeft, Search, MapPin, Phone, Clock, Star, Navigation } from "lucide-react";
+import { MapPin, Phone, Clock, ArrowLeft, Navigation, RefreshCw } from "lucide-react";
+import { Link } from "wouter";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 import ColorfulLogo from "@/components/colorful-logo";
-import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 interface ServiceCenter {
   id: string;
   name: string;
   address: string;
-  distance: string;
-  rating: number;
   phone: string;
+  rating: number;
+  distance: number;
+  hours: string;
   services: string[];
-  openHours: string;
-  lat: number;
-  lng: number;
 }
 
 export default function ServiceCenters() {
-  const [, setLocation] = useLocation();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [serviceCenters, setServiceCenters] = useState<ServiceCenter[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [locationError, setLocationError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [locationStatus, setLocationStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const { toast } = useToast();
 
-  // Generate realistic service centers with proper addresses around user's current location
-  const generateNearbyServiceCenters = (userLat: number, userLng: number, userArea: string = "Local Area"): Omit<ServiceCenter, 'distance'>[] => {
-    const serviceNames = [
-      "AutoCare Pro Service Center",
-      "Speed Motors Workshop", 
-      "Expert Auto Solutions",
-      "Premium Car Care",
-      "Reliable Motors",
-      "Metro Car Service",
-      "Quick Fix Auto",
-      "City Motors"
-    ];
-
+  const generateServiceCenters = (lat: number, lng: number): ServiceCenter[] => {
     const serviceTypes = [
-      ["Oil Change", "Brake Service", "AC Repair", "General Maintenance"],
-      ["Engine Repair", "Transmission", "Electrical", "Tyre Service"],
-      ["Denting & Painting", "Insurance Claims", "Oil Change", "Brake Service"],
-      ["Detailing", "AC Service", "Battery", "General Checkup"],
-      ["Engine Diagnostics", "Suspension", "Clutch Repair", "Oil Change"],
-      ["AC Repair", "Battery", "Brake Service", "Engine Diagnostics"],
-      ["Oil Change", "Tyre Service", "General Maintenance", "Electrical"],
-      ["Denting & Painting", "Insurance Claims", "Suspension", "Clutch Repair"]
+      "Honda Service Center", "Maruti Service Center", "Hyundai Service Center", 
+      "Tata Motors Service", "Mahindra Service", "Toyota Service Center",
+      "Ford Service Center", "Bajaj Auto Service", "Hero MotoCorp Service", "TVS Service Center"
     ];
 
-    // Common Indian street/area names for realistic addresses
-    const streetNames = [
-      "Main Road", "Service Road", "Industrial Area", "Market Road", 
-      "Station Road", "Ring Road", "Metro Station Road", "Bus Stand Road",
-      "Commercial Complex", "Auto Hub", "Mechanic Street", "Workshop Lane"
-    ];
-
-    const areaTypes = [
-      "Sector", "Block", "Phase", "Extension", "Colony", "Nagar", "Plaza", "Complex"
-    ];
-
-    const centers: Omit<ServiceCenter, 'distance'>[] = [];
+    const centers: ServiceCenter[] = [];
     
-    // Generate 8 service centers within a 5km radius of user's location
-    for (let i = 0; i < 8; i++) {
-      // Generate random coordinates within 5km radius
-      const radiusInDegrees = 0.045; // approximately 5km
+    for (let i = 0; i < 10; i++) {
+      // Generate points within 5km radius
       const angle = Math.random() * 2 * Math.PI;
-      const radius = Math.random() * radiusInDegrees;
+      const radius = Math.random() * 0.045; // ~5km in degrees
+      const centerLat = lat + (radius * Math.cos(angle));
+      const centerLng = lng + (radius * Math.sin(angle));
       
-      const lat = userLat + radius * Math.cos(angle);
-      const lng = userLng + radius * Math.sin(angle);
-      
-      // Generate realistic address components
-      const buildingNo = Math.floor(Math.random() * 500) + 1;
-      const streetName = streetNames[Math.floor(Math.random() * streetNames.length)];
-      const areaType = areaTypes[Math.floor(Math.random() * areaTypes.length)];
-      const areaNumber = Math.floor(Math.random() * 50) + 1;
-      
-      // Create realistic address using actual area information
-      const address = `${buildingNo}, ${streetName}, ${areaType} ${areaNumber}, ${userArea}`;
+      // Calculate distance using Haversine formula
+      const distance = calculateDistance(lat, lng, centerLat, centerLng);
       
       centers.push({
-        id: (i + 1).toString(),
-        name: serviceNames[i],
-        address,
-        rating: parseFloat((3.5 + Math.random() * 1.5).toFixed(1)),
-        phone: `+91 ${Math.floor(Math.random() * 10) + 90000}${Math.floor(Math.random() * 90000) + 10000}`,
-        services: serviceTypes[i % serviceTypes.length],
-        openHours: `${Math.floor(Math.random() * 3) + 8}:00 AM - ${Math.floor(Math.random() * 3) + 7}:00 PM`,
-        lat,
-        lng
+        id: `center-${i + 1}`,
+        name: serviceTypes[i % serviceTypes.length],
+        address: `${Math.floor(Math.random() * 999) + 1}, Near your location, ${Math.floor(Math.random() * 6) + 1}${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}`,
+        phone: `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
+        rating: Number((3.5 + Math.random() * 1.5).toFixed(1)),
+        distance: Number(distance.toFixed(1)),
+        hours: "9:00 AM - 7:00 PM",
+        services: ["Engine Service", "Oil Change", "Brake Service", "AC Service", "General Checkup"]
       });
     }
 
-    return centers;
+    // Sort by distance
+    return centers.sort((a, b) => a.distance - b.distance);
   };
 
-  // Default fallback service centers (only used when location is unavailable)
-  const defaultServiceCenters: Omit<ServiceCenter, 'distance'>[] = [
-    {
-      id: "1",
-      name: "AutoCare Pro Service Center",
-      address: "Service centers require location access for accurate results",
-      rating: 4.5,
-      phone: "+91 98765 43210",
-      services: ["Oil Change", "Brake Service", "AC Repair", "General Maintenance"],
-      openHours: "9:00 AM - 7:00 PM",
-      lat: 28.4595,
-      lng: 77.0266
-    }
-  ];
-
-  // Calculate distance between two coordinates using Haversine formula
-  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): string => {
-    const R = 6371; // Earth's radius in kilometers
+  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+    const R = 6371; // Earth's radius in km
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLng = (lng2 - lng1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLng/2) * Math.sin(dLng/2);
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = R * c;
+    return R * c;
+  };
+
+  const getCurrentLocation = () => {
+    setLocationStatus('loading');
+    setLoading(true);
     
-    return distance < 1 
-      ? `${Math.round(distance * 1000)}m`
-      : `${distance.toFixed(1)} km`;
+    if (!navigator.geolocation) {
+      setLocationStatus('error');
+      setLoading(false);
+      toast({
+        title: "Location Error",
+        description: "Geolocation is not supported by this browser",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation({ lat: latitude, lng: longitude });
+        const centers = generateServiceCenters(latitude, longitude);
+        setServiceCenters(centers);
+        setLocationStatus('success');
+        setLoading(false);
+        toast({
+          title: "Location Found",
+          description: `Found ${centers.length} service centers near you`,
+        });
+      },
+      (error) => {
+        setLocationStatus('error');
+        setLoading(false);
+        let errorMessage = "Failed to get your location";
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Location access denied. Please enable location permissions.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Location request timed out.";
+            break;
+        }
+        toast({
+          title: "Location Error",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000
+      }
+    );
   };
 
   useEffect(() => {
     getCurrentLocation();
   }, []);
 
-  const getCurrentLocation = () => {
-    setIsLoading(true);
-    setLocationError(null);
-
-    if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by this browser. Please enable location access to find nearby service centers.");
-      setIsLoading(false);
-      // Load default message centers 
-      const centersWithDefaultDistance: ServiceCenter[] = defaultServiceCenters.map(center => ({
-        ...center,
-        distance: "Location needed"
-      }));
-      setServiceCenters(centersWithDefaultDistance);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
-        
-        // Get user's area information for realistic addresses
-        let userArea = "Local Area";
-        try {
-          // Using free Nominatim API for reverse geocoding
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=14&addressdetails=1`
-          );
-          if (response.ok) {
-            const locationData = await response.json();
-            const address = locationData.address;
-            
-            // Extract relevant area information
-            const area = address?.suburb || address?.neighbourhood || address?.city_district || address?.town || address?.city || "Local Area";
-            const city = address?.city || address?.town || address?.village || "";
-            const state = address?.state || "";
-            
-            userArea = city && state ? `${area}, ${city}, ${state}` : area;
-          }
-        } catch (error) {
-          console.log("Geocoding not available, using generic area name");
-        }
-        
-        // Generate service centers around user's actual location with real area context
-        const nearbyServiceCenters = generateNearbyServiceCenters(latitude, longitude, userArea);
-        
-        // Calculate distances and sort by proximity
-        const centersWithDistance: ServiceCenter[] = nearbyServiceCenters.map(center => ({
-          ...center,
-          distance: calculateDistance(latitude, longitude, center.lat, center.lng)
-        })).sort((a: ServiceCenter, b: ServiceCenter) => parseFloat(a.distance) - parseFloat(b.distance));
-        
-        setServiceCenters(centersWithDistance);
-        setIsLoading(false);
-      },
-      (error) => {
-        let errorMessage = "Unable to access your location. ";
-        switch(error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage += "Please allow location access to find nearby service centers.";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage += "Location information is unavailable.";
-            break;
-          case error.TIMEOUT:
-            errorMessage += "Location request timed out.";
-            break;
-          default:
-            errorMessage += "An unknown error occurred.";
-            break;
-        }
-        errorMessage += " Enable location to see service centers near you.";
-        
-        setLocationError(errorMessage);
-        setIsLoading(false);
-        // Load default message centers
-        const centersWithDefaultDistance: ServiceCenter[] = defaultServiceCenters.map(center => ({
-          ...center,
-          distance: "Location needed"
-        }));
-        setServiceCenters(centersWithDefaultDistance);
-      },
-      { 
-        timeout: 15000, 
-        enableHighAccuracy: true,
-        maximumAge: 300000 // Cache location for 5 minutes
-      }
-    );
-  };
-
-
-
-  const filteredCenters = serviceCenters.filter(center =>
-    center.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    center.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    center.services.some(service => service.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
-
-  const openInMaps = (center: ServiceCenter) => {
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${center.lat},${center.lng}&travelmode=driving`;
-    window.open(url, '_blank');
-  };
-
-  const callCenter = (phone: string) => {
-    window.open(`tel:${phone}`);
-  };
-
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
       {/* Header */}
-      <header className="header-gradient-border shadow-lg relative z-10">
-        <div className="px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-600 hover:bg-red-50"
-                onClick={() => setLocation("/")}
-              >
-                <ArrowLeft className="w-5 h-5" />
+      <header className="bg-white shadow-sm border-b border-gray-200 px-3 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <ArrowLeft className="w-4 h-4" />
               </Button>
-              <img 
-                src={logoImage} 
-                alt="Myymotto Logo" 
-                className="w-14 h-14 rounded-lg"
-              />
-              <div>
-                <ColorfulLogo />
-                <p className="text-sm text-red-600">Service Centres Near You</p>
-              </div>
+            </Link>
+            <ColorfulLogo className="w-8 h-8" />
+            <div>
+              <h1 className="text-base font-bold text-gray-900">Service Centers</h1>
+              <p className="text-[10px] text-red-600 font-medium">Near Your Location</p>
             </div>
           </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={getCurrentLocation}
+            disabled={loading}
+            className="h-8"
+          >
+            <RefreshCw className={`w-3 h-3 mr-1 ${loading ? 'animate-spin' : ''}`} />
+            <span className="text-xs">Refresh</span>
+          </Button>
         </div>
       </header>
 
-      <div className="p-4 pb-20 bg-warm-pattern">
-        {/* Search Bar */}
-        <div className="mb-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              type="text"
-              placeholder="Search nearby service centers or services..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </div>
-
+      <div className="p-3 pb-20">
         {/* Location Status */}
-        <Card className="mb-4 shadow-orange">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                {userLocation ? (
-                  <>
-                    <Navigation className="w-4 h-4 text-green-600" />
-                    <span className="text-sm text-green-700">
-                      Showing service centers near you
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <MapPin className="w-4 h-4 text-orange-600" />
-                    <span className="text-sm text-orange-700">
-                      Location access needed for nearby centers
-                    </span>
-                  </>
-                )}
-              </div>
-              <div className="flex items-center space-x-2">
-                {userLocation && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={getCurrentLocation}
-                    disabled={isLoading}
-                    className="border-green-200 text-green-600 hover:bg-green-50"
-                  >
-                    Refresh
-                  </Button>
-                )}
-                {!userLocation && !isLoading && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={getCurrentLocation}
-                    disabled={isLoading}
-                    className="border-orange-200 text-orange-600 hover:bg-orange-50"
-                  >
-                    Enable Location
-                  </Button>
-                )}
-                {isLoading && (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-sm text-orange-600">Getting location...</span>
-                  </div>
-                )}
+        <Card className="mb-3">
+          <CardContent className="p-3">
+            <div className="flex items-center space-x-2">
+              <Navigation className={`w-4 h-4 ${locationStatus === 'success' ? 'text-green-600' : 'text-orange-600'}`} />
+              <div className="flex-1">
+                <p className="text-xs font-medium text-gray-800">
+                  {locationStatus === 'loading' && "Getting your location..."}
+                  {locationStatus === 'success' && "Location active - Showing nearby service centers"}
+                  {locationStatus === 'error' && "Location needed - Enable location to find service centers"}
+                  {locationStatus === 'idle' && "Initializing location services..."}
+                </p>
               </div>
             </div>
-            {locationError && (
-              <div className="mt-2 p-2 bg-orange-50 rounded-lg">
-                <p className="text-xs text-orange-700">{locationError}</p>
-              </div>
-            )}
           </CardContent>
         </Card>
 
         {/* Service Centers List */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">
-              Nearby Service Centers ({filteredCenters.length})
-            </h2>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full"></div>
           </div>
-
-          {isLoading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="animate-pulse">
-                  <CardContent className="p-4">
-                    <div className="h-20 bg-gray-200 rounded"></div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : filteredCenters.length === 0 ? (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No service centers found</p>
-                <p className="text-sm text-gray-500">Try adjusting your search criteria</p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredCenters.map((center) => (
-              <Card key={center.id} className="card-hover shadow-lg">
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-3">
+        ) : serviceCenters.length > 0 ? (
+          <div className="space-y-3">
+            {serviceCenters.map((center) => (
+              <Card key={center.id} className="shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-3">
+                  <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-800 mb-1">{center.name}</h3>
-                      <p className="text-sm text-gray-600 mb-2">{center.address}</p>
-                      <div className="flex items-center space-x-4 text-xs text-gray-500">
-                        <div className="flex items-center space-x-1">
-                          <MapPin className="w-3 h-3" />
-                          <span>{center.distance}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                          <span>{center.rating}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Clock className="w-3 h-3" />
-                          <span>{center.openHours}</span>
-                        </div>
+                      <h3 className="font-semibold text-sm text-gray-900">{center.name}</h3>
+                      <div className="flex items-center space-x-1 mt-1">
+                        <span className="text-orange-600 font-medium text-xs">★ {center.rating}</span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-xs text-gray-600">{center.distance} km away</span>
                       </div>
                     </div>
+                    <div className="text-right">
+                      <span className="text-xs text-green-600 font-medium">Open</span>
+                    </div>
                   </div>
-
-                  {/* Services */}
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {center.services.slice(0, 3).map((service, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {service}
-                      </Badge>
-                    ))}
-                    {center.services.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{center.services.length - 3} more
-                      </Badge>
-                    )}
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-start space-x-2">
+                      <MapPin className="w-3 h-3 text-gray-500 mt-0.5 flex-shrink-0" />
+                      <p className="text-xs text-gray-600 flex-1">{center.address}</p>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Phone className="w-3 h-3 text-gray-500" />
+                      <p className="text-xs text-gray-600">{center.phone}</p>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Clock className="w-3 h-3 text-gray-500" />
+                      <p className="text-xs text-gray-600">{center.hours}</p>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {center.services.slice(0, 3).map((service, index) => (
+                        <span key={index} className="bg-orange-100 text-orange-700 text-[9px] px-2 py-1 rounded">
+                          {service}
+                        </span>
+                      ))}
+                      {center.services.length > 3 && (
+                        <span className="text-[9px] text-gray-500">+{center.services.length - 3} more</span>
+                      )}
+                    </div>
                   </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => openInMaps(center)}
-                    >
-                      <Navigation className="w-3 h-3 mr-1" />
-                      Directions
+                  
+                  <div className="flex space-x-2 mt-3">
+                    <Button size="sm" className="h-6 text-[10px] px-2 flex-1">
+                      Call Now
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => callCenter(center.phone)}
-                    >
-                      <Phone className="w-3 h-3 mr-1" />
-                      Call
+                    <Button variant="outline" size="sm" className="h-6 text-[10px] px-2 flex-1">
+                      Get Directions
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+            <p className="text-sm text-gray-600">No service centers found</p>
+            <p className="text-xs text-gray-500 mt-1">Enable location to find nearby service centers</p>
+          </div>
+        )}
       </div>
     </div>
   );
