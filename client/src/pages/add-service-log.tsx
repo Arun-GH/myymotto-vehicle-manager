@@ -58,7 +58,7 @@ export default function AddServiceLog() {
       const formData = new FormData();
       formData.append("vehicleId", vehicleId);
       formData.append("serviceType", data.serviceType);
-      formData.append("serviceDate", formatForDatabase(data.serviceDate) || "");
+      formData.append("serviceDate", data.serviceDate || "");
       formData.append("serviceCentre", data.serviceCentre);
       if (data.notes) formData.append("notes", data.notes);
       if (data.invoice) formData.append("invoice", data.invoice);

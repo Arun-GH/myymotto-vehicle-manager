@@ -241,7 +241,7 @@ export default function CombinedServicePage() {
       const formData = new FormData();
       formData.append("vehicleId", id!);
       formData.append("serviceType", data.serviceType);
-      formData.append("serviceDate", formatForDatabase(data.serviceDate) || "");
+      formData.append("serviceDate", data.serviceDate || "");
       formData.append("serviceCentre", data.serviceCentre);
       if (data.notes) formData.append("notes", data.notes);
       if (data.invoice) formData.append("invoice", data.invoice);
@@ -307,7 +307,7 @@ export default function CombinedServicePage() {
     const formData = new FormData();
     formData.append('vehicleId', id!);
     formData.append('maintenanceType', selectedMaintenance.type);
-    formData.append('completedDate', formatForDatabase(completedDate) || "");
+    formData.append('completedDate', completedDate || "");
     formData.append('notes', notes);
 
     if (warrantyFile) {
