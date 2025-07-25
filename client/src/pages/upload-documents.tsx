@@ -231,18 +231,11 @@ export default function UploadDocuments() {
           metadata.expiryDate = expiryDate;
         }
         
-        // Create a file with custom name if available
+        // Use the file as-is, but we'll override the name in storage
         let fileToStore = file;
-        if (file.customName && file.customName !== file.name) {
-          // Create a blob and then a new File with the custom name
-          const blob = new Blob([file], { type: file.type });
-          fileToStore = new File([blob], file.customName, { 
-            type: file.type, 
-            lastModified: file.lastModified 
-          });
-        }
+        const customName = (file as FileWithCustomName).customName;
         
-        const localDoc = await localDocumentStorage.storeDocument(vehicleId, selectedType, fileToStore, metadata);
+        const localDoc = await localDocumentStorage.storeDocument(vehicleId, selectedType, fileToStore, metadata, customName);
         uploadedDocuments.push(localDoc);
       }
 

@@ -42,7 +42,8 @@ class LocalDocumentStorage {
     vehicleId: number,
     type: string,
     file: File,
-    metadata?: { billDate?: string; documentName?: string; expiryDate?: string }
+    metadata?: { billDate?: string; documentName?: string; expiryDate?: string },
+    customFileName?: string
   ): Promise<LocalDocument> {
     const db = await this.openDB();
     const arrayBuffer = await file.arrayBuffer();
@@ -51,7 +52,7 @@ class LocalDocumentStorage {
       id: `${vehicleId}-${type}-${Date.now()}`,
       vehicleId,
       type,
-      fileName: file.name,
+      fileName: customFileName || file.name,
       fileData: arrayBuffer,
       mimeType: file.type,
       fileSize: file.size,
