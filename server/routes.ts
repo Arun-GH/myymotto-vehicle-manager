@@ -1801,13 +1801,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin routes - Protected by admin middleware
   const isAdmin = async (req: any, res: any, next: any) => {
     try {
-      const userId = parseInt(req.query.userId as string) || 1;
-      const user = await storage.getUser(userId);
+      const userId = parseInt(req.query.userId as string) || parseInt(req.body.userId as string) || 1;
+      const user = await storage.getUser(userId.toString());
+      
+      console.log(`Admin check for userId: ${userId}, user:`, user);
       
       // Grant admin access to phone number 9880105082 or user ID 1, or users with isAdmin flag
-      if (userId === 1 || (user && (user.mobile === '9880105082' || user.isAdmin))) {
+      const hasAdminPhone = user && (
+        user.mobile === '9880105082' || 
+        user.mobile === '+919880105082' ||
+        user.alternatePhone === '9880105082' || 
+        user.alternatePhone === '+919880105082'
+      );
+      
+      if (userId === 1 || hasAdminPhone || (user && user.isAdmin)) {
+        console.log(`Admin access granted for userId: ${userId}`);
         next();
       } else {
+        console.log(`Admin access denied for userId: ${userId}, mobile: ${user?.mobile}, alternatePhone: ${user?.alternatePhone}`);
         res.status(403).json({ message: "Admin access required" });
       }
     } catch (error) {
