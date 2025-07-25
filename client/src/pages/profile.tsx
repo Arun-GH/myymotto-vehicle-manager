@@ -460,6 +460,8 @@ export default function Profile() {
         driversLicenseNumber: data.driversLicenseNumber || "",
         driversLicenseValidTill: data.driversLicenseValidTill && data.driversLicenseValidTill.trim() !== '' ? formatForDatabase(data.driversLicenseValidTill) : null,
       };
+      console.log("Profile update data being sent:", profileData);
+      console.log("Profile picture path being sent:", profilePicturePath);
       const response = await apiRequest("PUT", `/api/profile/${userId}`, profileData);
       return response.json();
     },
@@ -1185,6 +1187,11 @@ export default function Profile() {
             <CardContent className="p-2 space-y-3">
               {/* Profile Picture */}
               <div className="flex justify-center">
+                {(() => {
+                  console.log("Profile picture debug - profile:", profile);
+                  console.log("Profile picture value:", profile?.profilePicture);
+                  return null;
+                })()}
                 {profile?.profilePicture ? (
                   <img 
                     src={profile.profilePicture.startsWith('/app_storage') ? profile.profilePicture : `/api/files/${profile.profilePicture}`} 
