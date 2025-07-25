@@ -1,6 +1,6 @@
 import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, adminMessages, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse, type AdminMessage, type InsertAdminMessage } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, gt, lte, lt, desc, gte, isNull, or, inArray } from "drizzle-orm";
+import { eq, and, gt, lte, lt, desc, gte, isNull, or, inArray, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -111,6 +111,7 @@ export interface IStorage {
   getBroadcastsByType(type: string): Promise<Broadcast[]>;
   incrementBroadcastViews(id: number): Promise<void>;
   cleanupExpiredBroadcasts(): Promise<number>;
+  getUserActiveBroadcastCount(userId: number): Promise<number>;
 
   // Broadcast Response methods
   getBroadcastResponses(broadcastId: number): Promise<BroadcastResponse[]>;
@@ -1235,6 +1236,18 @@ export class DatabaseStorage implements IStorage {
       .from(broadcasts)
       .where(and(eq(broadcasts.type, type), eq(broadcasts.isActive, true)))
       .orderBy(desc(broadcasts.createdAt));
+  }
+
+  async getUserActiveBroadcastCount(userId: number): Promise<number> {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(broadcasts)
+      .where(and(
+        eq(broadcasts.userId, userId),
+        eq(broadcasts.isActive, true),
+        eq(broadcasts.status, 'active')
+      ));
+    return result[0]?.count || 0;
   }
 
   async incrementBroadcastViews(id: number): Promise<void> {

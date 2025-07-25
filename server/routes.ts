@@ -1691,6 +1691,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid User ID format" });
       }
       
+      // Check if user already has 3 active posts (limit)
+      const activePostCount = await storage.getUserActiveBroadcastCount(parsedUserId);
+      if (activePostCount >= 3) {
+        return res.status(400).json({ 
+          message: "You cannot have more than 3 active posts. Please wait for existing posts to expire or delete some posts to create new ones." 
+        });
+      }
+      
       // Set expiry date to 7 days from now
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 7);

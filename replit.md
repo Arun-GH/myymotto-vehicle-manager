@@ -10,7 +10,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 25, 2025**: COMPLETED comprehensive file picker standardization with native mobile "Photos & Documents" display implementation
+**July 25, 2025**: COMPLETED comprehensive file picker standardization with native mobile "Photos & Documents" display implementation and 3-post broadcast limit
 - RESOLVED user confusion about file picker requirements - clarified user wanted native mobile file picker options changed, not button text
 - REVERTED button labels back to "Upload" after initial misunderstanding about requirements  
 - MODIFIED accept attributes throughout entire application from `image/*` to specific file extensions to change native mobile file picker display
@@ -21,6 +21,11 @@ Preferred communication style: Simple, everyday language.
 - ACHIEVED native mobile file picker displaying "Photos & Documents" instead of "Photos & Videos" through strategic accept attribute configuration
 - COMPLETED comprehensive file type support enabling users to upload documents, images, and various file formats across all upload interfaces
 - ENSURED consistent user experience with proper file type validation and support for multiple document formats throughout application
+- IMPLEMENTED 3-post broadcast limit restriction preventing users from creating more than 3 active posts simultaneously
+- ADDED getUserActiveBroadcastCount method to storage interface for counting user's active broadcasts
+- ENHANCED broadcast creation route with validation that returns clear error message when limit is exceeded
+- CREATED comprehensive post management system with automatic 7-day expiry and user ownership validation
+- MAINTAINED existing error handling system in frontend to display limit violations via toast notifications
 
 **July 25, 2025**: COMPLETED comprehensive admin user management system with block/unblock functionality and post deletion capabilities
 - IMPLEMENTED complete user blocking/unblocking system with database schema updates (isBlocked, blockedAt, blockedReason fields)
