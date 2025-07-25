@@ -49,7 +49,7 @@ export default function VehicleSelectorModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[90%] max-w-md mx-auto p-0 bg-white/95 backdrop-blur-sm shadow-2xl shadow-orange-500/20 rounded-xl border-0">
+      <DialogContent className="w-[90%] max-w-md mx-auto p-0 bg-white/95 backdrop-blur-sm shadow-2xl shadow-orange-500/20 rounded-xl border-0 [&>button]:hidden">
         <div className="relative">
           {/* Header with Gradient Background */}
           <div className={`${config.color === 'purple' ? 'bg-gradient-to-r from-purple-500 to-indigo-600' : 'bg-gradient-to-r from-teal-500 to-cyan-600'} text-white p-4 rounded-t-xl`}>
