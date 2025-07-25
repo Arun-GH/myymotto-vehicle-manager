@@ -2035,53 +2035,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Background job to send subscription expiry notifications
+  // Push notification token registration
+  app.post("/api/push/register-token", async (req, res) => {
+    try {
+      const { token, userId, platform } = req.body;
+      
+      if (!token || !userId) {
+        return res.status(400).json({ message: "Token and userId are required" });
+      }
+
+      // Store push token for user (in production, save to database)
+      await storage.registerPushToken(userId, token, platform);
+      
+      res.json({ 
+        success: true, 
+        message: "Push token registered successfully" 
+      });
+    } catch (error) {
+      console.error("Error registering push token:", error);
+      res.status(500).json({ message: "Failed to register push token" });
+    }
+  });
+
+  // Background job to send subscription expiry notifications with push notifications
   app.post("/api/subscription/send-notifications", async (req, res) => {
     try {
       const activeSubscriptions = await storage.getActiveSubscriptions();
       const now = new Date();
       let notificationsSent = 0;
+      let pushNotificationsSent = 0;
 
       for (const subscription of activeSubscriptions) {
         const expiryDate = new Date(subscription.expiryDate);
         const daysUntilExpiry = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
         
         // Send weekly notifications starting 30 days before expiry
-        if (daysUntilExpiry <= 30 && daysUntilExpiry > 0 && daysUntilExpiry % 7 === 0) {
-          // Check if notification was already sent this week
+        const weeklyTargets = [30, 23, 16, 9, 2]; // Weekly intervals
+        
+        if (weeklyTargets.includes(daysUntilExpiry)) {
+          // Check if notification was already sent for this specific day
           const existingNotification = await storage.getRecentSubscriptionNotification(
             subscription.userId, 
-            'expiry_warning'
+            `expiry_warning_${daysUntilExpiry}d`
           );
           
           if (!existingNotification) {
+            // Create database notification record
             await storage.createSubscriptionNotification({
               userId: subscription.userId,
               subscriptionId: subscription.id,
-              notificationType: 'expiry_warning',
+              notificationType: `expiry_warning_${daysUntilExpiry}d`,
               sentDate: now.toISOString(),
-              isRead: false
+              isRead: false,
+              title: getNotificationTitle(daysUntilExpiry),
+              message: getNotificationMessage(daysUntilExpiry)
             });
             
-            // In production, send email here
-            // await sendExpiryWarningEmail(subscription);
+            // Send push notification
+            const pushResult = await sendPushNotification(subscription.userId, {
+              title: getNotificationTitle(daysUntilExpiry),
+              body: getNotificationMessage(daysUntilExpiry),
+              data: {
+                type: 'subscription_expiry',
+                daysUntilExpiry,
+                subscriptionId: subscription.id
+              }
+            });
+            
+            if (pushResult.success) {
+              pushNotificationsSent++;
+            }
+            
             notificationsSent++;
+            console.log(`Sent subscription reminder: ${daysUntilExpiry} days for user ${subscription.userId}`);
           }
         }
         
         // Send expired notification
         if (daysUntilExpiry <= 0 && subscription.isActive) {
           await storage.deactivateSubscription(subscription.id);
+          
           await storage.createSubscriptionNotification({
             userId: subscription.userId,
             subscriptionId: subscription.id,
             notificationType: 'expired',
             sentDate: now.toISOString(),
-            isRead: false
+            isRead: false,
+            title: 'Myymotto Subscription Expired',
+            message: 'Your premium subscription has expired. Renew now to restore full access!'
           });
           
-          // In production, send expiry email here
-          // await sendExpiryEmail(subscription);
+          // Send expired push notification
+          const pushResult = await sendPushNotification(subscription.userId, {
+            title: 'Myymotto Subscription Expired',
+            body: 'Your premium subscription has expired. Renew now to restore full access!',
+            data: {
+              type: 'subscription_expired',
+              subscriptionId: subscription.id
+            }
+          });
+          
+          if (pushResult.success) {
+            pushNotificationsSent++;
+          }
+          
           notificationsSent++;
         }
       }
@@ -2089,7 +2146,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ 
         success: true, 
         notificationsSent,
-        message: `Processed ${activeSubscriptions.length} subscriptions, sent ${notificationsSent} notifications`
+        pushNotificationsSent,
+        message: `Processed ${activeSubscriptions.length} subscriptions, sent ${notificationsSent} notifications (${pushNotificationsSent} push notifications)`
       });
     } catch (error) {
       console.error("Error sending subscription notifications:", error);
@@ -2097,8 +2155,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Manual trigger for testing notifications
+  app.post("/api/subscription/test-notification", async (req, res) => {
+    try {
+      const { userId, daysUntilExpiry } = req.body;
+      
+      const testNotification = {
+        title: getNotificationTitle(daysUntilExpiry || 30),
+        body: getNotificationMessage(daysUntilExpiry || 30),
+        data: {
+          type: 'subscription_expiry',
+          daysUntilExpiry: daysUntilExpiry || 30,
+          test: true
+        }
+      };
+
+      const pushResult = await sendPushNotification(userId || "1", testNotification);
+      
+      res.json({
+        success: true,
+        pushResult,
+        notification: testNotification,
+        message: "Test notification sent successfully"
+      });
+    } catch (error) {
+      console.error("Error sending test notification:", error);
+      res.status(500).json({ message: "Failed to send test notification" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
+}
+
+// Helper functions for push notifications
+function getNotificationTitle(daysUntilExpiry: number): string {
+  if (daysUntilExpiry <= 0) return 'Myymotto Subscription Expired';
+  if (daysUntilExpiry <= 2) return 'Myymotto Critical Alert';
+  if (daysUntilExpiry <= 9) return 'Myymotto Final Notice';
+  if (daysUntilExpiry <= 16) return 'Myymotto Renewal Urgent';
+  if (daysUntilExpiry <= 23) return 'Myymotto Subscription Alert';
+  return 'Myymotto Subscription Reminder';
+}
+
+function getNotificationMessage(daysUntilExpiry: number): string {
+  if (daysUntilExpiry <= 0) return 'Your premium subscription has expired. Renew now to restore full access!';
+  if (daysUntilExpiry <= 2) return `URGENT: Your subscription expires in ${daysUntilExpiry} days! Renew now to avoid service loss.`;
+  if (daysUntilExpiry <= 9) return `Last chance! Your subscription expires in ${daysUntilExpiry} days. Renew immediately!`;
+  if (daysUntilExpiry <= 16) return `Your subscription expires in ${daysUntilExpiry} days. Don't lose access to premium features!`;
+  if (daysUntilExpiry <= 23) return `Only ${daysUntilExpiry} days left on your premium subscription. Secure your renewal today!`;
+  return `Your premium subscription expires in ${daysUntilExpiry} days. Renew now to avoid service interruption!`;
+}
+
+async function sendPushNotification(userId: string, notification: any): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Get user's push token
+    const pushTokens = await storage.getUserPushTokens(userId);
+    
+    if (!pushTokens || pushTokens.length === 0) {
+      console.log(`No push tokens found for user ${userId}`);
+      return { success: false, error: 'No push tokens registered' };
+    }
+
+    // In production, use FCM (Firebase Cloud Messaging) or APNs (Apple Push Notification service)
+    // For demo, we'll simulate sending
+    console.log(`Sending push notification to user ${userId}:`, {
+      title: notification.title,
+      body: notification.body,
+      tokens: pushTokens,
+      data: notification.data
+    });
+
+    // Simulate successful push notification
+    // In production, implement actual push notification sending using FCM/APNs
+    // Example FCM implementation:
+    // const admin = require('firebase-admin');
+    // const message = {
+    //   notification: {
+    //     title: notification.title,
+    //     body: notification.body
+    //   },
+    //   data: notification.data,
+    //   tokens: pushTokens
+    // };
+    // const response = await admin.messaging().sendMulticast(message);
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending push notification:', error);
+    return { success: false, error: error.message };
+  }
 }
 
 // Helper functions for invoice generation

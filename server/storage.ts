@@ -138,6 +138,10 @@ export interface IStorage {
   getRecentSubscriptionNotification(userId: string, type: string): Promise<any>;
   createSubscriptionNotification(notification: any): Promise<any>;
   deactivateSubscription(subscriptionId: number): Promise<void>;
+  
+  // Push notification methods
+  registerPushToken(userId: string, token: string, platform: string): Promise<void>;
+  getUserPushTokens(userId: string): Promise<string[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -1420,6 +1424,38 @@ export class DatabaseStorage implements IStorage {
     // Mock subscription deactivation
     console.log('Subscription deactivated:', subscriptionId);
   }
+
+  // Push notification methods
+  async registerPushToken(userId: string, token: string, platform: string): Promise<void> {
+    // In production, store push tokens in database
+    // For demo, store in memory map
+    if (!this.pushTokens) {
+      this.pushTokens = new Map();
+    }
+    
+    if (!this.pushTokens.has(userId)) {
+      this.pushTokens.set(userId, []);
+    }
+    
+    const userTokens = this.pushTokens.get(userId) || [];
+    if (!userTokens.includes(token)) {
+      userTokens.push(token);
+      this.pushTokens.set(userId, userTokens);
+    }
+    
+    console.log(`Registered push token for user ${userId} on ${platform}:`, token);
+  }
+
+  async getUserPushTokens(userId: string): Promise<string[]> {
+    if (!this.pushTokens) {
+      this.pushTokens = new Map();
+    }
+    
+    return this.pushTokens.get(userId) || [];
+  }
+
+  // Add push tokens storage for demo
+  private pushTokens?: Map<string, string[]>;
 }
 
 export const storage = new DatabaseStorage();

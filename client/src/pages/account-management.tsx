@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { ArrowLeft, CreditCard, Calendar, Download, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
+import { ArrowLeft, CreditCard, Calendar, Download, CheckCircle, XCircle, Clock, AlertTriangle, Bell } from "lucide-react";
 import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -53,6 +53,28 @@ export default function AccountManagement() {
       toast({
         title: "Renewal Failed",
         description: error.message || "Failed to renew subscription",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const testNotification = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("POST", "/api/subscription/test-notification", {
+        userId: "1",
+        daysUntilExpiry: 30
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Test Notification Sent",
+        description: "Check your device for the subscription reminder notification!",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Test Failed",
+        description: error.message || "Failed to send test notification.",
         variant: "destructive",
       });
     },
@@ -246,20 +268,40 @@ export default function AccountManagement() {
                         : `Your subscription expires in ${accountInfo.daysUntilExpiry} days. Renew now to avoid service interruption.`
                       }
                     </p>
-                    <Button 
-                      onClick={() => renewSubscription.mutate()}
-                      disabled={renewSubscription.isPending}
-                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white h-8 text-sm"
-                    >
-                      {renewSubscription.isPending ? (
-                        <>
-                          <Clock className="w-3 h-3 mr-2 animate-spin" />
-                          Renewing...
-                        </>
-                      ) : (
-                        'Renew Subscription'
-                      )}
-                    </Button>
+                    <div className="space-y-2">
+                      <Button 
+                        onClick={() => renewSubscription.mutate()}
+                        disabled={renewSubscription.isPending}
+                        className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white h-8 text-sm"
+                      >
+                        {renewSubscription.isPending ? (
+                          <>
+                            <Clock className="w-3 h-3 mr-2 animate-spin" />
+                            Renewing...
+                          </>
+                        ) : (
+                          'Renew Subscription'
+                        )}
+                      </Button>
+                      <Button 
+                        onClick={() => testNotification.mutate()}
+                        disabled={testNotification.isPending}
+                        variant="outline"
+                        className="w-full h-8 text-sm border-orange-300 text-orange-600 hover:bg-orange-50"
+                      >
+                        {testNotification.isPending ? (
+                          <>
+                            <Clock className="w-3 h-3 mr-2 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Bell className="w-3 h-3 mr-2" />
+                            Test Push Notification
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </>
               )}

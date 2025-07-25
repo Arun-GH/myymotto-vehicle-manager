@@ -6,6 +6,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { apiRequest } from "@/lib/queryClient";
+import { pushNotificationService } from "@/lib/push-notifications";
 import { type UserProfile } from "@shared/schema";
 import SplashScreen from "@/components/splash-screen";
 import PermissionsScreen from "@/components/permissions-screen";
@@ -58,7 +59,26 @@ function Router() {
   // Handle permissions completion
   const handlePermissionsComplete = () => {
     setShowPermissions(false);
+    // Initialize push notifications after permissions are granted
+    initializePushNotifications();
   };
+
+  // Initialize push notifications
+  const initializePushNotifications = async () => {
+    try {
+      await pushNotificationService.initialize();
+      console.log('Push notifications initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize push notifications:', error);
+    }
+  };
+
+  // Initialize push notifications when user is authenticated
+  useEffect(() => {
+    if (isAuthenticated && !showSplash && !showPermissions) {
+      initializePushNotifications();
+    }
+  }, [isAuthenticated, showSplash, showPermissions]);
   
   const { data: profile, isLoading } = useQuery<UserProfile>({
     queryKey: ["/api/profile", currentUserId],
