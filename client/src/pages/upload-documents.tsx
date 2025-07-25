@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams, Link } from "wouter";
-import { ArrowLeft, Upload, Camera, FileText, Calendar, CheckCircle, Bell, Settings, Scan, DollarSign, File } from "lucide-react";
+import { ArrowLeft, Upload, Camera, FileText, Calendar, CheckCircle, Bell, Settings, Scan, DollarSign, File, Edit2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,95 @@ interface DocumentUpload {
   type: DocumentType;
   file: File;
   expiryDate?: string;
+}
+
+interface FilePreviewCardProps {
+  file: File;
+  index: number;
+  onRename: (newName: string) => void;
+  onRemove: () => void;
+}
+
+function FilePreviewCard({ file, onRename, onRemove }: FilePreviewCardProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [fileName, setFileName] = useState(() => {
+    const name = file.name;
+    const lastDotIndex = name.lastIndexOf('.');
+    return lastDotIndex > 0 ? name.substring(0, lastDotIndex) : name;
+  });
+
+  const handleSave = () => {
+    if (fileName.trim()) {
+      onRename(fileName.trim());
+      setIsEditing(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSave();
+    } else if (e.key === 'Escape') {
+      setIsEditing(false);
+      // Reset to original name
+      const name = file.name;
+      const lastDotIndex = name.lastIndexOf('.');
+      setFileName(lastDotIndex > 0 ? name.substring(0, lastDotIndex) : name);
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-between p-1.5 bg-orange-50 border border-orange-100 rounded-lg">
+      <div className="flex items-center space-x-1.5 flex-1 min-w-0">
+        <div className="w-5 h-5 bg-orange-100 rounded flex items-center justify-center shrink-0">
+          <FileText className="w-2.5 h-2.5 text-orange-600" />
+        </div>
+        <div className="min-w-0 flex-1">
+          {isEditing ? (
+            <Input
+              value={fileName}
+              onChange={(e) => setFileName(e.target.value)}
+              onBlur={handleSave}
+              onKeyDown={handleKeyPress}
+              className="h-6 text-xs font-medium p-1 border-orange-200 focus:border-orange-400"
+              autoFocus
+            />
+          ) : (
+            <p className="text-xs font-medium truncate cursor-pointer" onClick={() => setIsEditing(true)}>
+              {file.name}
+            </p>
+          )}
+          <p className="text-[10px] text-gray-500">
+            {(file.size / 1024 / 1024).toFixed(1)} MB
+          </p>
+        </div>
+      </div>
+      
+      <div className="flex items-center space-x-1 shrink-0">
+        {!isEditing && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsEditing(true)}
+            className="text-blue-600 hover:text-blue-700 h-5 w-5 p-0"
+            title="Rename file"
+          >
+            <Edit2 className="w-2.5 h-2.5" />
+          </Button>
+        )}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onRemove}
+          className="text-red-600 hover:text-red-700 h-5 w-5 p-0"
+          title="Remove file"
+        >
+          ×
+        </Button>
+      </div>
+    </div>
+  );
 }
 
 export default function UploadDocuments() {
@@ -99,6 +188,18 @@ export default function UploadDocuments() {
 
   const removeFile = (index: number) => {
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const renameFile = (index: number, newName: string) => {
+    setSelectedFiles(prev => prev.map((file, i) => {
+      if (i === index) {
+        // Create a new File object with the new name
+        const extension = file.name.split('.').pop() || '';
+        const finalName = newName.endsWith(`.${extension}`) ? newName : `${newName}.${extension}`;
+        return new File([file], finalName, { type: file.type });
+      }
+      return file;
+    }));
   };
 
   const uploadDocuments = useMutation({
@@ -400,34 +501,19 @@ export default function UploadDocuments() {
 
             </div>
 
-            {/* Selected Files Preview */}
+            {/* Selected Files Preview with Renaming */}
             {selectedFiles.length > 0 && (
               <div className="space-y-1">
                 <Label className="text-xs font-medium">Selected Files ({selectedFiles.length})</Label>
-                <div className="space-y-1 max-h-32 overflow-y-auto">
+                <div className="space-y-1 max-h-48 overflow-y-auto">
                   {selectedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-1.5 bg-orange-50 border border-orange-100 rounded-lg">
-                      <div className="flex items-center space-x-1.5">
-                        <div className="w-5 h-5 bg-orange-100 rounded flex items-center justify-center">
-                          <FileText className="w-2.5 h-2.5 text-orange-600" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs font-medium truncate max-w-[160px]">{file.name}</p>
-                          <p className="text-[10px] text-gray-500">
-                            {(file.size / 1024 / 1024).toFixed(1)} MB
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeFile(index)}
-                        className="text-red-600 hover:text-red-700 h-5 w-5 p-0 shrink-0"
-                      >
-                        ×
-                      </Button>
-                    </div>
+                    <FilePreviewCard 
+                      key={index}
+                      file={file}
+                      index={index}
+                      onRename={(newName) => renameFile(index, newName)}
+                      onRemove={() => removeFile(index)}
+                    />
                   ))}
                 </div>
               </div>

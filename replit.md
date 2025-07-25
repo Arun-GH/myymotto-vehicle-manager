@@ -24,6 +24,7 @@ Preferred communication style: Simple, everyday language.
 - UPDATED page title from "Service Centers Near You" to "Services Near You" for concise branding
 - FIXED Logo Puzzle Game timer and move count functionality with proper startTime initialization and game state management
 - REMOVED duplicate X button from vehicle selector modal by hiding default Dialog close button while keeping custom header X button
+- ADDED photo naming/renaming feature during document upload with inline editing capability for all file types
 
 **July 25, 2025**: COMPLETED HTML5 date picker implementation across all service log pages for enhanced user experience
 - ADDED native HTML5 date input fields to replace text inputs across combined-service.tsx and add-service-log.tsx
