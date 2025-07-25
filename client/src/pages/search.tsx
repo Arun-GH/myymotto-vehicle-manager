@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MapPin, Phone, Clock, ArrowLeft, Navigation, RefreshCw, Search } from "lucide-react";
+import { MapPin, Phone, Clock, ArrowLeft, Navigation, RefreshCw, Search, Wrench, Fuel, Cross, Shield } from "lucide-react";
 import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import ColorfulLogo from "@/components/colorful-logo";
 
-interface ServiceCenter {
+interface ServiceLocation {
   id: string;
   name: string;
   address: string;
@@ -16,23 +16,55 @@ interface ServiceCenter {
   distance: number;
   hours: string;
   services: string[];
+  type: 'service' | 'petrol' | 'hospital' | 'police';
 }
 
 export default function SearchPage() {
-  const [serviceCenters, setServiceCenters] = useState<ServiceCenter[]>([]);
-  const [filteredCenters, setFilteredCenters] = useState<ServiceCenter[]>([]);
+  const [serviceLocations, setServiceLocations] = useState<ServiceLocation[]>([]);
+  const [filteredLocations, setFilteredLocations] = useState<ServiceLocation[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [locationStatus, setLocationStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<'service' | 'petrol' | 'hospital' | 'police'>('service');
   const { toast } = useToast();
 
-  const generateServiceCenters = (lat: number, lng: number): ServiceCenter[] => {
-    const serviceTypes = [
-      "Honda Service Center", "Maruti Service Center", "Hyundai Service Center", 
-      "Tata Motors Service", "Mahindra Service", "Toyota Service Center",
-      "Ford Service Center", "Bajaj Auto Service", "Hero MotoCorp Service", "TVS Service Center"
-    ];
+  const generateServiceLocations = (lat: number, lng: number, category: 'service' | 'petrol' | 'hospital' | 'police'): ServiceLocation[] => {
+    const locationData = {
+      service: {
+        names: [
+          "Honda Service Center", "Maruti Service Center", "Hyundai Service Center", 
+          "Tata Motors Service", "Mahindra Service", "Toyota Service Center",
+          "Ford Service Center", "Bajaj Auto Service", "Hero MotoCorp Service", "TVS Service Center"
+        ],
+        services: ["Engine Service", "Oil Change", "Brake Service", "AC Service", "General Checkup"],
+        hours: "9:00 AM - 7:00 PM"
+      },
+      petrol: {
+        names: [
+          "Indian Oil Petrol Pump", "Bharat Petroleum", "Hindustan Petroleum", "Shell Petrol Station",
+          "Reliance Petrol Pump", "Essar Oil", "Total Energies", "BP Petrol Station", "Nayara Energy", "IOCL"
+        ],
+        services: ["Petrol", "Diesel", "CNG", "Car Wash", "Air Check"],
+        hours: "24 Hours"
+      },
+      hospital: {
+        names: [
+          "Apollo Hospital", "Fortis Hospital", "Manipal Hospital", "Columbia Asia",
+          "Narayana Health", "Max Healthcare", "AIIMS", "Government Hospital", "Care Hospital", "Aster CMI"
+        ],
+        services: ["Emergency Care", "General Medicine", "Surgery", "Pediatrics", "Cardiology"],
+        hours: "24 Hours Emergency"
+      },
+      police: {
+        names: [
+          "Police Station", "Traffic Police", "Cyber Crime Police", "Women Police Station",
+          "PCR Van Point", "Police Outpost", "District Police", "City Police Station", "Highway Patrol", "Beat Police"
+        ],
+        services: ["Emergency Response", "FIR Registration", "Traffic Violations", "General Complaints", "Security"],
+        hours: "24 Hours"
+      }
+    };
 
     // Common Indian road/area names for realistic addresses
     const streetNames = [
@@ -47,9 +79,10 @@ export default function SearchPage() {
       "IT Park", "Shopping Complex", "Business District", "Tech Hub", "City Center"
     ];
 
-    const centers: ServiceCenter[] = [];
+    const currentData = locationData[category];
+    const locations: ServiceLocation[] = [];
     
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 8; i++) {
       // Generate points within 5km radius
       const angle = Math.random() * 2 * Math.PI;
       const radius = Math.random() * 0.045; // ~5km in degrees
@@ -65,20 +98,21 @@ export default function SearchPage() {
       const landmark = landmarks[Math.floor(Math.random() * landmarks.length)];
       const pincode = Math.floor(Math.random() * 9000) + 560001; // Bangalore-style pincode
       
-      centers.push({
-        id: `center-${i + 1}`,
-        name: serviceTypes[i % serviceTypes.length],
+      locations.push({
+        id: `${category}-${i + 1}`,
+        name: currentData.names[i % currentData.names.length],
         address: `${buildingNumber}, ${streetName}, Near ${landmark}, ${pincode}`,
         phone: `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
         rating: Number((3.5 + Math.random() * 1.5).toFixed(1)),
         distance: Number(distance.toFixed(1)),
-        hours: "9:00 AM - 7:00 PM",
-        services: ["Engine Service", "Oil Change", "Brake Service", "AC Service", "General Checkup"]
+        hours: currentData.hours,
+        services: currentData.services,
+        type: category
       });
     }
 
     // Sort by distance
-    return centers.sort((a, b) => a.distance - b.distance);
+    return locations.sort((a, b) => a.distance - b.distance);
   };
 
   const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -111,9 +145,9 @@ export default function SearchPage() {
       (position) => {
         const { latitude, longitude } = position.coords;
         setUserLocation({ lat: latitude, lng: longitude });
-        const centers = generateServiceCenters(latitude, longitude);
-        setServiceCenters(centers);
-        setFilteredCenters(centers);
+        const locations = generateServiceLocations(latitude, longitude, selectedCategory);
+        setServiceLocations(locations);
+        setFilteredLocations(locations);
         setLocationStatus('success');
         setLoading(false);
       },
@@ -148,28 +182,42 @@ export default function SearchPage() {
     );
   };
 
-  // Filter service centers based on search
+  // Filter locations based on search
   useEffect(() => {
     if (!searchTerm.trim()) {
-      setFilteredCenters(serviceCenters);
+      setFilteredLocations(serviceLocations);
       return;
     }
 
-    const filtered = serviceCenters.filter(center =>
-      center.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      center.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      center.services.some(service => 
+    const filtered = serviceLocations.filter(location =>
+      location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      location.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      location.services.some(service => 
         service.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
     
-    setFilteredCenters(filtered);
-  }, [searchTerm, serviceCenters]);
+    setFilteredLocations(filtered);
+  }, [searchTerm, serviceLocations]);
 
   // Auto-load location on component mount
   useEffect(() => {
     getCurrentLocation();
   }, []);
+
+  // Regenerate locations when category changes
+  useEffect(() => {
+    if (userLocation) {
+      const locations = generateServiceLocations(userLocation.lat, userLocation.lng, selectedCategory);
+      setServiceLocations(locations);
+      setFilteredLocations(locations);
+    }
+  }, [selectedCategory, userLocation]);
+
+  const handleCategoryChange = (category: 'service' | 'petrol' | 'hospital' | 'police') => {
+    setSelectedCategory(category);
+    setSearchTerm(''); // Clear search when changing category
+  };
 
   const getLocationStatusColor = () => {
     switch (locationStatus) {
@@ -246,12 +294,72 @@ export default function SearchPage() {
             </Button>
           </div>
 
+          {/* Category Icons */}
+          <div className="grid grid-cols-4 gap-3">
+            <Button
+              onClick={() => handleCategoryChange('service')}
+              variant={selectedCategory === 'service' ? 'default' : 'outline'}
+              className={`h-16 flex flex-col items-center space-y-1 ${
+                selectedCategory === 'service' 
+                  ? 'bg-orange-500 hover:bg-orange-600 text-white' 
+                  : 'border-gray-200 hover:bg-gray-50'
+              }`}
+            >
+              <Wrench className="w-6 h-6" />
+              <span className="text-xs">Service Centre</span>
+            </Button>
+            
+            <Button
+              onClick={() => handleCategoryChange('petrol')}
+              variant={selectedCategory === 'petrol' ? 'default' : 'outline'}
+              className={`h-16 flex flex-col items-center space-y-1 ${
+                selectedCategory === 'petrol' 
+                  ? 'bg-orange-500 hover:bg-orange-600 text-white' 
+                  : 'border-gray-200 hover:bg-gray-50'
+              }`}
+            >
+              <Fuel className="w-6 h-6" />
+              <span className="text-xs">Petrol Bunks</span>
+            </Button>
+            
+            <Button
+              onClick={() => handleCategoryChange('hospital')}
+              variant={selectedCategory === 'hospital' ? 'default' : 'outline'}
+              className={`h-16 flex flex-col items-center space-y-1 ${
+                selectedCategory === 'hospital' 
+                  ? 'bg-orange-500 hover:bg-orange-600 text-white' 
+                  : 'border-gray-200 hover:bg-gray-50'
+              }`}
+            >
+              <Cross className="w-6 h-6" />
+              <span className="text-xs">Hospitals</span>
+            </Button>
+            
+            <Button
+              onClick={() => handleCategoryChange('police')}
+              variant={selectedCategory === 'police' ? 'default' : 'outline'}
+              className={`h-16 flex flex-col items-center space-y-1 ${
+                selectedCategory === 'police' 
+                  ? 'bg-orange-500 hover:bg-orange-600 text-white' 
+                  : 'border-gray-200 hover:bg-gray-50'
+              }`}
+            >
+              <Shield className="w-6 h-6" />
+              <span className="text-xs">Police Stations</span>
+            </Button>
+          </div>
+
           {/* Search Input */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
               type="text"
-              placeholder="Search nearby service centers or services..."
+              placeholder={`Search nearby ${
+                selectedCategory === 'service' ? 'service centers' :
+                selectedCategory === 'petrol' ? 'petrol bunks' :
+                selectedCategory === 'hospital' ? 'hospitals' :
+                'police stations'
+              } or services...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 h-10 bg-white border-gray-200 focus:border-orange-500 focus:ring-orange-500"
@@ -290,27 +398,27 @@ export default function SearchPage() {
                 Enable Location
               </Button>
             </div>
-          ) : filteredCenters.length === 0 && searchTerm ? (
+          ) : filteredLocations.length === 0 && searchTerm ? (
             <div className="text-center py-12">
               <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Service Centers Found</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Locations Found</h3>
               <p className="text-sm text-gray-600 max-w-sm mx-auto">
-                No service centers found matching "{searchTerm}". Try a different search term.
+                No locations found matching "{searchTerm}". Try a different search term.
               </p>
             </div>
-          ) : filteredCenters.length === 0 ? (
+          ) : filteredLocations.length === 0 ? (
             <div className="text-center py-12">
               <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Service Centers</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Locations Found</h3>
               <p className="text-sm text-gray-600 max-w-sm mx-auto">
-                No service centers found in your area. Try refreshing your location.
+                No locations found in your area. Try refreshing your location.
               </p>
             </div>
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">
-                  {filteredCenters.length} service center{filteredCenters.length !== 1 ? 's' : ''} nearby
+                  {filteredLocations.length} location{filteredLocations.length !== 1 ? 's' : ''} nearby
                 </p>
                 {userLocation && (
                   <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
@@ -319,7 +427,7 @@ export default function SearchPage() {
                 )}
               </div>
 
-              {filteredCenters.map((center) => (
+              {filteredLocations.map((center) => (
                 <Card key={center.id} className="hover:shadow-md transition-shadow bg-white border border-gray-200">
                   <CardContent className="p-3">
                     <div className="space-y-3">
@@ -377,7 +485,7 @@ export default function SearchPage() {
 
                       {/* Services */}
                       <div className="flex flex-wrap gap-1">
-                        {center.services.slice(0, 3).map((service, idx) => (
+                        {center.services.slice(0, 3).map((service: string, idx: number) => (
                           <span 
                             key={idx}
                             className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full"
