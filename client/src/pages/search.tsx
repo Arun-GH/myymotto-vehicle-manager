@@ -155,11 +155,7 @@ export default function SearchPage() {
         setLocationStatus('success');
         setLoading(false);
         
-        // Show success feedback for fresh location
-        toast({
-          title: "Location Updated",
-          description: `Found ${locations.length} nearby locations.`,
-        });
+        // Location updated successfully - no popup needed
       },
       (error) => {
         setLocationStatus('error');
@@ -212,7 +208,10 @@ export default function SearchPage() {
 
   // Auto-load location on component mount and refresh every time user visits
   useEffect(() => {
-    // Always refresh location when component mounts
+    // Clear existing data and get fresh location
+    setServiceLocations([]);
+    setFilteredLocations([]);
+    setUserLocation(null);
     setLocationStatus('loading');
     setLoading(true);
     getCurrentLocation();
@@ -221,9 +220,18 @@ export default function SearchPage() {
   // Regenerate locations when category changes
   useEffect(() => {
     if (userLocation) {
-      const locations = generateServiceLocations(userLocation.lat, userLocation.lng, selectedCategory);
-      setServiceLocations(locations);
-      setFilteredLocations(locations);
+      // Clear previous results first
+      setServiceLocations([]);
+      setFilteredLocations([]);
+      setLoading(true);
+      
+      // Generate new locations after small delay to show loading state
+      setTimeout(() => {
+        const locations = generateServiceLocations(userLocation.lat, userLocation.lng, selectedCategory);
+        setServiceLocations(locations);
+        setFilteredLocations(locations);
+        setLoading(false);
+      }, 300);
     }
   }, [selectedCategory, userLocation]);
 
