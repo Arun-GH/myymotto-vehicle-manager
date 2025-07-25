@@ -47,13 +47,13 @@ export default function EnhancedFileUpload({
   return (
     <div className={`space-y-3 ${className}`}>
       {/* File Access Options */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-3 gap-2">
         {/* Camera Capture */}
         <Button
           type="button"
           variant="outline"
           onClick={onCameraCapture || (() => triggerFileInput(cameraInputRef, "Camera"))}
-          className="h-11 flex flex-col items-center justify-center border-orange-300 text-orange-700 hover:bg-orange-50"
+          className="h-12 flex flex-col items-center justify-center border-orange-300 text-orange-700 hover:bg-orange-50"
         >
           <Camera className="w-4 h-4 mb-1" />
           {showLabels && <span className="text-xs">Camera</span>}
@@ -64,7 +64,7 @@ export default function EnhancedFileUpload({
           type="button"
           variant="outline"
           onClick={() => triggerFileInput(galleryInputRef, "Gallery")}
-          className="h-11 flex flex-col items-center justify-center border-blue-300 text-blue-700 hover:bg-blue-50"
+          className="h-12 flex flex-col items-center justify-center border-blue-300 text-blue-700 hover:bg-blue-50"
         >
           <Upload className="w-4 h-4 mb-1" />
           {showLabels && <span className="text-xs">Gallery</span>}
@@ -75,7 +75,7 @@ export default function EnhancedFileUpload({
           type="button"
           variant="outline"
           onClick={() => triggerFileInput(documentsInputRef, "Documents")}
-          className="h-11 flex flex-col items-center justify-center border-green-300 text-green-700 hover:bg-green-50"
+          className="h-12 flex flex-col items-center justify-center border-green-300 text-green-700 hover:bg-green-50"
         >
           <FileText className="w-4 h-4 mb-1" />
           {showLabels && <span className="text-xs">Documents</span>}
@@ -86,7 +86,7 @@ export default function EnhancedFileUpload({
           type="button"
           variant="outline"
           onClick={() => triggerFileInput(downloadsInputRef, "Downloads")}
-          className="h-11 flex flex-col items-center justify-center border-purple-300 text-purple-700 hover:bg-purple-50"
+          className="h-12 flex flex-col items-center justify-center border-purple-300 text-purple-700 hover:bg-purple-50"
         >
           <Download className="w-4 h-4 mb-1" />
           {showLabels && <span className="text-xs">Downloads</span>}
@@ -97,7 +97,7 @@ export default function EnhancedFileUpload({
           type="button"
           variant="outline"
           onClick={() => triggerFileInput(storageInputRef, "File Manager")}
-          className="h-11 flex flex-col items-center justify-center border-teal-300 text-teal-700 hover:bg-teal-50"
+          className="h-12 flex flex-col items-center justify-center border-teal-300 text-teal-700 hover:bg-teal-50"
         >
           <Folder className="w-4 h-4 mb-1" />
           {showLabels && <span className="text-xs">Files</span>}
@@ -108,7 +108,7 @@ export default function EnhancedFileUpload({
           type="button"
           variant="outline"
           onClick={() => triggerFileInput(storageInputRef, "Internal Storage")}
-          className="h-11 flex flex-col items-center justify-center border-gray-300 text-gray-700 hover:bg-gray-50"
+          className="h-12 flex flex-col items-center justify-center border-gray-300 text-gray-700 hover:bg-gray-50"
         >
           <HardDrive className="w-4 h-4 mb-1" />
           {showLabels && <span className="text-xs">Storage</span>}
