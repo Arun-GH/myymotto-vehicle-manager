@@ -1187,15 +1187,20 @@ export default function Profile() {
               <div className="flex justify-center">
                 {profile?.profilePicture ? (
                   <img 
-                    src={profile.profilePicture} 
+                    src={profile.profilePicture.startsWith('/app_storage') ? profile.profilePicture : `/api/files/${profile.profilePicture}`} 
                     alt="Profile" 
                     className="w-20 h-20 rounded-full object-cover shadow-md border-2 border-orange-200"
+                    onError={(e) => {
+                      console.log("Profile image failed to load:", profile.profilePicture);
+                      // Hide broken image and show default avatar
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
                   />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center border-2 border-gray-200">
-                    <User className="w-8 h-8 text-gray-400" />
-                  </div>
-                )}
+                ) : null}
+                <div className={`w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center border-2 border-gray-200 ${profile?.profilePicture ? 'hidden' : ''}`}>
+                  <User className="w-8 h-8 text-gray-400" />
+                </div>
               </div>
 
               {/* Basic Information */}
