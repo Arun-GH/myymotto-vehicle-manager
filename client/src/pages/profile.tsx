@@ -849,23 +849,6 @@ export default function Profile() {
                   <div className="grid grid-cols-2 gap-2">
                     <FormField
                       control={form.control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs">City</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="City"
-                              className="h-8 text-sm"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
                       name="state"
                       render={({ field }) => (
                         <FormItem>
@@ -884,6 +867,23 @@ export default function Profile() {
                               ))}
                             </SelectContent>
                           </Select>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">City</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="City"
+                              className="h-8 text-sm"
+                              {...field}
+                            />
+                          </FormControl>
                           <FormMessage className="text-xs" />
                         </FormItem>
                       )}

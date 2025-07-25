@@ -10,6 +10,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 25, 2025**: INTERCHANGED state and city positions on edit profile page as requested by user
+- MOVED state field to first position (left side) and city field to second position (right side) in the address section grid layout
+- MAINTAINED all existing functionality and validation while updating the visual order of the form fields
+- UPDATED profile editing form to show State | City instead of City | State for better user experience
+
 **July 25, 2025**: REVERTED profile page to separate viewing and editing modes due to user preference
 - RESTORED original two-mode profile structure with separate viewing and editing interfaces as requested by user
 - ADDED back isEditing state management with proper conditional rendering for viewing vs editing modes
