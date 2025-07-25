@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Car, Save, FileText, Calendar, Camera, Settings, AlertTriangle, Shield, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
+import { ArrowLeft, Car, Save, FileText, Calendar, Camera, Settings, AlertTriangle, Shield, TrendingUp, AlertCircle, CheckCircle, Upload } from "lucide-react";
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -18,7 +18,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import ColorfulLogo from "@/components/colorful-logo";
 import ReferralDialog from "@/components/referral-dialog";
-import EnhancedFileUpload from "@/components/enhanced-file-upload";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 // Top Indian Insurance Providers
@@ -435,23 +434,21 @@ export default function AddVehicle() {
                       </div>
                     )}
                     <div className="flex-1">
-                      <EnhancedFileUpload
-                        onFileSelect={(files) => {
-                          const file = files[0]; // Single file selection for vehicle photo
-                          if (file) {
-                            setThumbnailImage(file);
-                            
-                            // Create preview URL
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                              setThumbnailPreview(e.target?.result as string);
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                        accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
-                        multiple={false}
-                        showLabels={true}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => document.getElementById('vehicle-photo-input')?.click()}
+                        className="w-full h-12 flex items-center justify-center border-blue-300 text-blue-700 hover:bg-blue-50"
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        <span className="text-sm">Photos & Documents</span>
+                      </Button>
+                      <input
+                        id="vehicle-photo-input"
+                        type="file"
+                        accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.ppt,.pptx"
+                        onChange={handleThumbnailChange}
+                        className="hidden"
                       />
                       <p className="text-xs text-gray-500 mt-1 text-center">📱 Choose photos and documents from storage</p>
                     </div>
