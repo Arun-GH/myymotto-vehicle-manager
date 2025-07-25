@@ -382,7 +382,7 @@ export default function AdminDashboard() {
           <TabsContent value="ratings" className="space-y-4">
             <Card className="shadow-orange">
               <CardHeader>
-                <CardTitle className="text-lg">Recent Ratings</CardTitle>
+                <CardTitle className="text-lg">Ratings</CardTitle>
               </CardHeader>
               <CardContent>
                 {ratingsLoading ? (
