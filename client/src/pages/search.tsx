@@ -29,115 +29,127 @@ export default function SearchPage() {
   const [selectedCategory, setSelectedCategory] = useState<'service' | 'petrol' | 'hospital' | 'police'>('service');
   const { toast } = useToast();
 
-  const generateServiceLocations = (lat: number, lng: number, category: 'service' | 'petrol' | 'hospital' | 'police'): ServiceLocation[] => {
-    console.log(`Generating ${category} locations around: ${lat}, ${lng}`);
+  // Fetch real service locations using Overpass API (OpenStreetMap data)
+  const fetchRealServiceLocations = async (lat: number, lng: number, category: 'service' | 'petrol' | 'hospital' | 'police'): Promise<ServiceLocation[]> => {
+    console.log(`Fetching real ${category} locations around: ${lat}, ${lng}`);
     
-    const locationData = {
-      service: {
-        names: [
-          "Honda Service Center", "Maruti Service Center", "Hyundai Service Center", 
-          "Tata Motors Service", "Mahindra Service", "Toyota Service Center",
-          "Ford Service Center", "Bajaj Auto Service", "Hero MotoCorp Service", "TVS Service Center"
-        ],
-        services: ["Engine Service", "Oil Change", "Brake Service", "AC Service", "General Checkup"],
-        hours: "9:00 AM - 7:00 PM"
-      },
-      petrol: {
-        names: [
-          "Indian Oil Petrol Pump", "Bharat Petroleum", "Hindustan Petroleum", "Shell Petrol Station",
-          "Reliance Petrol Pump", "Essar Oil", "Total Energies", "BP Petrol Station", "Nayara Energy", "IOCL"
-        ],
-        services: ["Petrol", "Diesel", "CNG", "Car Wash", "Air Check"],
-        hours: "24 Hours"
-      },
-      hospital: {
-        names: [
-          "Apollo Hospital", "Fortis Hospital", "Manipal Hospital", "Columbia Asia",
-          "Narayana Health", "Max Healthcare", "AIIMS", "Government Hospital", "Care Hospital", "Aster CMI"
-        ],
-        services: ["Emergency Care", "General Medicine", "Surgery", "Pediatrics", "Cardiology"],
-        hours: "24 Hours Emergency"
-      },
-      police: {
-        names: [
-          "Police Station", "Traffic Police", "Cyber Crime Police", "Women Police Station",
-          "PCR Van Point", "Police Outpost", "District Police", "City Police Station", "Highway Patrol", "Beat Police"
-        ],
-        services: ["Emergency Response", "FIR Registration", "Traffic Violations", "General Complaints", "Security"],
-        hours: "24 Hours"
-      }
+    // Define Overpass API queries for different categories
+    const queries = {
+      service: `
+        [out:json][timeout:10];
+        (
+          node["shop"="car_repair"](around:5000,${lat},${lng});
+          node["amenity"="car_wash"](around:5000,${lat},${lng});
+          way["shop"="car_repair"](around:5000,${lat},${lng});
+          way["amenity"="car_wash"](around:5000,${lat},${lng});
+        );
+        out center meta;
+      `,
+      petrol: `
+        [out:json][timeout:10];
+        (
+          node["amenity"="fuel"](around:5000,${lat},${lng});
+          way["amenity"="fuel"](around:5000,${lat},${lng});
+        );
+        out center meta;
+      `,
+      hospital: `
+        [out:json][timeout:10];
+        (
+          node["amenity"="hospital"](around:5000,${lat},${lng});
+          node["amenity"="clinic"](around:5000,${lat},${lng});
+          way["amenity"="hospital"](around:5000,${lat},${lng});
+          way["amenity"="clinic"](around:5000,${lat},${lng});
+        );
+        out center meta;
+      `,
+      police: `
+        [out:json][timeout:10];
+        (
+          node["amenity"="police"](around:5000,${lat},${lng});
+          way["amenity"="police"](around:5000,${lat},${lng});
+        );
+        out center meta;
+      `
     };
 
-    // Detailed address components for realistic addresses
-    const roadTypes = [
-      "Main Road", "Service Road", "Ring Road", "Cross Road", "Extension",
-      "1st Main", "2nd Main", "3rd Main", "4th Cross", "5th Cross",
-      "Church Street", "Temple Street", "Market Street", "Station Road", "Link Road"
-    ];
+    try {
+      const overpassUrl = 'https://overpass-api.de/api/interpreter';
+      const response = await fetch(overpassUrl, {
+        method: 'POST',
+        body: queries[category],
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
 
-    const areaNames = [
-      "Koramangala", "Indiranagar", "Jayanagar", "BTM Layout", "HSR Layout",
-      "Whitefield", "Marathahalli", "Electronic City", "Sarjapur", "Bellandur",
-      "Hebbal", "Yeshwanthpur", "Rajajinagar", "Malleshwaram", "Basavanagudi"
-    ];
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-    const landmarks = [
-      "Bangalore Metro Station", "Bus Depot", "Government Hospital", "Primary School", "Hanuman Temple",
-      "Venkateshwara Temple", "Central Market", "Forum Mall", "Axis Bank", "SBI Branch",
-      "Post Office", "BBMP Office", "Police Station", "Fire Station", "Community Hall"
-    ];
+      const data = await response.json();
+      console.log(`Received ${data.elements?.length || 0} real locations from API`);
 
-    const sectors = ["Sector 1", "Sector 2", "Sector 3", "Phase 1", "Phase 2", "Block A", "Block B", "Block C"];
+      const locations: ServiceLocation[] = [];
 
-    const currentData = locationData[category];
-    const locations: ServiceLocation[] = [];
-    
-    for (let i = 0; i < 8; i++) {
-      // Generate points within smaller radius for more realistic results
-      const angle = Math.random() * 2 * Math.PI;
-      const radiusKm = Math.random() * 3 + 0.5; // 0.5km to 3.5km radius
-      const radiusDeg = radiusKm / 111; // Convert km to degrees (approximately)
+      data.elements?.forEach((element: any, index: number) => {
+        // Get coordinates (handle both nodes and ways)
+        const elementLat = element.lat || element.center?.lat;
+        const elementLng = element.lon || element.center?.lon;
+        
+        if (!elementLat || !elementLng) return;
+
+        // Calculate distance
+        const distance = calculateDistance(lat, lng, elementLat, elementLng);
+        
+        // Skip if too far (over 5km)
+        if (distance > 5) return;
+
+        // Extract name and address from tags
+        const tags = element.tags || {};
+        const name = tags.name || tags.brand || `${category.charAt(0).toUpperCase() + category.slice(1)} Location`;
+        const address = [
+          tags['addr:housenumber'],
+          tags['addr:street'],
+          tags['addr:suburb'] || tags['addr:district'],
+          tags['addr:city'] || 'Bangalore',
+          tags['addr:postcode']
+        ].filter(Boolean).join(', ') || `Near ${elementLat.toFixed(4)}, ${elementLng.toFixed(4)}`;
+
+        // Generate appropriate services based on category
+        const categoryServices = {
+          service: ["Engine Service", "Oil Change", "Brake Service", "AC Service", "General Checkup"],
+          petrol: ["Petrol", "Diesel", "CNG", "Car Wash", "Air Check"],
+          hospital: ["Emergency Care", "General Medicine", "Surgery", "Consultation"],
+          police: ["Emergency Response", "FIR Registration", "Traffic Violations", "General Complaints"]
+        };
+
+        const location: ServiceLocation = {
+          id: `real-${category}-${index}`,
+          name: name,
+          address: address,
+          phone: tags.phone || `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
+          rating: Number((4.0 + Math.random() * 1.0).toFixed(1)),
+          distance: Number(distance.toFixed(1)),
+          hours: tags.opening_hours || (category === 'petrol' || category === 'hospital' || category === 'police' ? "24 Hours" : "9:00 AM - 7:00 PM"),
+          services: categoryServices[category],
+          type: category
+        };
+
+        locations.push(location);
+      });
+
+      // Sort by distance and limit to 8 results
+      const sortedLocations = locations.sort((a, b) => a.distance - b.distance).slice(0, 8);
+      console.log(`Returning ${sortedLocations.length} real locations, closest: ${sortedLocations[0]?.distance}km`);
       
-      const centerLat = lat + (radiusDeg * Math.cos(angle));
-      const centerLng = lng + (radiusDeg * Math.sin(angle));
-      
-      // Calculate actual distance using Haversine formula
-      const distance = calculateDistance(lat, lng, centerLat, centerLng);
-      
-      // Generate detailed realistic address
-      const buildingNumber = Math.floor(Math.random() * 999) + 1;
-      const roadType = roadTypes[Math.floor(Math.random() * roadTypes.length)];
-      const areaName = areaNames[Math.floor(Math.random() * areaNames.length)];
-      const sector = sectors[Math.floor(Math.random() * sectors.length)];
-      const landmark = landmarks[Math.floor(Math.random() * landmarks.length)];
-      
-      // Generate Bangalore-style pincode (560001-560125)
-      const pincode = Math.floor(Math.random() * 125) + 560001;
-      
-      // Create detailed address format: Building No, Road, Sector, Area, Near Landmark, City, Pincode
-      const detailedAddress = `${buildingNumber}, ${roadType}, ${sector}, ${areaName}, Near ${landmark}, Bangalore, ${pincode}`;
-      
-      const location = {
-        id: `${category}-${i + 1}`,
-        name: currentData.names[i % currentData.names.length],
-        address: detailedAddress,
-        phone: `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
-        rating: Number((3.5 + Math.random() * 1.5).toFixed(1)),
-        distance: Number(distance.toFixed(1)),
-        hours: currentData.hours,
-        services: currentData.services,
-        type: category
-      };
-      
-      console.log(`Generated location ${i + 1}: ${location.name} at ${distance.toFixed(1)}km`);
-      locations.push(location);
+      return sortedLocations;
+
+    } catch (error) {
+      console.error('Error fetching real locations:', error);
+      // Return empty array - we'll handle this in the UI
+      return [];
     }
-
-    // Sort by distance
-    const sortedLocations = locations.sort((a, b) => a.distance - b.distance);
-    console.log(`Returning ${sortedLocations.length} sorted locations, closest: ${sortedLocations[0]?.distance}km`);
-    
-    return sortedLocations;
   };
 
   const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -173,7 +185,7 @@ export default function SearchPage() {
     console.log('Starting location detection...');
     
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const { latitude, longitude, accuracy } = position.coords;
         console.log(`Location detected: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
         
@@ -186,11 +198,29 @@ export default function SearchPage() {
           variant: "default"
         });
         
-        const locations = generateServiceLocations(latitude, longitude, selectedCategory);
-        console.log(`Generated ${locations.length} service locations`);
+        try {
+          const locations = await fetchRealServiceLocations(latitude, longitude, selectedCategory);
+          console.log(`Fetched ${locations.length} real service locations`);
+          
+          if (locations.length > 0) {
+            setServiceLocations(locations);
+            setFilteredLocations(locations);
+          } else {
+            toast({
+              title: "No Service Centers Found",
+              description: "No service centers found in your area. Please try refreshing.",
+              variant: "destructive"
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching service locations:', error);
+          toast({
+            title: "Search Error",
+            description: "Unable to find service centers. Please try again.",
+            variant: "destructive"
+          });
+        }
         
-        setServiceLocations(locations);
-        setFilteredLocations(locations);
         setLocationStatus('success');
         setLoading(false);
       },
@@ -207,9 +237,18 @@ export default function SearchPage() {
             const fallbackLat = 12.9716; // Bangalore coordinates as fallback
             const fallbackLng = 77.5946;
             setUserLocation({ lat: fallbackLat, lng: fallbackLng });
-            const fallbackLocations = generateServiceLocations(fallbackLat, fallbackLng, selectedCategory);
-            setServiceLocations(fallbackLocations);
-            setFilteredLocations(fallbackLocations);
+            
+            // Use real API even for fallback location
+            fetchRealServiceLocations(fallbackLat, fallbackLng, selectedCategory)
+              .then(fallbackLocations => {
+                setServiceLocations(fallbackLocations);
+                setFilteredLocations(fallbackLocations);
+              })
+              .catch(error => {
+                console.error('Error fetching fallback locations:', error);
+                setServiceLocations([]);
+                setFilteredLocations([]);
+              });
             break;
           case error.POSITION_UNAVAILABLE:
             errorMessage = "Location information unavailable. Please check your device's location settings.";
@@ -273,7 +312,7 @@ export default function SearchPage() {
   }, []);
 
   // Handle category changes - only search when user clicks other buttons
-  const handleCategoryChange = (category: 'service' | 'petrol' | 'hospital' | 'police') => {
+  const handleCategoryChange = async (category: 'service' | 'petrol' | 'hospital' | 'police') => {
     if (category === selectedCategory) return; // Don't reload same category
     
     setSelectedCategory(category);
@@ -285,13 +324,35 @@ export default function SearchPage() {
       setFilteredLocations([]);
       setLoading(true);
       
-      // Generate new locations after small delay to show loading state
-      setTimeout(() => {
-        const locations = generateServiceLocations(userLocation.lat, userLocation.lng, category);
-        setServiceLocations(locations);
-        setFilteredLocations(locations);
-        setLoading(false);
-      }, 300);
+      try {
+        // Fetch real locations for the selected category
+        const locations = await fetchRealServiceLocations(userLocation.lat, userLocation.lng, category);
+        console.log(`Fetched ${locations.length} real ${category} locations`);
+        
+        if (locations.length > 0) {
+          setServiceLocations(locations);
+          setFilteredLocations(locations);
+        } else {
+          toast({
+            title: `No ${category.charAt(0).toUpperCase() + category.slice(1)} Centers Found`,
+            description: `No ${category} centers found in your area.`,
+            variant: "destructive"
+          });
+          setServiceLocations([]);
+          setFilteredLocations([]);
+        }
+      } catch (error) {
+        console.error(`Error fetching ${category} locations:`, error);
+        toast({
+          title: "Search Error",
+          description: `Unable to find ${category} centers. Please try again.`,
+          variant: "destructive"
+        });
+        setServiceLocations([]);
+        setFilteredLocations([]);
+      }
+      
+      setLoading(false);
     }
   };
 
