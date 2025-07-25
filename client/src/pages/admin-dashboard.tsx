@@ -13,13 +13,19 @@ import {
   ShieldOff,
   TrendingUp,
   AlertTriangle,
-  Database
+  Database,
+  MessageCircle,
+  Send,
+  Trash2
 } from "lucide-react";
 import type { UserProfile } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import ColorfulLogo from "@/components/colorful-logo";
@@ -42,6 +48,158 @@ interface AdminStats {
   newVehiclesThisMonth: number;
   totalBroadcasts: number;
   totalRatings: number;
+}
+
+function AdminMessages() {
+  const { toast } = useToast();
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [todaysMessage, setTodaysMessage] = useState<any>(null);
+
+  useEffect(() => {
+    loadTodaysMessage();
+  }, []);
+
+  const loadTodaysMessage = async () => {
+    try {
+      const response = await apiRequest("GET", "/api/admin/messages/today");
+      const data = await response.json();
+      setTodaysMessage(data);
+    } catch (error) {
+      console.error("Error loading today's message:", error);
+    }
+  };
+
+  const handleCreateMessage = async () => {
+    if (!message.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a message",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const response = await apiRequest("POST", "/api/admin/messages", {
+        message: message.trim(),
+        messageDate: today
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Daily message created successfully",
+        });
+        setMessage("");
+        loadTodaysMessage();
+      } else {
+        throw new Error("Failed to create message");
+      }
+    } catch (error) {
+      console.error("Error creating message:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create daily message",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteMessage = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this message?")) return;
+
+    try {
+      const response = await apiRequest("DELETE", `/api/admin/messages/${id}`);
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Message deleted successfully",
+        });
+        loadTodaysMessage();
+      } else {
+        throw new Error("Failed to delete message");
+      }
+    } catch (error) {
+      console.error("Error deleting message:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete message",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <Card className="shadow-orange">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <MessageCircle className="w-5 h-5" />
+            Daily User Messages
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-3">
+            <div>
+              <label className="text-sm font-medium">Today's Message</label>
+              <Textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Enter a greeting message for all users today..."
+                className="h-20"
+                maxLength={200}
+              />
+              <div className="text-xs text-gray-500 mt-1">
+                {message.length}/200 characters
+              </div>
+            </div>
+            
+            <Button
+              onClick={handleCreateMessage}
+              disabled={loading || !message.trim()}
+              className="w-full"
+            >
+              <Send className="w-4 h-4 mr-2" />
+              {loading ? "Sending..." : "Send Message to All Users"}
+            </Button>
+          </div>
+
+          {todaysMessage && (
+            <div className="border rounded-lg p-4 bg-orange-50">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="font-medium text-orange-800">Active Message</p>
+                  <p className="text-sm text-gray-700 mt-1">{todaysMessage.message}</p>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Date: {new Date(todaysMessage.messageDate).toLocaleDateString()}
+                  </p>
+                </div>
+                <Button
+                  onClick={() => handleDeleteMessage(todaysMessage.id)}
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <div className="text-sm text-gray-600 space-y-1">
+            <p>• Messages are shown to all users on their dashboard</p>
+            <p>• Only one message per day is allowed</p>
+            <p>• Messages are automatically displayed when users open the app</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
 
 export default function AdminDashboard() {
@@ -482,11 +640,12 @@ export default function AdminDashboard() {
 
         {/* Detailed Data Tabs */}
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="vehicles">Vehicles</TabsTrigger>
             <TabsTrigger value="broadcasts">Posts</TabsTrigger>
             <TabsTrigger value="ratings">Ratings</TabsTrigger>
+            <TabsTrigger value="messages">Messages</TabsTrigger>
           </TabsList>
           
           <TabsContent value="users" className="space-y-4">
@@ -663,6 +822,10 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="messages" className="space-y-4">
+            <AdminMessages />
           </TabsContent>
         </Tabs>
       </div>

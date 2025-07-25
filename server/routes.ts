@@ -1877,6 +1877,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin daily message routes
+  app.post("/api/admin/messages", isAdmin, async (req, res) => {
+    try {
+      const { message, messageDate } = req.body;
+      const adminMessage = await storage.createAdminMessage({
+        message,
+        messageDate,
+        isActive: true
+      });
+      res.json(adminMessage);
+    } catch (error) {
+      console.error("Error creating admin message:", error);
+      res.status(500).json({ message: "Failed to create admin message" });
+    }
+  });
+
+  app.get("/api/admin/messages/today", isAdmin, async (req, res) => {
+    try {
+      const message = await storage.getTodaysAdminMessage();
+      res.json(message);
+    } catch (error) {
+      console.error("Error fetching today's admin message:", error);
+      res.status(500).json({ message: "Failed to fetch admin message" });
+    }
+  });
+
+  app.put("/api/admin/messages/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { message, messageDate, isActive } = req.body;
+      const updated = await storage.updateAdminMessage(id, { message, messageDate, isActive });
+      if (updated) {
+        res.json(updated);
+      } else {
+        res.status(404).json({ message: "Admin message not found" });
+      }
+    } catch (error) {
+      console.error("Error updating admin message:", error);
+      res.status(500).json({ message: "Failed to update admin message" });
+    }
+  });
+
+  app.delete("/api/admin/messages/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteAdminMessage(id);
+      if (success) {
+        res.json({ success: true });
+      } else {
+        res.status(404).json({ message: "Admin message not found" });
+      }
+    } catch (error) {
+      console.error("Error deleting admin message:", error);
+      res.status(500).json({ message: "Failed to delete admin message" });
+    }
+  });
+
   app.get("/api/admin/users/recent", isAdmin, async (req, res) => {
     try {
       const limit = parseInt(req.query.limit as string) || 10;
@@ -2232,6 +2289,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error sending test notification:", error);
       res.status(500).json({ message: "Failed to send test notification" });
+    }
+  });
+
+  // Regular user route to get today's admin message
+  app.get("/api/todays-message", async (req, res) => {
+    try {
+      const message = await storage.getTodaysAdminMessage();
+      res.json(message);
+    } catch (error) {
+      console.error("Error fetching today's message:", error);
+      res.status(500).json({ message: "Failed to fetch today's message" });
     }
   });
 

@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, adminMessages, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse, type AdminMessage, type InsertAdminMessage } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte, lt, desc, gte, isNull, or, inArray } from "drizzle-orm";
 
@@ -142,6 +142,12 @@ export interface IStorage {
   // Push notification methods
   registerPushToken(userId: string, token: string, platform: string): Promise<void>;
   getUserPushTokens(userId: string): Promise<string[]>;
+  
+  // Admin message methods
+  createAdminMessage(message: InsertAdminMessage): Promise<AdminMessage>;
+  getTodaysAdminMessage(): Promise<AdminMessage | undefined>;
+  updateAdminMessage(id: number, message: Partial<InsertAdminMessage>): Promise<AdminMessage | undefined>;
+  deleteAdminMessage(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -1523,6 +1529,42 @@ export class DatabaseStorage implements IStorage {
 
   // Add push tokens storage for demo
   private pushTokens?: Map<string, string[]>;
+  
+  // Admin message methods
+  async createAdminMessage(message: InsertAdminMessage): Promise<AdminMessage> {
+    const [adminMessage] = await db
+      .insert(adminMessages)
+      .values(message)
+      .returning();
+    return adminMessage;
+  }
+
+  async getTodaysAdminMessage(): Promise<AdminMessage | undefined> {
+    const today = new Date().toISOString().split('T')[0];
+    const [message] = await db
+      .select()
+      .from(adminMessages)
+      .where(eq(adminMessages.messageDate, today))
+      .orderBy(desc(adminMessages.createdAt))
+      .limit(1);
+    return message;
+  }
+
+  async updateAdminMessage(id: number, messageData: Partial<InsertAdminMessage>): Promise<AdminMessage | undefined> {
+    const [updated] = await db
+      .update(adminMessages)
+      .set({ ...messageData, updatedAt: new Date() })
+      .where(eq(adminMessages.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteAdminMessage(id: number): Promise<boolean> {
+    const result = await db
+      .delete(adminMessages)
+      .where(eq(adminMessages.id, id));
+    return result.rowCount > 0;
+  }
 }
 
 export const storage = new DatabaseStorage();

@@ -597,3 +597,22 @@ export const insertDashboardWidgetSchema = createInsertSchema(dashboardWidgets).
 
 export type DashboardWidget = typeof dashboardWidgets.$inferSelect;
 export type InsertDashboardWidget = z.infer<typeof insertDashboardWidgetSchema>;
+
+// Admin daily messages table for greetings and announcements
+export const adminMessages = pgTable("admin_messages", {
+  id: serial("id").primaryKey(),
+  message: text("message").notNull(),
+  messageDate: date("message_date").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertAdminMessageSchema = createInsertSchema(adminMessages).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type AdminMessage = typeof adminMessages.$inferSelect;
+export type InsertAdminMessage = z.infer<typeof insertAdminMessageSchema>;

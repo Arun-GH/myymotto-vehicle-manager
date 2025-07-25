@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings, Gamepad2, Puzzle, Newspaper, Files, Wrench, Radio } from "lucide-react";
+import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings, Gamepad2, Puzzle, Newspaper, Files, Wrench, Radio, MessageCircle, X } from "lucide-react";
 import { Link } from "wouter";
 import { type Vehicle } from "@shared/schema";
 import VehicleCard from "@/components/vehicle-card";
@@ -15,6 +15,50 @@ import { Button } from "@/components/ui/button";
 
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
+
+function AdminMessageBanner() {
+  const [showMessage, setShowMessage] = useState(false);
+  const [adminMessage, setAdminMessage] = useState<any>(null);
+
+  useEffect(() => {
+    loadTodaysMessage();
+  }, []);
+
+  const loadTodaysMessage = async () => {
+    try {
+      const response = await apiRequest("GET", "/api/todays-message");
+      const data = await response.json();
+      if (data && data.message) {
+        setAdminMessage(data);
+        setShowMessage(true);
+      }
+    } catch (error) {
+      console.error("Error loading today's message:", error);
+    }
+  };
+
+  if (!showMessage || !adminMessage) return null;
+
+  return (
+    <div className="mx-3 mb-4">
+      <div className="bg-gradient-to-r from-orange-100 to-yellow-100 border border-orange-200 rounded-lg p-4 relative">
+        <button
+          onClick={() => setShowMessage(false)}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+        >
+          <X className="w-4 h-4" />
+        </button>
+        <div className="flex items-start gap-3">
+          <MessageCircle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-orange-800 mb-1">Message from Admin</p>
+            <p className="text-sm text-gray-700">{adminMessage.message}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
@@ -89,6 +133,9 @@ export default function Dashboard() {
           </div>
         </div>
       </header>
+
+      {/* Admin Message Banner */}
+      <AdminMessageBanner />
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pb-20 bg-warm-pattern">
