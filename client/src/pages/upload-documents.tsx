@@ -16,7 +16,6 @@ import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
 import { OCRInsuranceScanner } from "@/components/ocr-insurance-scanner";
 import { type InsurancePolicyData } from "@/lib/ocr-utils";
 import { formatForDatabase } from "@/lib/date-format";
-import EnhancedFileUpload from "@/components/enhanced-file-upload";
 
 type DocumentType = "emission" | "insurance" | "rc" | "fuel" | "miscellaneous";
 
@@ -369,20 +368,44 @@ export default function UploadDocuments() {
 
 
 
-            {/* Enhanced File Upload Section */}
+            {/* File Upload Section */}
             <div className="space-y-2">
-              <Label className="text-xs font-medium">📁 Choose Files from Multiple Sources</Label>
+              <Label className="text-xs font-medium">Upload Files</Label>
               
-              <EnhancedFileUpload
-                onFileSelect={(files) => {
-                  const fileArray = Array.from(files);
-                  setSelectedFiles(prev => [...prev, ...fileArray]);
-                }}
-                onCameraCapture={handleCameraCapture}
-                accept="image/*,application/pdf,.doc,.docx,.txt"
-                multiple={true}
-                showLabels={true}
-              />
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCameraCapture}
+                  className="h-10 flex items-center justify-center border-blue-300 text-blue-700 hover:bg-blue-50"
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  <span className="text-xs">Camera</span>
+                </Button>
+                
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*,application/pdf,.doc,.docx,.txt';
+                    input.multiple = true;
+                    input.onchange = (e) => {
+                      const files = (e.target as HTMLInputElement).files;
+                      if (files) {
+                        const fileArray = Array.from(files);
+                        setSelectedFiles(prev => [...prev, ...fileArray]);
+                      }
+                    };
+                    input.click();
+                  }}
+                  className="h-10 flex items-center justify-center border-green-300 text-green-700 hover:bg-green-50"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  <span className="text-xs">Upload</span>
+                </Button>
+              </div>
               
               {selectedType === "insurance" && (
                 <Button
@@ -399,6 +422,16 @@ export default function UploadDocuments() {
               <p className="text-[10px] text-gray-500 text-center">
                 Supported: JPEG, PNG, WebP, PDF • Max: 10MB per file
               </p>
+              
+              {/* Hidden camera input for mobile compatibility */}
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleCameraInputChange}
+                style={{ display: 'none' }}
+                id="camera-input"
+              />
             </div>
 
             {/* Selected Files Preview */}

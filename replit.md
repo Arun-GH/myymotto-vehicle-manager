@@ -10,15 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 25, 2025**: COMPLETED comprehensive enhanced file system access implementation with improved visibility across all file upload areas
+**July 25, 2025**: COMPLETED comprehensive enhanced file system access implementation with selective deployment across application
 - CREATED enhanced-file-upload.tsx component providing unified access to documents, files, gallery, internal storage, documents folder, and downloads folder
 - IMPLEMENTED comprehensive file system permissions for accessing multiple storage locations throughout the app  
-- INTEGRATED enhanced file upload component across upload-documents.tsx, vehicle-document-section.tsx, add-vehicle.tsx, and maintenance.tsx pages
-- REPLACED traditional file input elements with enhanced component offering camera capture and multiple storage location access
-- ENHANCED layout with 3-column grid display (previously 2-column) ensuring all 6 file access options are clearly visible: Camera, Gallery, Documents, Downloads, Files, Storage
+- INTEGRATED enhanced file upload component across vehicle-document-section.tsx, add-vehicle.tsx, and maintenance.tsx pages
+- REVERTED upload-documents.tsx page back to traditional Camera and Upload button layout as requested for simplified user experience
+- ENHANCED layout with 3-column grid display ensuring all 6 file access options are clearly visible: Camera, Gallery, Documents, Downloads, Files, Storage
 - IMPROVED button sizing to h-12 (48px) with professional mobile-friendly interface and clear labeling for file source selection
-- UPGRADED user experience with unified file access across vehicle photos, document uploads, warranty cards, and invoice uploads
-- STANDARDIZED file selection workflow to include internal storage, documents folder, downloads folder, and gallery access options across all upload buttons
+- MAINTAINED traditional dual-button layout (Camera + Upload) in document upload page while keeping enhanced options in vehicle forms and maintenance
+- STANDARDIZED file selection workflow to include comprehensive storage access in vehicle management areas while preserving familiar interface in document uploads
 - IMPLEMENTED consistent file handling across all upload areas with proper error handling, file type validation, and success toast notifications
 - COMPLETED professional mobile-friendly broadcast/create post dialog with community guidelines disclaimer including gradient styling and orange theming
 
