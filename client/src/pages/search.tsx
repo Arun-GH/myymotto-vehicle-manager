@@ -68,18 +68,26 @@ export default function SearchPage() {
       }
     };
 
-    // Generic road/area names that work anywhere
-    const streetNames = [
-      "Main Road", "Service Road", "Ring Road", "Bypass Road", "Link Road",
-      "Station Road", "Market Road", "Temple Road", "Church Road", "School Road",
-      "Hospital Road", "Bus Stand Road", "Railway Station Road", "Airport Road", "Highway Road",
-      "Industrial Area", "Commercial Complex", "Residential Area", "Shopping Center", "Business District"
+    // Detailed address components for realistic addresses
+    const roadTypes = [
+      "Main Road", "Service Road", "Ring Road", "Cross Road", "Extension",
+      "1st Main", "2nd Main", "3rd Main", "4th Cross", "5th Cross",
+      "Church Street", "Temple Street", "Market Street", "Station Road", "Link Road"
+    ];
+
+    const areaNames = [
+      "Koramangala", "Indiranagar", "Jayanagar", "BTM Layout", "HSR Layout",
+      "Whitefield", "Marathahalli", "Electronic City", "Sarjapur", "Bellandur",
+      "Hebbal", "Yeshwanthpur", "Rajajinagar", "Malleshwaram", "Basavanagudi"
     ];
 
     const landmarks = [
-      "Metro Station", "Bus Stop", "Hospital", "School", "Temple",
-      "Market", "Shopping Mall", "Bank", "Post Office", "Government Office"
+      "Bangalore Metro Station", "Bus Depot", "Government Hospital", "Primary School", "Hanuman Temple",
+      "Venkateshwara Temple", "Central Market", "Forum Mall", "Axis Bank", "SBI Branch",
+      "Post Office", "BBMP Office", "Police Station", "Fire Station", "Community Hall"
     ];
+
+    const sectors = ["Sector 1", "Sector 2", "Sector 3", "Phase 1", "Phase 2", "Block A", "Block B", "Block C"];
 
     const currentData = locationData[category];
     const locations: ServiceLocation[] = [];
@@ -96,18 +104,23 @@ export default function SearchPage() {
       // Calculate actual distance using Haversine formula
       const distance = calculateDistance(lat, lng, centerLat, centerLng);
       
-      // Generate realistic address based on location
+      // Generate detailed realistic address
       const buildingNumber = Math.floor(Math.random() * 999) + 1;
-      const streetName = streetNames[Math.floor(Math.random() * streetNames.length)];
+      const roadType = roadTypes[Math.floor(Math.random() * roadTypes.length)];
+      const areaName = areaNames[Math.floor(Math.random() * areaNames.length)];
+      const sector = sectors[Math.floor(Math.random() * sectors.length)];
       const landmark = landmarks[Math.floor(Math.random() * landmarks.length)];
       
-      // Generate pincode based on rough location (generic approach)
-      const pincode = Math.floor(Math.random() * 99999) + 100000;
+      // Generate Bangalore-style pincode (560001-560125)
+      const pincode = Math.floor(Math.random() * 125) + 560001;
+      
+      // Create detailed address format: Building No, Road, Sector, Area, Near Landmark, City, Pincode
+      const detailedAddress = `${buildingNumber}, ${roadType}, ${sector}, ${areaName}, Near ${landmark}, Bangalore, ${pincode}`;
       
       const location = {
         id: `${category}-${i + 1}`,
         name: currentData.names[i % currentData.names.length],
-        address: `${buildingNumber}, ${streetName}, Near ${landmark}`,
+        address: detailedAddress,
         phone: `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
         rating: Number((3.5 + Math.random() * 1.5).toFixed(1)),
         distance: Number(distance.toFixed(1)),
