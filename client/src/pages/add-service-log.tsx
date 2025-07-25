@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ColorfulLogo from "@/components/colorful-logo";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -16,6 +17,79 @@ import { type Vehicle } from "@shared/schema";
 import { formatForDatabase } from "@/lib/date-format";
 import { useState, useRef } from "react";
 import logoImage from "@assets/Mymotto_Logo_Green_Revised_1752603344750.png";
+
+// Common 4-wheeler service types for dropdown
+const fourWheelerServiceTypes = [
+  'Engine Oil Change',
+  'Oil Filter Replacement', 
+  'Air Filter Replacement',
+  'Brake Service & Inspection',
+  'Brake Pad Replacement',
+  'Brake Fluid Change',
+  'Transmission Service',
+  'Coolant System Service',
+  'AC Service & Regassing',
+  'Battery Check & Replacement',
+  'Tire Rotation & Balancing',
+  'Wheel Alignment',
+  'Suspension Service',
+  'Spark Plug Replacement',
+  'Timing Belt Service',
+  'General Service (Paid)',
+  'Free Service',
+  'Car Wash & Detailing',
+  'Engine Tune-up',
+  'Clutch Service',
+  'Radiator Service',
+  'Exhaust System Service',
+  'Power Steering Service',
+  'Fuel System Cleaning',
+  'Electrical System Check',
+  'Body Work & Painting',
+  'Denting & Painting',
+  'Insurance Claim Work',
+  'Other (Please specify)'
+];
+
+// Common 2-wheeler service types for dropdown
+const twoWheelerServiceTypes = [
+  'Engine Oil Change',
+  'Oil Filter Replacement',
+  'Air Filter Cleaning/Replacement',
+  'Brake Service (Front/Rear)',
+  'Brake Pad Replacement',
+  'Chain Cleaning & Lubrication',
+  'Chain Adjustment',
+  'Chain Replacement',
+  'Sprocket Replacement',
+  'Spark Plug Replacement',
+  'Battery Service/Replacement',
+  'Tire Replacement (Front/Rear)',
+  'Tube Replacement',
+  'Puncture Repair',
+  'Carburetor Cleaning',
+  'Fuel Injector Cleaning',
+  'General Service (Paid)',
+  'Free Service',
+  'Clutch Plate Replacement',
+  'Clutch Cable Adjustment',
+  'Gear Oil Change',
+  'Brake Oil Change',
+  'Suspension Service',
+  'Fork Oil Change',
+  'Shock Absorber Service',
+  'Headlight/Taillight Service',
+  'Horn & Electrical Check',
+  'Speedometer Service',
+  'Exhaust Service/Repair',
+  'Engine Tuning',
+  'Carburetor Tuning',
+  'Washing & Cleaning',
+  'Insurance Claim Work',
+  'Accident Repair',
+  'Engine Overhaul/Rebore',
+  'Other (Please specify)'
+];
 
 const serviceLogSchema = z.object({
   serviceType: z.string().min(1, "Service type is required"),
@@ -34,6 +108,7 @@ export default function AddServiceLog() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [showCustomServiceInput, setShowCustomServiceInput] = useState(false);
 
   // Get service type from URL query parameter
   const urlParams = new URLSearchParams(window.location.search);
@@ -191,16 +266,51 @@ export default function AddServiceLog() {
                 <Label htmlFor="serviceType" className="text-sm font-medium text-gray-700">
                   Service Type *
                 </Label>
-                <Input
-                  id="serviceType"
-                  placeholder="e.g., Oil Change, Brake Service, General Service"
-                  className="h-9"
-                  {...form.register("serviceType", {
-                    onChange: (e) => {
-                      e.target.value = e.target.value.toUpperCase();
-                    }
-                  })}
-                />
+                {vehicle?.vehicleType === '4-wheeler' || vehicle?.vehicleType === '2-wheeler' ? (
+                  <div className="space-y-2">
+                    <Select 
+                      value={showCustomServiceInput ? 'Other (Please specify)' : form.watch("serviceType")} 
+                      onValueChange={(value) => {
+                        if (value === 'Other (Please specify)') {
+                          setShowCustomServiceInput(true);
+                          form.setValue("serviceType", "");
+                        } else {
+                          setShowCustomServiceInput(false);
+                          form.setValue("serviceType", value);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Select service type..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(vehicle?.vehicleType === '4-wheeler' ? fourWheelerServiceTypes : twoWheelerServiceTypes).map((serviceType) => (
+                          <SelectItem key={serviceType} value={serviceType}>
+                            {serviceType}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {showCustomServiceInput && (
+                      <Input
+                        {...form.register("serviceType")}
+                        placeholder="Enter custom service type..."
+                        className="h-9"
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <Input
+                    id="serviceType"
+                    placeholder="e.g., Oil Change, Brake Service, General Service"
+                    className="h-9"
+                    {...form.register("serviceType", {
+                      onChange: (e) => {
+                        e.target.value = e.target.value.toUpperCase();
+                      }
+                    })}
+                  />
+                )}
                 {form.formState.errors.serviceType && (
                   <p className="text-sm text-red-600">{form.formState.errors.serviceType.message}</p>
                 )}

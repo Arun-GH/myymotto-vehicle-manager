@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 25, 2025**: COMPLETED comprehensive 2-wheeler service type dropdown with manual input option for Service Management
+- IMPLEMENTED comprehensive dropdown list of 33 common 2-wheeler services including Chain maintenance, Oil changes, Brake service, Spark plug replacement, Suspension service, Engine tuning, and Carburetor services
+- ADDED 2-wheeler specific service types: Chain Cleaning & Lubrication, Chain Adjustment, Chain Replacement, Sprocket Replacement, Fork Oil Change, Clutch Cable Adjustment, Gear Oil Change, Carburetor Tuning, Engine Overhaul/Rebore
+- ENHANCED both combined-service.tsx and add-service-log.tsx with intelligent dropdown selection based on vehicle type (4-wheeler vs 2-wheeler)
+- CREATED "Other (Please specify)" option allowing users to manually enter custom service types for unique maintenance needs
+- MAINTAINED existing 4-wheeler service dropdown functionality while adding complete 2-wheeler service coverage
+- UNIFIED service type selection experience across all service logging interfaces with consistent dropdown behavior
+- PRESERVED manual input capability for 3-wheeler and other vehicle types ensuring universal compatibility
+
 **July 25, 2025**: COMPLETED HTML5 date picker implementation across all service log pages for enhanced user experience
 - ADDED native HTML5 date input fields to replace text inputs across combined-service.tsx and add-service-log.tsx
 - IMPLEMENTED calendar date pickers for Service Date field in both service forms with intuitive date selection

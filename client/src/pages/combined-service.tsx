@@ -151,6 +151,46 @@ const fourWheelerServiceTypes = [
   'Other (Please specify)'
 ];
 
+// Common 2-wheeler service types for dropdown
+const twoWheelerServiceTypes = [
+  'Engine Oil Change',
+  'Oil Filter Replacement',
+  'Air Filter Cleaning/Replacement',
+  'Brake Service (Front/Rear)',
+  'Brake Pad Replacement',
+  'Chain Cleaning & Lubrication',
+  'Chain Adjustment',
+  'Chain Replacement',
+  'Sprocket Replacement',
+  'Spark Plug Replacement',
+  'Battery Service/Replacement',
+  'Tire Replacement (Front/Rear)',
+  'Tube Replacement',
+  'Puncture Repair',
+  'Carburetor Cleaning',
+  'Fuel Injector Cleaning',
+  'General Service (Paid)',
+  'Free Service',
+  'Clutch Plate Replacement',
+  'Clutch Cable Adjustment',
+  'Gear Oil Change',
+  'Brake Oil Change',
+  'Suspension Service',
+  'Fork Oil Change',
+  'Shock Absorber Service',
+  'Headlight/Taillight Service',
+  'Horn & Electrical Check',
+  'Speedometer Service',
+  'Exhaust Service/Repair',
+  'Engine Tuning',
+  'Carburetor Tuning',
+  'Washing & Cleaning',
+  'Insurance Claim Work',
+  'Accident Repair',
+  'Engine Overhaul/Rebore',
+  'Other (Please specify)'
+];
+
 const serviceLogSchema = z.object({
   serviceType: z.string().min(1, "Service type is required"),
   serviceDate: z.string().min(1, "Service date is required"),
@@ -455,7 +495,7 @@ export default function CombinedServicePage() {
                 <form onSubmit={serviceForm.handleSubmit(handleServiceSubmit)} className="space-y-3">
                   <div className="space-y-1">
                     <Label htmlFor="serviceType" className="text-xs">Service Type</Label>
-                    {vehicle?.vehicleType === '4-wheeler' ? (
+                    {vehicle?.vehicleType === '4-wheeler' || vehicle?.vehicleType === '2-wheeler' ? (
                       <div className="space-y-2">
                         <Select 
                           value={showCustomServiceInput ? 'Other (Please specify)' : serviceForm.watch("serviceType")} 
@@ -473,7 +513,7 @@ export default function CombinedServicePage() {
                             <SelectValue placeholder="Select service type..." />
                           </SelectTrigger>
                           <SelectContent>
-                            {fourWheelerServiceTypes.map((serviceType) => (
+                            {(vehicle?.vehicleType === '4-wheeler' ? fourWheelerServiceTypes : twoWheelerServiceTypes).map((serviceType) => (
                               <SelectItem key={serviceType} value={serviceType}>
                                 {serviceType}
                               </SelectItem>
