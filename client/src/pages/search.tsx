@@ -206,7 +206,7 @@ export default function SearchPage() {
     setFilteredLocations(filtered);
   }, [searchTerm, serviceLocations]);
 
-  // Auto-load location on component mount and refresh every time user visits
+  // Auto-load location and service centers on component mount
   useEffect(() => {
     // Clear existing data and get fresh location
     setServiceLocations([]);
@@ -214,11 +214,26 @@ export default function SearchPage() {
     setUserLocation(null);
     setLocationStatus('loading');
     setLoading(true);
+    setSelectedCategory('service'); // Always start with service centers
     getCurrentLocation();
+
+    // Cleanup function to clear data when navigating away
+    return () => {
+      setServiceLocations([]);
+      setFilteredLocations([]);
+      setUserLocation(null);
+      setLocationStatus('idle');
+      setSearchTerm("");
+    };
   }, []);
 
-  // Regenerate locations when category changes
-  useEffect(() => {
+  // Handle category changes - only search when user clicks other buttons
+  const handleCategoryChange = (category: 'service' | 'petrol' | 'hospital' | 'police') => {
+    if (category === selectedCategory) return; // Don't reload same category
+    
+    setSelectedCategory(category);
+    setSearchTerm(''); // Clear search when changing category
+    
     if (userLocation) {
       // Clear previous results first
       setServiceLocations([]);
@@ -227,17 +242,12 @@ export default function SearchPage() {
       
       // Generate new locations after small delay to show loading state
       setTimeout(() => {
-        const locations = generateServiceLocations(userLocation.lat, userLocation.lng, selectedCategory);
+        const locations = generateServiceLocations(userLocation.lat, userLocation.lng, category);
         setServiceLocations(locations);
         setFilteredLocations(locations);
         setLoading(false);
       }, 300);
     }
-  }, [selectedCategory, userLocation]);
-
-  const handleCategoryChange = (category: 'service' | 'petrol' | 'hospital' | 'police') => {
-    setSelectedCategory(category);
-    setSearchTerm(''); // Clear search when changing category
   };
 
   const getLocationStatusColor = () => {
