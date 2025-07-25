@@ -116,11 +116,6 @@ export default function SearchPage() {
         setFilteredCenters(centers);
         setLocationStatus('success');
         setLoading(false);
-        
-        toast({
-          title: "Location Found",
-          description: `Found ${centers.length} service centers near you.`,
-        });
       },
       (error) => {
         setLocationStatus('error');
