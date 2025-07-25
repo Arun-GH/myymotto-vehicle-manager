@@ -68,23 +68,7 @@ export default function UploadDocuments() {
     setSelectedFiles(prev => [...prev, ...files]);
   };
 
-  const handleCameraCapture = () => {
-    // Trigger the hidden camera input to open device camera app
-    const cameraInput = document.getElementById('camera-input') as HTMLInputElement;
-    if (cameraInput) {
-      cameraInput.click();
-    }
-  };
 
-  const handleCameraInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFiles(prev => [...prev, file]);
-      // Photo captured successfully - no popup needed
-    }
-    // Reset the input value so the same file can be selected again
-    event.target.value = '';
-  };
 
   const handleOCRDataExtracted = async (data: InsurancePolicyData) => {
     setOcrData(data);
@@ -372,17 +356,7 @@ export default function UploadDocuments() {
             <div className="space-y-2">
               <Label className="text-xs font-medium">Upload Files</Label>
               
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCameraCapture}
-                  className="h-10 flex items-center justify-center border-blue-300 text-blue-700 hover:bg-blue-50"
-                >
-                  <Camera className="w-4 h-4 mr-2" />
-                  <span className="text-xs">Camera</span>
-                </Button>
-                
+              <div className="flex justify-center">
                 <Button
                   type="button"
                   variant="outline"
@@ -400,10 +374,10 @@ export default function UploadDocuments() {
                     };
                     input.click();
                   }}
-                  className="h-10 flex items-center justify-center border-green-300 text-green-700 hover:bg-green-50"
+                  className="h-10 flex items-center justify-center border-green-300 text-green-700 hover:bg-green-50 w-full"
                 >
                   <Upload className="w-4 h-4 mr-2" />
-                  <span className="text-xs">Upload</span>
+                  <span className="text-xs">Photos & Documents</span>
                 </Button>
               </div>
               
@@ -423,15 +397,7 @@ export default function UploadDocuments() {
                 Supported: JPEG, PNG, WebP, PDF • Max: 10MB per file
               </p>
               
-              {/* Hidden camera input for mobile compatibility */}
-              <input
-                type="file"
-                accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
-                capture="environment"
-                onChange={handleCameraInputChange}
-                style={{ display: 'none' }}
-                id="camera-input"
-              />
+
             </div>
 
             {/* Selected Files Preview */}

@@ -38,23 +38,7 @@ export function OCRInsuranceScanner({ onDataExtracted, onClose }: OCRInsuranceSc
     }
   };
 
-  const handleCameraCapture = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.jpg,.jpeg,.png,.gif,.bmp,.webp';
-    input.capture = 'environment';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        setSelectedFile(file);
-        const url = URL.createObjectURL(file);
-        setPreviewUrl(url);
-        setExtractedData(null);
-        setRawText('');
-      }
-    };
-    input.click();
-  };
+
 
   const processImage = async () => {
     if (!selectedFile) {
@@ -127,25 +111,16 @@ export function OCRInsuranceScanner({ onDataExtracted, onClose }: OCRInsuranceSc
           {/* File Selection */}
           <div className="space-y-3">
             <Label className="text-sm font-medium">Select Insurance Policy Image</Label>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCameraCapture}
-                className="flex items-center gap-2"
-              >
-                <Camera className="w-4 h-4" />
-                Camera
-              </Button>
-              <div className="relative">
+            <div className="flex justify-center">
+              <div className="relative w-full">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 w-full"
                   onClick={() => document.getElementById('ocr-file-input')?.click()}
                 >
                   <Upload className="w-4 h-4" />
-                  Upload
+                  Photos & Documents
                 </Button>
                 <input
                   id="ocr-file-input"

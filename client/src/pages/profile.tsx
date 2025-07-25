@@ -209,9 +209,7 @@ export default function Profile() {
   };
 
   // Handle camera capture button click
-  const handleCameraCapture = () => {
-    document.getElementById('profile-camera-input')?.click();
-  };
+
 
   // Remove profile image
   const removeProfileImage = () => {
@@ -250,9 +248,7 @@ export default function Profile() {
   };
 
   // Handle license camera capture button click
-  const handleLicenseCameraCapture = () => {
-    document.getElementById('license-camera-input')?.click();
-  };
+
 
   // Remove license image
   const removeLicenseImage = () => {
@@ -762,26 +758,7 @@ export default function Profile() {
                     </div>
 
                     {/* Upload Options */}
-                    <div className="flex gap-1.5 justify-center">
-                      {/* Hidden camera input that opens device camera app with front camera */}
-                      <input
-                        id="profile-camera-input"
-                        type="file"
-                        accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
-                        capture="user"
-                        onChange={handleCameraInputChange}
-                        className="hidden"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleCameraCapture}
-                        className="flex items-center gap-1.5 h-7 text-xs px-2"
-                      >
-                        <Camera className="w-3 h-3" />
-                        Camera
-                      </Button>
+                    <div className="flex justify-center">
                       <Button
                         type="button"
                         variant="outline"
@@ -790,7 +767,7 @@ export default function Profile() {
                         onClick={() => document.getElementById('profile-upload')?.click()}
                       >
                         <Upload className="w-3 h-3" />
-                        Upload
+                        Photos & Documents
                       </Button>
                     </div>
 
@@ -1130,31 +1107,12 @@ export default function Profile() {
                       </div>
 
                       {/* License Upload Buttons */}
-                      <div className="flex gap-1.5 justify-center">
-                        {/* Hidden camera input that opens device camera app with front camera */}
-                        <input
-                          id="license-camera-input"
-                          type="file"
-                          accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
-                          capture="user"
-                          onChange={handleLicenseCameraInputChange}
-                          className="hidden"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={handleLicenseCameraCapture}
-                          className="flex items-center gap-1.5 h-7 text-xs px-2"
-                        >
-                          <Camera className="w-3 h-3" />
-                          Camera
-                        </Button>
+                      <div className="flex justify-center">
                         <label>
                           <Button type="button" variant="outline" size="sm" className="flex items-center gap-1.5 h-7 text-xs px-2" asChild>
                             <div>
                               <Upload className="w-3 h-3" />
-                              Upload
+                              Photos & Documents
                             </div>
                           </Button>
                           <input

@@ -47,38 +47,27 @@ export default function EnhancedFileUpload({
   return (
     <div className={`space-y-3 ${className}`}>
       {/* File Access Options */}
-      <div className="grid grid-cols-3 gap-2">
-        {/* Camera Capture */}
+      <div className="grid grid-cols-2 gap-2">
+        {/* Photos & Documents */}
         <Button
           type="button"
           variant="outline"
-          onClick={onCameraCapture || (() => triggerFileInput(cameraInputRef, "Camera"))}
-          className="h-12 flex flex-col items-center justify-center border-orange-300 text-orange-700 hover:bg-orange-50"
-        >
-          <Camera className="w-4 h-4 mb-1" />
-          {showLabels && <span className="text-xs">Camera</span>}
-        </Button>
-
-        {/* Photo Gallery */}
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => triggerFileInput(galleryInputRef, "Gallery")}
+          onClick={() => triggerFileInput(galleryInputRef, "Photos & Documents")}
           className="h-12 flex flex-col items-center justify-center border-blue-300 text-blue-700 hover:bg-blue-50"
         >
           <Upload className="w-4 h-4 mb-1" />
-          {showLabels && <span className="text-xs">Upload</span>}
+          {showLabels && <span className="text-xs">Photos & Documents</span>}
         </Button>
 
         {/* Documents Folder */}
         <Button
           type="button"
           variant="outline"
-          onClick={() => triggerFileInput(documentsInputRef, "Documents")}
+          onClick={() => triggerFileInput(documentsInputRef, "Files")}
           className="h-12 flex flex-col items-center justify-center border-green-300 text-green-700 hover:bg-green-50"
         >
           <FileText className="w-4 h-4 mb-1" />
-          {showLabels && <span className="text-xs">Documents</span>}
+          {showLabels && <span className="text-xs">Files</span>}
         </Button>
 
         {/* Downloads Folder */}

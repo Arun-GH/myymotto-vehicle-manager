@@ -296,26 +296,7 @@ export default function AddVehicle() {
     setThumbnailPreview(null);
   };
 
-  const handleCameraCapture = () => {
-    // Trigger the hidden camera input to open device camera app
-    const cameraInput = document.getElementById('camera-input') as HTMLInputElement;
-    if (cameraInput) {
-      cameraInput.click();
-    }
-  };
 
-  const handleCameraInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setThumbnailImage(file);
-      const previewUrl = URL.createObjectURL(file);
-      setThumbnailPreview(previewUrl);
-      
-      // Photo captured successfully - no popup needed
-    }
-    // Reset the input value so the same file can be selected again
-    event.target.value = '';
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -468,24 +449,15 @@ export default function AddVehicle() {
                             reader.readAsDataURL(file);
                           }
                         }}
-                        onCameraCapture={handleCameraCapture}
                         accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
                         multiple={false}
                         showLabels={true}
                       />
-                      <p className="text-xs text-gray-500 mt-1 text-center">📱 Take photo from camera app or choose from storage</p>
+                      <p className="text-xs text-gray-500 mt-1 text-center">📱 Choose photos and documents from storage</p>
                     </div>
                   </div>
                   
-                  {/* Hidden camera input for device camera access */}
-                  <input
-                    id="camera-input"
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
-                    capture="environment"
-                    onChange={handleCameraInputChange}
-                    style={{ display: 'none' }}
-                  />
+
                 </div>
                 {/* Vehicle Type - First Field */}
                 <FormField

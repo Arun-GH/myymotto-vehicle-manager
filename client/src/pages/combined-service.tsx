@@ -471,26 +471,16 @@ export default function CombinedServicePage() {
                   {/* Invoice Upload */}
                   <div className="space-y-1">
                     <Label className="text-xs">Invoice (Optional)</Label>
-                    <div className="flex space-x-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => triggerCamera('service')}
-                        className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50 h-8 text-xs"
-                      >
-                        <Camera className="w-3 h-3 mr-1" />
-                        Camera
-                      </Button>
+                    <div className="flex justify-center">
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => triggerFileUpload('service')}
-                        className="flex-1 border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs"
+                        className="border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs w-full"
                       >
                         <Upload className="w-3 h-3 mr-1" />
-                        Upload
+                        Photos & Documents
                       </Button>
                     </div>
                     {selectedServiceFile && (
@@ -697,26 +687,16 @@ export default function CombinedServicePage() {
             {/* Invoice Upload */}
             <div className="space-y-1">
               <Label className="text-sm">Invoice</Label>
-              <div className="flex space-x-1">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => triggerCamera('invoice')}
-                  className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50 h-8 text-xs"
-                >
-                  <Camera className="w-3 h-3 mr-1" />
-                  Camera
-                </Button>
+              <div className="flex justify-center">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => triggerFileUpload('invoice')}
-                  className="flex-1 border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs"
+                  className="border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs w-full"
                 >
                   <Upload className="w-3 h-3 mr-1" />
-                  Upload
+                  Photos & Documents
                 </Button>
               </div>
               {invoiceFile && (

@@ -237,29 +237,7 @@ export default function EditVehicle() {
     }
   };
 
-  const handleCameraCapture = () => {
-    // Trigger the hidden camera input to open device camera app
-    const cameraInput = document.getElementById('camera-input') as HTMLInputElement;
-    if (cameraInput) {
-      cameraInput.click();
-    }
-  };
 
-  const handleCameraInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setThumbnailImage(file);
-      const previewUrl = URL.createObjectURL(file);
-      setThumbnailPreview(previewUrl);
-      
-      toast({
-        title: "Photo Captured",
-        description: "Vehicle photo has been successfully captured from camera.",
-      });
-    }
-    // Reset the input value so the same file can be selected again
-    event.target.value = '';
-  };
 
   const removeThumbnail = () => {
     setThumbnailImage(null);
@@ -480,27 +458,8 @@ export default function EditVehicle() {
                       </div>
                     )}
                     <div className="flex-1 space-y-2">
-                      <div className="flex gap-2">
-                        {/* Hidden camera input that opens device camera app */}
-                        <input
-                          id="camera-input"
-                          type="file"
-                          accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
-                          capture="environment"
-                          onChange={handleCameraInputChange}
-                          className="hidden"
-                        />
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          size="sm"
-                          className="h-8 text-xs px-3"
-                          onClick={handleCameraCapture}
-                        >
-                          <Camera className="w-3 h-3 mr-1" />
-                          Camera
-                        </Button>
-                        <label className="block">
+                      <div className="flex justify-center">
+                        <label className="block w-full">
                           <input
                             type="file"
                             accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
@@ -511,18 +470,18 @@ export default function EditVehicle() {
                             type="button" 
                             variant="outline" 
                             size="sm"
-                            className="h-8 text-xs px-3"
+                            className="h-8 text-xs px-3 w-full"
                             onClick={(e) => {
                               e.preventDefault();
                               (e.target as HTMLElement).parentElement?.querySelector('input')?.click();
                             }}
                           >
                             <Upload className="w-3 h-3 mr-1" />
-                            Upload
+                            Photos & Documents
                           </Button>
                         </label>
                       </div>
-                      <p className="text-xs text-gray-500">Take a photo with camera app or upload from gallery</p>
+                      <p className="text-xs text-gray-500">Choose photos and documents from storage</p>
                     </div>
                   </div>
                 </div>
