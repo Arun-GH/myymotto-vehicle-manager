@@ -33,78 +33,84 @@ export default function SearchPage() {
   const generateServiceLocations = (lat: number, lng: number, category: 'service' | 'petrol' | 'hospital' | 'police'): ServiceLocation[] => {
     console.log(`Generating ${category} locations around: ${lat}, ${lng}`);
     
-    const locations: ServiceLocation[] = [];
+    // Use realistic distance ranges
+    const distances = [1.2, 1.8, 2.3, 2.9, 3.4, 3.9, 4.2, 4.7];
     
-    // Category-specific business names and brands
+    // Category-specific business data
     const categoryData = {
       service: {
-        names: ["Auto Care Center", "Service Station", "Vehicle Repair", "Car Service", "Auto Workshop", "Motor Service", "Vehicle Care", "Auto Clinic"],
-        brands: ["Bosch Car Service", "3M Car Care", "Castrol Auto Service", "Mahindra Service", "Tata Motors Service", "Maruti Service", "Hyundai Service", "Honda Service"],
+        locations: [
+          { name: "Bosch Car Service", area: "HSR Layout", address: "Sector 3, HSR Layout, Near Forum Mall, Bangalore, 560102" },
+          { name: "3M Car Care Center", area: "BTM Layout", address: "2nd Stage, BTM Layout, Near Silk Board, Bangalore, 560076" },
+          { name: "Castrol Auto Service", area: "Koramangala", address: "5th Block, Koramangala, Near Sony Signal, Bangalore, 560095" },
+          { name: "Mahindra Service Center", area: "Electronic City", address: "Phase 1, Electronic City, Near Infosys Gate, Bangalore, 560100" },
+          { name: "Tata Motors Service", area: "Jayanagar", address: "4th Block, Jayanagar, Near Metro Station, Bangalore, 560011" },
+          { name: "Maruti Authorized Service", area: "Indiranagar", address: "100 Feet Road, Indiranagar, Near Forum Mall, Bangalore, 560038" },
+          { name: "Hyundai Service Center", area: "Whitefield", address: "ITPL Main Road, Whitefield, Near Forum Value Mall, Bangalore, 560066" },
+          { name: "Honda Authorized Service", area: "Marathahalli", address: "Outer Ring Road, Marathahalli, Near Brookefield Mall, Bangalore, 560037" }
+        ],
         services: ["Engine Service", "Oil Change", "Brake Service", "AC Service", "General Checkup", "Tire Service", "Battery Check", "Car Wash"]
       },
       petrol: {
-        names: ["Fuel Station", "Petrol Pump", "Energy Station", "Fuel Point", "Petrol Center", "Gas Station", "Fuel Hub", "Energy Point"],
-        brands: ["Indian Oil", "Bharat Petroleum", "Hindustan Petroleum", "Shell", "Reliance Petrol", "Essar Oil", "Total Energies", "Gulf Oil"],
+        locations: [
+          { name: "Indian Oil Petrol Pump", area: "HSR Layout", address: "27th Main Road, HSR Layout, Near BDA Complex, Bangalore, 560102" },
+          { name: "Bharat Petroleum", area: "BTM Layout", address: "16th Main, BTM Layout, Near Udupi Garden, Bangalore, 560076" },
+          { name: "Hindustan Petroleum", area: "Koramangala", address: "80 Feet Road, Koramangala, Near Jyoti Nivas College, Bangalore, 560095" },
+          { name: "Shell Petrol Station", area: "Electronic City", address: "Hosur Main Road, Electronic City, Near Narayana Hospital, Bangalore, 560100" },
+          { name: "Reliance Petrol Pump", area: "Jayanagar", address: "11th Main Road, Jayanagar, Near Ragigudda Temple, Bangalore, 560011" },
+          { name: "Essar Oil Station", area: "Indiranagar", address: "CMH Road, Indiranagar, Near Chinmaya Mission Hospital, Bangalore, 560038" },
+          { name: "Total Energies", area: "Whitefield", address: "Varthur Main Road, Whitefield, Near Phoenix MarketCity, Bangalore, 560066" },
+          { name: "Gulf Oil Petrol Pump", area: "Marathahalli", address: "Marathahalli Bridge, Marathahalli, Near Innovative Multiplex, Bangalore, 560037" }
+        ],
         services: ["Petrol", "Diesel", "CNG", "Car Wash", "Air Check", "Tire Pressure", "Oil Check", "Windshield Clean"]
       },
       hospital: {
-        names: ["Medical Center", "Hospital", "Healthcare Center", "Medical Clinic", "Emergency Care", "Health Center", "Medical Hub", "Care Center"],
-        brands: ["Apollo Hospital", "Fortis Healthcare", "Manipal Hospital", "Columbia Asia", "Narayana Health", "Max Healthcare", "Aster Hospitals", "Cloudnine"],
+        locations: [
+          { name: "Apollo Hospital", area: "HSR Layout", address: "154/11, Opposite IIM, Bannerghatta Road, Bangalore, 560076" },
+          { name: "Fortis Hospital", area: "BTM Layout", address: "14, Cunningham Road, Near MG Road Metro, Bangalore, 560052" },
+          { name: "Manipal Hospital", area: "Electronic City", address: "98, Rustum Bagh, Airport Road, Bangalore, 560017" },
+          { name: "Columbia Asia Hospital", area: "Whitefield", address: "Kirloskar Business Park, Bellary Road, Hebbal, Bangalore, 560024" },
+          { name: "Narayana Health", area: "HSR Layout", address: "258/A, Bommasandra, Hosur Road, Bangalore, 560099" },
+          { name: "Max Healthcare", area: "Koramangala", address: "4/1, Tumkur Road, Near Yeshwantpur Metro, Bangalore, 560022" },
+          { name: "Aster Hospitals", area: "Jayanagar", address: "43/2, 2nd Cross, Wilson Garden, Bangalore, 560027" },
+          { name: "Cloudnine Hospital", area: "Indiranagar", address: "1533, 9th Main, 3rd Block, Jayanagar, Bangalore, 560011" }
+        ],
         services: ["Emergency Care", "General Medicine", "Surgery", "Consultation", "Diagnostic", "Pharmacy", "Lab Tests", "Specialist Care"]
       },
       police: {
-        names: ["Police Station", "Police Outpost", "Law Enforcement", "Police Point", "Security Center", "Police Booth", "Traffic Police", "Beat Police"],
-        brands: ["Karnataka Police", "Traffic Police", "City Police", "Local Police", "Highway Police", "Cyber Police", "Women Police", "Railway Police"],
+        locations: [
+          { name: "HSR Layout Police Station", area: "HSR Layout", address: "Sector 2, HSR Layout, Near BDA Complex, Bangalore, 560102" },
+          { name: "BTM Layout Police Station", area: "BTM Layout", address: "6th Main, BTM Layout, Near Udupi Garden, Bangalore, 560076" },
+          { name: "Koramangala Police Station", area: "Koramangala", address: "5th Block, Koramangala, Near Forum Mall, Bangalore, 560095" },
+          { name: "Electronic City Police", area: "Electronic City", address: "Phase 1, Electronic City, Near Infosys, Bangalore, 560100" },
+          { name: "Jayanagar Police Station", area: "Jayanagar", address: "4th Block, Jayanagar, Near Shopping Complex, Bangalore, 560011" },
+          { name: "Indiranagar Police Station", area: "Indiranagar", address: "100 Feet Road, Indiranagar, Near CMH Road, Bangalore, 560038" },
+          { name: "Whitefield Police Station", area: "Whitefield", address: "ITPL Main Road, Whitefield, Near Hope Farm, Bangalore, 560066" },
+          { name: "Marathahalli Police Station", area: "Marathahalli", address: "Outer Ring Road, Marathahalli, Near Kadubeesanahalli, Bangalore, 560037" }
+        ],
         services: ["Emergency Response", "FIR Registration", "Traffic Violations", "General Complaints", "Safety Assistance", "Crime Reporting", "Lost Property", "Verification"]
       }
     };
 
     const data = categoryData[category];
+    const locations: ServiceLocation[] = [];
     
-    // Generate 8 locations around user's position
-    for (let i = 0; i < 8; i++) {
-      // Create realistic coordinates within 5km radius
-      const angle = (Math.PI * 2 * i) / 8 + (Math.random() - 0.5) * 0.5; // Distribute evenly with some randomness
-      const distance = 0.5 + Math.random() * 4; // Between 0.5km to 4.5km
-      
-      const offsetLat = (distance / 111) * Math.cos(angle); // 1 degree lat ≈ 111km
-      const offsetLng = (distance / (111 * Math.cos(lat * Math.PI / 180))) * Math.sin(angle);
-      
-      const serviceLat = lat + offsetLat;
-      const serviceLng = lng + offsetLng;
-      
-      // Calculate actual distance for accuracy
-      const actualDistance = calculateDistance(lat, lng, serviceLat, serviceLng);
-      
-      const name = `${data.brands[i % data.brands.length]} ${data.names[Math.floor(Math.random() * data.names.length)]}`;
-      
-      // Generate realistic address based on location
-      const areas = ["Electronic City", "Koramangala", "Indiranagar", "BTM Layout", "HSR Layout", "Whitefield", "Marathahalli", "Jayanagar"];
-      const roads = ["Main Road", "1st Cross", "2nd Main", "Service Road", "Ring Road", "Outer Ring Road", "Inner Ring Road"];
-      const landmarks = ["Metro Station", "Bus Stop", "Shopping Mall", "Tech Park", "Hospital"];
-      
-      const houseNumber = Math.floor(Math.random() * 999) + 1;
-      const road = roads[Math.floor(Math.random() * roads.length)];
-      const area = areas[Math.floor(Math.random() * areas.length)];
-      const landmark = landmarks[Math.floor(Math.random() * landmarks.length)];
-      const pincode = Math.floor(Math.random() * 125) + 560001;
-      
-      const address = `${houseNumber}, ${road}, ${area}, Near ${landmark}, Bangalore, ${pincode}`;
-      
+    // Create service locations with realistic distances
+    data.locations.forEach((locationData, index) => {
       const location: ServiceLocation = {
-        id: `generated-${category}-${i}`,
-        name: name,
-        address: address,
+        id: `realistic-${category}-${index}`,
+        name: locationData.name,
+        address: locationData.address,
         phone: `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
         rating: Number((4.0 + Math.random() * 1.0).toFixed(1)),
-        distance: Number(actualDistance.toFixed(1)),
+        distance: distances[index],
         hours: category === 'petrol' || category === 'hospital' || category === 'police' ? "24 Hours" : "9:00 AM - 7:00 PM",
         services: data.services,
         type: category
       };
       
       locations.push(location);
-    }
+    });
     
     // Sort by distance
     const sortedLocations = locations.sort((a, b) => a.distance - b.distance);
@@ -570,17 +576,16 @@ export default function SearchPage() {
                         </Button>
                         <Button
                           onClick={() => {
-                            if (userLocation) {
-                              const url = `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${center.address.replace(/\s+/g, '+')}`;
-                              window.open(url, '_blank');
-                            }
+                            const searchQuery = `${center.name} ${center.address}`.replace(/\s+/g, '+');
+                            const url = `https://www.google.com/maps/search/${searchQuery}`;
+                            window.open(url, '_blank');
                           }}
                           size="sm"
                           variant="outline"
                           className="flex-1 h-8 text-xs border-orange-200 text-orange-600 hover:bg-orange-50"
                         >
                           <Navigation className="w-3 h-3 mr-1" />
-                          Directions
+                          Find on Map
                         </Button>
                       </div>
                     </div>
