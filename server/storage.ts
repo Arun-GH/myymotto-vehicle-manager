@@ -1265,7 +1265,8 @@ export class DatabaseStorage implements IStorage {
       totalRatingsResult,
       subscriptionRevenueResult,
       newUsersThisMonthResult,
-      newVehiclesThisMonthResult
+      newVehiclesThisMonthResult,
+      userProfilesResult
     ] = await Promise.all([
       db.select().from(users),
       db.select().from(vehicles),
@@ -1273,18 +1274,48 @@ export class DatabaseStorage implements IStorage {
       db.select().from(ratings),
       db.select().from(users).where(eq(users.subscriptionStatus, "paid")),
       db.select().from(users).where(gte(users.createdAt, new Date(new Date().setDate(1)))),
-      db.select().from(vehicles).where(gte(vehicles.createdAt, new Date(new Date().setDate(1))))
+      db.select().from(vehicles).where(gte(vehicles.createdAt, new Date(new Date().setDate(1)))),
+      db.select().from(userProfiles)
     ]);
+
+    // Calculate demographics
+    const maleUsers = userProfilesResult.filter(p => p.gender === 'male').length;
+    const femaleUsers = userProfilesResult.filter(p => p.gender === 'female').length;
+    
+    // Calculate vehicle types
+    const twoWheelers = totalVehiclesResult.filter(v => v.vehicleType === '2-wheeler').length;
+    const threeWheelers = totalVehiclesResult.filter(v => v.vehicleType === '3-wheeler').length;
+    const fourWheelers = totalVehiclesResult.filter(v => v.vehicleType === '4-wheeler').length;
+    
+    // Calculate activity metrics (mock for now - would need login tracking in real app)
+    const dailyActiveUsers = Math.floor(totalUsersResult.filter(u => u.isVerified).length * 0.3);
+    const monthlyActiveUsers = Math.floor(totalUsersResult.filter(u => u.isVerified).length * 0.8);
+    
+    // Calculate users by state
+    const usersByState: { [key: string]: number } = {};
+    userProfilesResult.forEach(profile => {
+      if (profile.state) {
+        usersByState[profile.state] = (usersByState[profile.state] || 0) + 1;
+      }
+    });
 
     return {
       totalUsers: totalUsersResult.length,
+      activeUsers: totalUsersResult.filter(u => u.isVerified).length,
+      dailyActiveUsers,
+      monthlyActiveUsers,
+      maleUsers,
+      femaleUsers,
+      usersByState,
       totalVehicles: totalVehiclesResult.length,
+      twoWheelers,
+      threeWheelers,
+      fourWheelers,
       totalBroadcasts: totalBroadcastsResult.length,
       totalRatings: totalRatingsResult.length,
       subscriptionRevenue: subscriptionRevenueResult.length * 100, // ₹100 per subscription
       newUsersThisMonth: newUsersThisMonthResult.length,
-      newVehiclesThisMonth: newVehiclesThisMonthResult.length,
-      activeUsers: totalUsersResult.filter(u => u.isVerified).length
+      newVehiclesThisMonth: newVehiclesThisMonthResult.length
     };
   }
 

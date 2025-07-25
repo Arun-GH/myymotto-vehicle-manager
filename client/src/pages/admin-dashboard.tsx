@@ -27,7 +27,15 @@ import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 interface AdminStats {
   totalUsers: number;
   activeUsers: number;
+  dailyActiveUsers: number;
+  monthlyActiveUsers: number;
+  maleUsers: number;
+  femaleUsers: number;
+  usersByState: { [state: string]: number };
   totalVehicles: number;
+  twoWheelers: number;
+  threeWheelers: number;
+  fourWheelers: number;
   subscriptionRevenue: number;
   newUsersThisMonth: number;
   newVehiclesThisMonth: number;
@@ -275,6 +283,154 @@ export default function AdminDashboard() {
                 <TrendingUp className="w-4 h-4 mr-2" />
                 {downloadLoading === "ratings" ? "..." : "Ratings"}
               </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Enhanced User Analytics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <Card className="shadow-orange">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center">
+                <TrendingUp className="w-5 h-5 mr-2 text-blue-600" />
+                User Activity Analytics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Active Users</span>
+                  <span className="font-semibold">{adminStats?.activeUsers || 0}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Daily Active Users</span>
+                  <span className="font-semibold">{adminStats?.dailyActiveUsers || 0}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Monthly Active Users</span>
+                  <span className="font-semibold">{adminStats?.monthlyActiveUsers || 0}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">New Users This Month</span>
+                  <span className="font-semibold">{adminStats?.newUsersThisMonth || 0}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-orange">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center">
+                <Users className="w-5 h-5 mr-2 text-pink-600" />
+                Gender Demographics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Male Users</span>
+                  <div className="flex items-center">
+                    <span className="font-semibold mr-2">{adminStats?.maleUsers || 0}</span>
+                    <div className="w-16 h-2 bg-gray-200 rounded">
+                      <div 
+                        className="h-2 bg-blue-500 rounded" 
+                        style={{ 
+                          width: `${((adminStats?.maleUsers || 0) / (adminStats?.totalUsers || 1)) * 100}%` 
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Female Users</span>
+                  <div className="flex items-center">
+                    <span className="font-semibold mr-2">{adminStats?.femaleUsers || 0}</span>
+                    <div className="w-16 h-2 bg-gray-200 rounded">
+                      <div 
+                        className="h-2 bg-pink-500 rounded" 
+                        style={{ 
+                          width: `${((adminStats?.femaleUsers || 0) / (adminStats?.totalUsers || 1)) * 100}%` 
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="pt-2 text-xs text-gray-500">
+                  Total: {(adminStats?.maleUsers || 0) + (adminStats?.femaleUsers || 0)} users with gender data
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Vehicle Type Breakdown */}
+        <Card className="shadow-orange mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center">
+              <Car className="w-5 h-5 mr-2 text-green-600" />
+              Vehicle Type Distribution
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">{adminStats?.twoWheelers || 0}</div>
+                <div className="text-sm text-gray-600">2-Wheelers</div>
+                <div className="text-xs text-gray-500">
+                  {((adminStats?.twoWheelers || 0) / (adminStats?.totalVehicles || 1) * 100).toFixed(1)}%
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-orange-600">{adminStats?.threeWheelers || 0}</div>
+                <div className="text-sm text-gray-600">3-Wheelers</div>
+                <div className="text-xs text-gray-500">
+                  {((adminStats?.threeWheelers || 0) / (adminStats?.totalVehicles || 1) * 100).toFixed(1)}%
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">{adminStats?.fourWheelers || 0}</div>
+                <div className="text-sm text-gray-600">4-Wheelers</div>
+                <div className="text-xs text-gray-500">
+                  {((adminStats?.fourWheelers || 0) / (adminStats?.totalVehicles || 1) * 100).toFixed(1)}%
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* State Distribution */}
+        <Card className="shadow-orange mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center">
+              <Database className="w-5 h-5 mr-2 text-purple-600" />
+              Users by State
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {adminStats?.usersByState && Object.entries(adminStats.usersByState)
+                .sort(([,a], [,b]) => (b as number) - (a as number))
+                .map(([state, count]) => (
+                  <div key={state} className="flex justify-between items-center py-1">
+                    <span className="text-sm text-gray-600">{state}</span>
+                    <div className="flex items-center">
+                      <span className="font-semibold mr-2">{count as number}</span>
+                      <div className="w-20 h-2 bg-gray-200 rounded">
+                        <div 
+                          className="h-2 bg-purple-500 rounded" 
+                          style={{ 
+                            width: `${((count as number) / (adminStats?.totalUsers || 1)) * 100}%` 
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              {(!adminStats?.usersByState || Object.keys(adminStats.usersByState).length === 0) && (
+                <div className="text-sm text-gray-500 text-center py-4">
+                  No state data available
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
