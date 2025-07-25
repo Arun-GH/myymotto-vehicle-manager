@@ -371,38 +371,36 @@ export default function AddVehicle() {
               </div>
             )}
             
-            {/* Floating Vehicle Completeness Tracker - Ultra Compact */}
-            <div className="fixed top-4 right-4 z-50 w-56 max-w-[calc(100vw-2rem)]">
-              <Card className="shadow-lg border border-orange-300 bg-white/90 backdrop-blur-sm">
-                <CardContent className="p-2">
-                  {/* Inline Header with Progress */}
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center space-x-1">
-                      <TrendingUp className="w-3 h-3 text-orange-500" />
-                      <span className="text-xs font-medium text-gray-700">Complete</span>
-                    </div>
-                    <span className="text-sm font-bold text-orange-600">{completeness.percentage}%</span>
+            {/* Fixed Vehicle Completeness Tracker */}
+            <Card className="shadow-lg border border-orange-300 bg-white mb-4">
+              <CardContent className="p-3">
+                {/* Header with Progress */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-2">
+                    <TrendingUp className="w-4 h-4 text-orange-500" />
+                    <span className="text-sm font-medium text-gray-700">Form Completion</span>
                   </div>
-                  
-                  {/* Compact Progress Bar */}
-                  <div className="w-full bg-gray-200 rounded-full h-1 mb-1">
-                    <div 
-                      className="bg-gradient-to-r from-orange-500 to-amber-500 h-1 rounded-full transition-all duration-300"
-                      style={{ width: `${completeness.percentage}%` }}
-                    ></div>
-                  </div>
-                  
-                  {/* Single Line Stats */}
-                  <div className="flex justify-between text-[10px] text-gray-600">
-                    <span>{completeness.completedFields}/{completeness.totalFields} fields</span>
-                    <span className="text-orange-600 font-medium">
-                      {completeness.percentage >= 90 ? "Almost done!" : 
-                       completeness.percentage >= 50 ? "Keep going" : "Getting started"}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                  <span className="text-lg font-bold text-orange-600">{completeness.percentage}%</span>
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                  <div 
+                    className="bg-gradient-to-r from-orange-500 to-amber-500 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${completeness.percentage}%` }}
+                  ></div>
+                </div>
+                
+                {/* Stats */}
+                <div className="flex justify-between text-xs text-gray-600">
+                  <span>{completeness.completedFields}/{completeness.totalFields} fields completed</span>
+                  <span className="text-orange-600 font-medium">
+                    {completeness.percentage >= 90 ? "Almost done!" : 
+                     completeness.percentage >= 50 ? "Keep going" : "Getting started"}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
             
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
