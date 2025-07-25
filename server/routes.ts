@@ -1837,6 +1837,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin user management routes
+  app.post('/api/admin/users/:userId/block', isAdmin, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { reason } = req.body;
+      await storage.blockUser(parseInt(userId), reason || 'Admin action');
+      res.json({ success: true, message: 'User blocked successfully' });
+    } catch (error) {
+      console.error("Error blocking user:", error);
+      res.status(500).json({ message: "Failed to block user" });
+    }
+  });
+
+  app.post('/api/admin/users/:userId/unblock', isAdmin, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      await storage.unblockUser(parseInt(userId));
+      res.json({ success: true, message: 'User unblocked successfully' });
+    } catch (error) {
+      console.error("Error unblocking user:", error);
+      res.status(500).json({ message: "Failed to unblock user" });
+    }
+  });
+
+  // Admin post management routes
+  app.delete('/api/admin/broadcasts/:id', isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deleted = await storage.adminDeleteBroadcast(parseInt(id));
+      if (deleted) {
+        res.json({ success: true, message: 'Post deleted successfully' });
+      } else {
+        res.status(404).json({ message: 'Post not found' });
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      res.status(500).json({ message: "Failed to delete post" });
+    }
+  });
+
   app.get("/api/admin/users/recent", isAdmin, async (req, res) => {
     try {
       const limit = parseInt(req.query.limit as string) || 10;

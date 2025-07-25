@@ -10,6 +10,7 @@ import {
   Eye, 
   Calendar,
   Shield,
+  ShieldOff,
   TrendingUp,
   AlertTriangle,
   Database
@@ -54,7 +55,6 @@ export default function AdminDashboard() {
 
   // Redirect non-admin users - check for admin phone numbers
   const isAdminUser = currentUser && (
-    currentUser.isAdmin || 
     currentUser.alternatePhone === '+919880105082' || 
     currentUser.alternatePhone === '9880105082'
   );
@@ -114,6 +114,51 @@ export default function AdminDashboard() {
       alert(`Failed to download ${dataType} data. Please try again.`);
     } finally {
       setDownloadLoading(null);
+    }
+  };
+
+  // User management handlers
+  const handleBlockUser = async (targetUserId: number) => {
+    try {
+      const response = await apiRequest("POST", `/api/admin/users/${targetUserId}/block`, {
+        reason: "Admin action"
+      });
+      
+      if (response.ok) {
+        // Refresh the users data
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error blocking user:", error);
+    }
+  };
+
+  const handleUnblockUser = async (targetUserId: number) => {
+    try {
+      const response = await apiRequest("POST", `/api/admin/users/${targetUserId}/unblock`, {});
+      
+      if (response.ok) {
+        // Refresh the users data
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error unblocking user:", error);
+    }
+  };
+
+  // Post management handler
+  const handleDeletePost = async (broadcastId: number) => {
+    if (confirm("Are you sure you want to delete this post?")) {
+      try {
+        const response = await apiRequest("DELETE", `/api/admin/broadcasts/${broadcastId}`, {});
+        
+        if (response.ok) {
+          // Refresh the broadcasts data
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error("Error deleting post:", error);
+      }
     }
   };
 
@@ -461,12 +506,41 @@ export default function AdminDashboard() {
                         <div>
                           <p className="font-medium">{user.username}</p>
                           <p className="text-sm text-gray-600">{user.mobile || "No mobile"}</p>
+                          {user.isBlocked && (
+                            <Badge variant="destructive" className="text-xs mt-1">
+                              <Shield className="w-3 h-3 mr-1" />
+                              Blocked
+                            </Badge>
+                          )}
                         </div>
-                        <div className="text-right">
+                        <div className="text-right flex flex-col items-end gap-1">
                           <Badge variant={user.subscriptionStatus === "paid" ? "default" : "secondary"}>
                             {user.subscriptionStatus}
                           </Badge>
                           <p className="text-xs text-gray-500">{formatDate(user.createdAt)}</p>
+                          <div className="flex gap-1">
+                            {user.isBlocked ? (
+                              <Button
+                                onClick={() => handleUnblockUser(user.id)}
+                                size="sm"
+                                variant="outline"
+                                className="h-6 text-xs px-2 text-green-600 border-green-300 hover:bg-green-50"
+                              >
+                                <ShieldOff className="w-3 h-3 mr-1" />
+                                Unblock
+                              </Button>
+                            ) : (
+                              <Button
+                                onClick={() => handleBlockUser(user.id)}
+                                size="sm"
+                                variant="outline"
+                                className="h-6 text-xs px-2 text-red-600 border-red-300 hover:bg-red-50"
+                              >
+                                <Shield className="w-3 h-3 mr-1" />
+                                Block
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -524,12 +598,21 @@ export default function AdminDashboard() {
                           <p className="font-medium">{broadcast.title}</p>
                           <p className="text-sm text-gray-600 truncate">{broadcast.description}</p>
                         </div>
-                        <div className="text-right">
+                        <div className="text-right flex flex-col items-end gap-1">
                           <Badge variant="outline">{broadcast.type}</Badge>
                           <p className="text-xs text-gray-500 flex items-center gap-1">
                             <Eye className="w-3 h-3" />
                             {broadcast.viewCount || 0}
                           </p>
+                          <Button
+                            onClick={() => handleDeletePost(broadcast.id)}
+                            size="sm"
+                            variant="outline"
+                            className="h-6 text-xs px-2 text-red-600 border-red-300 hover:bg-red-50"
+                          >
+                            <FileText className="w-3 h-3 mr-1" />
+                            Delete
+                          </Button>
                         </div>
                       </div>
                     ))}

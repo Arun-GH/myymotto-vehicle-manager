@@ -1204,6 +1204,12 @@ export class DatabaseStorage implements IStorage {
     return (result.rowCount ?? 0) > 0;
   }
 
+  // Admin method to delete any post
+  async adminDeleteBroadcast(id: number): Promise<boolean> {
+    const result = await db.delete(broadcasts).where(eq(broadcasts.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
   async cleanupExpiredBroadcasts(): Promise<number> {
     const now = new Date();
     const result = await db
@@ -1337,6 +1343,29 @@ export class DatabaseStorage implements IStorage {
 
   async getAllUsersData(): Promise<User[]> {
     return await db.select().from(users).orderBy(desc(users.createdAt));
+  }
+
+  // Admin User Management Methods
+  async blockUser(userId: number, reason: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        isBlocked: true, 
+        blockedAt: new Date(), 
+        blockedReason: reason 
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async unblockUser(userId: number): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        isBlocked: false, 
+        blockedAt: null, 
+        blockedReason: null 
+      })
+      .where(eq(users.id, userId));
   }
 
   async getAllVehiclesData(): Promise<Vehicle[]> {

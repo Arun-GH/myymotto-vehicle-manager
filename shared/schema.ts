@@ -254,6 +254,9 @@ export const users = pgTable("users", {
   razorpayPaymentId: text("razorpay_payment_id"),
   isAdmin: boolean("is_admin").default(false), // Admin access flag
   adminRole: text("admin_role").default("user"), // 'user', 'admin', 'super_admin'
+  isBlocked: boolean("is_blocked").default(false), // User blocking status
+  blockedAt: timestamp("blocked_at"), // When user was blocked
+  blockedReason: text("blocked_reason"), // Reason for blocking
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
