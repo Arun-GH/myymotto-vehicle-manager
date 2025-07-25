@@ -1,5 +1,5 @@
 
-import { AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Trash2, Bike, Truck, Zap, Droplets } from "lucide-react";
+import { AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Trash2, Bike, Truck, Zap, Droplets, Info } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -7,7 +7,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { type Vehicle } from "@shared/schema";
 import { formatDistanceToNow, getExpiryStatus, getServiceStatus, calculateNextServiceDate } from "@/lib/date-utils";
-import { formatToddmmyyyy, formatToDDMMMYYYY } from "@/lib/date-format";
+import { formatToddmmyyyy, formatToDDMMMYYYY, calculateVehicleCompleteness } from "@/lib/date-format";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -75,25 +75,16 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   if (!vehicle.chassisNumber?.trim()) missingDetails.push("Chassis Number");
   if (!vehicle.engineNumber?.trim()) missingDetails.push("Engine Number");
 
-  // Determine overall status based on insurance and emission status
-  const overallStatus = 
-    insuranceStatus.status === "unknown" || emissionStatus.status === "unknown" ? "unknown" :
-    "valid";
+  // Calculate vehicle completeness
+  const completenessData = {
+    ...vehicle,
+    thumbnailPath: vehicle.thumbnailPath ? 'photo-selected' : null,
+    insuranceProvider: vehicle.insuranceCompany,
+  };
+  const completeness = calculateVehicleCompleteness(completenessData);
 
-  const StatusIcon = {
-    valid: CheckCircle,
-    unknown: Clock,
-  }[overallStatus];
-
-  const statusColor = {
-    valid: "text-green-600",
-    unknown: "text-muted-foreground",
-  }[overallStatus];
-
-  const statusText = {
-    valid: "All Valid",
-    unknown: "Check Required",
-  }[overallStatus];
+  // Determine info icon color based on completeness percentage
+  const infoIconColor = completeness.percentage === 100 ? "text-green-600" : "text-red-600";
 
   const deleteVehicle = useMutation({
     mutationFn: async () => {
@@ -158,7 +149,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             </div>
             <div className="flex items-center space-x-2">
               <div className="flex items-center space-x-1">
-                <StatusIcon className={`w-3 h-3 ${statusColor}`} />
+                <Info className={`w-3 h-3 ${infoIconColor}`} />
               </div>
               <div className="flex items-center space-x-1">
                 <Link href={`/vehicle/${vehicle.id}/edit`}>
