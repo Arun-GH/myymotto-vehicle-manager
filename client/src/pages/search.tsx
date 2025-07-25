@@ -166,10 +166,12 @@ export default function SearchPage() {
                 <img 
                   src="/attached_assets/Mymotto_Logo_Green_Revised_1752603344750.png" 
                   alt="Myymotto" 
-                  className="w-8 h-8"
+                  className="w-10 h-10"
                 />
                 <div>
-                  <div className="font-bold text-sm text-gray-900">Myymotto</div>
+                  <div className="font-bold text-sm text-gray-900">
+                    Myym<span className="text-red-600">o</span><span className="text-red-600">t</span><span className="text-red-600">t</span>o
+                  </div>
                   <div className="text-[10px] text-red-600 font-medium -mt-1">Service Centers Near You</div>
                 </div>
               </div>

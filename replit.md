@@ -10,6 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 25, 2025**: UPDATED brand identity with red 't' letters and larger logos across title pages
+- ENHANCED Myymotto branding by making both 't' letters red in ColorfulLogo component for stronger visual impact
+- INCREASED logo sizes from w-8/w-10 to w-12 h-12 on all title pages (dashboard, admin dashboard, insurance, search pages)
+- UPDATED Google Maps search to open in same tab with browser back button navigation for better user flow
+- ADDED instruction message telling users to use browser back button to return to search page after Google Maps
+- IMPROVED navigation experience: Search page → Google Maps → Back button → Search page
+
 **July 25, 2025**: REVERTED to simple Google Maps search integration for accurate service discovery
 - USER FEEDBACK: Generated results were incorrect, requested reversion to simple Google Maps search approach
 - IMPLEMENTED clean search interface with category selection (Service Centers, Petrol Bunks, Hospitals, Police Stations)
