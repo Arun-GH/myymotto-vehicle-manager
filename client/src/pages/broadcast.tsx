@@ -276,13 +276,13 @@ export default function BroadcastPage() {
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-10 h-10 rounded-lg"
+                className="w-12 h-12 rounded-lg"
               />
               <div>
                 <div className="text-base font-bold">
                   <ColorfulLogo />
                 </div>
-                <p className="text-sm text-red-600">Community for MMians</p>
+                <p className="text-xs text-red-600">Community for MMians</p>
               </div>
             </div>
             {!isViewOnly && (

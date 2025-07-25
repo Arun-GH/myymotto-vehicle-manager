@@ -147,17 +147,17 @@ export default function LocalDocuments() {
               variant="ghost" 
               size="sm" 
               onClick={() => setLocation("/")}
-              className="text-gray-600 hover:bg-red-50 h-8"
+              className="text-gray-600 hover:bg-red-50 p-1"
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <img 
               src={logoImage} 
               alt="Myymotto Logo" 
-              className="w-8 h-8 rounded-lg"
+              className="w-12 h-12 rounded-lg"
             />
             <div>
-              <div className="text-sm font-bold">
+              <div className="text-base font-bold">
                 <ColorfulLogo />
               </div>
               <p className="text-xs text-red-600">Vehicle Documents</p>

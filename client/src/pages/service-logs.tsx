@@ -112,9 +112,9 @@ export default function ServiceLogs() {
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
               </Link>
-              <img src={logoImage} alt="Myymotto Logo" className="w-8 h-8 rounded-lg" />
+              <img src={logoImage} alt="Myymotto Logo" className="w-12 h-12 rounded-lg" />
               <div>
-                <div className="text-sm font-bold">
+                <div className="text-base font-bold">
                   <ColorfulLogo />
                 </div>
                 <p className="text-xs text-red-600">Service Logs</p>

@@ -15,6 +15,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { type Vehicle } from "@shared/schema";
 import { formatForDatabase } from "@/lib/date-format";
 import { useState, useRef } from "react";
+import logoImage from "@assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 const serviceLogSchema = z.object({
   serviceType: z.string().min(1, "Service type is required"),
@@ -135,25 +136,28 @@ export default function AddServiceLog() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       {/* Header */}
-      <header className="header-gradient-border shadow-lg relative px-4 py-4">
-        <div className="flex items-center justify-between">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 -ml-2">
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-          </Link>
-          
-          <div className="flex-1 text-center">
-            <div className="flex items-center justify-center space-x-2">
-              <ColorfulLogo />
+      <header className="header-gradient-border shadow-lg relative z-10">
+        <div className="px-3 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Link href="/">
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 p-1">
+                  <ArrowLeft className="w-4 h-4" />
+                </Button>
+              </Link>
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-12 h-12 rounded-lg"
+              />
               <div>
-                <h1 className="text-xl font-bold text-gray-800">Add Service Log</h1>
-                <p className="text-sm text-red-600">Timely Care for your carrier</p>
+                <div className="text-base font-bold">
+                  <ColorfulLogo />
+                </div>
+                <p className="text-xs text-red-600">Add Service Log</p>
               </div>
             </div>
           </div>
-
-          <div className="w-8" /> {/* Spacer for centering */}
         </div>
       </header>
 

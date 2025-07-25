@@ -4,6 +4,8 @@ import { ArrowLeft, MapPin, Navigation, Wrench, Fuel, Building2, Shield } from '
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import ColorfulLogo from "@/components/colorful-logo";
+import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function SearchPage() {
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
@@ -156,24 +158,22 @@ export default function SearchPage() {
       <header className="header-gradient-border shadow-lg relative z-10">
         <div className="px-3 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <Link href="/">
                 <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 p-1">
-                  <ArrowLeft className="w-5 h-5" />
+                  <ArrowLeft className="w-4 h-4" />
                 </Button>
               </Link>
-              <div className="flex items-center space-x-3">
-                <img 
-                  src="/attached_assets/Mymotto_Logo_Green_Revised_1752603344750.png" 
-                  alt="Myymotto" 
-                  className="w-10 h-10"
-                />
-                <div>
-                  <div className="font-bold text-sm text-gray-900">
-                    Myym<span className="text-red-600">o</span><span className="text-red-600">t</span><span className="text-red-600">t</span>o
-                  </div>
-                  <div className="text-[10px] text-red-600 font-medium -mt-1">Service Centers Near You</div>
+              <img 
+                src={logoImage} 
+                alt="Myymotto Logo" 
+                className="w-12 h-12 rounded-lg"
+              />
+              <div>
+                <div className="text-base font-bold">
+                  <ColorfulLogo />
                 </div>
+                <p className="text-xs text-red-600">Service Centers Near You</p>
               </div>
             </div>
             

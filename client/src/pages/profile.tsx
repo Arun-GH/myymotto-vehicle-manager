@@ -447,13 +447,13 @@ export default function Profile() {
                 <img 
                   src={logoImage} 
                   alt="Myymotto Logo" 
-                  className="w-10 h-10 rounded-lg"
+                  className="w-12 h-12 rounded-lg"
                 />
                 <div>
                   <div className="text-base font-bold">
                     <ColorfulLogo />
                   </div>
-                  <p className="text-xs text-red-600">Timely Care for your carrier</p>
+                  <p className="text-xs text-red-600">Timely Care For Your Carrier</p>
                 </div>
               </div>
             </div>
@@ -506,13 +506,13 @@ export default function Profile() {
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-8 h-8 rounded-lg"
+                className="w-12 h-12 rounded-lg"
               />
               <div>
-                <div className="text-sm font-bold">
+                <div className="text-base font-bold">
                   <ColorfulLogo />
                 </div>
-                <p className="text-[10px] text-red-600">
+                <p className="text-xs text-red-600">
                   {profile ? (isEditing ? "Edit Profile" : "Profile") : "Create Profile"}
                 </p>
               </div>

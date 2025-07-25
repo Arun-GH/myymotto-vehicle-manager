@@ -193,7 +193,7 @@ export default function Settings() {
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-10 h-10 rounded-lg"
+                className="w-12 h-12 rounded-lg"
               />
               <div>
                 <div className="text-base font-bold">
