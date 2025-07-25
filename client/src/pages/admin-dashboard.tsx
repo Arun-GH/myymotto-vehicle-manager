@@ -26,8 +26,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useLocation } from "wouter";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
@@ -205,6 +206,7 @@ function AdminMessages() {
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const [downloadLoading, setDownloadLoading] = useState<string | null>(null);
+  const { toast } = useToast();
 
   // Check admin access
   const { data: currentUser } = useQuery<UserProfile>({
@@ -307,34 +309,58 @@ export default function AdminDashboard() {
     }
   };
 
-  // User management handlers
-  const handleBlockUser = async (targetUserId: number) => {
+  const handleBlockUser = async (userId: number, reason: string = 'Admin action') => {
     try {
-      const response = await apiRequest("POST", `/api/admin/users/${targetUserId}/block`, {
-        reason: "Admin action"
+      const response = await apiRequest("POST", `/api/admin/users/${userId}/block`, { 
+        userId: 1, 
+        reason 
       });
+      const result = await response.json();
       
-      if (response.ok) {
-        // Refresh the users data
-        window.location.reload();
+      if (result.success) {
+        toast({
+          title: "User Blocked",
+          description: "User has been successfully blocked.",
+        });
+        // Refetch users data without page reload
+        await queryClient.invalidateQueries({ queryKey: ["/api/admin/users/recent"] });
       }
     } catch (error) {
-      console.error("Error blocking user:", error);
+      console.error('Error blocking user:', error);
+      toast({
+        title: "Error",
+        description: "Failed to block user. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
-  const handleUnblockUser = async (targetUserId: number) => {
+  const handleUnblockUser = async (userId: number) => {
     try {
-      const response = await apiRequest("POST", `/api/admin/users/${targetUserId}/unblock`, {});
+      const response = await apiRequest("POST", `/api/admin/users/${userId}/unblock`, { 
+        userId: 1 
+      });
+      const result = await response.json();
       
-      if (response.ok) {
-        // Refresh the users data
-        window.location.reload();
+      if (result.success) {
+        toast({
+          title: "User Unblocked",
+          description: "User has been successfully unblocked.",
+        });
+        // Refetch users data without page reload
+        await queryClient.invalidateQueries({ queryKey: ["/api/admin/users/recent"] });
       }
     } catch (error) {
-      console.error("Error unblocking user:", error);
+      console.error('Error unblocking user:', error);
+      toast({
+        title: "Error",
+        description: "Failed to unblock user. Please try again.",
+        variant: "destructive"
+      });
     }
   };
+
+
 
   // Post management handler
   const handleDeletePost = async (broadcastId: number) => {
@@ -696,13 +722,18 @@ export default function AdminDashboard() {
                     {recentUsers.map((user: any) => (
                       <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
                         <div>
-                          <p className="font-medium">{user.username}</p>
-                          <p className="text-sm text-gray-600">{user.mobile || "No mobile"}</p>
-                          {user.isBlocked && (
-                            <Badge variant="destructive" className="text-xs mt-1">
-                              <Shield className="w-3 h-3 mr-1" />
-                              Blocked
-                            </Badge>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium">{user.username}</p>
+                            {user.isBlocked && (
+                              <Badge variant="destructive" className="text-xs">
+                                <Shield className="w-3 h-3 mr-1" />
+                                Blocked
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600">Phone: {user.mobile || "No mobile"}</p>
+                          {user.email && (
+                            <p className="text-xs text-gray-500">Email: {user.email}</p>
                           )}
                         </div>
                         <div className="text-right flex flex-col items-end gap-1">
@@ -712,25 +743,65 @@ export default function AdminDashboard() {
                           <p className="text-xs text-gray-500">{formatDate(user.createdAt)}</p>
                           <div className="flex gap-1">
                             {user.isBlocked ? (
-                              <Button
-                                onClick={() => handleUnblockUser(user.id)}
-                                size="sm"
-                                variant="outline"
-                                className="h-6 text-xs px-2 text-green-600 border-green-300 hover:bg-green-50"
-                              >
-                                <ShieldOff className="w-3 h-3 mr-1" />
-                                Unblock
-                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-6 text-xs px-2 text-green-600 border-green-300 hover:bg-green-50"
+                                  >
+                                    <ShieldOff className="w-3 h-3 mr-1" />
+                                    Unblock
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className="w-[90%] max-w-md">
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Unblock User</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to unblock user "{user.username}" ({user.mobile})? This will restore their access to the app.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction 
+                                      onClick={() => handleUnblockUser(user.id)}
+                                      className="bg-green-600 hover:bg-green-700"
+                                    >
+                                      Unblock User
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                             ) : (
-                              <Button
-                                onClick={() => handleBlockUser(user.id)}
-                                size="sm"
-                                variant="outline"
-                                className="h-6 text-xs px-2 text-red-600 border-red-300 hover:bg-red-50"
-                              >
-                                <Shield className="w-3 h-3 mr-1" />
-                                Block
-                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-6 text-xs px-2 text-red-600 border-red-300 hover:bg-red-50"
+                                  >
+                                    <Shield className="w-3 h-3 mr-1" />
+                                    Block
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className="w-[90%] max-w-md">
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Block User</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to block user "{user.username}" ({user.mobile})? This will prevent them from accessing the app.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction 
+                                      onClick={() => handleBlockUser(user.id)}
+                                      className="bg-red-600 hover:bg-red-700"
+                                    >
+                                      Block User
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                             )}
                           </div>
                         </div>
