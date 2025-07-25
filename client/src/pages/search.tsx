@@ -130,6 +130,10 @@ export default function SearchPage() {
     setLocationStatus('loading');
     setLoading(true);
     
+    // Clear previous data to show fresh loading state
+    setServiceLocations([]);
+    setFilteredLocations([]);
+    
     if (!navigator.geolocation) {
       setLocationStatus('error');
       setLoading(false);
@@ -150,6 +154,12 @@ export default function SearchPage() {
         setFilteredLocations(locations);
         setLocationStatus('success');
         setLoading(false);
+        
+        // Show success feedback for fresh location
+        toast({
+          title: "Location Updated",
+          description: `Found ${locations.length} nearby locations.`,
+        });
       },
       (error) => {
         setLocationStatus('error');
@@ -176,8 +186,8 @@ export default function SearchPage() {
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000
+        timeout: 15000,
+        maximumAge: 0 // Always get fresh location, never use cache
       }
     );
   };
@@ -200,8 +210,11 @@ export default function SearchPage() {
     setFilteredLocations(filtered);
   }, [searchTerm, serviceLocations]);
 
-  // Auto-load location on component mount
+  // Auto-load location on component mount and refresh every time user visits
   useEffect(() => {
+    // Always refresh location when component mounts
+    setLocationStatus('loading');
+    setLoading(true);
     getCurrentLocation();
   }, []);
 
