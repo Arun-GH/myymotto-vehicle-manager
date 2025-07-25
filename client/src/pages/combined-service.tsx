@@ -438,7 +438,7 @@ export default function CombinedServicePage() {
         <div className="px-3 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Link href="/">
+              <Link href={`/vehicle/${id}/service-logs`}>
                 <Button variant="ghost" size="sm" className="text-gray-600 hover:bg-red-50 p-1">
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
