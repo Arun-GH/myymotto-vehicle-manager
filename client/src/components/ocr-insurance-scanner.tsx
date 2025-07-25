@@ -41,7 +41,7 @@ export function OCRInsuranceScanner({ onDataExtracted, onClose }: OCRInsuranceSc
   const handleCameraCapture = () => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'image/*';
+    input.accept = '.jpg,.jpeg,.png,.gif,.bmp,.webp';
     input.capture = 'environment';
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
@@ -150,7 +150,7 @@ export function OCRInsuranceScanner({ onDataExtracted, onClose }: OCRInsuranceSc
                 <input
                   id="ocr-file-input"
                   type="file"
-                  accept="image/*"
+                  accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
                   onChange={handleFileSelect}
                   className="hidden"
                 />

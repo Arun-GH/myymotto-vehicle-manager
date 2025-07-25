@@ -389,7 +389,7 @@ export default function UploadDocuments() {
                   onClick={() => {
                     const input = document.createElement('input');
                     input.type = 'file';
-                    input.accept = 'image/*,application/pdf,.doc,.docx,.txt';
+                    input.accept = '.jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.ppt,.pptx';
                     input.multiple = true;
                     input.onchange = (e) => {
                       const files = (e.target as HTMLInputElement).files;
@@ -403,7 +403,7 @@ export default function UploadDocuments() {
                   className="h-10 flex items-center justify-center border-green-300 text-green-700 hover:bg-green-50"
                 >
                   <Upload className="w-4 h-4 mr-2" />
-                  <span className="text-xs">Photos & Documents</span>
+                  <span className="text-xs">Upload</span>
                 </Button>
               </div>
               
@@ -426,7 +426,7 @@ export default function UploadDocuments() {
               {/* Hidden camera input for mobile compatibility */}
               <input
                 type="file"
-                accept="image/*"
+                accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
                 capture="environment"
                 onChange={handleCameraInputChange}
                 style={{ display: 'none' }}

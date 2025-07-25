@@ -510,21 +510,21 @@ export default function MaintenancePage() {
           <input
             ref={warrantyFileRef}
             type="file"
-            accept="image/*,.pdf"
+            accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
             onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'warranty')}
             className="hidden"
           />
           <input
             ref={invoiceFileRef}
             type="file"
-            accept="image/*,.pdf"
+            accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
             onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'invoice')}
             className="hidden"
           />
           <input
             ref={warrantyCameraRef}
             type="file"
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
             capture="environment"
             onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'warranty')}
             className="hidden"
@@ -532,7 +532,7 @@ export default function MaintenancePage() {
           <input
             ref={invoiceCameraRef}
             type="file"
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
             capture="environment"
             onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'invoice')}
             className="hidden"

@@ -15,7 +15,7 @@ interface EnhancedFileUploadProps {
 export default function EnhancedFileUpload({
   onFileSelect,
   onCameraCapture,
-  accept = "image/*,application/pdf,.doc,.docx,.txt",
+  accept = ".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.ppt,.pptx",
   multiple = true,
   className = "",
   showLabels = true
@@ -59,15 +59,15 @@ export default function EnhancedFileUpload({
           {showLabels && <span className="text-xs">Camera</span>}
         </Button>
 
-        {/* Photos & Documents */}
+        {/* Photo Gallery */}
         <Button
           type="button"
           variant="outline"
-          onClick={() => triggerFileInput(galleryInputRef, "Photos & Documents")}
+          onClick={() => triggerFileInput(galleryInputRef, "Gallery")}
           className="h-12 flex flex-col items-center justify-center border-blue-300 text-blue-700 hover:bg-blue-50"
         >
           <Upload className="w-4 h-4 mb-1" />
-          {showLabels && <span className="text-xs">Photos & Documents</span>}
+          {showLabels && <span className="text-xs">Upload</span>}
         </Button>
 
         {/* Documents Folder */}
@@ -163,7 +163,7 @@ export default function EnhancedFileUpload({
       <input
         ref={cameraInputRef}
         type="file"
-        accept="image/*"
+        accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
         capture="environment"
         onChange={(e) => handleFileInput(e.target.files, "Camera")}
         className="hidden"

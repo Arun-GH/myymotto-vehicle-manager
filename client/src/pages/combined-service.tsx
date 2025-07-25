@@ -490,7 +490,7 @@ export default function CombinedServicePage() {
                         className="flex-1 border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs"
                       >
                         <Upload className="w-3 h-3 mr-1" />
-                        Photos & Documents
+                        Upload
                       </Button>
                     </div>
                     {selectedServiceFile && (
@@ -593,7 +593,7 @@ export default function CombinedServicePage() {
       <input
         ref={serviceFileInputRef}
         type="file"
-        accept="image/*,.pdf"
+        accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
         onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'service')}
         className="hidden"
         capture="environment"
@@ -601,21 +601,21 @@ export default function CombinedServicePage() {
       <input
         ref={warrantyFileRef}
         type="file"
-        accept="image/*,.pdf"
+        accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
         onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'warranty')}
         className="hidden"
       />
       <input
         ref={invoiceFileRef}
         type="file"
-        accept="image/*,.pdf"
+        accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
         onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'invoice')}
         className="hidden"
       />
       <input
         ref={warrantyCameraRef}
         type="file"
-        accept="image/*"
+        accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
         onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'warranty')}
         className="hidden"
         capture="environment"
@@ -623,7 +623,7 @@ export default function CombinedServicePage() {
       <input
         ref={invoiceCameraRef}
         type="file"
-        accept="image/*"
+        accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
         onChange={(e) => handleFileSelect(e.target.files?.[0] || null, 'invoice')}
         className="hidden"
         capture="environment"
@@ -716,7 +716,7 @@ export default function CombinedServicePage() {
                   className="flex-1 border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs"
                 >
                   <Upload className="w-3 h-3 mr-1" />
-                  Photos & Documents
+                  Upload
                 </Button>
               </div>
               {invoiceFile && (

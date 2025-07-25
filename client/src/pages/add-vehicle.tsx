@@ -469,7 +469,7 @@ export default function AddVehicle() {
                           }
                         }}
                         onCameraCapture={handleCameraCapture}
-                        accept="image/*"
+                        accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
                         multiple={false}
                         showLabels={true}
                       />
@@ -481,7 +481,7 @@ export default function AddVehicle() {
                   <input
                     id="camera-input"
                     type="file"
-                    accept="image/*"
+                    accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
                     capture="environment"
                     onChange={handleCameraInputChange}
                     style={{ display: 'none' }}

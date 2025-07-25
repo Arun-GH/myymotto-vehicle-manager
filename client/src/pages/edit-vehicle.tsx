@@ -485,7 +485,7 @@ export default function EditVehicle() {
                         <input
                           id="camera-input"
                           type="file"
-                          accept="image/*"
+                          accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
                           capture="environment"
                           onChange={handleCameraInputChange}
                           className="hidden"
@@ -503,7 +503,7 @@ export default function EditVehicle() {
                         <label className="block">
                           <input
                             type="file"
-                            accept="image/*"
+                            accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
                             onChange={handleThumbnailChange}
                             className="hidden"
                           />

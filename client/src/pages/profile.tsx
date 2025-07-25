@@ -767,7 +767,7 @@ export default function Profile() {
                       <input
                         id="profile-camera-input"
                         type="file"
-                        accept="image/*"
+                        accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
                         capture="user"
                         onChange={handleCameraInputChange}
                         className="hidden"
@@ -790,7 +790,7 @@ export default function Profile() {
                         onClick={() => document.getElementById('profile-upload')?.click()}
                       >
                         <Upload className="w-3 h-3" />
-                        Photos & Documents
+                        Upload
                       </Button>
                     </div>
 
@@ -798,7 +798,7 @@ export default function Profile() {
                     <input
                       id="profile-upload"
                       type="file"
-                      accept="image/*"
+                      accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
                       onChange={handleFileUpload}
                       className="hidden"
                     />
@@ -1135,7 +1135,7 @@ export default function Profile() {
                         <input
                           id="license-camera-input"
                           type="file"
-                          accept="image/*"
+                          accept=".jpg,.jpeg,.png,.gif,.bmp,.webp"
                           capture="user"
                           onChange={handleLicenseCameraInputChange}
                           className="hidden"
@@ -1154,12 +1154,12 @@ export default function Profile() {
                           <Button type="button" variant="outline" size="sm" className="flex items-center gap-1.5 h-7 text-xs px-2" asChild>
                             <div>
                               <Upload className="w-3 h-3" />
-                              Photos & Documents
+                              Upload
                             </div>
                           </Button>
                           <input
                             type="file"
-                            accept="image/*"
+                            accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
                             onChange={handleLicenseFileUpload}
                             className="hidden"
                           />

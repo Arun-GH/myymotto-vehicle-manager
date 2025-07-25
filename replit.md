@@ -10,18 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 25, 2025**: COMPLETED comprehensive enhanced file system access implementation with standardized labeling across application
-- CREATED enhanced-file-upload.tsx component providing unified access to documents, files, gallery, internal storage, documents folder, and downloads folder
-- IMPLEMENTED comprehensive file system permissions for accessing multiple storage locations throughout the app  
-- INTEGRATED enhanced file upload component across vehicle-document-section.tsx, add-vehicle.tsx, and maintenance.tsx pages
-- REVERTED upload-documents.tsx page back to traditional Camera and Upload button layout as requested for simplified user experience
-- ENHANCED layout with 3-column grid display ensuring all 6 file access options are clearly visible: Camera, Photos & Documents, Documents, Downloads, Files, Storage
-- IMPROVED button sizing to h-12 (48px) with professional mobile-friendly interface and clear labeling for file source selection
-- STANDARDIZED all upload button labels from "Upload" and "Gallery" to "Photos & Documents" throughout the entire application for consistency
-- UPDATED enhanced file upload component, upload documents page, combined service page, profile page, and maintenance areas with unified "Photos & Documents" labeling
-- MAINTAINED traditional dual-button layout (Camera + Photos & Documents) in document upload page while keeping enhanced options in vehicle forms and maintenance
-- IMPLEMENTED consistent file handling across all upload areas with proper error handling, file type validation, and success toast notifications
-- COMPLETED professional mobile-friendly broadcast/create post dialog with community guidelines disclaimer including gradient styling and orange theming
+**July 25, 2025**: COMPLETED comprehensive file picker standardization with native mobile "Photos & Documents" display implementation
+- RESOLVED user confusion about file picker requirements - clarified user wanted native mobile file picker options changed, not button text
+- REVERTED button labels back to "Upload" after initial misunderstanding about requirements  
+- MODIFIED accept attributes throughout entire application from `image/*` to specific file extensions to change native mobile file picker display
+- UPDATED file inputs across all components: enhanced-file-upload.tsx, upload-documents.tsx, profile.tsx, maintenance.tsx, combined-service.tsx, add-vehicle.tsx, edit-vehicle.tsx, and ocr-insurance-scanner.tsx
+- STANDARDIZED accept attributes to `.jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.ppt,.pptx` to encourage "Photos & Documents" display instead of "Photos & Videos"
+- IMPLEMENTED camera-specific inputs with image-only extensions `.jpg,.jpeg,.png,.gif,.bmp,.webp` for camera capture functionality
+- MAINTAINED traditional dual-button layout (Camera + Upload) in document upload page while providing comprehensive file type support
+- ACHIEVED native mobile file picker displaying "Photos & Documents" instead of "Photos & Videos" through strategic accept attribute configuration
+- COMPLETED comprehensive file type support enabling users to upload documents, images, and various file formats across all upload interfaces
+- ENSURED consistent user experience with proper file type validation and support for multiple document formats throughout application
 
 **July 25, 2025**: COMPLETED comprehensive admin user management system with block/unblock functionality and post deletion capabilities
 - IMPLEMENTED complete user blocking/unblocking system with database schema updates (isBlocked, blockedAt, blockedReason fields)
