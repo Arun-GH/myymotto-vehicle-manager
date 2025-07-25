@@ -106,6 +106,7 @@ export default function Profile() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const [isEditing, setIsEditing] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [licenseImage, setLicenseImage] = useState<File | null>(null);
@@ -291,9 +292,9 @@ export default function Profile() {
     }
   };
 
-  // Update form when profile data loads
+  // Update form when profile data loads or editing mode changes
   useEffect(() => {
-    if (profile) {
+    if (profile && isEditing) {
       form.reset({
         name: profile.name,
         age: profile.age,
@@ -311,19 +312,13 @@ export default function Profile() {
       // Set existing profile picture if available
       if (profile.profilePicture) {
         setProfileImagePreview(profile.profilePicture);
-        console.log("Setting profile image preview:", profile.profilePicture);
-      } else {
-        setProfileImagePreview(null);
       }
       // Set existing license copy if available
       if (profile.driversLicenseCopy) {
         setLicenseImagePreview(profile.driversLicenseCopy);
-        console.log("Setting license image preview:", profile.driversLicenseCopy);
-      } else {
-        setLicenseImagePreview(null);
       }
     }
-  }, [profile, form]);
+  }, [profile, isEditing, form]);
 
   const createProfileMutation = useMutation({
     mutationFn: async (data: InsertUserProfile) => {
@@ -385,7 +380,7 @@ export default function Profile() {
         title: "Profile Created",
         description: "Your profile has been successfully created.",
       });
-      setLocation("/");
+      setIsEditing(false);
     },
     onError: (error) => {
       toast({
@@ -452,6 +447,7 @@ export default function Profile() {
     onSuccess: () => {
       const userId = localStorage.getItem("currentUserId");
       queryClient.invalidateQueries({ queryKey: ["/api/profile", userId] });
+      setIsEditing(false);
       toast({
         title: "Profile Updated",
         description: "Your profile has been successfully updated.",
@@ -554,6 +550,16 @@ export default function Profile() {
               </div>
             </div>
             <div className="flex items-center space-x-1">
+              {profile && !isEditing && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:bg-red-50 h-6 text-xs px-2"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit
+                </Button>
+              )}
               <Link href="/settings">
                 <Button
                   variant="ghost"
@@ -626,14 +632,15 @@ export default function Profile() {
           </Card>
         )}
 
-        {/* Always show form - unified viewing and editing */}
-        <Card className="shadow-orange">
-          <CardHeader className="p-2 pb-2">
-            <CardTitle className="text-lg">Personal Information</CardTitle>
-          </CardHeader>
-          <CardContent className="p-2">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+        {!profile || isEditing ? (
+          // Editing mode - Show form
+          <Card className="shadow-orange">
+            <CardHeader className="p-2 pb-2">
+              <CardTitle className="text-lg">{profile ? "Edit Profile" : "Create Profile"}</CardTitle>
+            </CardHeader>
+            <CardContent className="p-2">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
                 {/* Profile Picture Section */}
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-gray-700">Profile Picture</label>
@@ -1057,9 +1064,131 @@ export default function Profile() {
             </Form>
           </CardContent>
         </Card>
+        ) : (
+          // Viewing mode - Show profile data
+          <Card className="shadow-orange">
+            <CardHeader className="p-2 pb-2">
+              <CardTitle className="text-lg">Profile Information</CardTitle>
+            </CardHeader>
+            <CardContent className="p-2 space-y-3">
+              {/* Profile Picture */}
+              <div className="flex justify-center">
+                {profile.profilePicture ? (
+                  <img 
+                    src={profile.profilePicture} 
+                    alt="Profile" 
+                    className="w-20 h-20 rounded-full object-cover shadow-md border-2 border-orange-200"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center border-2 border-gray-200">
+                    <User className="w-8 h-8 text-gray-400" />
+                  </div>
+                )}
+              </div>
+
+              {/* Basic Information */}
+              <div className="space-y-2">
+                <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Basic Information</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <span className="text-xs text-gray-500">Name</span>
+                    <p className="font-medium">{profile.name}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500">Age</span>
+                    <p className="font-medium">{profile.age}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500">Gender</span>
+                    <p className="font-medium">{profile.gender || "Not specified"}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500">Blood Group</span>
+                    <p className="font-medium">{profile.bloodGroup}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Address Information */}
+              <div className="space-y-2">
+                <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Address Information</h4>
+                <div className="text-sm space-y-1">
+                  <div>
+                    <span className="text-xs text-gray-500">Address</span>
+                    <p className="font-medium">{profile.address}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <span className="text-xs text-gray-500">City</span>
+                      <p className="font-medium">{profile.city}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-500">State</span>
+                      <p className="font-medium">{profile.state}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500">Pin Code</span>
+                    <p className="font-medium">{profile.pinCode}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Information */}
+              <div className="space-y-2">
+                <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Contact Information</h4>
+                <div className="text-sm space-y-1">
+                  <div>
+                    <span className="text-xs text-gray-500">Email</span>
+                    <p className="font-medium">{profile.email}</p>
+                  </div>
+                  {profile.alternatePhone && (
+                    <div>
+                      <span className="text-xs text-gray-500">Alternate Phone</span>
+                      <p className="font-medium">{profile.alternatePhone}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Driver's License */}
+              {(profile.driversLicenseNumber || profile.driversLicenseCopy) && (
+                <div className="space-y-2">
+                  <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Driver's License</h4>
+                  <div className="text-sm space-y-1">
+                    {profile.driversLicenseNumber && (
+                      <div>
+                        <span className="text-xs text-gray-500">License Number</span>
+                        <p className="font-medium">{profile.driversLicenseNumber}</p>
+                      </div>
+                    )}
+                    {profile.driversLicenseValidTill && (
+                      <div>
+                        <span className="text-xs text-gray-500">Valid Till</span>
+                        <p className="font-medium">{profile.driversLicenseValidTill}</p>
+                      </div>
+                    )}
+                    {profile.driversLicenseCopy && (
+                      <div>
+                        <span className="text-xs text-gray-500">License Copy</span>
+                        <div className="mt-1">
+                          <img 
+                            src={profile.driversLicenseCopy} 
+                            alt="License" 
+                            className="w-16 h-16 rounded object-cover border"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Continue to dashboard button for existing profiles */}
-        {profile && (
+        {profile && !isEditing && (
           <Card className="shadow-orange mt-3">
             <CardContent className="p-2">
               <Button 
@@ -1068,6 +1197,21 @@ export default function Profile() {
                 className="w-full"
               >
                 Continue to Dashboard
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Cancel button when editing */}
+        {profile && isEditing && (
+          <Card className="shadow-orange mt-3">
+            <CardContent className="p-2">
+              <Button 
+                onClick={() => setIsEditing(false)} 
+                variant="outline"
+                className="w-full"
+              >
+                Cancel
               </Button>
             </CardContent>
           </Card>
