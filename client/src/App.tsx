@@ -46,9 +46,9 @@ function Router() {
   const [showSplash, setShowSplash] = useState(true);
   const [showPermissions, setShowPermissions] = useState(false);
   
-  // Check if user is authenticated - need proper authentication flag, not just userId
+  // Check if user is authenticated - use userId presence as authentication check
   const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId");
-  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+  const isAuthenticated = !!currentUserId;
 
   // Handle splash screen completion
   const handleSplashComplete = () => {
