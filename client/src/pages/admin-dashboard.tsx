@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   Database
 } from "lucide-react";
+import type { UserProfile } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,38 +40,45 @@ export default function AdminDashboard() {
   const [downloadLoading, setDownloadLoading] = useState<string | null>(null);
 
   // Check admin access
-  const { data: currentUser } = useQuery({
+  const { data: currentUser } = useQuery<UserProfile>({
     queryKey: ["/api/profile/1"], // Current logged in user
   });
 
+  // Redirect non-admin users - check for admin phone numbers
+  const isAdminUser = currentUser && (
+    currentUser.isAdmin || 
+    currentUser.alternatePhone === '+919880105082' || 
+    currentUser.alternatePhone === '9880105082'
+  );
+
   // Fetch admin statistics
-  const { data: adminStats, isLoading: statsLoading } = useQuery({
+  const { data: adminStats, isLoading: statsLoading } = useQuery<AdminStats>({
     queryKey: ["/api/admin/stats"],
-    enabled: currentUser?.isAdmin || false,
+    enabled: !!isAdminUser,
   });
 
   // Fetch recent users
-  const { data: recentUsers = [], isLoading: usersLoading } = useQuery({
+  const { data: recentUsers = [], isLoading: usersLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/users/recent"],
-    enabled: currentUser?.isAdmin || false,
+    enabled: !!isAdminUser,
   });
 
   // Fetch recent vehicles
-  const { data: recentVehicles = [], isLoading: vehiclesLoading } = useQuery({
+  const { data: recentVehicles = [], isLoading: vehiclesLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/vehicles/recent"],
-    enabled: currentUser?.isAdmin || false,
+    enabled: !!isAdminUser,
   });
 
   // Fetch recent broadcasts
-  const { data: recentBroadcasts = [], isLoading: broadcastsLoading } = useQuery({
+  const { data: recentBroadcasts = [], isLoading: broadcastsLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/broadcasts/recent"],
-    enabled: currentUser?.isAdmin || false,
+    enabled: !!isAdminUser,
   });
 
   // Fetch recent ratings
-  const { data: recentRatings = [], isLoading: ratingsLoading } = useQuery({
+  const { data: recentRatings = [], isLoading: ratingsLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/ratings/recent"],
-    enabled: currentUser?.isAdmin || false,
+    enabled: !!isAdminUser,
   });
 
   const handleDownload = async (dataType: string) => {
@@ -107,8 +115,7 @@ export default function AdminDashboard() {
     });
   };
 
-  // Redirect non-admin users
-  if (currentUser && !currentUser.isAdmin) {
+  if (currentUser && !isAdminUser) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-red-50 to-white flex items-center justify-center">
         <Card className="w-96 p-6 text-center">
