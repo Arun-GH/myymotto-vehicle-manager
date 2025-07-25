@@ -10,10 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 25, 2025**: COMPLETED comprehensive push notification system and fixed admin access for mobile number 9880105082
-- FIXED admin access issue by checking alternatePhone field (+919880105082) in addition to mobile field for admin authorization
-- Enhanced admin middleware to properly grant access to phone number 9880105082 with comprehensive phone number format checking
-- Admin access now works correctly for user with mobile number 9880105082 as confirmed by successful API calls
+**July 25, 2025**: COMPLETED admin dashboard improvements with fixed labels and working data export functionality
+- COMPLETED removal of redundant "Recent" labels throughout admin dashboard interface (tabs, headers, titles)
+- FIXED data export functionality for Users, Vehicles, Broadcasts, and Ratings with proper file download system
+- Enhanced export endpoints with proper authentication and file naming (myymotto-{datatype}-{date}.json format)
+- All admin dashboard sections now use clean labels: "Users", "Vehicles", "Posts", "Ratings" without redundant "Recent" prefixes
+- Data export buttons now successfully download JSON files with complete user, vehicle, broadcast, and rating information
+- Admin access remains fully functional for phone number 9880105082 with complete dashboard access and export capabilities
 - Created complete push notification service using Capacitor Push Notifications plugin for mobile app functionality
 - Built weekly nudging system that sends reminders starting one month before subscription expiry (30, 23, 16, 9, 2 days)
 - Added push notification infrastructure with proper permission handling, device token registration, and error management

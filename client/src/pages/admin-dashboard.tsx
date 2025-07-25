@@ -84,7 +84,10 @@ export default function AdminDashboard() {
   const handleDownload = async (dataType: string) => {
     setDownloadLoading(dataType);
     try {
-      const response = await apiRequest("GET", `/api/admin/export/${dataType}`);
+      const response = await apiRequest("GET", `/api/admin/export/${dataType}?userId=1`);
+      
+      // Log the response to debug
+      console.log(`${dataType} export data:`, response);
       
       // Create blob and download
       const blob = new Blob([JSON.stringify(response, null, 2)], {
@@ -93,13 +96,14 @@ export default function AdminDashboard() {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `${dataType}-${new Date().toISOString().split('T')[0]}.json`;
+      link.download = `myymotto-${dataType}-${new Date().toISOString().split('T')[0]}.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Download failed:", error);
+      alert(`Failed to download ${dataType} data. Please try again.`);
     } finally {
       setDownloadLoading(null);
     }
@@ -278,16 +282,16 @@ export default function AdminDashboard() {
         {/* Detailed Data Tabs */}
         <Tabs defaultValue="users" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="users">Recent Users</TabsTrigger>
-            <TabsTrigger value="vehicles">Recent Vehicles</TabsTrigger>
-            <TabsTrigger value="broadcasts">Recent Posts</TabsTrigger>
-            <TabsTrigger value="ratings">Recent Ratings</TabsTrigger>
+            <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="vehicles">Vehicles</TabsTrigger>
+            <TabsTrigger value="broadcasts">Posts</TabsTrigger>
+            <TabsTrigger value="ratings">Ratings</TabsTrigger>
           </TabsList>
           
           <TabsContent value="users" className="space-y-4">
             <Card className="shadow-orange">
               <CardHeader>
-                <CardTitle className="text-lg">Recent Users</CardTitle>
+                <CardTitle className="text-lg">Users</CardTitle>
               </CardHeader>
               <CardContent>
                 {usersLoading ? (
@@ -319,7 +323,7 @@ export default function AdminDashboard() {
           <TabsContent value="vehicles" className="space-y-4">
             <Card className="shadow-orange">
               <CardHeader>
-                <CardTitle className="text-lg">Recent Vehicles</CardTitle>
+                <CardTitle className="text-lg">Vehicles</CardTitle>
               </CardHeader>
               <CardContent>
                 {vehiclesLoading ? (
@@ -349,7 +353,7 @@ export default function AdminDashboard() {
           <TabsContent value="broadcasts" className="space-y-4">
             <Card className="shadow-orange">
               <CardHeader>
-                <CardTitle className="text-lg">Recent Broadcast Posts</CardTitle>
+                <CardTitle className="text-lg">Broadcast Posts</CardTitle>
               </CardHeader>
               <CardContent>
                 {broadcastsLoading ? (
