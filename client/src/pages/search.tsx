@@ -48,13 +48,6 @@ export default function SearchPage() {
         console.log(`Location detected: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
         
         setUserLocation({ lat: latitude, lng: longitude });
-        
-        toast({
-          title: "Location Ready",
-          description: "You can now search for nearby services on Google Maps",
-          variant: "default"
-        });
-        
         setLocationStatus('success');
       },
       (error) => {
