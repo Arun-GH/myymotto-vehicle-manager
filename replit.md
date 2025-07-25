@@ -10,6 +10,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 25, 2025**: FIXED popup auto-fade timing to 1 second for all toast notifications
+- UPDATED toast removal delay from 2000ms to 1000ms for faster popup dismissal across entire application
+- ENSURED profile update popups and all other notifications auto-fade after 1 second as requested
+- MAINTAINED consistent popup behavior throughout the application with improved user experience
+
 **July 25, 2025**: ADDED manual entry options for both state and city dropdowns in edit profile page
 - IMPLEMENTED hybrid dropdown/manual entry system for both state and city fields allowing users to select from predefined options or enter custom values
 - ADDED "Enter manually" option at bottom of both state and city dropdowns with pencil icon for easy identification
