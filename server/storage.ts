@@ -1361,8 +1361,34 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
-  async getRecentUsers(limit: number = 10): Promise<User[]> {
-    return await db.select().from(users).orderBy(desc(users.createdAt)).limit(limit);
+  async getRecentUsers(limit: number = 10): Promise<any[]> {
+    return await db.select({
+      id: users.id,
+      username: users.username,
+      password: users.password,
+      email: users.email,
+      mobile: users.mobile,
+      isVerified: users.isVerified,
+      pin: users.pin,
+      biometricEnabled: users.biometricEnabled,
+      subscriptionStatus: users.subscriptionStatus,
+      subscriptionExpiry: users.subscriptionExpiry,
+      razorpayOrderId: users.razorpayOrderId,
+      razorpayPaymentId: users.razorpayPaymentId,
+      isAdmin: users.isAdmin,
+      adminRole: users.adminRole,
+      isBlocked: users.isBlocked,
+      blockedAt: users.blockedAt,
+      blockedReason: users.blockedReason,
+      createdAt: users.createdAt,
+      // Add user profile information
+      name: userProfiles.name,
+      profileEmail: userProfiles.email,
+    })
+    .from(users)
+    .leftJoin(userProfiles, eq(users.id, userProfiles.userId))
+    .orderBy(desc(users.createdAt))
+    .limit(limit);
   }
 
   async getRecentVehicles(limit: number = 10): Promise<Vehicle[]> {

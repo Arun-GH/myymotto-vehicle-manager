@@ -723,7 +723,7 @@ export default function AdminDashboard() {
                       <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="font-medium">{user.username}</p>
+                            <p className="font-medium">{user.name || user.username}</p>
                             {user.isBlocked && (
                               <Badge variant="destructive" className="text-xs">
                                 <Shield className="w-3 h-3 mr-1" />
@@ -732,8 +732,8 @@ export default function AdminDashboard() {
                             )}
                           </div>
                           <p className="text-sm text-gray-600">Phone: {user.mobile || "No mobile"}</p>
-                          {user.email && (
-                            <p className="text-xs text-gray-500">Email: {user.email}</p>
+                          {(user.profileEmail || user.email) && (
+                            <p className="text-xs text-gray-500">Email: {user.profileEmail || user.email}</p>
                           )}
                         </div>
                         <div className="text-right flex flex-col items-end gap-1">
@@ -758,7 +758,7 @@ export default function AdminDashboard() {
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>Unblock User</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Are you sure you want to unblock user "{user.username}" ({user.mobile})? This will restore their access to the app.
+                                      Are you sure you want to unblock user "{user.name || user.username}" ({user.mobile})? This will restore their access to the app.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
@@ -788,7 +788,7 @@ export default function AdminDashboard() {
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>Block User</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Are you sure you want to block user "{user.username}" ({user.mobile})? This will prevent them from accessing the app.
+                                      Are you sure you want to block user "{user.name || user.username}" ({user.mobile})? This will prevent them from accessing the app.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
