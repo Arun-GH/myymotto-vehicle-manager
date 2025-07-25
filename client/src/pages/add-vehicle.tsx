@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import ColorfulLogo from "@/components/colorful-logo";
 import ReferralDialog from "@/components/referral-dialog";
+import EnhancedFileUpload from "@/components/enhanced-file-upload";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 // Top Indian Insurance Providers
@@ -453,26 +454,26 @@ export default function AddVehicle() {
                       </div>
                     )}
                     <div className="flex-1">
-                      <div className="flex space-x-2">
-                        <div className="flex-1">
-                          <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleThumbnailChange}
-                            className="file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
-                          />
-                        </div>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={handleCameraCapture}
-                          className="shrink-0"
-                        >
-                          <Camera className="w-4 h-4" />
-                        </Button>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">Take a photo with camera app or upload from gallery</p>
+                      <EnhancedFileUpload
+                        onFileSelect={(files) => {
+                          const file = files[0]; // Single file selection for vehicle photo
+                          if (file) {
+                            setThumbnailImage(file);
+                            
+                            // Create preview URL
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                              setThumbnailPreview(e.target?.result as string);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        onCameraCapture={handleCameraCapture}
+                        accept="image/*"
+                        multiple={false}
+                        showLabels={true}
+                      />
+                      <p className="text-xs text-gray-500 mt-1 text-center">📱 Take photo from camera app or choose from storage</p>
                     </div>
                   </div>
                   

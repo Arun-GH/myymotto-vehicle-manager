@@ -16,6 +16,7 @@ import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
 import { OCRInsuranceScanner } from "@/components/ocr-insurance-scanner";
 import { type InsurancePolicyData } from "@/lib/ocr-utils";
 import { formatForDatabase } from "@/lib/date-format";
+import EnhancedFileUpload from "@/components/enhanced-file-upload";
 
 type DocumentType = "emission" | "insurance" | "rc" | "fuel" | "miscellaneous";
 
@@ -368,54 +369,34 @@ export default function UploadDocuments() {
 
 
 
-            {/* File Upload Section */}
+            {/* Enhanced File Upload Section */}
             <div className="space-y-2">
-              <Label className="text-xs font-medium">Upload Files</Label>
+              <Label className="text-xs font-medium">📁 Choose Files from Multiple Sources</Label>
               
-              <div className="grid grid-cols-1 gap-2">
-                <div className="flex-1">
-                  <Input
-                    type="file"
-                    accept="image/*,application/pdf"
-                    multiple
-                    onChange={handleFileSelect}
-                    className="h-8 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-medium file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleCameraCapture}
-                    className="h-8 flex items-center justify-center flex-1"
-                  >
-                    <Camera className="w-3 h-3 mr-1" />
-                    <span className="text-xs">Camera</span>
-                  </Button>
-                  {/* Hidden camera input */}
-                  <input
-                    id="camera-input"
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    onChange={handleCameraInputChange}
-                    style={{ display: 'none' }}
-                  />
-                  {selectedType === "insurance" && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setShowOCRScanner(true)}
-                      className="h-8 flex items-center justify-center flex-1 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200"
-                    >
-                      <Scan className="w-3 h-3 mr-1" />
-                      <span className="text-xs">Scan Policy</span>
-                    </Button>
-                  )}
-                </div>
-              </div>
+              <EnhancedFileUpload
+                onFileSelect={(files) => {
+                  const fileArray = Array.from(files);
+                  setSelectedFiles(prev => [...prev, ...fileArray]);
+                }}
+                onCameraCapture={handleCameraCapture}
+                accept="image/*,application/pdf,.doc,.docx,.txt"
+                multiple={true}
+                showLabels={true}
+              />
               
-              <p className="text-[10px] text-gray-500">
+              {selectedType === "insurance" && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowOCRScanner(true)}
+                  className="h-8 flex items-center justify-center w-full bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 mt-2"
+                >
+                  <Scan className="w-3 h-3 mr-1" />
+                  <span className="text-xs">Scan Policy</span>
+                </Button>
+              )}
+              
+              <p className="text-[10px] text-gray-500 text-center">
                 Supported: JPEG, PNG, WebP, PDF • Max: 10MB per file
               </p>
             </div>

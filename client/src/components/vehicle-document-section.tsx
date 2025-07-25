@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import EnhancedFileUpload from "@/components/enhanced-file-upload";
 
 interface VehicleDocumentSectionProps {
   title: string;
@@ -106,43 +107,18 @@ export default function VehicleDocumentSection({
           </div>
         )}
 
-        {/* Upload Buttons */}
-        <div className="flex space-x-2">
-          <div className="flex-1">
-            <input
-              type="file"
-              id={`upload-${documentType}`}
-              accept="image/*,.pdf"
-              multiple
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={() => document.getElementById(`upload-${documentType}`)?.click()}
-            >
-              <Upload className="w-4 h-4 mr-2" />
-              Upload Files
-            </Button>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCameraCapture}
-          >
-            <Camera className="w-4 h-4 mr-2" />
-            Camera
-          </Button>
-          {/* Hidden camera input */}
-          <input
-            id={`camera-${documentType}`}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={handleCameraInputChange}
-            style={{ display: 'none' }}
+        {/* Enhanced File Upload */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">📁 Upload from Multiple Sources</Label>
+          <EnhancedFileUpload
+            onFileSelect={(files) => {
+              const fileArray = Array.from(files);
+              onDocumentsChange([...documents, ...fileArray]);
+            }}
+            onCameraCapture={handleCameraCapture}
+            accept="image/*,application/pdf,.doc,.docx"
+            multiple={true}
+            showLabels={true}
           />
         </div>
 

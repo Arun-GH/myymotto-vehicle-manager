@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Camera, MapPin, Users, Image, Mic, Shield, Check, X } from "lucide-react";
+import { Camera, MapPin, Users, Image, Mic, Shield, Check, X, Folder, FileText, Download, HardDrive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ColorfulLogo from "@/components/colorful-logo";
 
@@ -56,6 +56,38 @@ export default function PermissionsScreen({ onComplete }: PermissionsScreenProps
       description: 'Voice notes for service records',
       icon: <Mic className="w-6 h-6" />,
       required: false,
+      status: 'pending'
+    },
+    {
+      id: 'documents',
+      name: 'Documents Folder',
+      description: 'Access documents saved on your device',
+      icon: <FileText className="w-6 h-6" />,
+      required: true,
+      status: 'pending'
+    },
+    {
+      id: 'downloads',
+      name: 'Downloads Folder',
+      description: 'Access files in your downloads folder',
+      icon: <Download className="w-6 h-6" />,
+      required: true,
+      status: 'pending'
+    },
+    {
+      id: 'files',
+      name: 'File Manager Access',
+      description: 'Browse and upload files from your device',
+      icon: <Folder className="w-6 h-6" />,
+      required: true,
+      status: 'pending'
+    },
+    {
+      id: 'storage',
+      name: 'Internal Storage',
+      description: 'Access internal storage and saved files',
+      icon: <HardDrive className="w-6 h-6" />,
+      required: true,
       status: 'pending'
     }
   ]);
@@ -114,6 +146,15 @@ export default function PermissionsScreen({ onComplete }: PermissionsScreenProps
               granted = false;
             }
           }
+          break;
+          
+        case 'documents':
+        case 'downloads':
+        case 'files':
+        case 'storage':
+          // File system access is granted by default in web browsers through file input
+          // In mobile app, this would request actual file system permissions
+          granted = true;
           break;
       }
       

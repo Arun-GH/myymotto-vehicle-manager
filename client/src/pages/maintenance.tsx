@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import ColorfulLogo from '@/components/colorful-logo';
+import EnhancedFileUpload from '@/components/enhanced-file-upload';
 import logoImage from '@assets/Mymotto_Logo_Green_Revised_1752603344750.png';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
@@ -420,36 +421,24 @@ export default function MaintenancePage() {
 
             {/* Warranty Card Upload */}
             <div className="space-y-1">
-              <Label className="text-sm">Warranty Card</Label>
-              <div className="flex space-x-1">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => triggerCamera('warranty')}
-                  className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50 h-8 text-xs"
-                >
-                  <Camera className="w-3 h-3 mr-1" />
-                  Camera
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => triggerFileUpload('warranty')}
-                  className="flex-1 border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs"
-                >
-                  <Upload className="w-3 h-3 mr-1" />
-                  Upload
-                </Button>
-              </div>
+              <Label className="text-sm">📄 Warranty Card</Label>
+              <EnhancedFileUpload
+                onFileSelect={(files) => {
+                  const file = files[0]; // Single file for warranty card
+                  if (file) setWarrantyFile(file);
+                }}
+                onCameraCapture={() => triggerCamera('warranty')}
+                accept="image/*,application/pdf"
+                multiple={false}
+                showLabels={false}
+              />
               {warrantyFile && (
                 <div className="text-xs text-green-600 flex items-center justify-between bg-green-50 p-1.5 rounded">
                   <span>📄 {warrantyFile.name}</span>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleFileSelect(null, 'warranty')}
+                    onClick={() => setWarrantyFile(null)}
                     className="h-6 w-6 p-0"
                   >
                     <Trash2 className="w-3 h-3 text-red-500" />
@@ -460,36 +449,24 @@ export default function MaintenancePage() {
 
             {/* Invoice Upload */}
             <div className="space-y-1">
-              <Label className="text-sm">Invoice</Label>
-              <div className="flex space-x-1">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => triggerCamera('invoice')}
-                  className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50 h-8 text-xs"
-                >
-                  <Camera className="w-3 h-3 mr-1" />
-                  Camera
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => triggerFileUpload('invoice')}
-                  className="flex-1 border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs"
-                >
-                  <Upload className="w-3 h-3 mr-1" />
-                  Upload
-                </Button>
-              </div>
+              <Label className="text-sm">🧾 Invoice</Label>
+              <EnhancedFileUpload
+                onFileSelect={(files) => {
+                  const file = files[0]; // Single file for invoice
+                  if (file) setInvoiceFile(file);
+                }}
+                onCameraCapture={() => triggerCamera('invoice')}
+                accept="image/*,application/pdf"
+                multiple={false}
+                showLabels={false}
+              />
               {invoiceFile && (
                 <div className="text-xs text-green-600 flex items-center justify-between bg-green-50 p-1.5 rounded">
                   <span>📄 {invoiceFile.name}</span>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleFileSelect(null, 'invoice')}
+                    onClick={() => setInvoiceFile(null)}
                     className="h-6 w-6 p-0"
                   >
                     <Trash2 className="w-3 h-3 text-red-500" />
