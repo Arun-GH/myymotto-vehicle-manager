@@ -17,6 +17,9 @@ import UploadDocuments from "@/pages/upload-documents";
 import LocalDocuments from "@/pages/local-documents";
 
 import ServiceCenters from "@/pages/service-centers";
+import PetrolBunks from "@/pages/petrol-bunks";
+import Hospitals from "@/pages/hospitals";
+import PoliceStations from "@/pages/police-stations";
 import Profile from "@/pages/profile";
 import EmergencyContacts from "@/pages/emergency-contacts";
 import Subscribe from "@/pages/subscribe";
@@ -168,6 +171,9 @@ function Router() {
       <Route path="/vehicle/:id/alerts" component={VehicleAlerts} />
 
       <Route path="/service-centers" component={ServiceCenters} />
+      <Route path="/petrol-bunks" component={PetrolBunks} />
+      <Route path="/hospitals" component={Hospitals} />
+      <Route path="/police-stations" component={PoliceStations} />
       <Route path="/emergency-contacts" component={EmergencyContacts} />
       <Route path="/subscribe" component={Subscribe} />
       <Route path="/profile" component={Profile} />
