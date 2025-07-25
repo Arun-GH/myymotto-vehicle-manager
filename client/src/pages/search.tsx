@@ -166,7 +166,7 @@ export default function SearchPage() {
                 <div className="text-base font-bold">
                   <ColorfulLogo />
                 </div>
-                <p className="text-xs text-red-600">Service Centers Near You</p>
+                <p className="text-xs text-red-600">Services Near You</p>
               </div>
             </div>
             
