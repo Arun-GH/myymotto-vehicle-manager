@@ -6,8 +6,8 @@ const config: CapacitorConfig = {
   webDir: 'dist/public',
   server: {
     androidScheme: 'https',
-    // For development with live reload
-    url: 'http://localhost:5000',
+    // Comment out for production APK builds
+    // url: 'http://localhost:5000',
     cleartext: true
   },
   plugins: {
