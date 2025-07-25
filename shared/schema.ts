@@ -118,6 +118,48 @@ export const serviceAlerts = pgTable("service_alerts", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Subscription and Payment Management Tables
+export const subscriptions = pgTable("subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(), // Reference to users table
+  subscriptionType: text("subscription_type").notNull().default("premium"), // "premium", "basic"
+  subscriptionDate: timestamp("subscription_date").defaultNow().notNull(),
+  expiryDate: timestamp("expiry_date").notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  razorpaySubscriptionId: text("razorpay_subscription_id"),
+  amount: integer("amount").notNull().default(10000), // Amount in paise (₹100 = 10000 paise)
+  currency: text("currency").notNull().default("INR"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const paymentHistory = pgTable("payment_history", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(), // Reference to users table
+  subscriptionId: integer("subscription_id").references(() => subscriptions.id),
+  amount: integer("amount").notNull(), // Amount in paise
+  currency: text("currency").notNull().default("INR"),
+  paymentDate: timestamp("payment_date").defaultNow().notNull(),
+  razorpayPaymentId: text("razorpay_payment_id"),
+  razorpayOrderId: text("razorpay_order_id"),
+  transactionId: text("transaction_id"),
+  paymentStatus: text("payment_status").notNull(), // "success", "failed", "pending"
+  paymentMethod: text("payment_method"), // "card", "netbanking", "upi", "wallet"
+  invoiceGenerated: boolean("invoice_generated").default(false).notNull(),
+  invoicePath: text("invoice_path"), // Path to generated invoice PDF
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const subscriptionNotifications = pgTable("subscription_notifications", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  subscriptionId: integer("subscription_id").references(() => subscriptions.id),
+  notificationType: text("notification_type").notNull(), // "expiry_warning", "expired", "renewal_reminder"
+  sentDate: timestamp("sent_date").defaultNow().notNull(),
+  isRead: boolean("is_read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   id: true,
   createdAt: true,
@@ -501,6 +543,30 @@ export const insertTrafficViolationSchema = createInsertSchema(trafficViolations
 
 export type TrafficViolation = typeof trafficViolations.$inferSelect;
 export type InsertTrafficViolation = z.infer<typeof insertTrafficViolationSchema>;
+
+// Subscription and Payment types
+export const insertSubscriptionSchema = createInsertSchema(subscriptions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertPaymentHistorySchema = createInsertSchema(paymentHistory).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertSubscriptionNotificationSchema = createInsertSchema(subscriptionNotifications).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type Subscription = typeof subscriptions.$inferSelect;
+export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
+export type PaymentHistory = typeof paymentHistory.$inferSelect;
+export type InsertPaymentHistory = z.infer<typeof insertPaymentHistorySchema>;
+export type SubscriptionNotification = typeof subscriptionNotifications.$inferSelect;
+export type InsertSubscriptionNotification = z.infer<typeof insertSubscriptionNotificationSchema>;
 
 export const insertNewsItemSchema = createInsertSchema(newsItems).omit({
   id: true,

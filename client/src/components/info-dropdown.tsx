@@ -120,6 +120,10 @@ export default function InfoDropdown() {
             <Info className="w-4 h-4 mr-2" />
             About Myymotto
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setLocation("/account-management")} className="cursor-pointer text-orange-600 hover:text-orange-700 hover:bg-orange-50">
+            <Shield className="w-4 h-4 mr-2" />
+            Account Management
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={handleContact} className="cursor-pointer">
             <Phone className="w-4 h-4 mr-2" />
             Contact Support

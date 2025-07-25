@@ -33,6 +33,7 @@ import NewsTidbits from "@/pages/news-tidbits";
 import DashboardCustomize from "@/pages/dashboard-customize";
 import BroadcastPage from "@/pages/broadcast";
 import AdminDashboard from "@/pages/admin-dashboard";
+import AccountManagement from "@/pages/account-management";
 
 import NotFound from "@/pages/not-found";
 
@@ -159,6 +160,7 @@ function Router() {
       <Route path="/insurance" component={Insurance} />
       <Route path="/broadcast" component={BroadcastPage} />
       <Route path="/admin-dashboard" component={AdminDashboard} />
+      <Route path="/account-management" component={AccountManagement} />
       <Route component={NotFound} />
     </Switch>
   );

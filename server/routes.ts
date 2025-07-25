@@ -1901,6 +1901,231 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Account Management and Subscription Routes
+  app.get("/api/account-info", async (req, res) => {
+    try {
+      const userId = req.query.userId as string || "1"; // Default to userId 1 for demo
+      
+      // Get account creation date
+      const user = await storage.getUser(parseInt(userId));
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Get current subscription
+      const subscription = await storage.getCurrentSubscription(userId);
+      
+      // Get payment history
+      const paymentHistory = await storage.getPaymentHistory(userId);
+      
+      // Calculate subscription status
+      let isSubscriptionExpired = false;
+      let daysUntilExpiry = 0;
+      
+      if (subscription) {
+        const now = new Date();
+        const expiryDate = new Date(subscription.expiryDate);
+        isSubscriptionExpired = expiryDate < now;
+        daysUntilExpiry = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      }
+
+      res.json({
+        accountCreatedDate: user.createdAt,
+        subscription,
+        paymentHistory,
+        isSubscriptionExpired,
+        daysUntilExpiry: Math.max(0, daysUntilExpiry)
+      });
+    } catch (error) {
+      console.error("Error fetching account info:", error);
+      res.status(500).json({ message: "Failed to fetch account information" });
+    }
+  });
+
+  app.post("/api/subscription/renew", async (req, res) => {
+    try {
+      const userId = req.body.userId || "1"; // Default to userId 1 for demo
+      
+      // Create new subscription (1 year from now)
+      const subscriptionDate = new Date();
+      const expiryDate = new Date();
+      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+
+      const subscription = await storage.createSubscription({
+        userId,
+        subscriptionType: "premium",
+        subscriptionDate: subscriptionDate.toISOString(),
+        expiryDate: expiryDate.toISOString(),
+        isActive: true,
+        amount: 10000, // ₹100 in paise
+        currency: "INR"
+      });
+
+      // Create payment record
+      const transactionId = `TXN_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const payment = await storage.createPaymentRecord({
+        userId,
+        subscriptionId: subscription.id,
+        amount: 10000,
+        currency: "INR",
+        paymentDate: new Date().toISOString(),
+        transactionId,
+        paymentStatus: "success",
+        paymentMethod: "upi",
+        invoiceGenerated: true,
+        invoicePath: `/invoices/invoice_${transactionId}.pdf`
+      });
+
+      // Generate invoice (mock for demo)
+      await generateInvoice(payment, subscription);
+
+      res.json({
+        success: true,
+        subscription,
+        payment,
+        message: "Subscription renewed successfully"
+      });
+    } catch (error) {
+      console.error("Error renewing subscription:", error);
+      res.status(500).json({ message: "Failed to renew subscription" });
+    }
+  });
+
+  app.get("/api/subscription/check-expired-features", async (req, res) => {
+    try {
+      const userId = req.query.userId as string || "1";
+      
+      const subscription = await storage.getCurrentSubscription(userId);
+      let isExpired = true;
+      
+      if (subscription) {
+        const now = new Date();
+        const expiryDate = new Date(subscription.expiryDate);
+        isExpired = expiryDate < now;
+      }
+
+      res.json({
+        isExpired,
+        restrictedFeatures: isExpired ? ['documents', 'add-vehicle', 'service-logs', 'broadcasts'] : []
+      });
+    } catch (error) {
+      console.error("Error checking subscription status:", error);
+      res.status(500).json({ message: "Failed to check subscription status" });
+    }
+  });
+
+  app.get("/api/invoice/download/:paymentId", async (req, res) => {
+    try {
+      const paymentId = req.params.paymentId;
+      const payment = await storage.getPaymentById(parseInt(paymentId));
+      
+      if (!payment || !payment.invoicePath) {
+        return res.status(404).json({ message: "Invoice not found" });
+      }
+
+      // For demo purposes, generate a simple PDF content
+      const invoiceContent = generatePDFContent(payment);
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="invoice-${paymentId}.pdf"`);
+      res.send(invoiceContent);
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+      res.status(500).json({ message: "Failed to download invoice" });
+    }
+  });
+
+  // Background job to send subscription expiry notifications
+  app.post("/api/subscription/send-notifications", async (req, res) => {
+    try {
+      const activeSubscriptions = await storage.getActiveSubscriptions();
+      const now = new Date();
+      let notificationsSent = 0;
+
+      for (const subscription of activeSubscriptions) {
+        const expiryDate = new Date(subscription.expiryDate);
+        const daysUntilExpiry = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        
+        // Send weekly notifications starting 30 days before expiry
+        if (daysUntilExpiry <= 30 && daysUntilExpiry > 0 && daysUntilExpiry % 7 === 0) {
+          // Check if notification was already sent this week
+          const existingNotification = await storage.getRecentSubscriptionNotification(
+            subscription.userId, 
+            'expiry_warning'
+          );
+          
+          if (!existingNotification) {
+            await storage.createSubscriptionNotification({
+              userId: subscription.userId,
+              subscriptionId: subscription.id,
+              notificationType: 'expiry_warning',
+              sentDate: now.toISOString(),
+              isRead: false
+            });
+            
+            // In production, send email here
+            // await sendExpiryWarningEmail(subscription);
+            notificationsSent++;
+          }
+        }
+        
+        // Send expired notification
+        if (daysUntilExpiry <= 0 && subscription.isActive) {
+          await storage.deactivateSubscription(subscription.id);
+          await storage.createSubscriptionNotification({
+            userId: subscription.userId,
+            subscriptionId: subscription.id,
+            notificationType: 'expired',
+            sentDate: now.toISOString(),
+            isRead: false
+          });
+          
+          // In production, send expiry email here
+          // await sendExpiryEmail(subscription);
+          notificationsSent++;
+        }
+      }
+
+      res.json({ 
+        success: true, 
+        notificationsSent,
+        message: `Processed ${activeSubscriptions.length} subscriptions, sent ${notificationsSent} notifications`
+      });
+    } catch (error) {
+      console.error("Error sending subscription notifications:", error);
+      res.status(500).json({ message: "Failed to send notifications" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
+}
+
+// Helper functions for invoice generation
+async function generateInvoice(payment: any, subscription: any) {
+  // In production, use a proper PDF library like puppeteer or jsPDF
+  // For demo, we'll just create a placeholder
+  console.log(`Generated invoice for payment ${payment.id}`);
+}
+
+function generatePDFContent(payment: any): Buffer {
+  // In production, generate actual PDF content
+  // For demo, return simple text as buffer
+  const content = `
+    MYYMOTTO INVOICE
+    ================
+    
+    Invoice ID: ${payment.id}
+    Transaction ID: ${payment.transactionId}
+    Date: ${new Date(payment.paymentDate).toLocaleDateString('en-IN')}
+    Amount: ₹${(payment.amount / 100).toLocaleString('en-IN')}
+    Status: ${payment.paymentStatus.toUpperCase()}
+    
+    Description: Annual Premium Subscription
+    Validity: 1 Year
+    
+    Thank you for choosing Myymotto!
+  `;
+  
+  return Buffer.from(content, 'utf-8');
 }

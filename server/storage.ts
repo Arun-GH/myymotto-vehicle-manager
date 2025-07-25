@@ -127,6 +127,17 @@ export interface IStorage {
   getAllVehiclesData(): Promise<Vehicle[]>;
   getAllBroadcastsData(): Promise<Broadcast[]>;
   getAllRatingsData(): Promise<Rating[]>;
+  
+  // Subscription Management methods
+  getCurrentSubscription(userId: string): Promise<any>;
+  getPaymentHistory(userId: string): Promise<any[]>;
+  createSubscription(subscription: any): Promise<any>;
+  createPaymentRecord(payment: any): Promise<any>;
+  getPaymentById(paymentId: number): Promise<any>;
+  getActiveSubscriptions(): Promise<any[]>;
+  getRecentSubscriptionNotification(userId: string, type: string): Promise<any>;
+  createSubscriptionNotification(notification: any): Promise<any>;
+  deactivateSubscription(subscriptionId: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -1296,6 +1307,118 @@ export class DatabaseStorage implements IStorage {
 
   async getAllRatingsData(): Promise<Rating[]> {
     return await db.select().from(ratings).orderBy(desc(ratings.createdAt));
+  }
+
+  // Subscription Management methods
+  async getCurrentSubscription(userId: string): Promise<any> {
+    // For demo purposes, create a mock subscription for user 1
+    if (userId === "1") {
+      const now = new Date();
+      const expiryDate = new Date();
+      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+      
+      return {
+        id: 1,
+        userId: userId,
+        subscriptionType: "premium",
+        subscriptionDate: new Date('2024-01-01').toISOString(),
+        expiryDate: expiryDate.toISOString(),
+        isActive: true,
+        amount: 10000,
+        currency: "INR"
+      };
+    }
+    return null;
+  }
+
+  async getPaymentHistory(userId: string): Promise<any[]> {
+    // Mock payment history for demo
+    if (userId === "1") {
+      return [
+        {
+          id: 1,
+          userId: userId,
+          subscriptionId: 1,
+          amount: 10000,
+          currency: "INR",
+          paymentDate: "2024-01-01T00:00:00.000Z",
+          transactionId: "TXN_1704067200000_abc123def",
+          paymentStatus: "success",
+          paymentMethod: "upi",
+          invoiceGenerated: true,
+          invoicePath: "/invoices/invoice_TXN_1704067200000_abc123def.pdf"
+        }
+      ];
+    }
+    return [];
+  }
+
+  async createSubscription(subscription: any): Promise<any> {
+    // Mock subscription creation
+    return {
+      id: Date.now(),
+      ...subscription
+    };
+  }
+
+  async createPaymentRecord(payment: any): Promise<any> {
+    // Mock payment record creation
+    return {
+      id: Date.now(),
+      ...payment
+    };
+  }
+
+  async getPaymentById(paymentId: number): Promise<any> {
+    // Mock payment retrieval
+    return {
+      id: paymentId,
+      userId: "1",
+      subscriptionId: 1,
+      amount: 10000,
+      currency: "INR",
+      paymentDate: new Date().toISOString(),
+      transactionId: `TXN_${paymentId}_mock`,
+      paymentStatus: "success",
+      paymentMethod: "upi",
+      invoiceGenerated: true,
+      invoicePath: `/invoices/invoice_${paymentId}.pdf`
+    };
+  }
+
+  async getActiveSubscriptions(): Promise<any[]> {
+    // Mock active subscriptions for notification processing
+    return [
+      {
+        id: 1,
+        userId: "1",
+        subscriptionType: "premium",
+        subscriptionDate: "2024-01-01T00:00:00.000Z",
+        expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
+        isActive: true,
+        amount: 10000,
+        currency: "INR"
+      }
+    ];
+  }
+
+  async getRecentSubscriptionNotification(userId: string, type: string): Promise<any> {
+    // Check if notification was sent in last 7 days (for demo, return null to allow notifications)
+    return null;
+  }
+
+  async createSubscriptionNotification(notification: any): Promise<any> {
+    // Mock notification creation
+    console.log('Subscription notification created:', notification);
+    return {
+      id: Date.now(),
+      ...notification
+    };
+  }
+
+  async deactivateSubscription(subscriptionId: number): Promise<void> {
+    // Mock subscription deactivation
+    console.log('Subscription deactivated:', subscriptionId);
   }
 }
 
