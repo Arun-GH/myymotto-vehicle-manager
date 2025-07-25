@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 25, 2025**: ADDED manual entry options for both state and city dropdowns in edit profile page
+- IMPLEMENTED hybrid dropdown/manual entry system for both state and city fields allowing users to select from predefined options or enter custom values
+- ADDED "Enter manually" option at bottom of both state and city dropdowns with pencil icon for easy identification
+- CREATED toggle functionality between dropdown selection and manual text input modes with "Use dropdown instead" button
+- ENHANCED state dropdown with manual entry mode that automatically enables city manual entry and clears existing city selection
+- IMPROVED city dropdown to work with both predefined state selection and manual state entry modes
+- MAINTAINED all existing auto-population and dependency logic while adding flexibility for custom location entries
+- ENSURED proper form state management when switching between dropdown and manual entry modes
+
 **July 25, 2025**: IMPLEMENTED auto-populated city dropdown based on state selection in edit profile page
 - CONVERTED city field from text input to dropdown that auto-populates based on selected state
 - ADDED comprehensive state-to-cities mapping covering all 28 Indian states and 8 union territories with major cities

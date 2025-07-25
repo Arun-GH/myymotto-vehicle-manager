@@ -111,6 +111,8 @@ export default function Profile() {
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [licenseImage, setLicenseImage] = useState<File | null>(null);
   const [licenseImagePreview, setLicenseImagePreview] = useState<string | null>(null);
+  const [isManualStateEntry, setIsManualStateEntry] = useState(false);
+  const [isManualCityEntry, setIsManualCityEntry] = useState(false);
   const currentUserId = localStorage.getItem("currentUserId");
 
   const { data: profile, isLoading } = useQuery<UserProfile>({
@@ -853,20 +855,63 @@ export default function Profile() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-xs">State</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="h-8 text-sm">
-                                <SelectValue placeholder="State" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {states.map((state) => (
-                                <SelectItem key={state} value={state}>
-                                  {state}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          {isManualStateEntry ? (
+                            <div className="space-y-1">
+                              <FormControl>
+                                <Input 
+                                  placeholder="Enter state manually"
+                                  className="h-8 text-sm"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 text-xs px-2"
+                                onClick={() => {
+                                  setIsManualStateEntry(false);
+                                  field.onChange("");
+                                  setIsManualCityEntry(false);
+                                  form.setValue("city", "");
+                                }}
+                              >
+                                Use dropdown instead
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="space-y-1">
+                              <Select 
+                                onValueChange={(value) => {
+                                  if (value === "manual_entry") {
+                                    setIsManualStateEntry(true);
+                                    field.onChange("");
+                                    setIsManualCityEntry(false);
+                                    form.setValue("city", "");
+                                  } else {
+                                    field.onChange(value);
+                                  }
+                                }} 
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger className="h-8 text-sm">
+                                    <SelectValue placeholder="State" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {states.map((state) => (
+                                    <SelectItem key={state} value={state}>
+                                      {state}
+                                    </SelectItem>
+                                  ))}
+                                  <SelectItem value="manual_entry" className="text-orange-600 font-medium">
+                                    ✏️ Enter manually
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          )}
                           <FormMessage className="text-xs" />
                         </FormItem>
                       )}
@@ -877,24 +922,63 @@ export default function Profile() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-xs">City</FormLabel>
-                          <Select 
-                            onValueChange={field.onChange} 
-                            defaultValue={field.value}
-                            disabled={!selectedState}
-                          >
-                            <FormControl>
-                              <SelectTrigger className="h-8 text-sm">
-                                <SelectValue placeholder={selectedState ? "Select City" : "Select State first"} />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {availableCities.map((city) => (
-                                <SelectItem key={city} value={city}>
-                                  {city}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          {isManualCityEntry ? (
+                            <div className="space-y-1">
+                              <FormControl>
+                                <Input 
+                                  placeholder="Enter city manually"
+                                  className="h-8 text-sm"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 text-xs px-2"
+                                onClick={() => {
+                                  setIsManualCityEntry(false);
+                                  field.onChange("");
+                                }}
+                              >
+                                Use dropdown instead
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="space-y-1">
+                              <Select 
+                                onValueChange={(value) => {
+                                  if (value === "manual_entry") {
+                                    setIsManualCityEntry(true);
+                                    field.onChange("");
+                                  } else {
+                                    field.onChange(value);
+                                  }
+                                }} 
+                                defaultValue={field.value}
+                                disabled={!selectedState && !isManualStateEntry}
+                              >
+                                <FormControl>
+                                  <SelectTrigger className="h-8 text-sm">
+                                    <SelectValue placeholder={
+                                      isManualStateEntry ? "Select City" : 
+                                      selectedState ? "Select City" : "Select State first"
+                                    } />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {availableCities.map((city) => (
+                                    <SelectItem key={city} value={city}>
+                                      {city}
+                                    </SelectItem>
+                                  ))}
+                                  <SelectItem value="manual_entry" className="text-orange-600 font-medium">
+                                    ✏️ Enter manually
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          )}
                           <FormMessage className="text-xs" />
                         </FormItem>
                       )}
