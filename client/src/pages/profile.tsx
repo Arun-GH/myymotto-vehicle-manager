@@ -105,7 +105,7 @@ export default function Profile() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [isEditing, setIsEditing] = useState(false);
+
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [licenseImage, setLicenseImage] = useState<File | null>(null);
@@ -251,6 +251,38 @@ export default function Profile() {
     setLicenseImagePreview(null);
   };
 
+  // Handle license file upload
+  const handleLicenseUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setLicenseImage(file);
+      const reader = new FileReader();
+      reader.onload = () => setLicenseImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Date conversion helpers
+  const convertToDateInputFormat = (dateStr: string): string => {
+    if (!dateStr) return "";
+    try {
+      const [day, month, year] = dateStr.split('/');
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    } catch {
+      return "";
+    }
+  };
+
+  const convertFromDateInputFormat = (dateStr: string): string => {
+    if (!dateStr) return "";
+    try {
+      const [year, month, day] = dateStr.split('-');
+      return `${day}/${month}/${year}`;
+    } catch {
+      return "";
+    }
+  };
+
   // Update form when profile data loads
   useEffect(() => {
     if (profile) {
@@ -339,7 +371,6 @@ export default function Profile() {
         title: "Profile Created",
         description: "Your profile has been successfully created.",
       });
-      setIsEditing(false);
       setLocation("/");
     },
     onError: (error) => {
@@ -361,7 +392,7 @@ export default function Profile() {
       }
       
       // Upload profile image first if a new one exists
-      let profilePicturePath = profile?.profilePicture || undefined;
+      let profilePicturePath = profile?.profilePicture;
       if (profileImage) {
         const formData = new FormData();
         formData.append('file', profileImage);
@@ -375,7 +406,7 @@ export default function Profile() {
       }
 
       // Upload license image if a new one exists
-      let licenseCopyPath = profile?.driversLicenseCopy || undefined;
+      let licenseCopyPath = profile?.driversLicenseCopy;
       if (licenseImage) {
         const formData = new FormData();
         formData.append('file', licenseImage);
@@ -411,7 +442,7 @@ export default function Profile() {
         title: "Profile Updated",
         description: "Your profile has been successfully updated.",
       });
-      setIsEditing(false);
+
     },
     onError: (error) => {
       toast({
@@ -430,8 +461,8 @@ export default function Profile() {
     }
   };
 
-  // If no profile exists and not editing, show the create profile prompt
-  if (!isLoading && !profile && !isEditing) {
+  // If no profile exists, show the create profile form
+  if (!isLoading && !profile) {
     return (
       <div className="min-h-screen bg-background">
         {/* Header */}
@@ -469,13 +500,9 @@ export default function Profile() {
               <p className="text-gray-600 mb-6">
                 Let's create your profile to get started with timely care for your carrier.
               </p>
-              <Button 
-                onClick={() => setIsEditing(true)}
-                className="w-full gradient-warm text-white border-0 hover:opacity-90"
-                size="lg"
-              >
-                Create Profile
-              </Button>
+              <div className="text-center text-gray-600">
+                <p>Please fill out the form below to create your profile.</p>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -494,7 +521,7 @@ export default function Profile() {
                 variant="ghost"
                 size="sm"
                 className="text-gray-600 hover:bg-red-50 p-1"
-                onClick={() => profile ? setLocation("/") : setIsEditing(false)}
+                onClick={() => setLocation("/")}
               >
                 <ArrowLeft className="w-4 h-4" />
               </Button>
@@ -508,7 +535,7 @@ export default function Profile() {
                   <ColorfulLogo />
                 </div>
                 <p className="text-xs text-red-600">
-                  {profile ? (isEditing ? "Edit Profile" : "Profile") : "Create Profile"}
+                  {profile ? "Profile" : "Create Profile"}
                 </p>
               </div>
             </div>
@@ -595,568 +622,453 @@ export default function Profile() {
           </Card>
         )}
 
-        {!isEditing && profile ? (
-          // Display Mode
-          <Card className="shadow-orange">
-            <CardHeader className="p-2 pb-2">
-              <CardTitle className="text-lg">Personal Information</CardTitle>
-            </CardHeader>
-            <CardContent className="p-2 space-y-3">
-              {/* Profile Picture Display */}
-              {profile.profilePicture && (
-                <div className="flex justify-center">
-                  <img 
-                    src={profile.profilePicture} 
-                    alt="Profile" 
-                    className="w-24 h-24 rounded-full object-cover shadow-md"
+        {/* Always show form - unified viewing and editing */}
+        <Card className="shadow-orange">
+          <CardHeader className="p-2 pb-2">
+            <CardTitle className="text-lg">Personal Information</CardTitle>
+          </CardHeader>
+          <CardContent className="p-2">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+                {/* Profile Picture Section */}
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-700">Profile Picture</label>
+                  
+                  {/* Profile Picture Display/Preview */}
+                  <div className="flex justify-center">
+                    {profileImagePreview ? (
+                      <div className="relative">
+                        <img 
+                          src={profileImagePreview} 
+                          alt="Profile" 
+                          className="w-20 h-20 rounded-full object-cover shadow-md border-2 border-orange-200"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute -top-1 -right-1 w-5 h-5 rounded-full"
+                          onClick={removeProfileImage}
+                        >
+                          <X className="w-2.5 h-2.5" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-2 border-gray-200">
+                        <User className="w-8 h-8 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Upload Options */}
+                  <div className="flex justify-center space-x-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-1.5 h-7 text-xs px-2"
+                      onClick={() => document.getElementById('profile-upload')?.click()}
+                    >
+                      <Upload className="w-3 h-3" />
+                      Upload
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-1.5 h-7 text-xs px-2"
+                      onClick={() => document.getElementById('profile-camera')?.click()}
+                    >
+                      <Camera className="w-3 h-3" />
+                      Camera
+                    </Button>
+                  </div>
+
+                  {/* Hidden File Inputs */}
+                  <input
+                    id="profile-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <input
+                    id="profile-camera"
+                    type="file"
+                    accept="image/*"
+                    capture="user"
+                    onChange={handleCameraInputChange}
+                    className="hidden"
                   />
                 </div>
-              )}
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm text-muted-foreground">Name</label>
-                  <p className="font-medium">{profile.name}</p>
-                </div>
-                <div>
-                  <label className="text-sm text-muted-foreground">Age</label>
-                  <p className="font-medium">{profile.age} years</p>
-                </div>
-                {profile.gender && (
-                  <div>
-                    <label className="text-sm text-muted-foreground">Gender</label>
-                    <p className="font-medium">{profile.gender}</p>
-                  </div>
-                )}
-                <div>
-                  <label className="text-sm text-muted-foreground">Blood Group</label>
-                  <p className="font-medium">{profile.bloodGroup}</p>
-                </div>
-                <div>
-                  <label className="text-sm text-muted-foreground">Pin Code</label>
-                  <p className="font-medium">{profile.pinCode}</p>
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-sm text-muted-foreground">Address</label>
-                <p className="font-medium">{profile.address}</p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm text-muted-foreground">City</label>
-                  <p className="font-medium">{profile.city}</p>
-                </div>
-                <div>
-                  <label className="text-sm text-muted-foreground">State</label>
-                  <p className="font-medium">{profile.state}</p>
-                </div>
-              </div>
-              
-              {profile.alternatePhone && (
-                <div>
-                  <label className="text-sm text-muted-foreground">Alternate Phone</label>
-                  <p className="font-medium">{profile.alternatePhone}</p>
-                </div>
-              )}
-              
-              {profile.email && (
-                <div>
-                  <label className="text-sm text-muted-foreground">Email Address</label>
-                  <p className="font-medium">{profile.email}</p>
-                </div>
-              )}
 
-              {/* Driver's License Information */}
-              {(profile.driversLicenseNumber || profile.driversLicenseCopy || profile.driversLicenseValidTill) && (
-                <div className="pt-4 border-t border-gray-200">
-                  <h4 className="font-medium text-gray-900 mb-3">Driver's License</h4>
+                {/* Basic Information */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Basic Information</h4>
                   
-                  {/* License Number and Valid Till side by side */}
-                  {(profile.driversLicenseNumber || profile.driversLicenseValidTill) && (
-                    <div className="grid grid-cols-2 gap-4">
-                      {profile.driversLicenseNumber && (
-                        <div>
-                          <label className="text-sm text-muted-foreground">License Number</label>
-                          <p className="font-medium">{profile.driversLicenseNumber}</p>
-                        </div>
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Full Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Enter your full name"
+                            className="h-8 text-sm"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <FormField
+                      control={form.control}
+                      name="age"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Age</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number"
+                              placeholder="Age"
+                              className="h-8 text-sm"
+                              value={field.value || ''}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                field.onChange(value === '' ? undefined : parseInt(value) || undefined);
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
                       )}
-                      {profile.driversLicenseValidTill && (
-                        <div>
-                          <label className="text-sm text-muted-foreground">Valid Till</label>
-                          <p className="font-medium">{new Date(profile.driversLicenseValidTill).toLocaleDateString()}</p>
-                        </div>
+                    />
+                    <FormField
+                      control={form.control}
+                      name="gender"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Gender</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="h-8 text-sm">
+                                <SelectValue placeholder="Gender" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="male">Male</SelectItem>
+                              <SelectItem value="female">Female</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
                       )}
-                    </div>
-                  )}
-                  
-                  {profile.driversLicenseCopy && (
-                    <div className="mt-3">
-                      <label className="text-sm text-muted-foreground">License Copy</label>
-                      <div className="mt-2">
-                        <img 
-                          src={profile.driversLicenseCopy} 
-                          alt="Driver's License" 
-                          className="w-full max-w-sm rounded-lg object-cover shadow-md"
-                        />
-                      </div>
-                    </div>
-                  )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="bloodGroup"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Blood Group</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="h-8 text-sm">
+                                <SelectValue placeholder="Blood" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {bloodGroups.map((group) => (
+                                <SelectItem key={group} value={group}>
+                                  {group}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
-              )}
-              
-              <div className="pt-4">
-                <Button onClick={() => setLocation("/")} className="w-full">
-                  Continue to Dashboard
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          // Edit/Create Mode
-          <Card className="shadow-orange">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Personal Information</CardTitle>
-            </CardHeader>
-            <CardContent className="p-3">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-                  {/* Profile Picture Upload Section */}
+
+                {/* Address Information */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Address Information</h4>
+                  
+                  <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Complete Address</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Enter your complete address"
+                            className="text-sm resize-none h-16"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">City</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="City"
+                              className="h-8 text-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="state"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">State</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="h-8 text-sm">
+                                <SelectValue placeholder="State" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {states.map((state) => (
+                                <SelectItem key={state} value={state}>
+                                  {state}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="pinCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Pin Code</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Pin code"
+                            className="h-8 text-sm"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Contact Information */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Contact Information</h4>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <FormField
+                      control={form.control}
+                      name="alternatePhone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Phone</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Alternate phone"
+                              className="h-8 text-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Email</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="email"
+                              placeholder="Email address"
+                              className="h-8 text-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                {/* Driver's License (Optional) */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Driver's License (Optional)</h4>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <FormField
+                      control={form.control}
+                      name="driversLicenseNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">License Number</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="License number"
+                              className="h-8 text-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="driversLicenseValidTill"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs">Valid Till</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="date"
+                              className="h-8 text-sm"
+                              value={field.value ? convertToDateInputFormat(field.value) : ""}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                field.onChange(value ? convertFromDateInputFormat(value) : "");
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* License Copy Upload */}
                   <div className="space-y-2">
-                    <label className="text-xs font-medium text-gray-700">Profile Picture</label>
+                    <label className="text-xs font-medium text-gray-700">License Copy</label>
                     
-                    {/* Profile Picture Preview */}
-                    <div className="flex justify-center">
-                      {profileImagePreview ? (
+                    {licenseImagePreview && (
+                      <div className="flex justify-center">
                         <div className="relative">
                           <img 
-                            src={profileImagePreview} 
-                            alt="Profile Preview" 
-                            className="w-16 h-16 rounded-full object-cover shadow-md"
+                            src={licenseImagePreview} 
+                            alt="License Preview" 
+                            className="w-32 h-20 object-cover rounded border"
                           />
                           <Button
                             type="button"
                             variant="destructive"
                             size="icon"
                             className="absolute -top-1 -right-1 w-5 h-5 rounded-full"
-                            onClick={removeProfileImage}
+                            onClick={removeLicenseImage}
                           >
                             <X className="w-2.5 h-2.5" />
                           </Button>
                         </div>
-                      ) : (
-                        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-                          <User className="w-6 h-6 text-muted-foreground" />
-                        </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
 
-                    {/* Upload Options */}
-                    <div className="flex justify-center">
+                    <div className="flex justify-center space-x-2">
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         className="flex items-center gap-1.5 h-7 text-xs px-2"
-                        onClick={() => document.getElementById('profile-upload')?.click()}
+                        onClick={() => document.getElementById('license-upload')?.click()}
                       >
                         <Upload className="w-3 h-3" />
-                        Photos & Documents
+                        Upload
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-1.5 h-7 text-xs px-2"
+                        onClick={() => document.getElementById('license-camera')?.click()}
+                      >
+                        <Camera className="w-3 h-3" />
+                        Camera
                       </Button>
                     </div>
 
-                    {/* Hidden File Input */}
+                    {/* Hidden File Inputs */}
                     <input
-                      id="profile-upload"
+                      id="license-upload"
                       type="file"
-                      accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
-                      onChange={handleFileUpload}
+                      accept="image/*"
+                      onChange={handleLicenseUpload}
+                      className="hidden"
+                    />
+                    <input
+                      id="license-camera"
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handleLicenseCameraInputChange}
                       className="hidden"
                     />
                   </div>
+                </div>
 
-                  {/* Basic Info Section */}
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Basic Information</h4>
-                    
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs">Full Name</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="Enter your full name"
-                              className="h-8 text-sm text-black"
-                              {...field}
-                              onChange={(e) => {
-                                const upperValue = e.target.value.toUpperCase();
-                                field.onChange(upperValue);
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
+                {/* Submit Button */}
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    className="w-full bg-orange-500 hover:bg-orange-600"
+                    disabled={createProfileMutation.isPending || updateProfileMutation.isPending}
+                  >
+                    {createProfileMutation.isPending || updateProfileMutation.isPending 
+                      ? "Saving..." 
+                      : profile ? "Update Profile" : "Create Profile"
+                    }
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
 
-                    <div className="grid grid-cols-3 gap-2">
-                      <FormField
-                        control={form.control}
-                        name="age"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs">Age</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number"
-                                placeholder="Age"
-                                className="h-8 text-sm text-black"
-                                value={field.value || ''}
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? undefined : parseInt(value) || undefined);
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="gender"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs">Gender</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="h-8 text-sm">
-                                  <SelectValue placeholder="Gender" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="male">Male</SelectItem>
-                                <SelectItem value="female">Female</SelectItem>
-                                <SelectItem value="other">Other</SelectItem>
-                                <SelectItem value="prefer_not_to_say">Prefer not to say</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="bloodGroup"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs">Blood Group</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="h-8 text-sm">
-                                  <SelectValue placeholder="Blood" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {bloodGroups.map((group) => (
-                                  <SelectItem key={group} value={group}>
-                                    {group}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Address Section */}
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Address Information</h4>
-                    
-                    <FormField
-                      control={form.control}
-                      name="address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs">Complete Address</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              placeholder="Enter your complete address"
-                              className="text-sm text-black resize-none h-16"
-                              {...field}
-                              onChange={(e) => {
-                                const upperValue = e.target.value.toUpperCase();
-                                field.onChange(upperValue);
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <FormField
-                        control={form.control}
-                        name="state"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs">State</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="h-8 text-sm text-black">
-                                  <SelectValue placeholder="Select state" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {states.map((state) => (
-                                  <SelectItem key={state} value={state}>
-                                    {state}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs">City</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!selectedState}>
-                              <FormControl>
-                                <SelectTrigger className="h-8 text-sm text-black">
-                                  <SelectValue placeholder={selectedState ? "Select city" : "Select state first"} />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {availableCities.map((city) => (
-                                  <SelectItem key={city} value={city}>
-                                    {city}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={form.control}
-                      name="pinCode"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs">Pin Code</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="Enter 6-digit pin code"
-                              className="h-8 text-sm text-black"
-                              maxLength={6}
-                              {...field}
-                              onChange={(e) => {
-                                const value = e.target.value.replace(/\D/g, ''); // Only allow digits
-                                field.onChange(value);
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Contact Section */}
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Contact Information</h4>
-                    
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs">Email Address</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="email" 
-                              placeholder="user@example.com"
-                              className="h-8 text-sm text-black"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="alternatePhone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs">Alternate Phone (Optional)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="+91 98765 43210"
-                              className="h-8 text-sm text-black"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Driver's License Section */}
-                  <div className="space-y-2 pt-2 border-t border-gray-100">
-                    <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Driver's License (Optional)</h4>
-                    
-                    <div className="grid grid-cols-2 gap-2">
-                      <FormField
-                        control={form.control}
-                        name="driversLicenseNumber"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs">License Number</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="MH12 20220012345" 
-                                className="h-8 text-sm text-black"
-                                {...field}
-                                onChange={(e) => {
-                                  const upperValue = e.target.value.toUpperCase();
-                                  field.onChange(upperValue);
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="driversLicenseValidTill"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs">Valid Till</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="date"
-                                className="h-8 text-sm text-black"
-                                {...field}
-                                value={toStandardDateFormat(field.value) || ""}
-                                onChange={(e) => {
-                                  field.onChange(e.target.value);
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    {/* License Copy Upload Section */}
-                    <div className="space-y-2 mt-2">
-                      <label className="text-xs font-medium text-gray-700">License Copy (Optional)</label>
-                      
-                      {/* License Image Preview */}
-                      <div className="flex justify-center">
-                        {licenseImagePreview ? (
-                          <div className="relative">
-                            <img 
-                              src={licenseImagePreview} 
-                              alt="License Preview" 
-                              className="w-full max-w-48 rounded-lg object-cover shadow-md"
-                            />
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="icon"
-                              className="absolute -top-1 -right-1 w-5 h-5 rounded-full"
-                              onClick={removeLicenseImage}
-                            >
-                              <X className="w-2.5 h-2.5" />
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="border border-dashed border-gray-300 rounded-lg p-4 text-center">
-                            <div className="flex flex-col items-center space-y-1">
-                              <Camera className="w-5 h-5 text-gray-400" />
-                              <p className="text-xs text-gray-500">No license uploaded</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* License Upload Buttons */}
-                      <div className="flex justify-center">
-                        <label>
-                          <Button type="button" variant="outline" size="sm" className="flex items-center gap-1.5 h-7 text-xs px-2" asChild>
-                            <div>
-                              <Upload className="w-3 h-3" />
-                              Photos & Documents
-                            </div>
-                          </Button>
-                          <input
-                            type="file"
-                            accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.pdf,.doc,.docx,.txt"
-                            onChange={handleLicenseFileUpload}
-                            className="hidden"
-                          />
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="pt-2 border-t border-gray-100 mt-3">
-                    <div className="flex gap-2">
-                      {profile && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="flex-1 h-8 text-sm"
-                          onClick={() => setIsEditing(false)}
-                        >
-                          Cancel
-                        </Button>
-                      )}
-                      <Button 
-                        type="submit"
-                        className="flex-1 gradient-warm text-white border-0 h-8 text-sm"
-                        disabled={createProfileMutation.isPending || updateProfileMutation.isPending}
-                      >
-                        {createProfileMutation.isPending || updateProfileMutation.isPending ? (
-                          'Saving...'
-                        ) : profile ? (
-                          'Update Profile'
-                        ) : (
-                          'Create Profile'
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </form>
-              </Form>
+        {/* Continue to dashboard button for existing profiles */}
+        {profile && (
+          <Card className="shadow-orange mt-3">
+            <CardContent className="p-2">
+              <Button 
+                onClick={() => setLocation("/")} 
+                variant="outline"
+                className="w-full"
+              >
+                Continue to Dashboard
+              </Button>
             </CardContent>
           </Card>
         )}
       </div>
-
-
     </div>
   );
 }
