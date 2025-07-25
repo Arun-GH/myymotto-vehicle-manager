@@ -25,8 +25,12 @@ interface DocumentUpload {
   expiryDate?: string;
 }
 
+interface FileWithCustomName extends File {
+  customName?: string;
+}
+
 interface FilePreviewCardProps {
-  file: File;
+  file: FileWithCustomName;
   index: number;
   onRename: (newName: string) => void;
   onRemove: () => void;
@@ -34,8 +38,9 @@ interface FilePreviewCardProps {
 
 function FilePreviewCard({ file, onRename, onRemove }: FilePreviewCardProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const displayName = file.customName || file.name;
   const [fileName, setFileName] = useState(() => {
-    const name = file.name;
+    const name = displayName;
     const lastDotIndex = name.lastIndexOf('.');
     return lastDotIndex > 0 ? name.substring(0, lastDotIndex) : name;
   });
@@ -77,7 +82,7 @@ function FilePreviewCard({ file, onRename, onRemove }: FilePreviewCardProps) {
             />
           ) : (
             <p className="text-xs font-medium truncate cursor-pointer" onClick={() => setIsEditing(true)}>
-              {file.name}
+              {displayName}
             </p>
           )}
           <p className="text-[10px] text-gray-500">
@@ -122,7 +127,7 @@ export default function UploadDocuments() {
   const queryClient = useQueryClient();
   
   const [selectedType, setSelectedType] = useState<DocumentType>("emission");
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<FileWithCustomName[]>([]);
   const [expiryDate, setExpiryDate] = useState<string>("");
   const [documentName, setDocumentName] = useState<string>("");
 
@@ -193,10 +198,13 @@ export default function UploadDocuments() {
   const renameFile = (index: number, newName: string) => {
     setSelectedFiles(prev => prev.map((file, i) => {
       if (i === index) {
-        // Create a new File object with the new name
         const extension = file.name.split('.').pop() || '';
         const finalName = newName.endsWith(`.${extension}`) ? newName : `${newName}.${extension}`;
-        return new File([file], finalName, { type: file.type });
+        
+        // Add customName property to track the renamed file
+        const fileWithCustomName = file as FileWithCustomName;
+        fileWithCustomName.customName = finalName;
+        return fileWithCustomName;
       }
       return file;
     }));
@@ -223,7 +231,18 @@ export default function UploadDocuments() {
           metadata.expiryDate = expiryDate;
         }
         
-        const localDoc = await localDocumentStorage.storeDocument(vehicleId, selectedType, file, metadata);
+        // Create a file with custom name if available
+        let fileToStore = file;
+        if (file.customName && file.customName !== file.name) {
+          // Create a blob and then a new File with the custom name
+          const blob = new Blob([file], { type: file.type });
+          fileToStore = new File([blob], file.customName, { 
+            type: file.type, 
+            lastModified: file.lastModified 
+          });
+        }
+        
+        const localDoc = await localDocumentStorage.storeDocument(vehicleId, selectedType, fileToStore, metadata);
         uploadedDocuments.push(localDoc);
       }
 
