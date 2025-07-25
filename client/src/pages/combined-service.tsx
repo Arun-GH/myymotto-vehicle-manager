@@ -490,7 +490,7 @@ export default function CombinedServicePage() {
                         className="flex-1 border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs"
                       >
                         <Upload className="w-3 h-3 mr-1" />
-                        Upload
+                        Photos & Documents
                       </Button>
                     </div>
                     {selectedServiceFile && (
@@ -716,7 +716,7 @@ export default function CombinedServicePage() {
                   className="flex-1 border-green-300 text-green-700 hover:bg-green-50 h-8 text-xs"
                 >
                   <Upload className="w-3 h-3 mr-1" />
-                  Upload
+                  Photos & Documents
                 </Button>
               </div>
               {invoiceFile && (

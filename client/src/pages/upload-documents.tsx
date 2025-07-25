@@ -403,7 +403,7 @@ export default function UploadDocuments() {
                   className="h-10 flex items-center justify-center border-green-300 text-green-700 hover:bg-green-50"
                 >
                   <Upload className="w-4 h-4 mr-2" />
-                  <span className="text-xs">Upload</span>
+                  <span className="text-xs">Photos & Documents</span>
                 </Button>
               </div>
               

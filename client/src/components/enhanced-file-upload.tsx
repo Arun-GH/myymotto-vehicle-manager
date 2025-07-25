@@ -59,15 +59,15 @@ export default function EnhancedFileUpload({
           {showLabels && <span className="text-xs">Camera</span>}
         </Button>
 
-        {/* Photo Gallery */}
+        {/* Photos & Documents */}
         <Button
           type="button"
           variant="outline"
-          onClick={() => triggerFileInput(galleryInputRef, "Gallery")}
+          onClick={() => triggerFileInput(galleryInputRef, "Photos & Documents")}
           className="h-12 flex flex-col items-center justify-center border-blue-300 text-blue-700 hover:bg-blue-50"
         >
           <Upload className="w-4 h-4 mb-1" />
-          {showLabels && <span className="text-xs">Gallery</span>}
+          {showLabels && <span className="text-xs">Photos & Documents</span>}
         </Button>
 
         {/* Documents Folder */}
@@ -126,7 +126,7 @@ export default function EnhancedFileUpload({
         type="file"
         accept={accept}
         multiple={multiple}
-        onChange={(e) => handleFileInput(e.target.files, "Gallery")}
+        onChange={(e) => handleFileInput(e.target.files, "Photos & Documents")}
         className="hidden"
       />
       

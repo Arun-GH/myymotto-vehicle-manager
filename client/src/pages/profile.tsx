@@ -790,7 +790,7 @@ export default function Profile() {
                         onClick={() => document.getElementById('profile-upload')?.click()}
                       >
                         <Upload className="w-3 h-3" />
-                        Upload
+                        Photos & Documents
                       </Button>
                     </div>
 
@@ -1154,7 +1154,7 @@ export default function Profile() {
                           <Button type="button" variant="outline" size="sm" className="flex items-center gap-1.5 h-7 text-xs px-2" asChild>
                             <div>
                               <Upload className="w-3 h-3" />
-                              Upload
+                              Photos & Documents
                             </div>
                           </Button>
                           <input
