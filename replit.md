@@ -22,6 +22,7 @@ Preferred communication style: Simple, everyday language.
 - ENHANCED security with proper admin middleware validation ensuring only authorized users can perform management actions
 - COMPLETED full admin toolkit: analytics, data export, user management, and content moderation capabilities
 - ADDED visual feedback with blocked user badges, action button styling, and confirmation dialogs for admin actions
+- ENHANCED ratings card with average rating display (e.g., 3.5/5) in the header for better analytics visualization
 
 **July 25, 2025**: COMPLETED admin dashboard improvements with fixed labels and working data export functionality
 - COMPLETED removal of redundant "Recent" labels throughout admin dashboard interface (tabs, headers, titles)

@@ -625,7 +625,18 @@ export default function AdminDashboard() {
           <TabsContent value="ratings" className="space-y-4">
             <Card className="shadow-orange">
               <CardHeader>
-                <CardTitle className="text-lg">Ratings</CardTitle>
+                <CardTitle className="text-lg flex items-center justify-between">
+                  <span>Ratings</span>
+                  <div className="text-sm font-normal text-gray-600">
+                    Average: {recentRatings.length > 0 ? (
+                      <span className="font-semibold text-orange-600">
+                        {(recentRatings.reduce((sum: number, rating: any) => sum + rating.rating, 0) / recentRatings.length).toFixed(1)}/5
+                      </span>
+                    ) : (
+                      <span className="text-gray-400">No ratings</span>
+                    )}
+                  </div>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 {ratingsLoading ? (
