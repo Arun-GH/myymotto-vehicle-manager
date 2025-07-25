@@ -22,7 +22,9 @@ export default function SearchPage() {
     
     const searchQuery = searchTerms[category].replace(/\s+/g, '+');
     const url = `https://www.google.com/maps/search/${searchQuery}`;
-    window.open(url, '_blank');
+    
+    // Open in same tab so users can use browser back button to return
+    window.location.href = url;
   };
 
   // Get user's current location
@@ -233,13 +235,18 @@ export default function SearchPage() {
                   Search on Google Maps
                 </Button>
                 
-                <div className="text-center text-xs text-gray-500 max-w-sm">
-                  {locationStatus === 'success' 
-                    ? "Location detected - Maps will show results near you" 
-                    : locationStatus === 'loading'
-                    ? "Detecting your location for better results..."
-                    : "Enable location for better search results"
-                  }
+                <div className="text-center text-xs text-gray-500 max-w-sm space-y-1">
+                  <div>
+                    {locationStatus === 'success' 
+                      ? "Location detected - Maps will show results near you" 
+                      : locationStatus === 'loading'
+                      ? "Detecting your location for better results..."
+                      : "Enable location for better search results"
+                    }
+                  </div>
+                  <div className="text-gray-400">
+                    Use your browser's back button to return here after searching
+                  </div>
                 </div>
               </div>
             </CardContent>
