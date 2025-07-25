@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -117,6 +118,39 @@ const fourWheelerMaintenanceSchedule: MaintenanceItem[] = [
   }
 ];
 
+// Common 4-wheeler service types for dropdown
+const fourWheelerServiceTypes = [
+  'Engine Oil Change',
+  'Oil Filter Replacement', 
+  'Air Filter Replacement',
+  'Brake Service & Inspection',
+  'Brake Pad Replacement',
+  'Brake Fluid Change',
+  'Transmission Service',
+  'Coolant System Service',
+  'AC Service & Regassing',
+  'Battery Check & Replacement',
+  'Tire Rotation & Balancing',
+  'Wheel Alignment',
+  'Suspension Service',
+  'Spark Plug Replacement',
+  'Timing Belt Service',
+  'General Service (Paid)',
+  'Free Service',
+  'Car Wash & Detailing',
+  'Engine Tune-up',
+  'Clutch Service',
+  'Radiator Service',
+  'Exhaust System Service',
+  'Power Steering Service',
+  'Fuel System Cleaning',
+  'Electrical System Check',
+  'Body Work & Painting',
+  'Denting & Painting',
+  'Insurance Claim Work',
+  'Other (Please specify)'
+];
+
 const serviceLogSchema = z.object({
   serviceType: z.string().min(1, "Service type is required"),
   serviceDate: z.string().min(1, "Service date is required"),
@@ -137,6 +171,8 @@ export default function CombinedServicePage() {
   const [notes, setNotes] = useState('');
   const [isMaintenanceDialogOpen, setIsMaintenanceDialogOpen] = useState(false);
   const [selectedServiceFile, setSelectedServiceFile] = useState<File | null>(null);
+  const [showCustomServiceInput, setShowCustomServiceInput] = useState(false);
+  const [customServiceType, setCustomServiceType] = useState('');
   const warrantyFileRef = useRef<HTMLInputElement>(null);
   const invoiceFileRef = useRef<HTMLInputElement>(null);
   const warrantyCameraRef = useRef<HTMLInputElement>(null);
@@ -367,7 +403,7 @@ export default function CombinedServicePage() {
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
               </Link>
-              <img src={logoImage} alt="Myymotto Logo" className="w-10 h-10 rounded-lg" />
+              <img src={logoImage} alt="Myymotto Logo" className="w-12 h-12 rounded-lg" />
               <div>
                 <div className="text-base font-bold">
                   <ColorfulLogo />
@@ -419,12 +455,47 @@ export default function CombinedServicePage() {
                 <form onSubmit={serviceForm.handleSubmit(handleServiceSubmit)} className="space-y-3">
                   <div className="space-y-1">
                     <Label htmlFor="serviceType" className="text-xs">Service Type</Label>
-                    <Input
-                      id="serviceType"
-                      {...serviceForm.register("serviceType")}
-                      placeholder="e.g., Oil Change, Brake Service"
-                      className="h-8"
-                    />
+                    {vehicle?.vehicleType === '4-wheeler' ? (
+                      <div className="space-y-2">
+                        <Select 
+                          value={showCustomServiceInput ? 'Other (Please specify)' : serviceForm.watch("serviceType")} 
+                          onValueChange={(value) => {
+                            if (value === 'Other (Please specify)') {
+                              setShowCustomServiceInput(true);
+                              serviceForm.setValue("serviceType", "");
+                            } else {
+                              setShowCustomServiceInput(false);
+                              serviceForm.setValue("serviceType", value);
+                            }
+                          }}
+                        >
+                          <SelectTrigger className="h-8">
+                            <SelectValue placeholder="Select service type..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {fourWheelerServiceTypes.map((serviceType) => (
+                              <SelectItem key={serviceType} value={serviceType}>
+                                {serviceType}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {showCustomServiceInput && (
+                          <Input
+                            {...serviceForm.register("serviceType")}
+                            placeholder="Enter custom service type..."
+                            className="h-8"
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <Input
+                        id="serviceType"
+                        {...serviceForm.register("serviceType")}
+                        placeholder="e.g., Oil Change, Brake Service"
+                        className="h-8"
+                      />
+                    )}
                     {serviceForm.formState.errors.serviceType && (
                       <p className="text-sm text-red-600">{serviceForm.formState.errors.serviceType.message}</p>
                     )}
