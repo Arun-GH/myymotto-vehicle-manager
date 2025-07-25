@@ -292,7 +292,7 @@ export default function Profile() {
     }
   };
 
-  // Update form when profile data loads or editing mode changes
+  // Update form when profile data loads and in editing mode
   useEffect(() => {
     if (profile && isEditing) {
       form.reset({
@@ -312,6 +312,7 @@ export default function Profile() {
       // Set existing profile picture if available
       if (profile.profilePicture) {
         setProfileImagePreview(profile.profilePicture);
+        console.log("Setting profile image preview in editing mode:", profile.profilePicture);
       }
       // Set existing license copy if available
       if (profile.driversLicenseCopy) {
@@ -319,6 +320,23 @@ export default function Profile() {
       }
     }
   }, [profile, isEditing, form]);
+
+  // Set profile images for viewing mode
+  useEffect(() => {
+    if (profile) {
+      console.log("Profile loaded for viewing:", profile);
+      console.log("Profile picture URL:", profile.profilePicture);
+      // Set existing profile picture for viewing mode
+      if (profile.profilePicture) {
+        setProfileImagePreview(profile.profilePicture);
+        console.log("Setting profile image preview for viewing mode:", profile.profilePicture);
+      }
+      // Set existing license copy for viewing mode
+      if (profile.driversLicenseCopy) {
+        setLicenseImagePreview(profile.driversLicenseCopy);
+      }
+    }
+  }, [profile]);
 
   const createProfileMutation = useMutation({
     mutationFn: async (data: InsertUserProfile) => {
@@ -1005,7 +1023,7 @@ export default function Profile() {
                       </div>
                     )}
 
-                    <div className="flex justify-center space-x-2">
+                    <div className="flex justify-center">
                       <Button
                         type="button"
                         variant="outline"
@@ -1014,34 +1032,16 @@ export default function Profile() {
                         onClick={() => document.getElementById('license-upload')?.click()}
                       >
                         <Upload className="w-3 h-3" />
-                        Upload
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center gap-1.5 h-7 text-xs px-2"
-                        onClick={() => document.getElementById('license-camera')?.click()}
-                      >
-                        <Camera className="w-3 h-3" />
-                        Camera
+                        Upload License
                       </Button>
                     </div>
 
-                    {/* Hidden File Inputs */}
+                    {/* Hidden File Input */}
                     <input
                       id="license-upload"
                       type="file"
                       accept="image/*"
                       onChange={handleLicenseUpload}
-                      className="hidden"
-                    />
-                    <input
-                      id="license-camera"
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      onChange={handleLicenseCameraInputChange}
                       className="hidden"
                     />
                   </div>
@@ -1073,7 +1073,7 @@ export default function Profile() {
             <CardContent className="p-2 space-y-3">
               {/* Profile Picture */}
               <div className="flex justify-center">
-                {profile.profilePicture ? (
+                {profile?.profilePicture ? (
                   <img 
                     src={profile.profilePicture} 
                     alt="Profile" 
