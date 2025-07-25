@@ -179,7 +179,11 @@ export default function Profile() {
     if (file) {
       setProfileImage(file);
       const reader = new FileReader();
-      reader.onload = () => setProfileImagePreview(reader.result as string);
+      reader.onload = () => {
+        const result = reader.result as string;
+        setProfileImagePreview(result);
+        console.log("Profile image uploaded, preview set");
+      };
       reader.readAsDataURL(file);
     }
   };
@@ -190,7 +194,11 @@ export default function Profile() {
     if (file) {
       setProfileImage(file);
       const reader = new FileReader();
-      reader.onload = () => setProfileImagePreview(reader.result as string);
+      reader.onload = () => {
+        const result = reader.result as string;
+        setProfileImagePreview(result);
+        console.log("Profile camera image captured, preview set");
+      };
       reader.readAsDataURL(file);
       
       toast({
@@ -303,10 +311,16 @@ export default function Profile() {
       // Set existing profile picture if available
       if (profile.profilePicture) {
         setProfileImagePreview(profile.profilePicture);
+        console.log("Setting profile image preview:", profile.profilePicture);
+      } else {
+        setProfileImagePreview(null);
       }
       // Set existing license copy if available
       if (profile.driversLicenseCopy) {
         setLicenseImagePreview(profile.driversLicenseCopy);
+        console.log("Setting license image preview:", profile.driversLicenseCopy);
+      } else {
+        setLicenseImagePreview(null);
       }
     }
   }, [profile, form]);
