@@ -505,11 +505,10 @@ export default function CombinedServicePage() {
                     <Label htmlFor="serviceDate" className="text-xs">Service Date</Label>
                     <Input
                       id="serviceDate"
-                      type="text"
-                      placeholder="dd/mm/yyyy"
+                      type="date"
                       {...serviceForm.register("serviceDate")}
                       className="h-8"
-                      maxLength={10}
+                      max={new Date().toISOString().split('T')[0]}
                     />
                     {serviceForm.formState.errors.serviceDate && (
                       <p className="text-sm text-red-600">{serviceForm.formState.errors.serviceDate.message}</p>
@@ -706,12 +705,11 @@ export default function CombinedServicePage() {
               <Label htmlFor="completedDate" className="text-sm">Date Completed</Label>
               <Input
                 id="completedDate"
-                type="text"
-                placeholder="dd/mm/yyyy"
+                type="date"
                 value={completedDate}
                 onChange={(e) => setCompletedDate(e.target.value)}
                 className="h-8 text-sm"
-                maxLength={10}
+                max={new Date().toISOString().split('T')[0]}
               />
             </div>
 

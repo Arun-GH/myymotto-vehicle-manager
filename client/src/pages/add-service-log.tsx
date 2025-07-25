@@ -215,11 +215,10 @@ export default function AddServiceLog() {
                   <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
                     id="serviceDate"
-                    type="text"
-                    placeholder="dd/mm/yyyy"
+                    type="date"
                     className="h-9 pl-10"
                     {...form.register("serviceDate")}
-                    maxLength={10}
+                    max={new Date().toISOString().split('T')[0]}
                   />
                 </div>
                 {form.formState.errors.serviceDate && (
