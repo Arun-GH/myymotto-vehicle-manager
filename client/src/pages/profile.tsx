@@ -452,8 +452,8 @@ export default function Profile() {
       // Clean up data to remove undefined values for update
       const profileData = { 
         ...data, 
-        profilePicture: profilePicturePath,
-        driversLicenseCopy: licenseCopyPath,
+        profilePicture: profilePicturePath || null,
+        driversLicenseCopy: licenseCopyPath || null,
         // Ensure required fields have proper types
         age: typeof data.age === 'number' ? data.age : parseInt(String(data.age)) || 25,
         // Handle optional fields properly - send empty string for empty values to avoid null issues
