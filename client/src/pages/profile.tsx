@@ -422,6 +422,7 @@ export default function Profile() {
       // Upload profile image first if a new one exists
       let profilePicturePath = profile?.profilePicture;
       if (profileImage) {
+        console.log("Uploading new profile image...");
         const formData = new FormData();
         formData.append('file', profileImage);
         const uploadResponse = await fetch('/api/upload', {
@@ -431,6 +432,7 @@ export default function Profile() {
         if (!uploadResponse.ok) throw new Error('Failed to upload profile image');
         const uploadResult = await uploadResponse.json();
         profilePicturePath = uploadResult.path;
+        console.log("Profile image uploaded successfully:", profilePicturePath);
       }
 
       // Upload license image if a new one exists
@@ -462,6 +464,8 @@ export default function Profile() {
       };
       console.log("Profile update data being sent:", profileData);
       console.log("Profile picture path being sent:", profilePicturePath);
+      console.log("Profile image state:", profileImage);
+      console.log("Existing profile picture:", profile?.profilePicture);
       const response = await apiRequest("PUT", `/api/profile/${userId}`, profileData);
       return response.json();
     },
