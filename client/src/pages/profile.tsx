@@ -317,16 +317,22 @@ export default function Profile() {
   // Set profile images for viewing mode
   useEffect(() => {
     if (profile) {
-      console.log("Profile loaded for viewing:", profile);
+      console.log("Profile loaded for viewing:", JSON.stringify(profile, null, 2));
       console.log("Profile picture URL:", profile.profilePicture);
+      console.log("Profile drivers license copy:", profile.driversLicenseCopy);
       // Set existing profile picture for viewing mode
       if (profile.profilePicture) {
         setProfileImagePreview(profile.profilePicture);
         console.log("Setting profile image preview for viewing mode:", profile.profilePicture);
+      } else {
+        console.log("No profile picture found in profile data");
       }
       // Set existing license copy for viewing mode
       if (profile.driversLicenseCopy) {
         setLicenseImagePreview(profile.driversLicenseCopy);
+        console.log("Setting license image preview for viewing mode:", profile.driversLicenseCopy);
+      } else {
+        console.log("No license copy found in profile data");
       }
     }
   }, [profile]);
