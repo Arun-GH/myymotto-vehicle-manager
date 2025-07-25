@@ -222,14 +222,21 @@ export default function Profile() {
   };
 
   // Handle license file upload
-  const handleLicenseFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLicenseUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setLicenseImage(file);
       const reader = new FileReader();
       reader.onload = () => setLicenseImagePreview(reader.result as string);
       reader.readAsDataURL(file);
+      
+      toast({
+        title: "License copy selected",
+        description: "License image will be uploaded when you save your profile.",
+      });
     }
+    // Reset the input
+    event.target.value = '';
   };
 
   // Handle license camera input change (from device camera app)
@@ -251,24 +258,10 @@ export default function Profile() {
     }
   };
 
-  // Handle license camera capture button click
-
-
   // Remove license image
   const removeLicenseImage = () => {
     setLicenseImage(null);
     setLicenseImagePreview(null);
-  };
-
-  // Handle license file upload
-  const handleLicenseUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setLicenseImage(file);
-      const reader = new FileReader();
-      reader.onload = () => setLicenseImagePreview(reader.result as string);
-      reader.readAsDataURL(file);
-    }
   };
 
   // Date conversion helpers
@@ -1023,7 +1016,7 @@ export default function Profile() {
                       </div>
                     )}
 
-                    <div className="flex justify-center">
+                    <div className="flex justify-center space-x-2">
                       <Button
                         type="button"
                         variant="outline"
@@ -1032,16 +1025,34 @@ export default function Profile() {
                         onClick={() => document.getElementById('license-upload')?.click()}
                       >
                         <Upload className="w-3 h-3" />
-                        Upload License
+                        Upload
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-1.5 h-7 text-xs px-2"
+                        onClick={() => document.getElementById('license-camera')?.click()}
+                      >
+                        <Camera className="w-3 h-3" />
+                        Camera
                       </Button>
                     </div>
 
-                    {/* Hidden File Input */}
+                    {/* Hidden File Inputs */}
                     <input
                       id="license-upload"
                       type="file"
                       accept="image/*"
                       onChange={handleLicenseUpload}
+                      className="hidden"
+                    />
+                    <input
+                      id="license-camera"
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handleLicenseCameraInputChange}
                       className="hidden"
                     />
                   </div>
