@@ -89,6 +89,7 @@ export default function ClimbingGame() {
     setPieces(newPieces);
     setMoves(0);
     setTimer(0);
+    setStartTime(null);
     setGameState('ready');
   };
 
@@ -1172,6 +1173,7 @@ export default function ClimbingGame() {
 
   const startGame = () => {
     setGameState('playing');
+    setStartTime(Date.now());
     setTimer(0);
     setMoves(0);
   };
@@ -1184,6 +1186,7 @@ export default function ClimbingGame() {
 
   const resetPuzzle = () => {
     initializePuzzle();
+    setShowCongratsPopup(false);
   };
 
   const formatTime = (seconds: number) => {
