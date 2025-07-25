@@ -30,6 +30,8 @@ export default function SearchPage() {
   const { toast } = useToast();
 
   const generateServiceLocations = (lat: number, lng: number, category: 'service' | 'petrol' | 'hospital' | 'police'): ServiceLocation[] => {
+    console.log(`Generating ${category} locations around: ${lat}, ${lng}`);
+    
     const locationData = {
       service: {
         names: [
@@ -66,53 +68,63 @@ export default function SearchPage() {
       }
     };
 
-    // Common Indian road/area names for realistic addresses
+    // Generic road/area names that work anywhere
     const streetNames = [
-      "MG Road", "Brigade Road", "Commercial Street", "Residency Road", "Richmond Road",
-      "Cunningham Road", "Airport Road", "Bannerghatta Road", "Whitefield Road", "Electronic City",
-      "Koramangala", "Indiranagar", "Jayanagar", "BTM Layout", "HSR Layout",
-      "Marathahalli", "Sarjapur Road", "Outer Ring Road", "Inner Ring Road", "Mysore Road"
+      "Main Road", "Service Road", "Ring Road", "Bypass Road", "Link Road",
+      "Station Road", "Market Road", "Temple Road", "Church Road", "School Road",
+      "Hospital Road", "Bus Stand Road", "Railway Station Road", "Airport Road", "Highway Road",
+      "Industrial Area", "Commercial Complex", "Residential Area", "Shopping Center", "Business District"
     ];
 
     const landmarks = [
-      "Metro Station", "Mall", "Hospital", "Bus Stand", "Railway Station",
-      "IT Park", "Shopping Complex", "Business District", "Tech Hub", "City Center"
+      "Metro Station", "Bus Stop", "Hospital", "School", "Temple",
+      "Market", "Shopping Mall", "Bank", "Post Office", "Government Office"
     ];
 
     const currentData = locationData[category];
     const locations: ServiceLocation[] = [];
     
     for (let i = 0; i < 8; i++) {
-      // Generate points within 5km radius
+      // Generate points within smaller radius for more realistic results
       const angle = Math.random() * 2 * Math.PI;
-      const radius = Math.random() * 0.045; // ~5km in degrees
-      const centerLat = lat + (radius * Math.cos(angle));
-      const centerLng = lng + (radius * Math.sin(angle));
+      const radiusKm = Math.random() * 3 + 0.5; // 0.5km to 3.5km radius
+      const radiusDeg = radiusKm / 111; // Convert km to degrees (approximately)
       
-      // Calculate distance using Haversine formula
+      const centerLat = lat + (radiusDeg * Math.cos(angle));
+      const centerLng = lng + (radiusDeg * Math.sin(angle));
+      
+      // Calculate actual distance using Haversine formula
       const distance = calculateDistance(lat, lng, centerLat, centerLng);
       
-      // Generate realistic address
+      // Generate realistic address based on location
       const buildingNumber = Math.floor(Math.random() * 999) + 1;
       const streetName = streetNames[Math.floor(Math.random() * streetNames.length)];
       const landmark = landmarks[Math.floor(Math.random() * landmarks.length)];
-      const pincode = Math.floor(Math.random() * 9000) + 560001; // Bangalore-style pincode
       
-      locations.push({
+      // Generate pincode based on rough location (generic approach)
+      const pincode = Math.floor(Math.random() * 99999) + 100000;
+      
+      const location = {
         id: `${category}-${i + 1}`,
         name: currentData.names[i % currentData.names.length],
-        address: `${buildingNumber}, ${streetName}, Near ${landmark}, ${pincode}`,
+        address: `${buildingNumber}, ${streetName}, Near ${landmark}`,
         phone: `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
         rating: Number((3.5 + Math.random() * 1.5).toFixed(1)),
         distance: Number(distance.toFixed(1)),
         hours: currentData.hours,
         services: currentData.services,
         type: category
-      });
+      };
+      
+      console.log(`Generated location ${i + 1}: ${location.name} at ${distance.toFixed(1)}km`);
+      locations.push(location);
     }
 
     // Sort by distance
-    return locations.sort((a, b) => a.distance - b.distance);
+    const sortedLocations = locations.sort((a, b) => a.distance - b.distance);
+    console.log(`Returning ${sortedLocations.length} sorted locations, closest: ${sortedLocations[0]?.distance}km`);
+    
+    return sortedLocations;
   };
 
   const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -145,32 +157,52 @@ export default function SearchPage() {
       return;
     }
 
+    console.log('Starting location detection...');
+    
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
+        const { latitude, longitude, accuracy } = position.coords;
+        console.log(`Location detected: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
+        
         setUserLocation({ lat: latitude, lng: longitude });
+        
+        // Show location coordinates in toast for verification
+        toast({
+          title: "Location Found",
+          description: `Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`,
+          variant: "default"
+        });
+        
         const locations = generateServiceLocations(latitude, longitude, selectedCategory);
+        console.log(`Generated ${locations.length} service locations`);
+        
         setServiceLocations(locations);
         setFilteredLocations(locations);
         setLocationStatus('success');
         setLoading(false);
-        
-        // Location updated successfully - no popup needed
       },
       (error) => {
+        console.error('Location error:', error);
         setLocationStatus('error');
         setLoading(false);
         let errorMessage = "Failed to get your location.";
         
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = "Location access denied. Please enable location permissions.";
+            errorMessage = "Location access denied. Showing general service centers.";
+            // Fallback to a default location (generic coordinates)
+            const fallbackLat = 12.9716; // Bangalore coordinates as fallback
+            const fallbackLng = 77.5946;
+            setUserLocation({ lat: fallbackLat, lng: fallbackLng });
+            const fallbackLocations = generateServiceLocations(fallbackLat, fallbackLng, selectedCategory);
+            setServiceLocations(fallbackLocations);
+            setFilteredLocations(fallbackLocations);
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = "Location information unavailable.";
+            errorMessage = "Location information unavailable. Please check your device's location settings.";
             break;
           case error.TIMEOUT:
-            errorMessage = "Location request timed out.";
+            errorMessage = "Location request timed out. Please try again.";
             break;
         }
         
@@ -182,7 +214,7 @@ export default function SearchPage() {
       },
       {
         enableHighAccuracy: true,
-        timeout: 15000,
+        timeout: 20000, // Increased timeout
         maximumAge: 0 // Always get fresh location, never use cache
       }
     );
@@ -305,9 +337,16 @@ export default function SearchPage() {
           <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
             <div className="flex items-center space-x-2">
               <Navigation className={`w-4 h-4 ${getLocationStatusColor()}`} />
-              <span className={`text-sm font-medium ${getLocationStatusColor()}`}>
-                {getLocationStatusText()}
-              </span>
+              <div className="flex flex-col">
+                <span className={`text-sm font-medium ${getLocationStatusColor()}`}>
+                  {getLocationStatusText()}
+                </span>
+                {userLocation && (
+                  <span className="text-xs text-gray-500">
+                    {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
+                  </span>
+                )}
+              </div>
             </div>
             <Button
               onClick={getCurrentLocation}
