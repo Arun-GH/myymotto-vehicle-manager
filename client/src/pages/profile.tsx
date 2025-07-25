@@ -877,13 +877,24 @@ export default function Profile() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-xs">City</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="City"
-                              className="h-8 text-sm"
-                              {...field}
-                            />
-                          </FormControl>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            defaultValue={field.value}
+                            disabled={!selectedState}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="h-8 text-sm">
+                                <SelectValue placeholder={selectedState ? "Select City" : "Select State first"} />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {availableCities.map((city) => (
+                                <SelectItem key={city} value={city}>
+                                  {city}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                           <FormMessage className="text-xs" />
                         </FormItem>
                       )}

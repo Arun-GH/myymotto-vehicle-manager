@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 25, 2025**: IMPLEMENTED auto-populated city dropdown based on state selection in edit profile page
+- CONVERTED city field from text input to dropdown that auto-populates based on selected state
+- ADDED comprehensive state-to-cities mapping covering all 28 Indian states and 8 union territories with major cities
+- CREATED dependent dropdown functionality where city options update automatically when state is selected
+- DISABLED city selection until state is chosen with helpful placeholder text "Select State first"
+- IMPLEMENTED automatic city field clearing when state changes to maintain data integrity
+- ENHANCED user experience with guided form filling process ensuring accurate location data
+
 **July 25, 2025**: INTERCHANGED state and city positions on edit profile page as requested by user
 - MOVED state field to first position (left side) and city field to second position (right side) in the address section grid layout
 - MAINTAINED all existing functionality and validation while updating the visual order of the form fields
