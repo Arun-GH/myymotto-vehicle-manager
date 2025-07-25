@@ -359,7 +359,7 @@ export default function Profile() {
         });
         if (!uploadResponse.ok) throw new Error('Failed to upload profile image');
         const uploadResult = await uploadResponse.json();
-        profilePicturePath = uploadResult.path;
+        profilePicturePath = uploadResult.filePath;
       }
 
       // Upload license image if exists
@@ -373,7 +373,7 @@ export default function Profile() {
         });
         if (!uploadResponse.ok) throw new Error('Failed to upload license copy');
         const uploadResult = await uploadResponse.json();
-        licenseCopyPath = uploadResult.path;
+        licenseCopyPath = uploadResult.filePath;
       }
 
       // Clean up data to remove undefined values for creation
@@ -431,7 +431,7 @@ export default function Profile() {
         });
         if (!uploadResponse.ok) throw new Error('Failed to upload profile image');
         const uploadResult = await uploadResponse.json();
-        profilePicturePath = uploadResult.path;
+        profilePicturePath = uploadResult.filePath;
         console.log("Profile image uploaded successfully:", profilePicturePath);
       }
 
@@ -446,7 +446,7 @@ export default function Profile() {
         });
         if (!uploadResponse.ok) throw new Error('Failed to upload license copy');
         const uploadResult = await uploadResponse.json();
-        licenseCopyPath = uploadResult.path;
+        licenseCopyPath = uploadResult.filePath;
       }
 
       // Clean up data to remove undefined values for update
@@ -1191,11 +1191,6 @@ export default function Profile() {
             <CardContent className="p-2 space-y-3">
               {/* Profile Picture */}
               <div className="flex justify-center">
-                {(() => {
-                  console.log("Profile picture debug - profile:", profile);
-                  console.log("Profile picture value:", profile?.profilePicture);
-                  return null;
-                })()}
                 {profile?.profilePicture ? (
                   <img 
                     src={profile.profilePicture.startsWith('/app_storage') ? profile.profilePicture : `/api/files/${profile.profilePicture}`} 

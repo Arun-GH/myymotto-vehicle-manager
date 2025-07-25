@@ -16,6 +16,8 @@ Preferred communication style: Simple, everyday language.
 - IMPLEMENTED error handling for broken images with automatic fallback to default avatar icon
 - ADDED console logging for debugging profile image loading issues
 - IMPROVED user experience by showing default avatar when profile picture fails to load instead of broken image
+- FIXED critical upload path bug: changed uploadResult.path to uploadResult.filePath to match server response format
+- RESOLVED profile picture not being saved to database by correcting API response field mapping
 
 **July 25, 2025**: FIXED popup auto-fade timing to 1 second for all toast notifications
 - UPDATED toast removal delay from 2000ms to 1000ms for faster popup dismissal across entire application
