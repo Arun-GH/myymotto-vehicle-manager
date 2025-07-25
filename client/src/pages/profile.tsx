@@ -540,16 +540,6 @@ export default function Profile() {
               </div>
             </div>
             <div className="flex items-center space-x-1">
-              {profile && !isEditing && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-600 hover:bg-red-50 h-6 text-xs px-2"
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit
-                </Button>
-              )}
               <Link href="/settings">
                 <Button
                   variant="ghost"
