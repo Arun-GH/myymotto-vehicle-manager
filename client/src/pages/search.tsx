@@ -34,6 +34,19 @@ export default function SearchPage() {
       "Ford Service Center", "Bajaj Auto Service", "Hero MotoCorp Service", "TVS Service Center"
     ];
 
+    // Common Indian road/area names for realistic addresses
+    const streetNames = [
+      "MG Road", "Brigade Road", "Commercial Street", "Residency Road", "Richmond Road",
+      "Cunningham Road", "Airport Road", "Bannerghatta Road", "Whitefield Road", "Electronic City",
+      "Koramangala", "Indiranagar", "Jayanagar", "BTM Layout", "HSR Layout",
+      "Marathahalli", "Sarjapur Road", "Outer Ring Road", "Inner Ring Road", "Mysore Road"
+    ];
+
+    const landmarks = [
+      "Metro Station", "Mall", "Hospital", "Bus Stand", "Railway Station",
+      "IT Park", "Shopping Complex", "Business District", "Tech Hub", "City Center"
+    ];
+
     const centers: ServiceCenter[] = [];
     
     for (let i = 0; i < 10; i++) {
@@ -46,10 +59,16 @@ export default function SearchPage() {
       // Calculate distance using Haversine formula
       const distance = calculateDistance(lat, lng, centerLat, centerLng);
       
+      // Generate realistic address
+      const buildingNumber = Math.floor(Math.random() * 999) + 1;
+      const streetName = streetNames[Math.floor(Math.random() * streetNames.length)];
+      const landmark = landmarks[Math.floor(Math.random() * landmarks.length)];
+      const pincode = Math.floor(Math.random() * 9000) + 560001; // Bangalore-style pincode
+      
       centers.push({
         id: `center-${i + 1}`,
         name: serviceTypes[i % serviceTypes.length],
-        address: `${Math.floor(Math.random() * 999) + 1}, Near your location, ${Math.floor(Math.random() * 6) + 1}${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}`,
+        address: `${buildingNumber}, ${streetName}, Near ${landmark}, ${pincode}`,
         phone: `+91 ${Math.floor(Math.random() * 9000000000) + 1000000000}`,
         rating: Number((3.5 + Math.random() * 1.5).toFixed(1)),
         distance: Number(distance.toFixed(1)),

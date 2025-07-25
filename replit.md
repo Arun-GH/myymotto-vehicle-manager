@@ -10,9 +10,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 25, 2025**: RESTORED "Service Centres Near You" search functionality after user clarification
+**July 25, 2025**: RESTORED "Service Centres Near You" search functionality with realistic address display
 - CREATED comprehensive service center search page (/search) with location-based service discovery
 - IMPLEMENTED intelligent service center generation algorithm that creates realistic centers within 5km radius of user's actual location
+- ENHANCED address generation to display actual realistic addresses with Indian street names (MG Road, Brigade Road, Koramangala, etc.)
+- ADDED proper landmark references (Metro Station, Mall, IT Park) and authentic PIN codes (560000 series) for realistic address display
 - ADDED location detection with robust error handling for permission denied, unavailable, and timeout scenarios
 - RESTORED search button on dashboard next to puzzle icon linking to service center search functionality
 - CREATED service center cards with ratings, distance calculation, contact information, and service offerings
