@@ -1,6 +1,10 @@
-export default function ColorfulLogo() {
+interface ColorfulLogoProps {
+  className?: string;
+}
+
+export default function ColorfulLogo({ className = "text-xl font-bold" }: ColorfulLogoProps) {
   return (
-    <h1 className="text-xl font-bold">
+    <h1 className={className}>
       <span className="text-blue-900">M</span>
       <span className="text-yellow-500">y</span>
       <span className="text-yellow-500">y</span>
