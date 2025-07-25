@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, adminMessages, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse, type AdminMessage, type InsertAdminMessage } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, adminMessages, accountInformation, invoices, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse, type AdminMessage, type InsertAdminMessage, type AccountInformation, type InsertAccountInformation, type Invoice, type InsertInvoice } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte, lt, desc, gte, isNull, or, inArray, sql } from "drizzle-orm";
 
@@ -149,6 +149,23 @@ export interface IStorage {
   getTodaysAdminMessage(): Promise<AdminMessage | undefined>;
   updateAdminMessage(id: number, message: Partial<InsertAdminMessage>): Promise<AdminMessage | undefined>;
   deleteAdminMessage(id: number): Promise<boolean>;
+  
+  // Account Information methods
+  getAccountInformation(userId: number): Promise<AccountInformation | undefined>;
+  createAccountInformation(account: InsertAccountInformation): Promise<AccountInformation>;
+  updateAccountInformation(userId: number, account: Partial<InsertAccountInformation>): Promise<AccountInformation | undefined>;
+  getAllAccountInformation(): Promise<AccountInformation[]>;
+  
+  // Invoice Management methods
+  getInvoices(userId: number): Promise<Invoice[]>;
+  getAllInvoices(): Promise<Invoice[]>;
+  getInvoice(id: number): Promise<Invoice | undefined>;
+  createInvoice(invoice: InsertInvoice): Promise<Invoice>;
+  updateInvoice(id: number, invoice: Partial<InsertInvoice>): Promise<Invoice | undefined>;
+  generateInvoiceNumber(): Promise<string>;
+  markInvoiceAsPaid(id: number, paymentDate: Date): Promise<Invoice | undefined>;
+  getInvoicesByDateRange(startDate: Date, endDate: Date): Promise<Invoice[]>;
+  getOverdueInvoices(): Promise<Invoice[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -1577,6 +1594,142 @@ export class DatabaseStorage implements IStorage {
       .delete(adminMessages)
       .where(eq(adminMessages.id, id));
     return result.rowCount > 0;
+  }
+
+  // Account Information methods
+  async getAccountInformation(userId: number): Promise<AccountInformation | undefined> {
+    const [account] = await db
+      .select()
+      .from(accountInformation)
+      .where(eq(accountInformation.userId, userId));
+    return account;
+  }
+
+  async createAccountInformation(account: InsertAccountInformation): Promise<AccountInformation> {
+    const [newAccount] = await db
+      .insert(accountInformation)
+      .values(account)
+      .returning();
+    return newAccount;
+  }
+
+  async updateAccountInformation(userId: number, account: Partial<InsertAccountInformation>): Promise<AccountInformation | undefined> {
+    const [updated] = await db
+      .update(accountInformation)
+      .set({ ...account, updatedAt: new Date() })
+      .where(eq(accountInformation.userId, userId))
+      .returning();
+    return updated;
+  }
+
+  async getAllAccountInformation(): Promise<AccountInformation[]> {
+    return await db
+      .select()
+      .from(accountInformation)
+      .orderBy(desc(accountInformation.createdAt));
+  }
+
+  // Invoice Management methods
+  async getInvoices(userId: number): Promise<Invoice[]> {
+    return await db
+      .select()
+      .from(invoices)
+      .where(eq(invoices.userId, userId))
+      .orderBy(desc(invoices.createdAt));
+  }
+
+  async getAllInvoices(): Promise<Invoice[]> {
+    return await db
+      .select()
+      .from(invoices)
+      .orderBy(desc(invoices.createdAt));
+  }
+
+  async getInvoice(id: number): Promise<Invoice | undefined> {
+    const [invoice] = await db
+      .select()
+      .from(invoices)
+      .where(eq(invoices.id, id));
+    return invoice;
+  }
+
+  async createInvoice(invoice: InsertInvoice): Promise<Invoice> {
+    const [newInvoice] = await db
+      .insert(invoices)
+      .values(invoice)
+      .returning();
+    return newInvoice;
+  }
+
+  async updateInvoice(id: number, invoice: Partial<InsertInvoice>): Promise<Invoice | undefined> {
+    const [updated] = await db
+      .update(invoices)
+      .set({ ...invoice, updatedAt: new Date() })
+      .where(eq(invoices.id, id))
+      .returning();
+    return updated;
+  }
+
+  async generateInvoiceNumber(): Promise<string> {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    
+    // Get count of invoices this month
+    const startOfMonth = new Date(year, now.getMonth(), 1);
+    const endOfMonth = new Date(year, now.getMonth() + 1, 0, 23, 59, 59);
+    
+    const monthlyInvoices = await db
+      .select()
+      .from(invoices)
+      .where(
+        and(
+          gte(invoices.createdAt, startOfMonth),
+          lte(invoices.createdAt, endOfMonth)
+        )
+      );
+    
+    const sequence = String(monthlyInvoices.length + 1).padStart(3, '0');
+    return `INV-${year}-${month}-${sequence}`;
+  }
+
+  async markInvoiceAsPaid(id: number, paymentDate: Date): Promise<Invoice | undefined> {
+    const [updated] = await db
+      .update(invoices)
+      .set({ 
+        invoiceStatus: 'paid',
+        updatedAt: new Date()
+      })
+      .where(eq(invoices.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getInvoicesByDateRange(startDate: Date, endDate: Date): Promise<Invoice[]> {
+    return await db
+      .select()
+      .from(invoices)
+      .where(
+        and(
+          gte(invoices.invoiceDate, startDate),
+          lte(invoices.invoiceDate, endDate)
+        )
+      )
+      .orderBy(desc(invoices.invoiceDate));
+  }
+
+  async getOverdueInvoices(): Promise<Invoice[]> {
+    const today = new Date();
+    return await db
+      .select()
+      .from(invoices)
+      .where(
+        and(
+          lt(invoices.dueDate, today),
+          eq(invoices.invoiceStatus, 'generated')
+        )
+      )
+      .orderBy(invoices.dueDate);
   }
 }
 

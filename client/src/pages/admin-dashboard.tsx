@@ -247,6 +247,18 @@ export default function AdminDashboard() {
     enabled: !!isAdminUser,
   });
 
+  // Fetch all invoices
+  const { data: allInvoices = [], isLoading: invoicesLoading, refetch: refetchInvoices } = useQuery<any[]>({
+    queryKey: ["/api/admin/invoices"],
+    enabled: !!isAdminUser,
+  });
+
+  // Fetch all account information
+  const { data: allAccounts = [], isLoading: accountsLoading } = useQuery<any[]>({
+    queryKey: ["/api/admin/accounts"],
+    enabled: !!isAdminUser,
+  });
+
   const handleDownload = async (dataType: string) => {
     setDownloadLoading(dataType);
     try {
@@ -272,6 +284,26 @@ export default function AdminDashboard() {
       alert(`Failed to download ${dataType} data. Please try again.`);
     } finally {
       setDownloadLoading(null);
+    }
+  };
+
+  const handleDownloadInvoice = async (invoiceId: number) => {
+    try {
+      const response = await apiRequest("GET", `/api/admin/invoices/download/${invoiceId}?userId=1`);
+      const data = await response.json();
+      
+      // Create and download invoice file
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice-${data.invoiceNumber || invoiceId}.json`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading invoice:', error);
     }
   };
 
@@ -640,11 +672,12 @@ export default function AdminDashboard() {
 
         {/* Detailed Data Tabs */}
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="vehicles">Vehicles</TabsTrigger>
             <TabsTrigger value="broadcasts">Posts</TabsTrigger>
             <TabsTrigger value="ratings">Ratings</TabsTrigger>
+            <TabsTrigger value="invoices">Invoices</TabsTrigger>
             <TabsTrigger value="messages">Messages</TabsTrigger>
           </TabsList>
           
@@ -820,6 +853,145 @@ export default function AdminDashboard() {
                     ))}
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="invoices" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="shadow-orange">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                    Invoice Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {invoicesLoading ? (
+                    <div className="flex justify-center py-8">
+                      <div className="animate-spin w-6 h-6 border-4 border-primary border-t-transparent rounded-full" />
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {allInvoices.length === 0 ? (
+                        <p className="text-gray-500 text-center py-4">No invoices found</p>
+                      ) : (
+                        allInvoices.slice(0, 5).map((invoice: any) => (
+                          <div key={invoice.id} className="flex items-center justify-between p-3 border rounded-lg">
+                            <div>
+                              <p className="font-medium">#{invoice.invoiceNumber}</p>
+                              <p className="text-sm text-gray-600">{invoice.customerName}</p>
+                              <p className="text-xs text-gray-500">₹{(invoice.totalAmount || 0).toLocaleString('en-IN')}</p>
+                            </div>
+                            <div className="text-right flex flex-col items-end gap-1">
+                              <Badge variant={invoice.invoiceStatus === 'paid' ? 'default' : 'outline'}>
+                                {invoice.invoiceStatus}
+                              </Badge>
+                              <p className="text-xs text-gray-500">
+                                {invoice.invoiceDate ? new Date(invoice.invoiceDate).toLocaleDateString() : 'No date'}
+                              </p>
+                              <Button
+                                onClick={() => handleDownloadInvoice(invoice.id)}
+                                size="sm"
+                                variant="outline"
+                                className="h-6 text-xs px-2"
+                              >
+                                <Download className="w-3 h-3 mr-1" />
+                                Download
+                              </Button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                      {allInvoices.length > 5 && (
+                        <p className="text-sm text-gray-500 text-center">
+                          Showing 5 of {allInvoices.length} invoices
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-orange">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Database className="w-5 h-5 text-green-600" />
+                    Account Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {accountsLoading ? (
+                    <div className="flex justify-center py-8">
+                      <div className="animate-spin w-6 h-6 border-4 border-primary border-t-transparent rounded-full" />
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {allAccounts.length === 0 ? (
+                        <p className="text-gray-500 text-center py-4">No account information found</p>
+                      ) : (
+                        allAccounts.slice(0, 5).map((account: any) => (
+                          <div key={account.id} className="flex items-center justify-between p-3 border rounded-lg">
+                            <div>
+                              <p className="font-medium">{account.customerName}</p>
+                              <p className="text-sm text-gray-600">{account.customerPhone}</p>
+                              <p className="text-xs text-gray-500">{account.customerEmail}</p>
+                            </div>
+                            <div className="text-right">
+                              <Badge variant={account.subscriptionStatus === 'active' ? 'default' : 'outline'}>
+                                {account.subscriptionStatus || 'inactive'}
+                              </Badge>
+                              <p className="text-xs text-gray-500">
+                                {account.accountCreatedDate ? new Date(account.accountCreatedDate).toLocaleDateString() : 'No date'}
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                      {allAccounts.length > 5 && (
+                        <p className="text-sm text-gray-500 text-center">
+                          Showing 5 of {allAccounts.length} accounts
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Invoice Statistics */}
+            <Card className="shadow-orange">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-purple-600" />
+                  Subscription Analytics
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center p-3 bg-blue-50 rounded-lg">
+                    <p className="text-2xl font-bold text-blue-600">{allInvoices.length}</p>
+                    <p className="text-xs text-gray-600">Total Invoices</p>
+                  </div>
+                  <div className="text-center p-3 bg-green-50 rounded-lg">
+                    <p className="text-2xl font-bold text-green-600">
+                      {allInvoices.filter((inv: any) => inv.invoiceStatus === 'paid').length}
+                    </p>
+                    <p className="text-xs text-gray-600">Paid Invoices</p>
+                  </div>
+                  <div className="text-center p-3 bg-orange-50 rounded-lg">
+                    <p className="text-2xl font-bold text-orange-600">
+                      {allInvoices.filter((inv: any) => inv.invoiceStatus === 'pending').length}
+                    </p>
+                    <p className="text-xs text-gray-600">Pending Payments</p>
+                  </div>
+                  <div className="text-center p-3 bg-purple-50 rounded-lg">
+                    <p className="text-2xl font-bold text-purple-600">
+                      ₹{allInvoices.reduce((sum: number, inv: any) => sum + (inv.totalAmount || 0), 0).toLocaleString('en-IN')}
+                    </p>
+                    <p className="text-xs text-gray-600">Total Revenue</p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

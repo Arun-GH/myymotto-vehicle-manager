@@ -2,7 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, insertMaintenanceRecordSchema, insertRatingSchema, insertBroadcastSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact, type InsertMaintenanceRecord, type Rating, type InsertBroadcast } from "@shared/schema";
+import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, insertMaintenanceRecordSchema, insertRatingSchema, insertBroadcastSchema, insertAccountInformationSchema, insertInvoiceSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact, type InsertMaintenanceRecord, type Rating, type InsertBroadcast, type InsertAccountInformation, type InsertInvoice } from "@shared/schema";
 import { maintenanceService } from "./maintenance-service";
 import { newsService } from "./news-service";
 import { trafficViolationService } from "./traffic-violation-service";
@@ -2297,6 +2297,170 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error sending test notification:", error);
       res.status(500).json({ message: "Failed to send test notification" });
+    }
+  });
+
+  // Admin Account Information routes
+  app.get("/api/admin/accounts", isAdmin, async (req, res) => {
+    try {
+      const accounts = await storage.getAllAccountInformation();
+      res.json(accounts);
+    } catch (error) {
+      console.error("Error fetching account information:", error);
+      res.status(500).json({ error: "Failed to fetch account information" });
+    }
+  });
+
+  app.get("/api/admin/accounts/:userId", isAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const account = await storage.getAccountInformation(userId);
+      if (!account) {
+        return res.status(404).json({ error: "Account information not found" });
+      }
+      res.json(account);
+    } catch (error) {
+      console.error("Error fetching account information:", error);
+      res.status(500).json({ error: "Failed to fetch account information" });
+    }
+  });
+
+  app.post("/api/admin/accounts", isAdmin, async (req, res) => {
+    try {
+      const accountData = insertAccountInformationSchema.parse(req.body);
+      const account = await storage.createAccountInformation(accountData);
+      res.json(account);
+    } catch (error) {
+      console.error("Error creating account information:", error);
+      res.status(500).json({ error: "Failed to create account information" });
+    }
+  });
+
+  app.put("/api/admin/accounts/:userId", isAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const accountData = insertAccountInformationSchema.partial().parse(req.body);
+      const account = await storage.updateAccountInformation(userId, accountData);
+      if (!account) {
+        return res.status(404).json({ error: "Account information not found" });
+      }
+      res.json(account);
+    } catch (error) {
+      console.error("Error updating account information:", error);
+      res.status(500).json({ error: "Failed to update account information" });
+    }
+  });
+
+  // Admin Invoice Management routes
+  app.get("/api/admin/invoices", isAdmin, async (req, res) => {
+    try {
+      const invoices = await storage.getAllInvoices();
+      res.json(invoices);
+    } catch (error) {
+      console.error("Error fetching all invoices:", error);
+      res.status(500).json({ error: "Failed to fetch invoices" });
+    }
+  });
+
+  app.get("/api/admin/invoices/user/:userId", isAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const invoices = await storage.getInvoices(userId);
+      res.json(invoices);
+    } catch (error) {
+      console.error("Error fetching user invoices:", error);
+      res.status(500).json({ error: "Failed to fetch user invoices" });
+    }
+  });
+
+  app.get("/api/admin/invoices/download/:invoiceId", isAdmin, async (req, res) => {
+    try {
+      const invoiceId = parseInt(req.params.invoiceId);
+      const invoice = await storage.getInvoice(invoiceId);
+      
+      if (!invoice) {
+        return res.status(404).json({ error: "Invoice not found" });
+      }
+
+      // Generate downloadable invoice content
+      const invoiceData = {
+        invoiceNumber: invoice.invoiceNumber,
+        customerName: invoice.customerName,
+        customerPhone: invoice.customerPhone,
+        customerEmail: invoice.customerEmail,
+        amount: invoice.amount,
+        totalAmount: invoice.totalAmount,
+        description: invoice.description,
+        invoiceDate: invoice.invoiceDate,
+        dueDate: invoice.dueDate,
+        status: invoice.invoiceStatus
+      };
+      
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename="invoice-${invoice.invoiceNumber}.json"`);
+      res.json(invoiceData);
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+      res.status(500).json({ error: "Failed to download invoice" });
+    }
+  });
+
+  app.get("/api/admin/invoices/range", isAdmin, async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      if (!startDate || !endDate) {
+        return res.status(400).json({ error: "Start date and end date are required" });
+      }
+      
+      const invoices = await storage.getInvoicesByDateRange(new Date(startDate as string), new Date(endDate as string));
+      res.json(invoices);
+    } catch (error) {
+      console.error("Error fetching invoices by date range:", error);
+      res.status(500).json({ error: "Failed to fetch invoices by date range" });
+    }
+  });
+
+  app.get("/api/admin/invoices/overdue", isAdmin, async (req, res) => {
+    try {
+      const overdueInvoices = await storage.getOverdueInvoices();
+      res.json(overdueInvoices);
+    } catch (error) {
+      console.error("Error fetching overdue invoices:", error);
+      res.status(500).json({ error: "Failed to fetch overdue invoices" });
+    }
+  });
+
+  app.post("/api/admin/invoices", isAdmin, async (req, res) => {
+    try {
+      const invoiceData = insertInvoiceSchema.parse(req.body);
+      
+      // Generate invoice number if not provided
+      if (!invoiceData.invoiceNumber) {
+        invoiceData.invoiceNumber = await storage.generateInvoiceNumber();
+      }
+      
+      const invoice = await storage.createInvoice(invoiceData);
+      res.json(invoice);
+    } catch (error) {
+      console.error("Error creating invoice:", error);
+      res.status(500).json({ error: "Failed to create invoice" });
+    }
+  });
+
+  app.put("/api/admin/invoices/:invoiceId/mark-paid", isAdmin, async (req, res) => {
+    try {
+      const invoiceId = parseInt(req.params.invoiceId);
+      const { paymentDate } = req.body;
+      
+      const invoice = await storage.markInvoiceAsPaid(invoiceId, new Date(paymentDate || Date.now()));
+      if (!invoice) {
+        return res.status(404).json({ error: "Invoice not found" });
+      }
+      
+      res.json(invoice);
+    } catch (error) {
+      console.error("Error marking invoice as paid:", error);
+      res.status(500).json({ error: "Failed to mark invoice as paid" });
     }
   });
 

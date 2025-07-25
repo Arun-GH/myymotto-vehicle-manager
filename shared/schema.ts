@@ -150,6 +150,60 @@ export const paymentHistory = pgTable("payment_history", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Account Information table for comprehensive user account tracking
+export const accountInformation = pgTable("account_information", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  accountType: text("account_type").notNull().default("individual"), // "individual", "business"
+  subscriptionPlan: text("subscription_plan").notNull().default("premium"), // "free", "premium"
+  accountStatus: text("account_status").notNull().default("active"), // "active", "suspended", "deactivated"
+  totalSubscriptionPayments: integer("total_subscription_payments").notNull().default(0),
+  totalAmountPaid: integer("total_amount_paid").notNull().default(0), // Total in paise
+  lastPaymentDate: timestamp("last_payment_date"),
+  nextBillingDate: timestamp("next_billing_date"),
+  autoRenewal: boolean("auto_renewal").default(false).notNull(),
+  billingAddress: text("billing_address"),
+  gstNumber: text("gst_number"), // For business accounts
+  panNumber: text("pan_number"), // For tax compliance
+  preferredPaymentMethod: text("preferred_payment_method"), // "card", "upi", "netbanking"
+  accountNotes: text("account_notes"), // Admin notes
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Invoice Management table for detailed invoice tracking
+export const invoices = pgTable("invoices", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  paymentId: integer("payment_id").references(() => paymentHistory.id),
+  subscriptionId: integer("subscription_id").references(() => subscriptions.id),
+  invoiceNumber: text("invoice_number").notNull().unique(), // INV-2025-001
+  invoiceType: text("invoice_type").notNull().default("subscription"), // "subscription", "renewal", "upgrade"
+  invoiceStatus: text("invoice_status").notNull().default("generated"), // "generated", "sent", "paid", "overdue", "cancelled"
+  invoiceDate: timestamp("invoice_date").defaultNow().notNull(),
+  dueDate: timestamp("due_date").notNull(),
+  amount: integer("amount").notNull(), // Amount in paise
+  taxAmount: integer("tax_amount").notNull().default(0), // GST/Tax in paise
+  totalAmount: integer("total_amount").notNull(), // Total including tax in paise
+  currency: text("currency").notNull().default("INR"),
+  description: text("description").notNull(), // "Myymotto Premium Subscription - 1 Year"
+  billingPeriodStart: timestamp("billing_period_start").notNull(),
+  billingPeriodEnd: timestamp("billing_period_end").notNull(),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email"),
+  customerPhone: text("customer_phone").notNull(),
+  customerAddress: text("customer_address"),
+  invoiceFilePath: text("invoice_file_path"), // PDF file path
+  downloadCount: integer("download_count").notNull().default(0),
+  lastDownloaded: timestamp("last_downloaded"),
+  emailSent: boolean("email_sent").default(false).notNull(),
+  emailSentAt: timestamp("email_sent_at"),
+  remindersSent: integer("reminders_sent").notNull().default(0),
+  lastReminderSent: timestamp("last_reminder_sent"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const subscriptionNotifications = pgTable("subscription_notifications", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull(),
@@ -564,12 +618,49 @@ export const insertSubscriptionNotificationSchema = createInsertSchema(subscript
   createdAt: true,
 });
 
+export const insertAccountInformationSchema = createInsertSchema(accountInformation).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  userId: z.number().min(1, "User ID is required"),
+  accountType: z.string().default("individual"),
+  subscriptionPlan: z.string().default("premium"),
+  accountStatus: z.string().default("active"),
+  billingAddress: z.string().optional(),
+  gstNumber: z.string().optional(),
+  panNumber: z.string().optional(),
+  preferredPaymentMethod: z.string().optional(),
+  accountNotes: z.string().optional(),
+});
+
+export const insertInvoiceSchema = createInsertSchema(invoices).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  userId: z.number().min(1, "User ID is required"),
+  invoiceNumber: z.string().min(1, "Invoice number is required"),
+  amount: z.number().min(1, "Amount must be greater than 0"),
+  totalAmount: z.number().min(1, "Total amount must be greater than 0"),
+  customerName: z.string().min(1, "Customer name is required"),
+  customerPhone: z.string().min(10, "Valid phone number is required"),
+  description: z.string().min(1, "Description is required"),
+  billingPeriodStart: z.string().min(1, "Billing period start is required"),
+  billingPeriodEnd: z.string().min(1, "Billing period end is required"),
+  dueDate: z.string().min(1, "Due date is required"),
+});
+
 export type Subscription = typeof subscriptions.$inferSelect;
 export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
 export type PaymentHistory = typeof paymentHistory.$inferSelect;
 export type InsertPaymentHistory = z.infer<typeof insertPaymentHistorySchema>;
 export type SubscriptionNotification = typeof subscriptionNotifications.$inferSelect;
 export type InsertSubscriptionNotification = z.infer<typeof insertSubscriptionNotificationSchema>;
+export type AccountInformation = typeof accountInformation.$inferSelect;
+export type InsertAccountInformation = z.infer<typeof insertAccountInformationSchema>;
+export type Invoice = typeof invoices.$inferSelect;
+export type InsertInvoice = z.infer<typeof insertInvoiceSchema>;
 
 export const insertNewsItemSchema = createInsertSchema(newsItems).omit({
   id: true,
