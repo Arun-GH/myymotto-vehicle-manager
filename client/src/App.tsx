@@ -35,6 +35,7 @@ import DashboardCustomize from "@/pages/dashboard-customize";
 import BroadcastPage from "@/pages/broadcast";
 import AdminDashboard from "@/pages/admin-dashboard";
 import AccountManagement from "@/pages/account-management";
+import SearchPage from "@/pages/search";
 
 import NotFound from "@/pages/not-found";
 
@@ -170,6 +171,7 @@ function Router() {
       <Route path="/subscribe" component={Subscribe} />
       <Route path="/profile" component={Profile} />
       <Route path="/settings" component={Settings} />
+      <Route path="/search" component={SearchPage} />
       <Route path="/climbing-game" component={ClimbingGame} />
       <Route path="/news-tidbits" component={NewsTidbits} />
       <Route path="/dashboard/customize" component={DashboardCustomize} />
