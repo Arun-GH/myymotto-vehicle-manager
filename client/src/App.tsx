@@ -16,10 +16,7 @@ import EditVehicle from "@/pages/edit-vehicle";
 import UploadDocuments from "@/pages/upload-documents";
 import LocalDocuments from "@/pages/local-documents";
 
-import ServiceCenters from "@/pages/service-centers";
-import PetrolBunks from "@/pages/petrol-bunks";
-import Hospitals from "@/pages/hospitals";
-import PoliceStations from "@/pages/police-stations";
+
 import Profile from "@/pages/profile";
 import EmergencyContacts from "@/pages/emergency-contacts";
 import Subscribe from "@/pages/subscribe";
@@ -46,9 +43,9 @@ function Router() {
   const [showSplash, setShowSplash] = useState(true);
   const [showPermissions, setShowPermissions] = useState(false);
   
-  // Check if user is authenticated - use userId presence as authentication check
+  // Check if user is authenticated - need proper authentication flag, not just userId
   const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId");
-  const isAuthenticated = !!currentUserId;
+  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
 
   // Handle splash screen completion
   const handleSplashComplete = () => {
@@ -169,11 +166,6 @@ function Router() {
       <Route path="/vehicle/:id/add-service-log" component={AddServiceLog} />
 
       <Route path="/vehicle/:id/alerts" component={VehicleAlerts} />
-
-      <Route path="/service-centers" component={ServiceCenters} />
-      <Route path="/petrol-bunks" component={PetrolBunks} />
-      <Route path="/hospitals" component={Hospitals} />
-      <Route path="/police-stations" component={PoliceStations} />
       <Route path="/emergency-contacts" component={EmergencyContacts} />
       <Route path="/subscribe" component={Subscribe} />
       <Route path="/profile" component={Profile} />
