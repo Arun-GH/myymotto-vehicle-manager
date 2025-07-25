@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 25, 2025**: COMPLETED professional mobile-friendly broadcast/create post dialog with community guidelines disclaimer
+- REDESIGNED create post dialog with professional center-aligned layout, larger fonts, and better mobile sizing (w-90%, max-w-md, h-11 inputs)
+- ADDED comprehensive community guidelines disclaimer with gradient styling warning against illegal content or content against Religion, Caste, Creed, Gender, or Nationality
+- ENHANCED form fields with modern styling: text-sm labels, font-semibold, proper focus states with orange theming, professional borders and spacing
+- UPGRADED submit buttons with gradient backgrounds, larger touch targets (h-12), descriptive text with emojis for better UX
+- IMPLEMENTED professional dialog styling with shadow-2xl, rounded-xl, backdrop-blur effects, and proper mobile responsiveness
+- IMPROVED form validation messages, field spacing (gap-4), and overall mobile-first design approach for better user experience
+- ADDED professional form layout with border-t separation between form fields and action buttons for clean visual hierarchy
+
 **July 25, 2025**: COMPLETED comprehensive admin user management system with block/unblock functionality and post deletion capabilities
 - IMPLEMENTED complete user blocking/unblocking system with database schema updates (isBlocked, blockedAt, blockedReason fields)
 - ADDED admin-only user management controls in Users tab with visual blocked status indicators and action buttons

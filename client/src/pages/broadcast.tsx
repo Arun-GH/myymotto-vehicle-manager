@@ -449,39 +449,53 @@ export default function BroadcastPage() {
       {/* Create Broadcast Dialog - Hidden in view-only mode */}
       {!isViewOnly && (
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="w-[94%] max-w-xs mx-auto max-h-[80vh] overflow-y-auto p-3">
-          <DialogHeader className="pb-1">
-            <DialogTitle className="text-xs flex items-center gap-1">
-              <Radio className="w-2.5 h-2.5 text-orange-600" />
-              Create Post
+        <DialogContent className="w-[90%] max-w-md mx-auto max-h-[85vh] overflow-y-auto p-6 rounded-xl shadow-2xl bg-white border-0">
+          <DialogHeader className="pb-4 text-center">
+            <DialogTitle className="text-lg font-bold flex items-center justify-center gap-2 text-gray-800">
+              <Radio className="w-5 h-5 text-orange-600" />
+              Create New Post
             </DialogTitle>
-            <DialogDescription className="text-[9px] text-gray-600 leading-tight">
-              Share with MMians
+            <DialogDescription className="text-sm text-gray-600 mt-2 leading-relaxed">
+              Share your thoughts, questions, or vehicle listings with the Myymotto community
             </DialogDescription>
+            
+            {/* Community Guidelines Disclaimer */}
+            <div className="mt-4 p-4 bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-lg">
+              <div className="flex items-start gap-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div className="text-left">
+                  <p className="text-xs font-medium text-red-800 mb-1">Community Guidelines</p>
+                  <p className="text-[10px] text-red-700 leading-relaxed">
+                    Please avoid posts containing illegal content or content against any Religion, Caste, Creed, Gender, or Nationality. 
+                    Keep our community respectful and inclusive for all members.
+                  </p>
+                </div>
+              </div>
+            </div>
           </DialogHeader>
           
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1.5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
               <FormField
                 control={form.control}
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[9px] font-medium">Post Type</FormLabel>
+                    <FormLabel className="text-sm font-semibold text-gray-700">Post Type</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="h-6 text-[9px]">
-                          <SelectValue placeholder="Select type" />
+                        <SelectTrigger className="h-11 text-sm border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                          <SelectValue placeholder="Choose your post type" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="general">General Post</SelectItem>
-                        <SelectItem value="sell">Vehicle for Sale</SelectItem>
-                        <SelectItem value="buy">Looking to Buy</SelectItem>
-                        <SelectItem value="query">Community Query</SelectItem>
+                      <SelectContent className="z-50">
+                        <SelectItem value="general">💬 General Post</SelectItem>
+                        <SelectItem value="sell">🚗 Vehicle for Sale</SelectItem>
+                        <SelectItem value="buy">🔍 Looking to Buy</SelectItem>
+                        <SelectItem value="query">❓ Community Query</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage className="text-[8px]" />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -489,10 +503,10 @@ export default function BroadcastPage() {
               {/* Vehicle Selection for Sell Type */}
               {form.watch("type") === "sell" && (
                 <div className="space-y-0.5">
-                  <label className="text-[9px] font-medium text-gray-700">Vehicle to Sell</label>
+                  <label className="text-sm font-semibold text-gray-700">Vehicle to Sell</label>
                   {selectedVehicleForSell ? (
-                    <div className="bg-orange-50 rounded p-1 flex items-center justify-between">
-                      <span className="text-[9px] font-medium">
+                    <div className="bg-orange-50 rounded-lg p-3 flex items-center justify-between border border-orange-200">
+                      <span className="text-sm font-medium text-gray-800">
                         {selectedVehicleForSell.make} {selectedVehicleForSell.model} {selectedVehicleForSell.year}
                       </span>
                       <Button
@@ -500,7 +514,7 @@ export default function BroadcastPage() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setSelectedVehicleForSell(null)}
-                        className="h-4 text-[8px] text-gray-500 px-1"
+                        className="h-8 text-xs text-orange-600 hover:text-orange-700 px-3"
                       >
                         Change
                       </Button>
@@ -510,10 +524,10 @@ export default function BroadcastPage() {
                       type="button"
                       variant="outline"
                       onClick={() => setShowVehicleSelector(true)}
-                      className="w-full h-7 text-[10px]"
+                      className="w-full h-11 text-sm border-dashed border-2 border-gray-300 hover:border-orange-400"
                     >
-                      <Car className="w-3 h-3 mr-1" />
-                      Choose Vehicle
+                      <Car className="w-4 h-4 mr-2" />
+                      Select Vehicle to Sell
                     </Button>
                   )}
                 </div>
@@ -526,7 +540,7 @@ export default function BroadcastPage() {
                   name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] font-medium">Title</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-gray-700">Title</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder={
@@ -534,11 +548,11 @@ export default function BroadcastPage() {
                               ? "Your question or topic" 
                               : "Brief title for your post"
                           } 
-                          className="h-7 text-[10px]" 
+                          className="h-11 text-sm border-gray-300 focus:border-orange-500 focus:ring-orange-500" 
                           {...field} 
                         />
                       </FormControl>
-                      <FormMessage className="text-[9px]" />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -554,11 +568,11 @@ export default function BroadcastPage() {
                   return (
                     <FormItem>
                       <div className="flex justify-between items-center">
-                        <FormLabel className="text-[10px] font-medium">
+                        <FormLabel className="text-sm font-semibold text-gray-700">
                           {form.watch("type") === "buy" ? "Vehicle Requirements" : 
                            form.watch("type") === "query" ? "Your Question" : "Description"}
                         </FormLabel>
-                        <span className={`text-[9px] ${wordCount > maxWords ? 'text-red-500' : 'text-gray-400'}`}>
+                        <span className={`text-xs ${wordCount > maxWords ? 'text-red-500' : 'text-gray-500'}`}>
                           {wordCount}/{maxWords} words
                         </span>
                       </div>
@@ -571,7 +585,7 @@ export default function BroadcastPage() {
                               ? "Ask your question or describe your query to the MMian community..."
                               : "Detailed description..."
                           }
-                          className="min-h-[50px] text-[10px] resize-none"
+                          className="min-h-[80px] text-sm resize-none border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                           {...field}
                           onChange={(e) => {
                             const words = e.target.value.trim().split(/\s+/).filter(word => word.length > 0);
@@ -582,9 +596,9 @@ export default function BroadcastPage() {
                         />
                       </FormControl>
                       {wordCount > maxWords && (
-                        <p className="text-[9px] text-red-500">Description must be 75 words or less</p>
+                        <p className="text-xs text-red-500">Description must be 75 words or less</p>
                       )}
-                      <FormMessage className="text-[9px]" />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   );
                 }}
@@ -592,17 +606,17 @@ export default function BroadcastPage() {
 
               {/* Contact Details for Buy and Query posts */}
               {(form.watch("type") === "buy" || form.watch("type") === "query") && (
-                <div className="grid grid-cols-2 gap-1.5">
+                <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="contactPhone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[9px] font-medium">Phone</FormLabel>
+                        <FormLabel className="text-sm font-semibold text-gray-700">Phone</FormLabel>
                         <FormControl>
-                          <Input placeholder="Phone number" className="h-6 text-[9px]" {...field} />
+                          <Input placeholder="Phone number" className="h-11 text-sm border-gray-300 focus:border-orange-500 focus:ring-orange-500" {...field} />
                         </FormControl>
-                        <FormMessage className="text-[8px]" />
+                        <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
@@ -612,11 +626,11 @@ export default function BroadcastPage() {
                     name="contactEmail"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[9px] font-medium">Email</FormLabel>
+                        <FormLabel className="text-sm font-semibold text-gray-700">Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="email@example.com" className="h-6 text-[9px]" {...field} />
+                          <Input placeholder="email@example.com" className="h-11 text-sm border-gray-300 focus:border-orange-500 focus:ring-orange-500" {...field} />
                         </FormControl>
-                        <FormMessage className="text-[8px]" />
+                        <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
@@ -662,11 +676,11 @@ export default function BroadcastPage() {
                   name="location"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[9px] font-medium">Location</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-gray-700">Location</FormLabel>
                       <FormControl>
-                        <Input placeholder="City" className="h-6 text-[9px]" {...field} />
+                        <Input placeholder="City" className="h-11 text-sm border-gray-300 focus:border-orange-500 focus:ring-orange-500" {...field} />
                       </FormControl>
-                      <FormMessage className="text-[8px]" />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -677,24 +691,24 @@ export default function BroadcastPage() {
                     name="price"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[9px] font-medium">Price (₹)</FormLabel>
+                        <FormLabel className="text-sm font-semibold text-gray-700">Price (₹)</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
                             placeholder="Amount"
-                            className="h-6 text-[9px]"
+                            className="h-11 text-sm border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                             {...field}
                             onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                           />
                         </FormControl>
-                        <FormMessage className="text-[8px]" />
+                        <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
                 )}
               </div>
 
-              <div className="flex gap-1.5 pt-0.5">
+              <div className="flex gap-4 pt-4 border-t border-gray-200">
                 <Button
                   type="button"
                   variant="outline"
@@ -703,19 +717,19 @@ export default function BroadcastPage() {
                     setSelectedVehicleForSell(null);
                     form.reset();
                   }}
-                  className="flex-1 h-6 text-[9px]"
+                  className="flex-1 h-12 text-sm border-gray-300 hover:bg-gray-50"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={createBroadcastMutation.isPending || (form.watch("type") === "sell" && !selectedVehicleForSell)}
-                  className="flex-1 h-6 text-[9px] bg-orange-500 hover:bg-orange-600"
+                  className="flex-1 h-12 text-sm bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold shadow-lg"
                 >
                   {createBroadcastMutation.isPending ? "Posting..." : 
-                   form.watch("type") === "buy" ? "Post" :
-                   form.watch("type") === "sell" ? "List" :
-                   form.watch("type") === "query" ? "Ask" : "Post"}
+                   form.watch("type") === "buy" ? "🔍 Post Request" :
+                   form.watch("type") === "sell" ? "🚗 List Vehicle" :
+                   form.watch("type") === "query" ? "❓ Ask Community" : "📝 Share Post"}
                 </Button>
               </div>
             </form>
