@@ -87,8 +87,27 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   const insuranceIssuedDate = insuranceDocument?.metadata?.insuranceIssuedDate;
   const insuranceProvider = insuranceDocument?.metadata?.insuranceProvider;
   
-  const insuranceStatus = getExpiryStatus(insuranceExpiryDate);
-  const emissionStatus = getExpiryStatus(vehicle.emissionExpiry);
+  // Helper function to get expiry status for renewal dates
+  const getDocumentExpiryStatus = (expiryDate: string | null) => {
+    if (!expiryDate) return { status: "unknown", color: "gray" };
+    
+    const expiry = new Date(expiryDate);
+    const today = new Date();
+    const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysUntilExpiry < 0) {
+      return { status: "expired", color: "red" };
+    } else if (daysUntilExpiry <= 30) {
+      return { status: "expiring", color: "orange" };
+    } else if (daysUntilExpiry <= 60) {
+      return { status: "due_soon", color: "yellow" };
+    } else {
+      return { status: "active", color: "green" };
+    }
+  };
+  
+  const insuranceStatus = getDocumentExpiryStatus(insuranceExpiryDate);
+  const emissionStatus = getDocumentExpiryStatus(vehicle.emissionExpiry);
   const serviceStatus = getServiceStatus(vehicle.lastServiceDate);
   const nextServiceInfo = calculateNextServiceDate(vehicle.lastServiceDate, vehicle.serviceIntervalMonths);
 
@@ -230,14 +249,24 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         <div className="grid grid-cols-2 gap-3 text-xs mb-2">
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold text-xs">Insured date:</span>
-              <span className="text-gray-800 text-xs">
-                {insuranceIssuedDate ? formatToDDMMMYYYY(new Date(insuranceIssuedDate)) : "Not set"}
+              <span className="text-amber-800 font-bold text-xs">Insurance Expiry:</span>
+              <span className={`text-xs ${
+                insuranceStatus.status === "expired" ? "text-red-600" :
+                insuranceStatus.status === "expiring" ? "text-orange-600" :
+                insuranceStatus.status === "due_soon" ? "text-yellow-600" :
+                "text-gray-800"
+              }`}>
+                {insuranceExpiryDate ? formatToDDMMMYYYY(new Date(insuranceExpiryDate)) : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold text-xs">Latest Emission:</span>
-              <span className="text-gray-800 text-xs">
+              <span className="text-amber-800 font-bold text-xs">Emission Expiry:</span>
+              <span className={`text-xs ${
+                emissionStatus.status === "expired" ? "text-red-600" :
+                emissionStatus.status === "expiring" ? "text-orange-600" :
+                emissionStatus.status === "due_soon" ? "text-yellow-600" :
+                "text-gray-800"
+              }`}>
                 {vehicle.emissionExpiry ? formatToDDMMMYYYY(new Date(vehicle.emissionExpiry)) : "Not set"}
               </span>
             </div>

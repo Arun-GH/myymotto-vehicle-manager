@@ -28,6 +28,13 @@ Preferred communication style: Simple, everyday language.
 - IMPLEMENTED expiry status indicators with color-coded badges showing days remaining for document renewals (red for expired/critical, orange for warning, yellow for due soon, green for active)
 - CREATED comprehensive document management system with real-time expiry tracking and detailed metadata display for improved document organization
 
+**July 26, 2025**: UPDATED vehicle dashboard tiles to display expiry dates instead of issue dates for better renewal tracking
+- CHANGED "Insured date" to "Insurance Expiry" on vehicle tiles showing insurance expiry date from document storage instead of issued date
+- CHANGED "Latest Emission" to "Emission Expiry" displaying emission certificate expiry date instead of generic emission information
+- ENHANCED expiry date display with color-coded status indicators (red for expired, orange for expiring, yellow for due soon, gray for normal)
+- IMPROVED vehicle tile information relevance by focusing on upcoming renewal dates rather than historical dates
+- MAINTAINED consistency with document management system's expiry-focused approach for better user experience
+
 **July 26, 2025**: COMPLETED Insurance Provider dropdown integration in Upload Documents page
 - ADDED comprehensive Insurance Provider dropdown field to Upload Documents page for Insurance Copy document type
 - IMPLEMENTED pre-populated dropdown with 25+ major Indian vehicle insurance providers including HDFC ERGO, ICICI Lombard, Bajaj Allianz, New India Assurance, National Insurance, Oriental Insurance, TATA AIG, Reliance General, and others
