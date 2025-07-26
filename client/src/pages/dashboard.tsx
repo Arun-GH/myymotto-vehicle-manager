@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Car, Camera, Search, Bell, Plus, FileText, AlertTriangle, CheckCircle, Clock, Users, Zap, Shield, Settings, Gamepad2, Puzzle, Newspaper, Files, Wrench, Radio, MessageCircle, X } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { type Vehicle } from "@shared/schema";
 import VehicleCard from "@/components/vehicle-card";
 import { apiRequest } from "@/lib/queryClient";
@@ -63,6 +63,7 @@ function AdminMessageBanner() {
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
+  const [, navigate] = useLocation();
   const [showVehicleSelector, setShowVehicleSelector] = useState(false);
   const [selectorActionType, setSelectorActionType] = useState<'documents' | 'service-logs'>('documents');
 
@@ -217,7 +218,7 @@ export default function Dashboard() {
               <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-purple-300 transition-all duration-200 h-16 px-1 active:scale-95" 
                    onClick={() => {
                      if (vehicles.length === 1) {
-                       window.location.href = `/vehicle/${vehicles[0].id}/local-documents`;
+                       navigate(`/vehicle/${vehicles[0].id}/local-documents`);
                      } else if (vehicles.length > 1) {
                        setSelectorActionType('documents');
                        setShowVehicleSelector(true);
@@ -229,7 +230,7 @@ export default function Dashboard() {
               <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-teal-300 transition-all duration-200 h-16 px-1 active:scale-95"
                    onClick={() => {
                      if (vehicles.length === 1) {
-                       window.location.href = `/vehicle/${vehicles[0].id}/service-logs`;
+                       navigate(`/vehicle/${vehicles[0].id}/service-logs`);
                      } else if (vehicles.length > 1) {
                        setSelectorActionType('service-logs');
                        setShowVehicleSelector(true);
