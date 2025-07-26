@@ -16,6 +16,9 @@ export interface LocalDocument {
     taxAmount?: number;
     permitFee?: number;
     rechargeAmount?: number;
+    insuranceExpiryDate?: string;
+    sumInsured?: number;
+    insurancePremium?: number;
   };
 }
 
@@ -46,7 +49,7 @@ class LocalDocumentStorage {
     vehicleId: number,
     type: string,
     file: File | null,
-    metadata?: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number; taxAmount?: number; permitFee?: number; rechargeAmount?: number },
+    metadata?: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number; taxAmount?: number; permitFee?: number; rechargeAmount?: number; insuranceExpiryDate?: string; sumInsured?: number; insurancePremium?: number },
     customFileName?: string
   ): Promise<LocalDocument> {
     const db = await this.openDB();
@@ -139,11 +142,17 @@ class LocalDocumentStorage {
   }
 
   createObjectURL(document: LocalDocument): string {
+    if (!document.fileData) {
+      throw new Error('Cannot create object URL for document without file data');
+    }
     const blob = new Blob([document.fileData], { type: document.mimeType });
     return URL.createObjectURL(blob);
   }
 
   downloadDocument(document: LocalDocument) {
+    if (!document.fileData) {
+      throw new Error('Cannot download document without file data');
+    }
     const blob = new Blob([document.fileData], { type: document.mimeType });
     const url = URL.createObjectURL(blob);
     const a = window.document.createElement('a');
@@ -176,7 +185,7 @@ class LocalDocumentStorage {
     vehicleId: number,
     type: string,
     file: File | null,
-    metadata?: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number; taxAmount?: number; permitFee?: number; rechargeAmount?: number },
+    metadata?: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number; taxAmount?: number; permitFee?: number; rechargeAmount?: number; insuranceExpiryDate?: string; sumInsured?: number; insurancePremium?: number },
     customFileName?: string
   ): Promise<LocalDocument> {
     // For unique document types, delete existing document first
@@ -194,7 +203,7 @@ class LocalDocumentStorage {
   async updateDocument(
     documentId: string,
     file: File | null,
-    metadata?: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number; taxAmount?: number; permitFee?: number; rechargeAmount?: number },
+    metadata?: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number; taxAmount?: number; permitFee?: number; rechargeAmount?: number; insuranceExpiryDate?: string; sumInsured?: number; insurancePremium?: number },
     customFileName?: string
   ): Promise<LocalDocument | undefined> {
     const existingDoc = await this.getDocument(documentId);

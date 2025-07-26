@@ -144,6 +144,9 @@ export default function UploadDocuments() {
   const [taxAmount, setTaxAmount] = useState<string>("");
   const [permitFee, setPermitFee] = useState<string>("");
   const [rechargeAmount, setRechargeAmount] = useState<string>("");
+  const [insuranceExpiryDate, setInsuranceExpiryDate] = useState<string>("");
+  const [sumInsured, setSumInsured] = useState<string>("");
+  const [insurancePremium, setInsurancePremium] = useState<string>("");
 
   const [showCamera, setShowCamera] = useState(false);
   const [showOCRScanner, setShowOCRScanner] = useState(false);
@@ -177,6 +180,9 @@ export default function UploadDocuments() {
         setTaxAmount(existing.metadata.taxAmount?.toString() || "");
         setPermitFee(existing.metadata.permitFee?.toString() || "");
         setRechargeAmount(existing.metadata.rechargeAmount?.toString() || "");
+        setInsuranceExpiryDate(existing.metadata.insuranceExpiryDate || "");
+        setSumInsured(existing.metadata.sumInsured?.toString() || "");
+        setInsurancePremium(existing.metadata.insurancePremium?.toString() || "");
       }
     } else {
       setExistingDocument(null);
@@ -259,31 +265,42 @@ export default function UploadDocuments() {
 
   const uploadDocuments = useMutation({
     mutationFn: async () => {
-      // Fast Tag Renewals allow optional file upload
-      if (selectedFiles.length === 0 && selectedType !== "fast_tag_renewals") {
+      // Fast Tag Renewals and Insurance copy allow optional file upload
+      if (selectedFiles.length === 0 && selectedType !== "fast_tag_renewals" && selectedType !== "insurance") {
         throw new Error("Please select at least one file to upload");
       }
 
       const uploadedDocuments = [];
 
       // Store documents locally on device instead of server upload
-      // For Fast Tag Renewals, create a metadata-only entry if no files selected
-      if (selectedFiles.length === 0 && selectedType === "fast_tag_renewals") {
+      // For Fast Tag Renewals and Insurance, create a metadata-only entry if no files selected
+      if (selectedFiles.length === 0 && (selectedType === "fast_tag_renewals" || selectedType === "insurance")) {
         const metadata: { 
           expiryDate?: string; 
           rechargeAmount?: number;
+          insuranceExpiryDate?: string;
+          sumInsured?: number;
+          insurancePremium?: number;
         } = {};
         
-        if (expiryDate) metadata.expiryDate = expiryDate;
-        if (rechargeAmount) metadata.rechargeAmount = parseFloat(rechargeAmount);
+        if (selectedType === "fast_tag_renewals") {
+          if (expiryDate) metadata.expiryDate = expiryDate;
+          if (rechargeAmount) metadata.rechargeAmount = parseFloat(rechargeAmount);
+        } else if (selectedType === "insurance") {
+          if (insuranceExpiryDate) metadata.insuranceExpiryDate = insuranceExpiryDate;
+          if (sumInsured) metadata.sumInsured = parseFloat(sumInsured);
+          if (insurancePremium) metadata.insurancePremium = parseFloat(insurancePremium);
+        }
         
         // Create a dummy document entry for metadata storage
-        const localDoc = await localDocumentStorage.storeDocument(
+        const localDoc = await localDocumentStorage.storeOrReplaceDocument(
           vehicleId, 
           selectedType, 
           null, // No file
           metadata, 
-          `Fast Tag Recharge - ${new Date().toLocaleDateString()}`
+          selectedType === "fast_tag_renewals" 
+            ? `Fast Tag Recharge - ${new Date().toLocaleDateString()}`
+            : `Insurance Details - ${new Date().toLocaleDateString()}`
         );
         uploadedDocuments.push(localDoc);
       }
@@ -297,6 +314,9 @@ export default function UploadDocuments() {
           taxAmount?: number;
           permitFee?: number;
           rechargeAmount?: number;
+          insuranceExpiryDate?: string;
+          sumInsured?: number;
+          insurancePremium?: number;
         } = {};
         
         // Add metadata based on document type
@@ -314,6 +334,10 @@ export default function UploadDocuments() {
         } else if (selectedType === "fast_tag_renewals") {
           if (expiryDate) metadata.expiryDate = expiryDate;
           if (rechargeAmount) metadata.rechargeAmount = parseFloat(rechargeAmount);
+        } else if (selectedType === "insurance") {
+          if (insuranceExpiryDate) metadata.insuranceExpiryDate = insuranceExpiryDate;
+          if (sumInsured) metadata.sumInsured = parseFloat(sumInsured);
+          if (insurancePremium) metadata.insurancePremium = parseFloat(insurancePremium);
         } else if (selectedType === "miscellaneous" && documentName) {
           metadata.documentName = documentName;
         } else if (selectedDocumentType?.requiresExpiry && expiryDate) {
@@ -506,6 +530,15 @@ export default function UploadDocuments() {
                     {existingDocument.metadata.expiryDate && (
                       <p>Expiry: {new Date(existingDocument.metadata.expiryDate).toLocaleDateString()}</p>
                     )}
+                    {existingDocument.metadata.insuranceExpiryDate && (
+                      <p>Insurance Expiry: {new Date(existingDocument.metadata.insuranceExpiryDate).toLocaleDateString()}</p>
+                    )}
+                    {existingDocument.metadata.sumInsured && (
+                      <p>Sum Insured: ₹{existingDocument.metadata.sumInsured.toLocaleString()}</p>
+                    )}
+                    {existingDocument.metadata.insurancePremium && (
+                      <p>Premium: ₹{existingDocument.metadata.insurancePremium.toLocaleString()}</p>
+                    )}
                     {existingDocument.metadata.taxAmount && (
                       <p>Tax Amount: ₹{existingDocument.metadata.taxAmount.toLocaleString()}</p>
                     )}
@@ -555,6 +588,9 @@ export default function UploadDocuments() {
                 setTaxAmount("");
                 setPermitFee("");
                 setRechargeAmount("");
+                setInsuranceExpiryDate("");
+                setSumInsured("");
+                setInsurancePremium("");
               }}>
                 <SelectTrigger className="h-8">
                   <SelectValue placeholder="Select document type" />
@@ -573,14 +609,13 @@ export default function UploadDocuments() {
             </div>
 
             {/* Date Fields */}
-            {selectedDocumentType?.requiresExpiry && (
+            {selectedDocumentType?.requiresExpiry && selectedType !== "insurance" && (
               <div className="space-y-1">
                 <Label htmlFor="expiry-date" className="text-xs font-medium">
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-3 h-3" />
                     <span>
-                      {selectedType === "emission" ? "Emission certificate issue date" : 
-                       selectedType === "insurance" ? "Insured date" : "Expiry Date"}
+                      {selectedType === "emission" ? "Emission certificate issue date" : "Expiry Date"}
                     </span>
                   </div>
                 </Label>
@@ -593,6 +628,69 @@ export default function UploadDocuments() {
                   max={selectedType === "emission" ? new Date().toISOString().split('T')[0] : undefined}
                 />
               </div>
+            )}
+
+            {/* Insurance-specific fields */}
+            {selectedType === "insurance" && (
+              <>
+                <div className="space-y-1">
+                  <Label htmlFor="insurance-expiry-date" className="text-xs font-medium">
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>Insurance Expiry Date</span>
+                    </div>
+                  </Label>
+                  <Input
+                    id="insurance-expiry-date"
+                    type="date"
+                    className="h-8"
+                    value={insuranceExpiryDate}
+                    onChange={(e) => setInsuranceExpiryDate(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="sum-insured" className="text-xs font-medium">
+                    <div className="flex items-center space-x-1">
+                      <DollarSign className="w-3 h-3" />
+                      <span>Sum Insured For (₹)</span>
+                    </div>
+                  </Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">₹</span>
+                    <Input
+                      id="sum-insured"
+                      type="number"
+                      className="h-8 pl-8"
+                      value={sumInsured}
+                      onChange={(e) => setSumInsured(e.target.value)}
+                      placeholder="Enter sum insured amount"
+                      min="0"
+                      step="1"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="insurance-premium" className="text-xs font-medium">
+                    <div className="flex items-center space-x-1">
+                      <DollarSign className="w-3 h-3" />
+                      <span>Insurance Premium (₹)</span>
+                    </div>
+                  </Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">₹</span>
+                    <Input
+                      id="insurance-premium"
+                      type="number"
+                      className="h-8 pl-8"
+                      value={insurancePremium}
+                      onChange={(e) => setInsurancePremium(e.target.value)}
+                      placeholder="Enter premium amount"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+                </div>
+              </>
             )}
 
             {/* Bill Date and Amount for Fuel Bills */}
@@ -738,7 +836,7 @@ export default function UploadDocuments() {
             {/* File Upload Section */}
             <div className="space-y-2">
               <Label className="text-xs font-medium">
-                Upload Files {selectedType === "fast_tag_renewals" && <span className="text-gray-500">(Optional)</span>}
+                Upload Files {(selectedType === "fast_tag_renewals" || selectedType === "insurance") && <span className="text-gray-500">(Optional)</span>}
               </Label>
               
               <div className="flex justify-center">
