@@ -35,6 +35,8 @@ Preferred communication style: Simple, everyday language.
 - RESOLVED issue where model field would reset to "Select model" after form submission due to missing form field connection
 - CHANGED "Insured date" to "Insurance Expiry" on vehicle tiles showing insurance expiry date from document storage instead of issued date
 - CHANGED "Latest Emission" to "Emission Expiry" displaying emission certificate expiry date instead of generic emission information
+- UPDATED upload documents page to show "Emission Certificate Expiry Date" instead of "Emission certificate issue date" for proper expiry date capture
+- REMOVED date restrictions for emission certificate expiry to allow proper future expiry date capture and storage
 - ENHANCED expiry date display with color-coded status indicators (red for expired, orange for expiring, yellow for due soon, gray for normal)
 - IMPROVED vehicle tile information relevance by focusing on upcoming renewal dates rather than historical dates
 - MAINTAINED consistency with document management system's expiry-focused approach for better user experience

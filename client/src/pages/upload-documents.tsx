@@ -630,7 +630,7 @@ export default function UploadDocuments() {
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-3 h-3" />
                     <span>
-                      {selectedType === "emission" ? "Emission certificate issue date" : "Expiry Date"}
+                      {selectedType === "emission" ? "Emission Certificate Expiry Date" : "Expiry Date"}
                     </span>
                   </div>
                 </Label>
@@ -640,7 +640,7 @@ export default function UploadDocuments() {
                   className="h-8"
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
-                  max={selectedType === "emission" ? new Date().toISOString().split('T')[0] : undefined}
+                  max={undefined}
                 />
               </div>
             )}
