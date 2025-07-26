@@ -195,6 +195,7 @@ const serviceLogSchema = z.object({
   serviceType: z.string().min(1, "Service type is required"),
   serviceDate: z.string().min(1, "Service date is required"),
   serviceCentre: z.string().min(1, "Service centre is required"),
+  billAmount: z.number().positive("Bill amount must be positive").optional().nullable(),
   notes: z.string().optional(),
 });
 
@@ -243,6 +244,7 @@ export default function CombinedServicePage() {
       serviceType: preSelectedServiceType,
       serviceDate: "",
       serviceCentre: "",
+      billAmount: null,
       notes: "",
     },
   });
@@ -283,6 +285,9 @@ export default function CombinedServicePage() {
       formData.append("serviceType", data.serviceType);
       formData.append("serviceDate", data.serviceDate || "");
       formData.append("serviceCentre", data.serviceCentre);
+      if (data.billAmount !== null && data.billAmount !== undefined) {
+        formData.append("billAmount", (data.billAmount * 100).toString()); // Convert to paise
+      }
       if (data.notes) formData.append("notes", data.notes);
       if (data.invoice) formData.append("invoice", data.invoice);
 
@@ -552,6 +557,24 @@ export default function CombinedServicePage() {
                     />
                     {serviceForm.formState.errors.serviceDate && (
                       <p className="text-sm text-red-600">{serviceForm.formState.errors.serviceDate.message}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label htmlFor="billAmount" className="text-xs">Bill Amount (₹)</Label>
+                    <Input
+                      id="billAmount"
+                      type="number"
+                      {...serviceForm.register("billAmount", { 
+                        setValueAs: (v: string) => v === "" ? null : parseFloat(v) 
+                      })}
+                      placeholder="Enter service bill amount"
+                      className="h-8"
+                      min="0"
+                      step="0.01"
+                    />
+                    {serviceForm.formState.errors.billAmount && (
+                      <p className="text-sm text-red-600">{serviceForm.formState.errors.billAmount.message}</p>
                     )}
                   </div>
 

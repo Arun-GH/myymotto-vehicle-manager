@@ -95,6 +95,7 @@ const serviceLogSchema = z.object({
   serviceType: z.string().min(1, "Service type is required"),
   serviceDate: z.string().min(1, "Service date is required"),
   serviceCentre: z.string().min(1, "Service centre is required"),
+  billAmount: z.number().positive("Bill amount must be positive").optional().nullable(),
   notes: z.string().optional(),
 });
 
@@ -124,6 +125,7 @@ export default function AddServiceLog() {
       serviceType: preSelectedServiceType,
       serviceDate: "",
       serviceCentre: "",
+      billAmount: null,
       notes: "",
     },
   });
@@ -135,6 +137,9 @@ export default function AddServiceLog() {
       formData.append("serviceType", data.serviceType);
       formData.append("serviceDate", data.serviceDate || "");
       formData.append("serviceCentre", data.serviceCentre);
+      if (data.billAmount !== null && data.billAmount !== undefined) {
+        formData.append("billAmount", (data.billAmount * 100).toString()); // Convert to paise
+      }
       if (data.notes) formData.append("notes", data.notes);
       if (data.invoice) formData.append("invoice", data.invoice);
 
@@ -333,6 +338,30 @@ export default function AddServiceLog() {
                 </div>
                 {form.formState.errors.serviceDate && (
                   <p className="text-sm text-red-600">{form.formState.errors.serviceDate.message}</p>
+                )}
+              </div>
+
+              {/* Bill Amount */}
+              <div className="space-y-2">
+                <Label htmlFor="billAmount" className="text-sm font-medium text-gray-700">
+                  Bill Amount (₹)
+                </Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">₹</span>
+                  <Input
+                    id="billAmount"
+                    type="number"
+                    className="h-9 pl-8"
+                    {...form.register("billAmount", { 
+                      setValueAs: (v: string) => v === "" ? null : parseFloat(v) 
+                    })}
+                    placeholder="Enter service bill amount"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                {form.formState.errors.billAmount && (
+                  <p className="text-sm text-red-600">{form.formState.errors.billAmount.message}</p>
                 )}
               </div>
 

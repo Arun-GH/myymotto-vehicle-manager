@@ -1160,6 +1160,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         serviceType: data.serviceType.toUpperCase(),
         serviceDate: data.serviceDate,
         serviceCentre: data.serviceCentre.toUpperCase(),
+        billAmount: data.billAmount ? parseInt(data.billAmount) : null, // billAmount is in paise
         notes: data.notes || null,
         invoicePath: invoicePath,
       });
@@ -1180,6 +1181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         serviceType: data.serviceType?.toUpperCase(),
         serviceDate: data.serviceDate,
         serviceCentre: data.serviceCentre?.toUpperCase(),
+        billAmount: data.billAmount ? parseInt(data.billAmount) : null, // billAmount is in paise
         notes: data.notes || null,
       };
       
