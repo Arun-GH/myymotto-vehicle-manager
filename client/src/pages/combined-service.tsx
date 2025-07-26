@@ -661,7 +661,7 @@ export default function CombinedServicePage() {
                 <CardTitle className="flex items-center justify-between text-left text-base">
                   <div className="flex items-center space-x-2">
                     <Settings className="w-4 h-4 text-orange-600" />
-                    <span>Essential Replacements</span>
+                    <span>Essential Replacement Schedule</span>
                   </div>
                   <Plus className={`w-4 h-4 transition-transform ${essentialReplacesOpen ? 'rotate-45' : ''}`} />
                 </CardTitle>
@@ -675,7 +675,6 @@ export default function CombinedServicePage() {
                       <TableRow>
                         <TableHead className="font-medium text-xs">Service</TableHead>
                         <TableHead className="font-medium text-xs">Recommended Timeline</TableHead>
-                        <TableHead className="font-medium text-xs text-center">Action</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -687,19 +686,6 @@ export default function CombinedServicePage() {
                           <TableRow key={index} className={isCompleted ? 'bg-green-50' : ''}>
                             <TableCell className="font-medium text-xs py-1">{item.service}</TableCell>
                             <TableCell className="text-xs text-gray-600 py-1">{item.recommendedTimeline}</TableCell>
-                            <TableCell className="text-center py-1">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => openMaintenanceDialog(item)}
-                                className={`border-orange-300 text-orange-700 hover:bg-orange-50 text-xs px-1 py-1 h-6 ${
-                                  record?.completedDate ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200' : ''
-                                }`}
-                              >
-                                <Calendar className="w-3 h-3 mr-1" />
-                                {record?.completedDate ? 'Add Again' : 'Add'}
-                              </Button>
-                            </TableCell>
                           </TableRow>
                         );
                       })}

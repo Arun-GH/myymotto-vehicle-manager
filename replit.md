@@ -22,6 +22,9 @@ Preferred communication style: Simple, everyday language.
 - ENHANCED service logs page to display bill amount for each service entry with proper rupee formatting
 - ADDED yearly service spending summary card showing total amount spent on services for current year
 - IMPLEMENTED proper currency formatting with Indian rupee symbol and thousands separators
+- RENAMED "Essential Replacements" to "Essential Replacement Schedule" on service management pages
+- REMOVED Action column from Essential Replacement Schedule table keeping only Service and Recommended Timeline columns
+- SIMPLIFIED maintenance schedule display to show only reference information without user interaction capabilities
 
 **July 26, 2025**: ADDED User Type classification dropdown to vehicle management system
 - IMPLEMENTED User Type dropdown field on Add Vehicle page with three options: Private, Commercial, Taxi services
