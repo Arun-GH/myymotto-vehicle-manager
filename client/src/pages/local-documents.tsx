@@ -38,6 +38,10 @@ export default function LocalDocuments() {
     service: { label: "Service Invoices", color: "bg-orange-500" },
     rc: { label: "RC Book Copies", color: "bg-purple-500" },
     fuel: { label: "Fuel Bills", color: "bg-yellow-500" },
+    road_tax: { label: "Road Tax", color: "bg-red-500" },
+    travel_permits: { label: "Travel Permits", color: "bg-indigo-500" },
+    fitness_certificate: { label: "Fitness Certificate", color: "bg-teal-500" },
+    fast_tag_renewals: { label: "Fast Tag Renewals", color: "bg-pink-500" },
     miscellaneous: { label: "Miscellaneous Documents", color: "bg-gray-500" },
   };
 
@@ -104,6 +108,14 @@ export default function LocalDocuments() {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+    }).format(amount);
   };
 
   const groupedDocuments = documents.reduce((acc, doc) => {
@@ -185,11 +197,11 @@ export default function LocalDocuments() {
                 </div>
               )}
               <div className="flex-1">
-                <h3 className="font-medium text-gray-800 text-sm">{vehicle.make?.toUpperCase()} {vehicle.model} {vehicle.year && `(${vehicle.year})`}</h3>
+                <h3 className="font-medium text-gray-800 text-base">{vehicle.make?.toUpperCase()} {vehicle.model} {vehicle.year && `(${vehicle.year})`}</h3>
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
-                  <div className="text-xs text-blue-600">
-                    <FileText className="w-3 h-3 inline mr-1" />
+                  <p className="text-sm text-gray-600">{vehicle.licensePlate}</p>
+                  <div className="text-sm text-blue-600">
+                    <FileText className="w-4 h-4 inline mr-1" />
                     {documents.length} doc{documents.length !== 1 ? 's' : ''}
                   </div>
                 </div>
@@ -206,14 +218,14 @@ export default function LocalDocuments() {
                 <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
                   <HardDrive className="w-3 h-3 text-green-600" />
                 </div>
-                <span className="text-xs font-medium text-gray-800">Device Storage</span>
+                <span className="text-sm font-medium text-gray-800">Device Storage</span>
               </div>
               <div className="text-right">
-                <div className="text-xs font-medium text-blue-600">{documents.length} docs • {formatFileSize(storageInfo.used)}</div>
+                <div className="text-sm font-medium text-blue-600">{documents.length} docs • {formatFileSize(storageInfo.used)}</div>
               </div>
             </div>
-            <div className="text-xs text-green-600 mt-1 flex items-center">
-              <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></div>
+            <div className="text-sm text-green-600 mt-1 flex items-center">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
               Secured locally
             </div>
           </CardContent>
@@ -224,13 +236,13 @@ export default function LocalDocuments() {
           <Card className="card-hover shadow-orange border-l-4 border-l-orange-500">
             <CardContent className="text-center py-4">
               <FileText className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-              <h3 className="text-sm font-semibold mb-1">No Documents Stored</h3>
-              <p className="text-xs text-muted-foreground mb-3">
+              <h3 className="text-base font-semibold mb-1">No Documents Stored</h3>
+              <p className="text-sm text-muted-foreground mb-3">
                 Upload documents to store them securely
               </p>
               <Button 
                 onClick={() => setLocation(`/vehicle/${vehicleId}/upload`)}
-                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 h-7 text-xs"
+                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 h-8 text-sm"
               >
                 Upload Documents
               </Button>
@@ -240,30 +252,35 @@ export default function LocalDocuments() {
           Object.entries(groupedDocuments).map(([type, docs]) => (
             <Card key={type} className="card-hover shadow-orange border-l-4 border-l-purple-500 mb-2">
               <CardHeader className="pb-1 px-2 pt-2">
-                <CardTitle className="flex items-center space-x-2 text-xs">
-                  <div className={`w-3 h-3 rounded-full ${documentTypes[type]?.color || 'bg-gray-500'}`} />
+                <CardTitle className="flex items-center space-x-2 text-sm">
+                  <div className={`w-4 h-4 rounded-full ${documentTypes[type]?.color || 'bg-gray-500'}`} />
                   <span>{documentTypes[type]?.label || type}</span>
-                  <Badge variant="secondary" className="ml-auto text-xs">{docs.length}</Badge>
+                  <Badge variant="secondary" className="ml-auto text-sm">{docs.length}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-1 px-2 pb-2">
                 {docs.map((document) => (
-                  <div key={document.id} className="border rounded-lg p-1.5 space-y-1">
+                  <div key={document.id} className="border rounded-lg p-2 space-y-2">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-1 mb-1">
-                          <span className="text-[9px] font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-sm">
+                          <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-sm">
                             {documentTypes[document.type]?.label || document.type}
                           </span>
                           {document.metadata?.documentName && (
-                            <span className="text-[9px] text-gray-600 bg-gray-50 px-1.5 py-0.5 rounded-sm">
+                            <span className="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-sm">
                               {document.metadata.documentName}
                             </span>
                           )}
                         </div>
-                        <p className="font-medium text-[10px] truncate">{document.fileName}</p>
-                        <div className="text-[9px] text-muted-foreground flex items-center space-x-2">
-                          <span>{formatFileSize(document.fileSize)} • {formatDate(document.uploadedAt)}</span>
+                        <p className="font-medium text-sm truncate">{document.fileName}</p>
+                        <div className="text-xs text-muted-foreground flex items-center space-x-2 mt-1">
+                          {document.fileSize > 0 && (
+                            <span>{formatFileSize(document.fileSize)} • {formatDate(document.uploadedAt)}</span>
+                          )}
+                          {document.fileSize === 0 && (
+                            <span>Added: {formatDate(document.uploadedAt)}</span>
+                          )}
                           {document.metadata?.billDate && (
                             <span className="text-yellow-600">Bill: {formatDate(document.metadata.billDate)}</span>
                           )}
@@ -271,35 +288,67 @@ export default function LocalDocuments() {
                             <span className="text-green-600">Expiry: {formatDate(document.metadata.expiryDate)}</span>
                           )}
                         </div>
+                        
+                        {/* Amount Fields Display */}
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {document.metadata?.billAmount && (
+                            <span className="text-xs font-medium text-green-700 bg-green-50 px-2 py-1 rounded-sm border border-green-200">
+                              Bill: {formatCurrency(document.metadata.billAmount)}
+                            </span>
+                          )}
+                          {document.metadata?.taxAmount && (
+                            <span className="text-xs font-medium text-red-700 bg-red-50 px-2 py-1 rounded-sm border border-red-200">
+                              Tax: {formatCurrency(document.metadata.taxAmount)}
+                            </span>
+                          )}
+                          {document.metadata?.permitFee && (
+                            <span className="text-xs font-medium text-indigo-700 bg-indigo-50 px-2 py-1 rounded-sm border border-indigo-200">
+                              Permit Fee: {formatCurrency(document.metadata.permitFee)}
+                            </span>
+                          )}
+                          {document.metadata?.rechargeAmount && (
+                            <span className="text-xs font-medium text-pink-700 bg-pink-50 px-2 py-1 rounded-sm border border-pink-200">
+                              Recharge: {formatCurrency(document.metadata.rechargeAmount)}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                     
-                    <div className="flex space-x-1">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleViewDocument(document)}
-                        className="flex-1 h-6 text-[10px] py-0"
-                      >
-                        <Eye className="w-2.5 h-2.5 mr-1" />
-                        View
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleDownloadDocument(document)}
-                        className="flex-1 h-6 text-[10px] py-0"
-                      >
-                        <Download className="w-2.5 h-2.5 mr-1" />
-                        Download
-                      </Button>
+                    <div className="flex space-x-2">
+                      {document.fileSize > 0 ? (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleViewDocument(document)}
+                            className="flex-1 h-8 text-xs py-0"
+                          >
+                            <Eye className="w-3 h-3 mr-1" />
+                            View
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDownloadDocument(document)}
+                            className="flex-1 h-8 text-xs py-0"
+                          >
+                            <Download className="w-3 h-3 mr-1" />
+                            Download
+                          </Button>
+                        </>
+                      ) : (
+                        <div className="flex-1 text-center text-xs text-gray-500 py-2">
+                          No file attached - Amount entry only
+                        </div>
+                      )}
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleDeleteDocument(document)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50 h-6 px-1.5 py-0"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 h-8 px-2 py-0"
                       >
-                        <Trash2 className="w-2.5 h-2.5" />
+                        <Trash2 className="w-3 h-3" />
                       </Button>
                     </div>
                   </div>
@@ -312,7 +361,7 @@ export default function LocalDocuments() {
         {/* Upload More Button */}
         <Button 
           onClick={() => setLocation(`/vehicle/${vehicleId}/upload`)}
-          className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 h-7 text-xs"
+          className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 h-9 text-sm"
         >
           Upload More Documents
         </Button>
