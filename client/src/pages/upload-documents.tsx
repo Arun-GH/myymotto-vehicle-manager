@@ -131,6 +131,9 @@ export default function UploadDocuments() {
   const [expiryDate, setExpiryDate] = useState<string>("");
   const [documentName, setDocumentName] = useState<string>("");
   const [billAmount, setBillAmount] = useState<string>("");
+  const [taxAmount, setTaxAmount] = useState<string>("");
+  const [permitFee, setPermitFee] = useState<string>("");
+  const [rechargeAmount, setRechargeAmount] = useState<string>("");
 
   const [showCamera, setShowCamera] = useState(false);
   const [showOCRScanner, setShowOCRScanner] = useState(false);
@@ -217,15 +220,45 @@ export default function UploadDocuments() {
 
   const uploadDocuments = useMutation({
     mutationFn: async () => {
-      if (selectedFiles.length === 0) {
+      // Fast Tag Renewals allow optional file upload
+      if (selectedFiles.length === 0 && selectedType !== "fast_tag_renewals") {
         throw new Error("Please select at least one file to upload");
       }
 
       const uploadedDocuments = [];
 
       // Store documents locally on device instead of server upload
+      // For Fast Tag Renewals, create a metadata-only entry if no files selected
+      if (selectedFiles.length === 0 && selectedType === "fast_tag_renewals") {
+        const metadata: { 
+          expiryDate?: string; 
+          rechargeAmount?: number;
+        } = {};
+        
+        if (expiryDate) metadata.expiryDate = expiryDate;
+        if (rechargeAmount) metadata.rechargeAmount = parseFloat(rechargeAmount);
+        
+        // Create a dummy document entry for metadata storage
+        const localDoc = await localDocumentStorage.storeDocument(
+          vehicleId, 
+          selectedType, 
+          null, // No file
+          metadata, 
+          `Fast Tag Recharge - ${new Date().toLocaleDateString()}`
+        );
+        uploadedDocuments.push(localDoc);
+      }
+      
       for (const file of selectedFiles) {
-        const metadata: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number } = {};
+        const metadata: { 
+          billDate?: string; 
+          documentName?: string; 
+          expiryDate?: string; 
+          billAmount?: number;
+          taxAmount?: number;
+          permitFee?: number;
+          rechargeAmount?: number;
+        } = {};
         
         // Add metadata based on document type
         if (selectedType === "fuel" && expiryDate) {
@@ -233,6 +266,15 @@ export default function UploadDocuments() {
           if (billAmount) {
             metadata.billAmount = parseFloat(billAmount);
           }
+        } else if (selectedType === "road_tax") {
+          if (expiryDate) metadata.expiryDate = expiryDate;
+          if (taxAmount) metadata.taxAmount = parseFloat(taxAmount);
+        } else if (selectedType === "travel_permits") {
+          if (expiryDate) metadata.expiryDate = expiryDate;
+          if (permitFee) metadata.permitFee = parseFloat(permitFee);
+        } else if (selectedType === "fast_tag_renewals") {
+          if (expiryDate) metadata.expiryDate = expiryDate;
+          if (rechargeAmount) metadata.rechargeAmount = parseFloat(rechargeAmount);
         } else if (selectedType === "miscellaneous" && documentName) {
           metadata.documentName = documentName;
         } else if (selectedDocumentType?.requiresExpiry && expiryDate) {
@@ -267,6 +309,9 @@ export default function UploadDocuments() {
       setExpiryDate("");
       setDocumentName("");
       setBillAmount("");
+      setTaxAmount("");
+      setPermitFee("");
+      setRechargeAmount("");
       setLocation(`/vehicle/${vehicleId}/local-documents`);
     },
     onError: (error) => {
@@ -393,6 +438,9 @@ export default function UploadDocuments() {
                 setExpiryDate("");
                 setDocumentName("");
                 setBillAmount("");
+                setTaxAmount("");
+                setPermitFee("");
+                setRechargeAmount("");
               }}>
                 <SelectTrigger className="h-8">
                   <SelectValue placeholder="Select document type" />
@@ -476,6 +524,81 @@ export default function UploadDocuments() {
               </>
             )}
 
+            {/* Tax Amount for Road Tax */}
+            {selectedType === "road_tax" && (
+              <div className="space-y-1">
+                <Label htmlFor="tax-amount" className="text-xs font-medium">
+                  <div className="flex items-center space-x-1">
+                    <DollarSign className="w-3 h-3" />
+                    <span>Tax Amount (₹)</span>
+                  </div>
+                </Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">₹</span>
+                  <Input
+                    id="tax-amount"
+                    type="number"
+                    className="h-8 pl-8"
+                    value={taxAmount}
+                    onChange={(e) => setTaxAmount(e.target.value)}
+                    placeholder="Enter tax amount paid"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Permit Fee for Travel Permits */}
+            {selectedType === "travel_permits" && (
+              <div className="space-y-1">
+                <Label htmlFor="permit-fee" className="text-xs font-medium">
+                  <div className="flex items-center space-x-1">
+                    <DollarSign className="w-3 h-3" />
+                    <span>Permit Fee (₹)</span>
+                  </div>
+                </Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">₹</span>
+                  <Input
+                    id="permit-fee"
+                    type="number"
+                    className="h-8 pl-8"
+                    value={permitFee}
+                    onChange={(e) => setPermitFee(e.target.value)}
+                    placeholder="Enter permit fee paid"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Recharge Amount for Fast Tag Renewals */}
+            {selectedType === "fast_tag_renewals" && (
+              <div className="space-y-1">
+                <Label htmlFor="recharge-amount" className="text-xs font-medium">
+                  <div className="flex items-center space-x-1">
+                    <DollarSign className="w-3 h-3" />
+                    <span>Recharge Amount (₹)</span>
+                  </div>
+                </Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">₹</span>
+                  <Input
+                    id="recharge-amount"
+                    type="number"
+                    className="h-8 pl-8"
+                    value={rechargeAmount}
+                    onChange={(e) => setRechargeAmount(e.target.value)}
+                    placeholder="Enter recharge amount"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Document Type/Name for Miscellaneous */}
             {selectedType === "miscellaneous" && (
               <div className="space-y-1">
@@ -500,7 +623,9 @@ export default function UploadDocuments() {
 
             {/* File Upload Section */}
             <div className="space-y-2">
-              <Label className="text-xs font-medium">Upload Files</Label>
+              <Label className="text-xs font-medium">
+                Upload Files {selectedType === "fast_tag_renewals" && <span className="text-gray-500">(Optional)</span>}
+              </Label>
               
               <div className="flex justify-center">
                 <Button

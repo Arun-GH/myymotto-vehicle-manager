@@ -30,7 +30,11 @@ Preferred communication style: Simple, everyday language.
 - ENHANCED upload documents page with bill amount field for Fuel Bills document type positioned under bill date
 - ADDED new document types to dropdown: Road Tax, Travel Permits, Fitness Certificate, Fast Tag Renewals
 - IMPLEMENTED bill amount capture for fuel bills with proper rupee symbol and decimal validation
-- UPDATED document type handling to include new categories with appropriate expiry date requirements
+- UPDATED document type handling to include new categories with appropriate expiry date requirements  
+- ADDED specialized amount fields for different document types: Tax Amount for Road Tax, Permit Fee for Travel Permits, Recharge Amount for Fast Tag Renewals
+- MADE file upload optional for Fast Tag Renewals document type
+- IMPLEMENTED document-specific amount fields with rupee symbol validation and decimal formatting
+- UPDATED local storage system to handle documents without files for Fast Tag Renewals metadata-only entries
 
 **July 26, 2025**: ADDED User Type classification dropdown to vehicle management system
 - IMPLEMENTED User Type dropdown field on Add Vehicle page with three options: Private, Commercial, Taxi services

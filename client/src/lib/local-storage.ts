@@ -4,7 +4,7 @@ export interface LocalDocument {
   vehicleId: number;
   type: string;
   fileName: string;
-  fileData: ArrayBuffer;
+  fileData: ArrayBuffer | null;
   mimeType: string;
   fileSize: number;
   uploadedAt: string;
@@ -12,6 +12,10 @@ export interface LocalDocument {
     billDate?: string;
     documentName?: string;
     expiryDate?: string;
+    billAmount?: number;
+    taxAmount?: number;
+    permitFee?: number;
+    rechargeAmount?: number;
   };
 }
 
@@ -41,21 +45,32 @@ class LocalDocumentStorage {
   async storeDocument(
     vehicleId: number,
     type: string,
-    file: File,
-    metadata?: { billDate?: string; documentName?: string; expiryDate?: string },
+    file: File | null,
+    metadata?: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number; taxAmount?: number; permitFee?: number; rechargeAmount?: number },
     customFileName?: string
   ): Promise<LocalDocument> {
     const db = await this.openDB();
-    const arrayBuffer = await file.arrayBuffer();
+    
+    let arrayBuffer: ArrayBuffer | null = null;
+    let mimeType = '';
+    let fileSize = 0;
+    let fileName = customFileName || 'No File';
+    
+    if (file) {
+      arrayBuffer = await file.arrayBuffer();
+      mimeType = file.type;
+      fileSize = file.size;
+      fileName = customFileName || file.name;
+    }
     
     const document: LocalDocument = {
       id: `${vehicleId}-${type}-${Date.now()}`,
       vehicleId,
       type,
-      fileName: customFileName || file.name,
+      fileName,
       fileData: arrayBuffer,
-      mimeType: file.type,
-      fileSize: file.size,
+      mimeType,
+      fileSize,
       uploadedAt: new Date().toISOString(),
       metadata,
     };
