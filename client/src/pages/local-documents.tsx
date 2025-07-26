@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car, Plus } from "lucide-react";
+import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car, Plus, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -316,6 +316,18 @@ export default function LocalDocuments() {
                     </div>
                     
                     <div className="flex space-x-1">
+                      {/* Edit button for unique document types */}
+                      {localDocumentStorage.isUniqueDocumentType(document.type) && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setLocation(`/vehicle/${vehicleId}/upload?edit=${document.type}`)}
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-6 px-1.5 py-0"
+                        >
+                          <Edit className="w-2.5 h-2.5" />
+                        </Button>
+                      )}
+                      
                       {document.fileSize > 0 ? (
                         <>
                           <Button

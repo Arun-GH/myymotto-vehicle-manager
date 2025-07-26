@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams, Link } from "wouter";
 import { ArrowLeft, Upload, Camera, FileText, Calendar, CheckCircle, Bell, Settings, Scan, DollarSign, File, Edit2 } from "lucide-react";
@@ -123,6 +123,16 @@ export default function UploadDocuments() {
   const [, setLocation] = useLocation();
   const params = useParams();
   const vehicleId = parseInt(params.id || "0");
+  
+  // Check for edit mode from URL query parameter
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const editType = urlParams.get('edit');
+    if (editType && localDocumentStorage.isUniqueDocumentType(editType)) {
+      setSelectedType(editType as DocumentType);
+      setIsEditMode(true);
+    }
+  }, []);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -139,6 +149,8 @@ export default function UploadDocuments() {
   const [showOCRScanner, setShowOCRScanner] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [ocrData, setOcrData] = useState<InsurancePolicyData | null>(null);
+  const [existingDocument, setExistingDocument] = useState<LocalDocument | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Fetch vehicle data
   const { data: vehicle, isLoading } = useQuery({
@@ -150,6 +162,33 @@ export default function UploadDocuments() {
     },
     enabled: !!vehicleId,
   });
+
+  // Check for existing document when type changes
+  const checkExistingDocument = async (type: DocumentType) => {
+    if (localDocumentStorage.isUniqueDocumentType(type)) {
+      const existing = await localDocumentStorage.getExistingDocumentByType(vehicleId, type);
+      setExistingDocument(existing || null);
+      
+      // Pre-populate form with existing data if in edit mode
+      if (existing && existing.metadata) {
+        setExpiryDate(existing.metadata.expiryDate || "");
+        setDocumentName(existing.metadata.documentName || "");
+        setBillAmount(existing.metadata.billAmount?.toString() || "");
+        setTaxAmount(existing.metadata.taxAmount?.toString() || "");
+        setPermitFee(existing.metadata.permitFee?.toString() || "");
+        setRechargeAmount(existing.metadata.rechargeAmount?.toString() || "");
+      }
+    } else {
+      setExistingDocument(null);
+    }
+  };
+
+  // Check for existing document when component mounts or type changes
+  React.useEffect(() => {
+    if (vehicleId && selectedType) {
+      checkExistingDocument(selectedType);
+    }
+  }, [vehicleId, selectedType]);
 
   const documentTypes = [
     { value: "emission" as DocumentType, label: "Emission Certificate", icon: FileText, requiresExpiry: true },
@@ -285,7 +324,13 @@ export default function UploadDocuments() {
         let fileToStore = file;
         const customName = (file as FileWithCustomName).customName;
         
-        const localDoc = await localDocumentStorage.storeDocument(vehicleId, selectedType, fileToStore, metadata, customName);
+        // Use storeOrReplaceDocument for unique document types in edit mode
+        let localDoc;
+        if (isEditMode && existingDocument && localDocumentStorage.isUniqueDocumentType(selectedType)) {
+          localDoc = await localDocumentStorage.updateDocument(existingDocument.id, fileToStore, metadata, customName);
+        } else {
+          localDoc = await localDocumentStorage.storeOrReplaceDocument(vehicleId, selectedType, fileToStore, metadata, customName);
+        }
         uploadedDocuments.push(localDoc);
       }
 
@@ -293,18 +338,21 @@ export default function UploadDocuments() {
 
       return uploadedDocuments;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       // Invalidate local document queries 
       queryClient.invalidateQueries({ queryKey: ["local-documents", vehicleId] });
       queryClient.invalidateQueries({ queryKey: ["/api/vehicles"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       
+      const actionText = isEditMode && existingDocument ? "updated" : "saved";
+      const countText = selectedFiles.length === 0 && selectedType === "fast_tag_renewals" ? "metadata entry" : `${selectedFiles.length} document(s)`;
+      
       toast({
-        title: "Documents Saved Locally",
-        description: `Successfully saved ${selectedFiles.length} ${selectedDocumentType?.label.toLowerCase()} document(s) on your device.`,
+        title: `Document${selectedFiles.length === 1 ? '' : 's'} ${actionText.charAt(0).toUpperCase() + actionText.slice(1)}`,
+        description: `Successfully ${actionText} ${countText} on your device.`,
       });
       
-      // Reset form
+      // Reset form and exit edit mode
       setSelectedFiles([]);
       setExpiryDate("");
       setDocumentName("");
@@ -312,6 +360,11 @@ export default function UploadDocuments() {
       setTaxAmount("");
       setPermitFee("");
       setRechargeAmount("");
+      setIsEditMode(false);
+      
+      // Refresh existing document data
+      await checkExistingDocument(selectedType);
+      
       setLocation(`/vehicle/${vehicleId}/local-documents`);
     },
     onError: (error) => {
@@ -417,14 +470,74 @@ export default function UploadDocuments() {
           </CardContent>
         </Card>
 
-        {/* Document Upload Form */}
-        <Card className="card-hover shadow-orange border-l-4 border-l-orange-500">
+        {/* Existing Document Display for Unique Types */}
+        {existingDocument && localDocumentStorage.isUniqueDocumentType(selectedType) && (
+          <Card className="card-hover shadow-blue border-l-4 border-l-blue-500">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg py-1.5">
+              <CardTitle className="flex items-center justify-between text-gray-800 text-xs">
+                <div className="flex items-center space-x-2">
+                  <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
+                    <FileText className="w-3 h-3 text-blue-600" />
+                  </div>
+                  <span>Existing {selectedDocumentType?.label}</span>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsEditMode(!isEditMode)}
+                  className="text-blue-600 hover:text-blue-700 h-6 text-xs px-2"
+                >
+                  <Edit2 className="w-3 h-3 mr-1" />
+                  {isEditMode ? "Cancel Edit" : "Edit"}
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2">
+              <div className="bg-blue-50 border border-blue-100 rounded-lg p-2">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs font-medium text-blue-800">{existingDocument.fileName}</p>
+                  <span className="text-[10px] text-blue-600">
+                    {(existingDocument.fileSize / 1024 / 1024).toFixed(1)} MB
+                  </span>
+                </div>
+                {existingDocument.metadata && (
+                  <div className="text-[10px] text-blue-700 space-y-0.5">
+                    {existingDocument.metadata.expiryDate && (
+                      <p>Expiry: {new Date(existingDocument.metadata.expiryDate).toLocaleDateString()}</p>
+                    )}
+                    {existingDocument.metadata.taxAmount && (
+                      <p>Tax Amount: ₹{existingDocument.metadata.taxAmount.toLocaleString()}</p>
+                    )}
+                    {existingDocument.metadata.permitFee && (
+                      <p>Permit Fee: ₹{existingDocument.metadata.permitFee.toLocaleString()}</p>
+                    )}
+                  </div>
+                )}
+                <p className="text-[9px] text-blue-600 mt-1">
+                  Uploaded: {new Date(existingDocument.uploadedAt).toLocaleDateString()}
+                </p>
+              </div>
+              {!isEditMode && (
+                <p className="text-xs text-blue-700 mt-2 text-center">
+                  Only one {selectedDocumentType?.label} allowed per vehicle. Click Edit to update.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Document Upload Form - Show if not unique type OR no existing document OR in edit mode */}
+        {(!localDocumentStorage.isUniqueDocumentType(selectedType) || !existingDocument || isEditMode) && (
+          <Card className="card-hover shadow-orange border-l-4 border-l-orange-500">
           <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50 rounded-t-lg py-1.5">
             <CardTitle className="flex items-center space-x-2 text-gray-800 text-xs">
               <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center">
                 <Upload className="w-3 h-3 text-orange-600" />
               </div>
-              <span>Upload Documents</span>
+              <span>
+                {isEditMode && existingDocument ? `Update ${selectedDocumentType?.label}` : 'Upload Documents'}
+              </span>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-2 space-y-2">
@@ -434,6 +547,7 @@ export default function UploadDocuments() {
               <Label htmlFor="document-type" className="text-xs font-medium">Document Type</Label>
               <Select value={selectedType} onValueChange={(value: DocumentType) => {
                 setSelectedType(value);
+                setIsEditMode(false);
                 // Reset form fields when document type changes
                 setExpiryDate("");
                 setDocumentName("");
@@ -719,6 +833,7 @@ export default function UploadDocuments() {
             </div>
           </CardContent>
         </Card>
+        )}
       </div>
 
 

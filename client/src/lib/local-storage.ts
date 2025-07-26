@@ -163,6 +163,83 @@ class LocalDocumentStorage {
     }
     return { used: 0, available: 0 };
   }
+
+  // Unique document types that can only have one entry per vehicle
+  private uniqueDocumentTypes = ['emission', 'rc', 'road_tax', 'fitness_certificate'];
+
+  async getExistingDocumentByType(vehicleId: number, type: string): Promise<LocalDocument | undefined> {
+    const documents = await this.getDocumentsByVehicle(vehicleId);
+    return documents.find(doc => doc.type === type);
+  }
+
+  async storeOrReplaceDocument(
+    vehicleId: number,
+    type: string,
+    file: File | null,
+    metadata?: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number; taxAmount?: number; permitFee?: number; rechargeAmount?: number },
+    customFileName?: string
+  ): Promise<LocalDocument> {
+    // For unique document types, delete existing document first
+    if (this.uniqueDocumentTypes.includes(type)) {
+      const existingDoc = await this.getExistingDocumentByType(vehicleId, type);
+      if (existingDoc) {
+        await this.deleteDocument(existingDoc.id);
+      }
+    }
+
+    // Store the new document
+    return await this.storeDocument(vehicleId, type, file, metadata, customFileName);
+  }
+
+  async updateDocument(
+    documentId: string,
+    file: File | null,
+    metadata?: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number; taxAmount?: number; permitFee?: number; rechargeAmount?: number },
+    customFileName?: string
+  ): Promise<LocalDocument | undefined> {
+    const existingDoc = await this.getDocument(documentId);
+    if (!existingDoc) return undefined;
+
+    const db = await this.openDB();
+    
+    let arrayBuffer: ArrayBuffer | null = existingDoc.fileData;
+    let mimeType = existingDoc.mimeType;
+    let fileSize = existingDoc.fileSize;
+    let fileName = existingDoc.fileName;
+    
+    // Update file data if new file provided
+    if (file) {
+      arrayBuffer = await file.arrayBuffer();
+      mimeType = file.type;
+      fileSize = file.size;
+      fileName = customFileName || file.name;
+    } else if (customFileName) {
+      fileName = customFileName;
+    }
+    
+    const updatedDocument: LocalDocument = {
+      ...existingDoc,
+      fileName,
+      fileData: arrayBuffer,
+      mimeType,
+      fileSize,
+      metadata: { ...existingDoc.metadata, ...metadata },
+      uploadedAt: new Date().toISOString(), // Update timestamp
+    };
+
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([this.storeName], 'readwrite');
+      const store = transaction.objectStore(this.storeName);
+      const request = store.put(updatedDocument);
+      
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(updatedDocument);
+    });
+  }
+
+  isUniqueDocumentType(type: string): boolean {
+    return this.uniqueDocumentTypes.includes(type);
+  }
 }
 
 export const localDocumentStorage = new LocalDocumentStorage();

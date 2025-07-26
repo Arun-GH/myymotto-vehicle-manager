@@ -10,6 +10,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 26, 2025**: COMPLETED unique document management system with edit functionality for single-entry document types
+- IMPLEMENTED unique document type system for Emission Certificate, RC Book Copy, Road Tax, and Fitness Certificate allowing only one entry per vehicle
+- ADDED storeOrReplaceDocument and updateDocument methods to local storage system with automatic replacement of existing unique documents
+- CREATED edit functionality with existing document display showing current document information, metadata, and upload dates
+- ENHANCED upload documents page with conditional form visibility - shows existing document card with edit button for unique types
+- ADDED edit mode activation from URL query parameters enabling direct editing from local documents page blue edit buttons
+- IMPLEMENTED automatic form pre-population with existing document metadata when entering edit mode (expiry dates, amounts, document names)
+- CREATED comprehensive edit workflow: existing document display → edit button → form pre-population → update functionality → automatic refresh
+- ADDED visual indicators distinguishing unique documents with blue-themed existing document cards and edit buttons
+- ENHANCED local documents page with edit buttons specifically for unique document types with proper navigation to upload page
+- COMPLETED full edit cycle: view existing → click edit → update form → save changes → return to documents with updated information
+- MAINTAINED backward compatibility with non-unique document types while adding specialized handling for single-entry documents
+- INTEGRATED seamlessly with document expiry notification system ensuring updated documents trigger appropriate renewal reminders
+
 **July 26, 2025**: COMPLETED comprehensive document expiry notification system with weekly reminder scheduling
 - IMPLEMENTED complete DocumentExpiryService class with automated weekly notification system (30, 23, 16, 9, 2 days before expiry)
 - INTEGRATED document expiry processing with authentication flow - automatic expiry checks trigger on login/OTP verification
