@@ -145,6 +145,7 @@ export default function UploadDocuments() {
   const [permitFee, setPermitFee] = useState<string>("");
   const [rechargeAmount, setRechargeAmount] = useState<string>("");
   const [insuranceExpiryDate, setInsuranceExpiryDate] = useState<string>("");
+  const [insuranceIssuedDate, setInsuranceIssuedDate] = useState<string>("");
   const [sumInsured, setSumInsured] = useState<string>("");
   const [insurancePremium, setInsurancePremium] = useState<string>("");
   const [insuranceProvider, setInsuranceProvider] = useState<string>("");
@@ -182,6 +183,7 @@ export default function UploadDocuments() {
         setPermitFee(existing.metadata.permitFee?.toString() || "");
         setRechargeAmount(existing.metadata.rechargeAmount?.toString() || "");
         setInsuranceExpiryDate(existing.metadata.insuranceExpiryDate || "");
+        setInsuranceIssuedDate(existing.metadata.insuranceIssuedDate || "");
         setSumInsured(existing.metadata.sumInsured?.toString() || "");
         setInsurancePremium(existing.metadata.insurancePremium?.toString() || "");
         setInsuranceProvider(existing.metadata.insuranceProvider || "");
@@ -319,6 +321,7 @@ export default function UploadDocuments() {
           permitFee?: number;
           rechargeAmount?: number;
           insuranceExpiryDate?: string;
+          insuranceIssuedDate?: string;
           sumInsured?: number;
           insurancePremium?: number;
           insuranceProvider?: string;
@@ -341,6 +344,7 @@ export default function UploadDocuments() {
           if (rechargeAmount) metadata.rechargeAmount = parseFloat(rechargeAmount);
         } else if (selectedType === "insurance") {
           if (insuranceExpiryDate) metadata.insuranceExpiryDate = insuranceExpiryDate;
+          if (insuranceIssuedDate) metadata.insuranceIssuedDate = insuranceIssuedDate;
           if (sumInsured) metadata.sumInsured = parseFloat(sumInsured);
           if (insurancePremium) metadata.insurancePremium = parseFloat(insurancePremium);
           if (insuranceProvider) metadata.insuranceProvider = insuranceProvider;
@@ -598,6 +602,7 @@ export default function UploadDocuments() {
                 setPermitFee("");
                 setRechargeAmount("");
                 setInsuranceExpiryDate("");
+                setInsuranceIssuedDate("");
                 setSumInsured("");
                 setInsurancePremium("");
                 setInsuranceProvider("");
@@ -683,6 +688,22 @@ export default function UploadDocuments() {
                       <SelectItem value="Other">Other</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="insurance-issued-date" className="text-xs font-medium">
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>Insured Date</span>
+                    </div>
+                  </Label>
+                  <Input
+                    id="insurance-issued-date"
+                    type="date"
+                    className="h-8"
+                    value={insuranceIssuedDate}
+                    onChange={(e) => setInsuranceIssuedDate(e.target.value)}
+                    max={new Date().toISOString().split('T')[0]}
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="insurance-expiry-date" className="text-xs font-medium">
