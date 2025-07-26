@@ -30,7 +30,9 @@ const fourWheelerServiceTypes = [
   'Coolant System Service',
   'AC Service & Regassing',
   'Battery Check & Replacement',
+  'Battery Replacement',
   'Tire Rotation & Balancing',
+  'Tyre Replacement',
   'Wheel Alignment',
   'Suspension Service',
   'Spark Plug Replacement',
@@ -406,7 +408,7 @@ export default function AddServiceLog() {
 
               {/* Invoice Upload */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Service Invoice</Label>
+                <Label className="text-sm font-medium text-gray-700">Invoice/Warranty cards (Optional)</Label>
                 
                 {/* File input (hidden) */}
                 <input

@@ -25,6 +25,8 @@ Preferred communication style: Simple, everyday language.
 - RENAMED "Essential Replacements" to "Essential Replacement Schedule" on service management pages
 - REMOVED Action column from Essential Replacement Schedule table keeping only Service and Recommended Timeline columns
 - SIMPLIFIED maintenance schedule display to show only reference information without user interaction capabilities
+- ADDED "Tyre Replacement" and "Battery Replacement" to 4-wheeler service type dropdown options
+- RENAMED "Invoice (Optional)" to "Invoice/Warranty cards (Optional)" in service details sections across both pages
 
 **July 26, 2025**: ADDED User Type classification dropdown to vehicle management system
 - IMPLEMENTED User Type dropdown field on Add Vehicle page with three options: Private, Commercial, Taxi services

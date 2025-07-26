@@ -130,7 +130,9 @@ const fourWheelerServiceTypes = [
   'Coolant System Service',
   'AC Service & Regassing',
   'Battery Check & Replacement',
+  'Battery Replacement',
   'Tire Rotation & Balancing',
+  'Tyre Replacement',
   'Wheel Alignment',
   'Suspension Service',
   'Spark Plug Replacement',
@@ -603,7 +605,7 @@ export default function CombinedServicePage() {
 
                   {/* Invoice Upload */}
                   <div className="space-y-1">
-                    <Label className="text-xs">Invoice (Optional)</Label>
+                    <Label className="text-xs">Invoice/Warranty cards (Optional)</Label>
                     <div className="flex justify-center">
                       <Button
                         type="button"
