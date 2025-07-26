@@ -216,6 +216,22 @@ export const subscriptionNotifications = pgTable("subscription_notifications", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Document Expiry Tracking Table for Road Tax, Fitness Certificate, Travel Permits
+export const documentExpiries = pgTable("document_expiries", {
+  id: serial("id").primaryKey(),
+  vehicleId: integer("vehicle_id").references(() => vehicles.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  documentType: text("document_type").notNull(), // "road_tax", "fitness_certificate", "travel_permits", "emission"
+  expiryDate: date("expiry_date").notNull(),
+  amount: integer("amount"), // Amount paid for document in paise
+  issueDate: date("issue_date"),
+  reminderSent: boolean("reminder_sent").default(false).notNull(),
+  lastReminderDate: timestamp("last_reminder_date"),
+  isActive: boolean("is_active").default(true).notNull(), // False when renewed
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertVehicleSchema = createInsertSchema(vehicles).omit({
   id: true,
   createdAt: true,
@@ -284,6 +300,15 @@ export const insertServiceLogSchema = createInsertSchema(serviceLogs).omit({
   serviceCentre: z.string().min(1, "Service centre is required"),
 });
 
+export const insertDocumentExpirySchema = createInsertSchema(documentExpiries).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  expiryDate: z.string().min(1, "Expiry date is required"),
+  issueDate: z.string().optional().nullable(),
+});
+
 export type Vehicle = typeof vehicles.$inferSelect;
 export type InsertVehicle = z.infer<typeof insertVehicleSchema>;
 export type Document = typeof documents.$inferSelect;
@@ -294,6 +319,8 @@ export type MaintenanceRecord = typeof maintenanceRecords.$inferSelect;
 export type InsertMaintenanceRecord = z.infer<typeof insertMaintenanceRecordSchema>;
 export type ServiceLog = typeof serviceLogs.$inferSelect;
 export type InsertServiceLog = z.infer<typeof insertServiceLogSchema>;
+export type DocumentExpiry = typeof documentExpiries.$inferSelect;
+export type InsertDocumentExpiry = z.infer<typeof insertDocumentExpirySchema>;
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),

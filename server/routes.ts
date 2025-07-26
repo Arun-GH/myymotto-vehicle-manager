@@ -6,6 +6,7 @@ import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, sig
 import { maintenanceService } from "./maintenance-service";
 import { newsService } from "./news-service";
 import { trafficViolationService } from "./traffic-violation-service";
+import { documentExpiryService } from "./document-expiry-service";
 import crypto from "crypto";
 import multer from "multer";
 import path from "path";
@@ -255,6 +256,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if user has profile
       const profile = await storage.getUserProfile(user.id);
       
+      // Run document expiry check process on successful login
+      try {
+        await documentExpiryService.runExpiryCheckProcess(user.id);
+      } catch (error) {
+        console.error('Error running document expiry check:', error);
+      }
+      
       res.json({
         success: true,
         userId: user.id,
@@ -311,6 +319,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Check if user has profile
       const profile = await storage.getUserProfile(user.id);
+      
+      // Run document expiry check process on successful PIN login
+      try {
+        await documentExpiryService.runExpiryCheckProcess(user.id);
+      } catch (error) {
+        console.error('Error running document expiry check:', error);
+      }
       
       res.json({
         success: true,
@@ -1521,6 +1536,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user ratings:", error);
       res.status(500).json({ message: "Failed to fetch user ratings" });
+    }
+  });
+
+  // Document Expiry API routes
+  app.get("/api/document-expiries/:vehicleId", async (req, res) => {
+    try {
+      const vehicleId = parseInt(req.params.vehicleId);
+      const expiries = await storage.getDocumentExpiries(vehicleId);
+      res.json(expiries);
+    } catch (error) {
+      console.error("Error fetching document expiries:", error);
+      res.status(500).json({ message: "Failed to fetch document expiries" });
+    }
+  });
+
+  app.post("/api/document-expiries", async (req, res) => {
+    try {
+      const data = req.body;
+      const expiry = await storage.createDocumentExpiry({
+        vehicleId: parseInt(data.vehicleId),
+        userId: parseInt(data.userId),
+        documentType: data.documentType,
+        expiryDate: data.expiryDate,
+        amount: data.amount ? parseInt(data.amount) : null,
+        issueDate: data.issueDate || null,
+        reminderSent: false,
+        isActive: true,
+      });
+
+      // Process document upload with expiry service to handle notifications
+      try {
+        await documentExpiryService.processDocumentUpload(
+          parseInt(data.vehicleId),
+          parseInt(data.userId),
+          data.documentType,
+          data.expiryDate,
+          data.amount ? parseInt(data.amount) : undefined
+        );
+        console.log(`✅ Document expiry processing completed for ${data.documentType}`);
+      } catch (processingError) {
+        console.error(`❌ Document expiry processing failed for ${data.documentType}:`, processingError);
+        // Don't fail the main request if processing fails
+      }
+
+      res.status(201).json(expiry);
+    } catch (error) {
+      console.error("Error creating document expiry:", error);
+      res.status(500).json({ message: "Failed to create document expiry" });
+    }
+  });
+
+  app.put("/api/document-expiries/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const data = req.body;
+      
+      const expiry = await storage.updateDocumentExpiry(id, {
+        expiryDate: data.expiryDate,
+        amount: data.amount ? parseInt(data.amount) : null,
+        issueDate: data.issueDate,
+        isActive: data.isActive,
+      });
+      
+      if (!expiry) {
+        return res.status(404).json({ message: "Document expiry not found" });
+      }
+      
+      res.json(expiry);
+    } catch (error) {
+      console.error("Error updating document expiry:", error);
+      res.status(500).json({ message: "Failed to update document expiry" });
     }
   });
 

@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, adminMessages, accountInformation, invoices, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse, type AdminMessage, type InsertAdminMessage, type AccountInformation, type InsertAccountInformation, type Invoice, type InsertInvoice } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, adminMessages, accountInformation, invoices, documentExpiries, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse, type AdminMessage, type InsertAdminMessage, type AccountInformation, type InsertAccountInformation, type Invoice, type InsertInvoice, type DocumentExpiry, type InsertDocumentExpiry } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte, lt, desc, gte, isNull, or, inArray, sql } from "drizzle-orm";
 
@@ -80,6 +80,12 @@ export interface IStorage {
   updateServiceAlert(id: number, serviceAlert: Partial<InsertServiceAlert>): Promise<ServiceAlert | undefined>;
   deleteServiceAlert(id: number): Promise<boolean>;
   getActiveServiceAlerts(): Promise<ServiceAlert[]>;
+
+  // Document Expiry methods
+  getDocumentExpiries(vehicleId: number): Promise<DocumentExpiry[]>;
+  createDocumentExpiry(expiry: InsertDocumentExpiry): Promise<DocumentExpiry>;
+  updateDocumentExpiry(id: number, expiry: Partial<DocumentExpiry>): Promise<DocumentExpiry | undefined>;
+  deleteDocumentExpiry(id: number): Promise<boolean>;
   
   // News methods
   getNewsItems(): Promise<NewsItem[]>;
@@ -1756,6 +1762,39 @@ export class DatabaseStorage implements IStorage {
         )
       )
       .orderBy(invoices.dueDate);
+  }
+
+  // Document Expiry methods
+  async getDocumentExpiries(vehicleId: number): Promise<DocumentExpiry[]> {
+    return await db
+      .select()
+      .from(documentExpiries)
+      .where(eq(documentExpiries.vehicleId, vehicleId))
+      .orderBy(desc(documentExpiries.createdAt));
+  }
+
+  async createDocumentExpiry(expiry: InsertDocumentExpiry): Promise<DocumentExpiry> {
+    const [newExpiry] = await db
+      .insert(documentExpiries)
+      .values(expiry)
+      .returning();
+    return newExpiry;
+  }
+
+  async updateDocumentExpiry(id: number, expiry: Partial<DocumentExpiry>): Promise<DocumentExpiry | undefined> {
+    const [updated] = await db
+      .update(documentExpiries)
+      .set({ ...expiry, updatedAt: new Date() })
+      .where(eq(documentExpiries.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteDocumentExpiry(id: number): Promise<boolean> {
+    const result = await db
+      .delete(documentExpiries)
+      .where(eq(documentExpiries.id, id));
+    return (result.rowCount || 0) > 0;
   }
 }
 

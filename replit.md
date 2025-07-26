@@ -10,6 +10,19 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 26, 2025**: COMPLETED comprehensive document expiry notification system with weekly reminder scheduling
+- IMPLEMENTED complete DocumentExpiryService class with automated weekly notification system (30, 23, 16, 9, 2 days before expiry)
+- INTEGRATED document expiry processing with authentication flow - automatic expiry checks trigger on login/OTP verification
+- CREATED comprehensive notification generation for Road Tax, Fitness Certificate, Travel Permits, and Emission Certificate expiry tracking
+- ENHANCED document upload process with automatic expiry tracking and immediate notification processing for applicable document types
+- FIXED notification database schema compatibility by properly mapping notification fields (message, dueDate, vehicleId)
+- IMPLEMENTED intelligent notification scheduling that only triggers on specific weekly intervals to prevent notification spam
+- ADDED robust error handling and logging throughout document expiry processing pipeline
+- TESTED and VERIFIED complete system functionality with comprehensive test suite covering all expiry intervals
+- INTEGRATED seamlessly with existing vehicle management, document upload, and notification systems
+- COMPLETED database integration using proper DocumentExpiry schema with full CRUD operations through storage interface
+- System now provides proactive document renewal reminders helping users avoid penalties and legal compliance issues
+
 **July 26, 2025**: COMPLETED Bill Amount field integration in service management system
 - ADDED "Bill Amount (₹)" input field to both 4-wheeler and 2-wheeler service management pages positioned right after service date field
 - IMPLEMENTED comprehensive form validation with number input type, positive value validation, and proper decimal handling
