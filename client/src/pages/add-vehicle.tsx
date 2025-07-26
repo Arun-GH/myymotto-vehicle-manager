@@ -695,7 +695,7 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-xs font-medium">Fuel Type</FormLabel>
                         <FormControl>
-                          <Select onValueChange={field.onChange} value={field.value}>
+                          <Select onValueChange={field.onChange} value={field.value || ""}>
                             <SelectTrigger className="h-9">
                               <SelectValue placeholder="Select fuel type" />
                             </SelectTrigger>
@@ -721,7 +721,7 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-sm font-medium">Chassis Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="MAT123456789" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
+                          <Input placeholder="MAT123456789" className="h-9" {...field} value={field.value || ""} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -734,7 +734,7 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-sm font-medium">Engine Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="ENG987654321" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
+                          <Input placeholder="ENG987654321" className="h-9" {...field} value={field.value || ""} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -763,7 +763,7 @@ export default function AddVehicle() {
                       <FormItem>
                         <FormLabel className="text-sm font-medium">Phone Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="+91 98765 43210" className="h-9" {...field} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
+                          <Input placeholder="+91 98765 43210" className="h-9" {...field} value={field.value || ""} onChange={(e) => field.onChange(e.target.value.toUpperCase())} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -771,331 +771,11 @@ export default function AddVehicle() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <FormField
-                    control={form.control}
-                    name="rcExpiry"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-medium">RC Expiry</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="date" 
-                            className="h-9"
-                            {...field} 
-                            value={toStandardDateFormat(field.value) || ""} 
-                            onChange={(e) => field.onChange(e.target.value)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="emissionExpiry"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-medium">Latest Emission</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="date" 
-                            className="h-9"
-                            {...field} 
-                            value={toStandardDateFormat(field.value) || ""} 
-                            onChange={(e) => field.onChange(e.target.value)}
-                            max={new Date().toISOString().split('T')[0]}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="lastServiceDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-medium">Last Service Date</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="date" 
-                            className="h-9"
-                            {...field} 
-                            value={toStandardDateFormat(field.value) || ""} 
-                            onChange={(e) => field.onChange(e.target.value)}
-                            max={new Date().toISOString().split('T')[0]}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
 
-                {/* Insurance Details Section */}
-                <Card className="mt-4 shadow-orange border-l-4 border-l-orange-500">
-                  <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-t-lg py-3">
-                    <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
-                      <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                        <Shield className="w-4 h-4 text-orange-600" />
-                      </div>
-                      <span>Insurance Details</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-4">
-                    <div className="space-y-3">
-                      <FormField
-                        control={form.control}
-                        name="insuranceCompany"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-sm font-medium">Insurance Provider</FormLabel>
-                            <FormControl>
-                              {isCustomInsuranceProvider ? (
-                                <Input 
-                                  placeholder="Enter insurance company name" 
-                                  className="h-9" 
-                                  {...field}
-                                  value={field.value || ""}
-                                />
-                              ) : (
-                                <Select onValueChange={handleInsuranceProviderChange} value={field.value || ""}>
-                                  <SelectTrigger className="h-9">
-                                    <SelectValue placeholder="Select insurance provider" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {indianInsuranceProviders.map((provider) => (
-                                      <SelectItem key={provider} value={provider}>
-                                        {provider}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            </FormControl>
-                            {isCustomInsuranceProvider && (
-                              <p className="text-xs text-gray-500 mt-1">
-                                <button 
-                                  type="button" 
-                                  onClick={() => {
-                                    setIsCustomInsuranceProvider(false);
-                                    form.setValue("insuranceCompany", "");
-                                  }}
-                                  className="text-blue-600 hover:text-blue-800"
-                                >
-                                  ← Back to dropdown
-                                </button>
-                              </p>
-                            )}
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <FormField
-                          control={form.control}
-                          name="insuranceExpiry"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Issue Date (When policy was issued)</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="date" 
-                                  className="h-9"
-                                  {...field} 
-                                  value={toStandardDateFormat(field.value) || ""} 
-                                  onChange={(e) => field.onChange(e.target.value)}
-                                  max={new Date().toISOString().split('T')[0]}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="insuranceExpiryDate"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Expiry Date (When policy expires)</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="date" 
-                                  className="h-9"
-                                  {...field} 
-                                  value={toStandardDateFormat(field.value) || ""} 
-                                  onChange={(e) => field.onChange(e.target.value)}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <FormField
-                          control={form.control}
-                          name="insuranceSumInsured"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Sum Insured (₹) (e.g. 500000)</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="text"
-                                  inputMode="numeric"
-                                  pattern="[0-9]*"
-                                  placeholder="500000" 
-                                  className="h-9"
-                                  {...field}
-                                  value={field.value || ""}
-                                  onChange={(e) => {
-                                    const value = e.target.value.replace(/\D/g, ''); // Only allow digits
-                                    field.onChange(value);
-                                  }}
-                                  onKeyPress={(e) => {
-                                    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
-                                      e.preventDefault();
-                                    }
-                                  }}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="insurancePremiumAmount"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Premium Amount (₹) (e.g. 15000)</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="text"
-                                  inputMode="numeric"
-                                  pattern="[0-9]*"
-                                  placeholder="15000" 
-                                  className="h-9"
-                                  {...field}
-                                  value={field.value || ""}
-                                  onChange={(e) => {
-                                    const value = e.target.value.replace(/\D/g, ''); // Only allow digits
-                                    field.onChange(value);
-                                  }}
-                                  onKeyPress={(e) => {
-                                    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
-                                      e.preventDefault();
-                                    }
-                                  }}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
 
-                {/* Service Details Section */}
-                <Card className="mt-4 shadow-orange border-l-4 border-l-blue-500">
-                  <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-t-lg py-3">
-                    <CardTitle className="flex items-center space-x-2 text-gray-800 text-base">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Settings className="w-4 h-4 text-blue-600" />
-                      </div>
-                      <span>Service Details</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <FormField
-                        control={form.control}
-                        name="currentOdometerReading"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-sm font-medium">Current Odometer (km) (e.g. 85000)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                placeholder="000" 
-                                className="h-9"
-                                {...field} 
-                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
-                                value={field.value === 0 ? "" : field.value || ""}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="averageUsagePerMonth"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-sm font-medium">Monthly Usage (km) (e.g. 1200)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                placeholder="000" 
-                                className="h-9"
-                                {...field} 
-                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
-                                value={field.value === 0 ? "" : field.value || ""}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="serviceIntervalKms"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-sm font-medium">Service Interval (km) (e.g. 10000)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                placeholder="000" 
-                                className="h-9"
-                                {...field} 
-                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
-                                value={field.value === 0 ? "" : field.value || ""}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="serviceIntervalMonths"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-sm font-medium">Service Interval (mths) (e.g. 6)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                placeholder="000" 
-                                className="h-9"
-                                {...field} 
-                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
-                                value={field.value === 0 ? "" : field.value || ""}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
+
+
 
                 <div className="flex space-x-2 pt-2">
                   <Button 

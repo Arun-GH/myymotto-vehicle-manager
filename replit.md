@@ -10,6 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 26, 2025**: COMPLETED streamlined vehicle forms by removing Insurance Details, Document Dates, and Service Details sections
+- REMOVED Insurance Details section from both add-vehicle.tsx and edit-vehicle.tsx including all insurance-related fields (provider, dates, amounts)
+- REMOVED Document Dates section containing emission expiry, RC expiry, and last service date fields from vehicle forms
+- REMOVED Service Details section with odometer reading, usage tracking, and service interval fields from vehicle forms
+- ENHANCED form focus to capture only essential vehicle information: make, model, year, fuel type, license plate, user type, chassis/engine numbers, owner details
+- FIXED TypeScript errors related to null value handling in input fields by adding proper value={field.value || ""} attributes
+- STREAMLINED vehicle entry process - detailed information now captured through dedicated documents section instead of vehicle forms
+- MAINTAINED all existing functionality while creating clean, focused vehicle registration experience
+- PRESERVED vehicle photo upload capability and completeness tracking system
+- All detailed vehicle data (insurance, dates, service info) now managed through specialized document upload and tracking systems
+
 **July 26, 2025**: COMPLETED unique document management system with edit functionality for single-entry document types
 - IMPLEMENTED unique document type system for Emission Certificate, RC Book Copy, Road Tax, and Fitness Certificate allowing only one entry per vehicle
 - ADDED storeOrReplaceDocument and updateDocument methods to local storage system with automatic replacement of existing unique documents
