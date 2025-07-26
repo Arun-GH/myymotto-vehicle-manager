@@ -28,7 +28,11 @@ Preferred communication style: Simple, everyday language.
 - IMPLEMENTED expiry status indicators with color-coded badges showing days remaining for document renewals (red for expired/critical, orange for warning, yellow for due soon, green for active)
 - CREATED comprehensive document management system with real-time expiry tracking and detailed metadata display for improved document organization
 
-**July 26, 2025**: UPDATED vehicle dashboard tiles to display expiry dates instead of issue dates for better renewal tracking
+**July 26, 2025**: FIXED critical model field bug and updated vehicle dashboard tiles to display expiry dates instead of issue dates for better renewal tracking
+- CRITICAL BUG FIX: Resolved model field not being saved in add and edit vehicle pages by properly connecting Select component's onValueChange to form field.onChange
+- UPDATED handleModelChange functions to accept and call field.onChange parameter ensuring form state synchronization with dropdown selections
+- FIXED Select component implementation to pass field.onChange to handleModelChange via onValueChange={(value) => handleModelChange(value, field.onChange)}
+- RESOLVED issue where model field would reset to "Select model" after form submission due to missing form field connection
 - CHANGED "Insured date" to "Insurance Expiry" on vehicle tiles showing insurance expiry date from document storage instead of issued date
 - CHANGED "Latest Emission" to "Emission Expiry" displaying emission certificate expiry date instead of generic emission information
 - ENHANCED expiry date display with color-coded status indicators (red for expired, orange for expiring, yellow for due soon, gray for normal)

@@ -139,13 +139,15 @@ export default function AddVehicle() {
     setIsCustomModel(false);
   };
 
-  const handleModelChange = (model: string) => {
+  const handleModelChange = (model: string, fieldOnChange?: (value: string) => void) => {
     if (model === "Other") {
       setIsCustomModel(true);
       form.setValue("model", "");
+      if (fieldOnChange) fieldOnChange("");
     } else {
       setIsCustomModel(false);
       form.setValue("model", model);
+      if (fieldOnChange) fieldOnChange(model);
     }
   };
 
@@ -570,7 +572,7 @@ export default function AddVehicle() {
                               onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                             />
                           ) : (
-                            <Select onValueChange={handleModelChange} value={field.value} disabled={!watchedMake && !isCustomMake}>
+                            <Select onValueChange={(value) => handleModelChange(value, field.onChange)} value={field.value} disabled={!watchedMake && !isCustomMake}>
                               <SelectTrigger className="h-9">
                                 <SelectValue placeholder="Select model" />
                               </SelectTrigger>
