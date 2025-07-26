@@ -27,6 +27,10 @@ Preferred communication style: Simple, everyday language.
 - SIMPLIFIED maintenance schedule display to show only reference information without user interaction capabilities
 - ADDED "Tyre Replacement" and "Battery Replacement" to 4-wheeler service type dropdown options
 - RENAMED "Invoice (Optional)" to "Invoice/Warranty cards (Optional)" in service details sections across both pages
+- ENHANCED upload documents page with bill amount field for Fuel Bills document type positioned under bill date
+- ADDED new document types to dropdown: Road Tax, Travel Permits, Fitness Certificate, Fast Tag Renewals
+- IMPLEMENTED bill amount capture for fuel bills with proper rupee symbol and decimal validation
+- UPDATED document type handling to include new categories with appropriate expiry date requirements
 
 **July 26, 2025**: ADDED User Type classification dropdown to vehicle management system
 - IMPLEMENTED User Type dropdown field on Add Vehicle page with three options: Private, Commercial, Taxi services

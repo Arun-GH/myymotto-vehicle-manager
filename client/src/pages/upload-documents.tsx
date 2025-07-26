@@ -17,7 +17,7 @@ import { OCRInsuranceScanner } from "@/components/ocr-insurance-scanner";
 import { type InsurancePolicyData } from "@/lib/ocr-utils";
 import { formatForDatabase } from "@/lib/date-format";
 
-type DocumentType = "emission" | "insurance" | "rc" | "fuel" | "miscellaneous";
+type DocumentType = "emission" | "insurance" | "rc" | "fuel" | "miscellaneous" | "road_tax" | "travel_permits" | "fitness_certificate" | "fast_tag_renewals";
 
 interface DocumentUpload {
   type: DocumentType;
@@ -130,6 +130,7 @@ export default function UploadDocuments() {
   const [selectedFiles, setSelectedFiles] = useState<FileWithCustomName[]>([]);
   const [expiryDate, setExpiryDate] = useState<string>("");
   const [documentName, setDocumentName] = useState<string>("");
+  const [billAmount, setBillAmount] = useState<string>("");
 
   const [showCamera, setShowCamera] = useState(false);
   const [showOCRScanner, setShowOCRScanner] = useState(false);
@@ -152,6 +153,10 @@ export default function UploadDocuments() {
     { value: "insurance" as DocumentType, label: "Insurance Copy", icon: FileText, requiresExpiry: true },
     { value: "rc" as DocumentType, label: "RC Book Copy", icon: FileText, requiresExpiry: true },
     { value: "fuel" as DocumentType, label: "Fuel Bills", icon: DollarSign, requiresExpiry: false },
+    { value: "road_tax" as DocumentType, label: "Road Tax", icon: FileText, requiresExpiry: true },
+    { value: "travel_permits" as DocumentType, label: "Travel Permits", icon: FileText, requiresExpiry: true },
+    { value: "fitness_certificate" as DocumentType, label: "Fitness Certificate", icon: FileText, requiresExpiry: true },
+    { value: "fast_tag_renewals" as DocumentType, label: "Fast Tag Renewals", icon: FileText, requiresExpiry: true },
     { value: "miscellaneous" as DocumentType, label: "Miscellaneous", icon: File, requiresExpiry: false },
   ];
 
@@ -220,11 +225,14 @@ export default function UploadDocuments() {
 
       // Store documents locally on device instead of server upload
       for (const file of selectedFiles) {
-        const metadata: { billDate?: string; documentName?: string; expiryDate?: string } = {};
+        const metadata: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number } = {};
         
         // Add metadata based on document type
         if (selectedType === "fuel" && expiryDate) {
           metadata.billDate = expiryDate;
+          if (billAmount) {
+            metadata.billAmount = parseFloat(billAmount);
+          }
         } else if (selectedType === "miscellaneous" && documentName) {
           metadata.documentName = documentName;
         } else if (selectedDocumentType?.requiresExpiry && expiryDate) {
@@ -258,6 +266,7 @@ export default function UploadDocuments() {
       setSelectedFiles([]);
       setExpiryDate("");
       setDocumentName("");
+      setBillAmount("");
       setLocation(`/vehicle/${vehicleId}/local-documents`);
     },
     onError: (error) => {
@@ -383,6 +392,7 @@ export default function UploadDocuments() {
                 // Reset form fields when document type changes
                 setExpiryDate("");
                 setDocumentName("");
+                setBillAmount("");
               }}>
                 <SelectTrigger className="h-8">
                   <SelectValue placeholder="Select document type" />
@@ -423,24 +433,47 @@ export default function UploadDocuments() {
               </div>
             )}
 
-            {/* Bill Date for Fuel Bills */}
+            {/* Bill Date and Amount for Fuel Bills */}
             {selectedType === "fuel" && (
-              <div className="space-y-1">
-                <Label htmlFor="bill-date" className="text-xs font-medium">
-                  <div className="flex items-center space-x-1">
-                    <Calendar className="w-3 h-3" />
-                    <span>Bill Date</span>
+              <>
+                <div className="space-y-1">
+                  <Label htmlFor="bill-date" className="text-xs font-medium">
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>Bill Date</span>
+                    </div>
+                  </Label>
+                  <Input
+                    id="bill-date"
+                    type="date"
+                    className="h-8"
+                    value={expiryDate}
+                    onChange={(e) => setExpiryDate(e.target.value)}
+                    max={new Date().toISOString().split('T')[0]}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="bill-amount" className="text-xs font-medium">
+                    <div className="flex items-center space-x-1">
+                      <DollarSign className="w-3 h-3" />
+                      <span>Bill Amount (₹)</span>
+                    </div>
+                  </Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">₹</span>
+                    <Input
+                      id="bill-amount"
+                      type="number"
+                      className="h-8 pl-8"
+                      value={billAmount}
+                      onChange={(e) => setBillAmount(e.target.value)}
+                      placeholder="Enter bill amount"
+                      min="0"
+                      step="0.01"
+                    />
                   </div>
-                </Label>
-                <Input
-                  id="bill-date"
-                  type="date"
-                  className="h-8"
-                  value={expiryDate}
-                  onChange={(e) => setExpiryDate(e.target.value)}
-                  max={new Date().toISOString().split('T')[0]}
-                />
-              </div>
+                </div>
+              </>
             )}
 
             {/* Document Type/Name for Miscellaneous */}
