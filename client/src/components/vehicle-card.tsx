@@ -74,6 +74,15 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
     loadDocuments();
   }, [vehicle.id]);
 
+  // Fetch service logs for this vehicle to get actual service dates
+  const { data: serviceLogs = [] } = useQuery({
+    queryKey: [`/api/service-logs/${vehicle.id}`],
+    queryFn: async () => {
+      const response = await apiRequest('GET', `/api/service-logs/${vehicle.id}`);
+      return response.json();
+    }
+  });
+
   // Fetch alerts count for this vehicle
   const { data: alerts = [] } = useQuery({
     queryKey: ['/api/service-alerts', vehicle.id],
@@ -114,8 +123,41 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   
   const insuranceStatus = getDocumentExpiryStatus(insuranceExpiryDate);
   const emissionStatus = getDocumentExpiryStatus(emissionExpiryDate);
-  const serviceStatus = getServiceStatus(vehicle.lastServiceDate);
-  const nextServiceInfo = calculateNextServiceDate(vehicle.lastServiceDate, vehicle.serviceIntervalMonths);
+  
+  // Calculate last service date and next service date from service logs
+  const getLastServiceDate = () => {
+    if (!serviceLogs || serviceLogs.length === 0) return null;
+    
+    // Sort service logs by date (newest first)
+    const sortedLogs = serviceLogs
+      .filter(log => log.serviceDate)
+      .sort((a, b) => new Date(b.serviceDate).getTime() - new Date(a.serviceDate).getTime());
+    
+    return sortedLogs.length > 0 ? sortedLogs[0].serviceDate : null;
+  };
+  
+  const getNextServiceDate = () => {
+    if (!serviceLogs || serviceLogs.length === 0) return null;
+    
+    // Find the most recent service log with service interval
+    const sortedLogs = serviceLogs
+      .filter(log => log.serviceDate && log.serviceIntervalMonths)
+      .sort((a, b) => new Date(b.serviceDate).getTime() - new Date(a.serviceDate).getTime());
+    
+    if (sortedLogs.length === 0) return null;
+    
+    const lastServiceWithInterval = sortedLogs[0];
+    const serviceDate = new Date(lastServiceWithInterval.serviceDate);
+    serviceDate.setMonth(serviceDate.getMonth() + lastServiceWithInterval.serviceIntervalMonths);
+    
+    return serviceDate.toISOString().split('T')[0];
+  };
+  
+  const lastServiceDate = getLastServiceDate();
+  const nextServiceDate = getNextServiceDate();
+  
+  const serviceStatus = getServiceStatus(lastServiceDate);
+  const nextServiceInfo = calculateNextServiceDate(lastServiceDate, null);
 
   // Check for missing details
   const missingDetails = [];
@@ -282,18 +324,18 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             <div className="flex flex-col">
               <span className="text-amber-800 font-bold text-xs">Last Service Date:</span>
               <span className="text-gray-800 text-xs">
-                {vehicle.lastServiceDate ? formatToDDMMMYYYY(new Date(vehicle.lastServiceDate)) : "Not set"}
+                {lastServiceDate ? formatToDDMMMYYYY(new Date(lastServiceDate)) : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-amber-800 font-bold text-xs">Next Service Date:</span>
               <span className={`text-xs ${
-                nextServiceInfo.status === "overdue" ? "text-red-600" :
-                nextServiceInfo.status === "due_soon" ? "text-orange-600" :
-                nextServiceInfo.status === "due_month" ? "text-yellow-600" :
+                nextServiceDate && new Date(nextServiceDate) < new Date() ? "text-red-600" :
+                nextServiceDate && new Date(nextServiceDate) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) ? "text-orange-600" :
+                nextServiceDate && new Date(nextServiceDate) <= new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) ? "text-yellow-600" :
                 "text-gray-800"
               }`}>
-                {nextServiceInfo.date ? formatToDDMMMYYYY(new Date(nextServiceInfo.date)) : "Not set"}
+                {nextServiceDate ? formatToDDMMMYYYY(new Date(nextServiceDate)) : "Not set"}
               </span>
             </div>
           </div>
