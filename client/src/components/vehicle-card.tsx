@@ -1,7 +1,7 @@
 
 import { AlertTriangle, CheckCircle, Clock, Car, Fuel, Edit, Trash2, Bike, Truck, Zap, Droplets, Info } from "lucide-react";
 import { Link } from "wouter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -11,6 +11,7 @@ import { formatToddmmyyyy, formatToDDMMMYYYY, calculateVehicleCompleteness } fro
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { localDocumentStorage } from "@/lib/local-storage";
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -51,8 +52,24 @@ const getFuelTypeIcon = (fuelType: string | null) => {
 
 export default function VehicleCard({ vehicle }: VehicleCardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [insuranceDocument, setInsuranceDocument] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Load insurance document from local storage
+  useEffect(() => {
+    const loadInsuranceDocument = async () => {
+      try {
+        const documents = await localDocumentStorage.getDocumentsByVehicle(vehicle.id);
+        const insurance = documents.find(doc => doc.type === 'insurance');
+        setInsuranceDocument(insurance);
+      } catch (error) {
+        console.error('Error loading insurance document:', error);
+      }
+    };
+    
+    loadInsuranceDocument();
+  }, [vehicle.id]);
 
   // Fetch alerts count for this vehicle
   const { data: alerts = [] } = useQuery({
@@ -65,7 +82,12 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
 
   const alertsCount = alerts.length;
 
-  const insuranceStatus = getExpiryStatus(vehicle.insuranceExpiry);
+  // Get insurance info from local document instead of vehicle database
+  const insuranceExpiryDate = insuranceDocument?.metadata?.insuranceExpiryDate;
+  const insuranceIssuedDate = insuranceDocument?.metadata?.insuranceIssuedDate;
+  const insuranceProvider = insuranceDocument?.metadata?.insuranceProvider;
+  
+  const insuranceStatus = getExpiryStatus(insuranceExpiryDate);
   const emissionStatus = getExpiryStatus(vehicle.emissionExpiry);
   const serviceStatus = getServiceStatus(vehicle.lastServiceDate);
   const nextServiceInfo = calculateNextServiceDate(vehicle.lastServiceDate, vehicle.serviceIntervalMonths);
@@ -75,11 +97,13 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   if (!vehicle.chassisNumber?.trim()) missingDetails.push("Chassis Number");
   if (!vehicle.engineNumber?.trim()) missingDetails.push("Engine Number");
 
-  // Calculate vehicle completeness
+  // Calculate vehicle completeness using insurance data from documents
   const completenessData = {
     ...vehicle,
     thumbnailPath: vehicle.thumbnailPath ? 'photo-selected' : null,
-    insuranceProvider: vehicle.insuranceCompany,
+    insuranceProvider: insuranceProvider,
+    insuranceExpiry: insuranceExpiryDate,
+    insuranceExpiryDate: insuranceExpiryDate,
   };
   const completeness = calculateVehicleCompleteness(completenessData);
 
@@ -208,7 +232,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             <div className="flex flex-col">
               <span className="text-amber-800 font-bold text-xs">Insured date:</span>
               <span className="text-gray-800 text-xs">
-                {vehicle.insuranceExpiry ? formatToDDMMMYYYY(new Date(vehicle.insuranceExpiry)) : "Not set"}
+                {insuranceIssuedDate ? formatToDDMMMYYYY(new Date(insuranceIssuedDate)) : "Not set"}
               </span>
             </div>
             <div className="flex flex-col">

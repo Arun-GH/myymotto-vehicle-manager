@@ -10,6 +10,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**January 26, 2025**: COMPLETED comprehensive insurance data refactoring from vehicle database to local document storage
+- MAJOR ARCHITECTURAL CHANGE: Removed redundant insurance data capture from vehicle forms and centralized all insurance information in Upload Documents page
+- UPDATED vehicle-card.tsx component to fetch insurance data (provider, issued date, expiry date) from local document storage instead of vehicle database fields
+- ENHANCED vehicle card with real-time insurance document loading using useEffect and localDocumentStorage.getDocumentsByVehicle()
+- MODIFIED insurance display to use insuranceDocument.metadata fields for provider, issued date, and expiry date instead of vehicle.insuranceCompany/insuranceExpiry
+- UPDATED vehicle completeness calculation to use insurance data from documents ensuring accurate progress tracking
+- FIXED insurance-renewals.tsx page to use local document storage with proper expiry status checking using getInsuranceExpiryStatus function
+- CREATED proper insurance expiry status function that returns "expired", "expiring", "due_soon", "active" instead of "unknown"/"valid"
+- ENHANCED insurance renewal page with document-based provider display and renewal functionality
+- STREAMLINED data flow: Vehicle forms capture essential info → Upload Documents captures detailed insurance data → Vehicle tiles display document-based insurance info
+- ELIMINATED data duplication between vehicle database and document storage for insurance information
+- MAINTAINED all existing functionality while creating single source of truth for insurance data in document management system
+- COMPLETED successful refactoring with proper state management, error handling, and type safety throughout insurance data pipeline
+
 **July 26, 2025**: COMPLETED Insurance Provider dropdown integration in Upload Documents page
 - ADDED comprehensive Insurance Provider dropdown field to Upload Documents page for Insurance Copy document type
 - IMPLEMENTED pre-populated dropdown with 25+ major Indian vehicle insurance providers including HDFC ERGO, ICICI Lombard, Bajaj Allianz, New India Assurance, National Insurance, Oriental Insurance, TATA AIG, Reliance General, and others

@@ -10,17 +10,53 @@ import { format } from "date-fns";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
+import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function InsuranceRenewals() {
   const { toast } = useToast();
+  const [insuranceDocuments, setInsuranceDocuments] = useState<Record<number, LocalDocument | null>>({});
+  
+  const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+
   const { data: vehicles = [], isLoading } = useQuery<Vehicle[]>({
     queryKey: ["/api/vehicles"],
+    queryFn: async () => {
+      const response = await apiRequest("GET", `/api/vehicles?userId=${currentUserId}`);
+      return response.json();
+    },
   });
+
+  // Fetch insurance documents for all vehicles
+  useEffect(() => {
+    const fetchInsuranceDocuments = async () => {
+      if (vehicles.length > 0) {
+        const documentsByVehicle: Record<number, LocalDocument | null> = {};
+        
+        for (const vehicle of vehicles) {
+          try {
+            const docs = await localDocumentStorage.getDocumentsByVehicle(vehicle.id);
+            const insuranceDoc = docs.find((doc: LocalDocument) => doc.type === 'insurance');
+            documentsByVehicle[vehicle.id] = insuranceDoc || null;
+          } catch (error) {
+            console.error(`Error fetching insurance documents for vehicle ${vehicle.id}:`, error);
+            documentsByVehicle[vehicle.id] = null;
+          }
+        }
+        
+        setInsuranceDocuments(documentsByVehicle);
+      }
+    };
+
+    fetchInsuranceDocuments();
+  }, [vehicles]);
 
   // Filter vehicles that need insurance renewal (expired or expiring soon)
   const vehiclesNeedingRenewal = vehicles.filter(vehicle => {
-    if (!vehicle.insuranceExpiry) return true;
-    const status = getExpiryStatus(vehicle.insuranceExpiry);
+    const insuranceDoc = insuranceDocuments[vehicle.id];
+    if (!insuranceDoc || !insuranceDoc.metadata?.insuranceExpiryDate) return true;
+    const status = getInsuranceExpiryStatus(insuranceDoc.metadata.insuranceExpiryDate);
     return status.status === "expired" || status.status === "expiring";
   });
 
@@ -135,8 +171,26 @@ export default function InsuranceRenewals() {
     };
   };
 
-  const handleCurrentInsurerRenewal = (vehicle: Vehicle) => {
-    const renewalInfo = getInsuranceRenewalInfo(vehicle.insuranceCompany!);
+  const getInsuranceExpiryStatus = (expiryDate: string) => {
+    if (!expiryDate) return { status: "unknown", color: "gray" };
+    
+    const expiry = new Date(expiryDate);
+    const today = new Date();
+    const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysUntilExpiry < 0) {
+      return { status: "expired", color: "red" };
+    } else if (daysUntilExpiry <= 30) {
+      return { status: "expiring", color: "orange" };
+    } else if (daysUntilExpiry <= 60) {
+      return { status: "due_soon", color: "yellow" };
+    } else {
+      return { status: "active", color: "green" };
+    }
+  };
+
+  const handleCurrentInsurerRenewal = (vehicle: Vehicle, insuranceProvider: string) => {
+    const renewalInfo = getInsuranceRenewalInfo(insuranceProvider);
     
     // Copy vehicle number to clipboard for easy pasting
     if (vehicle.licensePlate) {
@@ -217,9 +271,12 @@ export default function InsuranceRenewals() {
         ) : (
           <div className="space-y-4">
             {vehiclesNeedingRenewal.map((vehicle) => {
-              const insuranceStatus = vehicle.insuranceExpiry 
-                ? getExpiryStatus(vehicle.insuranceExpiry)
-                : { status: "unknown" as const, daysLeft: 0 };
+              const insuranceDoc = insuranceDocuments[vehicle.id];
+              const insuranceExpiryDate = insuranceDoc?.metadata?.insuranceExpiryDate;
+              const insuranceProvider = insuranceDoc?.metadata?.insuranceProvider;
+              const insuranceStatus = insuranceExpiryDate 
+                ? getInsuranceExpiryStatus(insuranceExpiryDate)
+                : { status: "unknown" as const, color: "gray" };
 
               return (
                 <Card key={vehicle.id} className="shadow-lg shadow-orange-100">
@@ -256,13 +313,13 @@ export default function InsuranceRenewals() {
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div>
                             <span className="text-gray-600">Provider:</span>
-                            <p className="font-medium">{vehicle.insuranceCompany || "Not specified"}</p>
+                            <p className="font-medium">{insuranceProvider || "Not specified"}</p>
                           </div>
                           <div>
                             <span className="text-gray-600">Expires:</span>
                             <p className="font-medium">
-                              {vehicle.insuranceExpiry 
-                                ? format(new Date(vehicle.insuranceExpiry), "MMM dd, yyyy")
+                              {insuranceExpiryDate 
+                                ? format(new Date(insuranceExpiryDate), "MMM dd, yyyy")
                                 : "Not set"
                               }
                             </p>
@@ -275,18 +332,18 @@ export default function InsuranceRenewals() {
                         <h4 className="font-medium text-gray-800">Compare & Renew Insurance</h4>
                         
                         {/* Current Insurer Direct Renewal */}
-                        {vehicle.insuranceCompany && (
+                        {insuranceProvider && (
                           <div className="mb-4">
                             <h5 className="text-sm font-medium text-gray-700 mb-2">Renew with Current Provider</h5>
                             <Button
-                              onClick={() => handleCurrentInsurerRenewal(vehicle)}
+                              onClick={() => handleCurrentInsurerRenewal(vehicle, insuranceProvider)}
                               variant="outline"
                               className="w-full border-green-200 bg-green-50 hover:bg-green-100 text-green-800 flex items-center justify-between p-3 h-auto"
                             >
                               <div className="flex items-center">
                                 <Building2 className="w-4 h-4 mr-2" />
                                 <div className="text-left">
-                                  <div className="font-medium">{vehicle.insuranceCompany}</div>
+                                  <div className="font-medium">{insuranceProvider}</div>
                                   <div className="text-xs opacity-80">Vehicle number copied • Direct renewal</div>
                                 </div>
                               </div>
