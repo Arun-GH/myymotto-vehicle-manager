@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 26, 2025**: COMPLETED Insurance Provider dropdown integration in Upload Documents page
+- ADDED comprehensive Insurance Provider dropdown field to Upload Documents page for Insurance Copy document type
+- IMPLEMENTED pre-populated dropdown with 25+ major Indian vehicle insurance providers including HDFC ERGO, ICICI Lombard, Bajaj Allianz, New India Assurance, National Insurance, Oriental Insurance, TATA AIG, Reliance General, and others
+- ENHANCED metadata handling to capture and store insurance provider selection alongside existing insurance fields (expiry date, sum insured, premium)
+- UPDATED local storage system to include insuranceProvider field in metadata interface for proper data persistence
+- ADDED insurance provider display in existing document cards showing provider information alongside other insurance details
+- INTEGRATED provider selection with both file upload and metadata-only insurance document entries
+- MAINTAINED consistent dropdown styling with h-8 height and proper placeholder text matching application design standards
+- COMPLETED comprehensive insurance document capture system: Provider + Expiry Date + Sum Insured + Premium + Optional File Upload
+
 **July 26, 2025**: COMPLETED streamlined vehicle forms by removing Insurance Details, Document Dates, and Service Details sections
 - REMOVED Insurance Details section from both add-vehicle.tsx and edit-vehicle.tsx including all insurance-related fields (provider, dates, amounts)
 - REMOVED Document Dates section containing emission expiry, RC expiry, and last service date fields from vehicle forms

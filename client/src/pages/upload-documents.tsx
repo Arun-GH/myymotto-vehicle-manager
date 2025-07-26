@@ -147,6 +147,7 @@ export default function UploadDocuments() {
   const [insuranceExpiryDate, setInsuranceExpiryDate] = useState<string>("");
   const [sumInsured, setSumInsured] = useState<string>("");
   const [insurancePremium, setInsurancePremium] = useState<string>("");
+  const [insuranceProvider, setInsuranceProvider] = useState<string>("");
 
   const [showCamera, setShowCamera] = useState(false);
   const [showOCRScanner, setShowOCRScanner] = useState(false);
@@ -183,6 +184,7 @@ export default function UploadDocuments() {
         setInsuranceExpiryDate(existing.metadata.insuranceExpiryDate || "");
         setSumInsured(existing.metadata.sumInsured?.toString() || "");
         setInsurancePremium(existing.metadata.insurancePremium?.toString() || "");
+        setInsuranceProvider(existing.metadata.insuranceProvider || "");
       }
     } else {
       setExistingDocument(null);
@@ -281,6 +283,7 @@ export default function UploadDocuments() {
           insuranceExpiryDate?: string;
           sumInsured?: number;
           insurancePremium?: number;
+          insuranceProvider?: string;
         } = {};
         
         if (selectedType === "fast_tag_renewals") {
@@ -290,6 +293,7 @@ export default function UploadDocuments() {
           if (insuranceExpiryDate) metadata.insuranceExpiryDate = insuranceExpiryDate;
           if (sumInsured) metadata.sumInsured = parseFloat(sumInsured);
           if (insurancePremium) metadata.insurancePremium = parseFloat(insurancePremium);
+          if (insuranceProvider) metadata.insuranceProvider = insuranceProvider;
         }
         
         // Create a dummy document entry for metadata storage
@@ -317,6 +321,7 @@ export default function UploadDocuments() {
           insuranceExpiryDate?: string;
           sumInsured?: number;
           insurancePremium?: number;
+          insuranceProvider?: string;
         } = {};
         
         // Add metadata based on document type
@@ -338,6 +343,7 @@ export default function UploadDocuments() {
           if (insuranceExpiryDate) metadata.insuranceExpiryDate = insuranceExpiryDate;
           if (sumInsured) metadata.sumInsured = parseFloat(sumInsured);
           if (insurancePremium) metadata.insurancePremium = parseFloat(insurancePremium);
+          if (insuranceProvider) metadata.insuranceProvider = insuranceProvider;
         } else if (selectedType === "miscellaneous" && documentName) {
           metadata.documentName = documentName;
         } else if (selectedDocumentType?.requiresExpiry && expiryDate) {
@@ -530,6 +536,9 @@ export default function UploadDocuments() {
                     {existingDocument.metadata.expiryDate && (
                       <p>Expiry: {new Date(existingDocument.metadata.expiryDate).toLocaleDateString()}</p>
                     )}
+                    {existingDocument.metadata.insuranceProvider && (
+                      <p>Provider: {existingDocument.metadata.insuranceProvider}</p>
+                    )}
                     {existingDocument.metadata.insuranceExpiryDate && (
                       <p>Insurance Expiry: {new Date(existingDocument.metadata.insuranceExpiryDate).toLocaleDateString()}</p>
                     )}
@@ -591,6 +600,7 @@ export default function UploadDocuments() {
                 setInsuranceExpiryDate("");
                 setSumInsured("");
                 setInsurancePremium("");
+                setInsuranceProvider("");
               }}>
                 <SelectTrigger className="h-8">
                   <SelectValue placeholder="Select document type" />
@@ -633,6 +643,47 @@ export default function UploadDocuments() {
             {/* Insurance-specific fields */}
             {selectedType === "insurance" && (
               <>
+                <div className="space-y-1">
+                  <Label htmlFor="insurance-provider" className="text-xs font-medium">
+                    <div className="flex items-center space-x-1">
+                      <FileText className="w-3 h-3" />
+                      <span>Insurance Provider</span>
+                    </div>
+                  </Label>
+                  <Select value={insuranceProvider} onValueChange={setInsuranceProvider}>
+                    <SelectTrigger className="h-8">
+                      <SelectValue placeholder="Select insurance provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="HDFC ERGO">HDFC ERGO General Insurance</SelectItem>
+                      <SelectItem value="ICICI Lombard">ICICI Lombard General Insurance</SelectItem>
+                      <SelectItem value="Bajaj Allianz">Bajaj Allianz General Insurance</SelectItem>
+                      <SelectItem value="New India Assurance">New India Assurance</SelectItem>
+                      <SelectItem value="National Insurance">National Insurance Company</SelectItem>
+                      <SelectItem value="Oriental Insurance">Oriental Insurance</SelectItem>
+                      <SelectItem value="United India Insurance">United India Insurance</SelectItem>
+                      <SelectItem value="TATA AIG">TATA AIG General Insurance</SelectItem>
+                      <SelectItem value="Reliance General">Reliance General Insurance</SelectItem>
+                      <SelectItem value="Royal Sundaram">Royal Sundaram General Insurance</SelectItem>
+                      <SelectItem value="Future Generali">Future Generali India Insurance</SelectItem>
+                      <SelectItem value="Kotak Mahindra">Kotak Mahindra General Insurance</SelectItem>
+                      <SelectItem value="Bharti AXA">Bharti AXA General Insurance</SelectItem>
+                      <SelectItem value="Cholamandalam MS">Cholamandalam MS General Insurance</SelectItem>
+                      <SelectItem value="Liberty General">Liberty General Insurance</SelectItem>
+                      <SelectItem value="SBI General">SBI General Insurance</SelectItem>
+                      <SelectItem value="Digit Insurance">Digit General Insurance</SelectItem>
+                      <SelectItem value="Go Digit">Go Digit General Insurance</SelectItem>
+                      <SelectItem value="Acko General">ACKO General Insurance</SelectItem>
+                      <SelectItem value="Magma HDI">Magma HDI General Insurance</SelectItem>
+                      <SelectItem value="Universal Sompo">Universal Sompo General Insurance</SelectItem>
+                      <SelectItem value="Iffco Tokio">IFFCO Tokio General Insurance</SelectItem>
+                      <SelectItem value="Shriram General">Shriram General Insurance</SelectItem>
+                      <SelectItem value="Raheja QBE">Raheja QBE General Insurance</SelectItem>
+                      <SelectItem value="L&T General">L&T General Insurance</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 <div className="space-y-1">
                   <Label htmlFor="insurance-expiry-date" className="text-xs font-medium">
                     <div className="flex items-center space-x-1">

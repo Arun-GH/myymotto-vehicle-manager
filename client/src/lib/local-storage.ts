@@ -185,7 +185,7 @@ class LocalDocumentStorage {
     vehicleId: number,
     type: string,
     file: File | null,
-    metadata?: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number; taxAmount?: number; permitFee?: number; rechargeAmount?: number; insuranceExpiryDate?: string; sumInsured?: number; insurancePremium?: number },
+    metadata?: { billDate?: string; documentName?: string; expiryDate?: string; billAmount?: number; taxAmount?: number; permitFee?: number; rechargeAmount?: number; insuranceExpiryDate?: string; sumInsured?: number; insurancePremium?: number; insuranceProvider?: string },
     customFileName?: string
   ): Promise<LocalDocument> {
     // For unique document types, delete existing document first
