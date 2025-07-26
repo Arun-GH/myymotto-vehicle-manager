@@ -53,22 +53,25 @@ const getFuelTypeIcon = (fuelType: string | null) => {
 export default function VehicleCard({ vehicle }: VehicleCardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [insuranceDocument, setInsuranceDocument] = useState<any>(null);
+  const [emissionDocument, setEmissionDocument] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Load insurance document from local storage
+  // Load insurance and emission documents from local storage
   useEffect(() => {
-    const loadInsuranceDocument = async () => {
+    const loadDocuments = async () => {
       try {
         const documents = await localDocumentStorage.getDocumentsByVehicle(vehicle.id);
         const insurance = documents.find(doc => doc.type === 'insurance');
+        const emission = documents.find(doc => doc.type === 'emission');
         setInsuranceDocument(insurance);
+        setEmissionDocument(emission);
       } catch (error) {
-        console.error('Error loading insurance document:', error);
+        console.error('Error loading documents:', error);
       }
     };
     
-    loadInsuranceDocument();
+    loadDocuments();
   }, [vehicle.id]);
 
   // Fetch alerts count for this vehicle
@@ -86,6 +89,9 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   const insuranceExpiryDate = insuranceDocument?.metadata?.insuranceExpiryDate;
   const insuranceIssuedDate = insuranceDocument?.metadata?.insuranceIssuedDate;
   const insuranceProvider = insuranceDocument?.metadata?.insuranceProvider;
+  
+  // Get emission info from local document instead of vehicle database
+  const emissionExpiryDate = emissionDocument?.metadata?.expiryDate || vehicle.emissionExpiry;
   
   // Helper function to get expiry status for renewal dates
   const getDocumentExpiryStatus = (expiryDate: string | null) => {
@@ -107,7 +113,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   };
   
   const insuranceStatus = getDocumentExpiryStatus(insuranceExpiryDate);
-  const emissionStatus = getDocumentExpiryStatus(vehicle.emissionExpiry);
+  const emissionStatus = getDocumentExpiryStatus(emissionExpiryDate);
   const serviceStatus = getServiceStatus(vehicle.lastServiceDate);
   const nextServiceInfo = calculateNextServiceDate(vehicle.lastServiceDate, vehicle.serviceIntervalMonths);
 
@@ -116,13 +122,14 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   if (!vehicle.chassisNumber?.trim()) missingDetails.push("Chassis Number");
   if (!vehicle.engineNumber?.trim()) missingDetails.push("Engine Number");
 
-  // Calculate vehicle completeness using insurance data from documents
+  // Calculate vehicle completeness using insurance and emission data from documents
   const completenessData = {
     ...vehicle,
     thumbnailPath: vehicle.thumbnailPath ? 'photo-selected' : null,
     insuranceProvider: insuranceProvider,
     insuranceExpiry: insuranceExpiryDate,
     insuranceExpiryDate: insuranceExpiryDate,
+    emissionExpiry: emissionExpiryDate,
   };
   const completeness = calculateVehicleCompleteness(completenessData);
 
@@ -267,7 +274,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 emissionStatus.status === "due_soon" ? "text-yellow-600" :
                 "text-gray-800"
               }`}>
-                {vehicle.emissionExpiry ? formatToDDMMMYYYY(new Date(vehicle.emissionExpiry)) : "Not set"}
+                {emissionExpiryDate ? formatToDDMMMYYYY(new Date(emissionExpiryDate)) : "Not set"}
               </span>
             </div>
           </div>

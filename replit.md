@@ -37,6 +37,9 @@ Preferred communication style: Simple, everyday language.
 - CHANGED "Latest Emission" to "Emission Expiry" displaying emission certificate expiry date instead of generic emission information
 - UPDATED upload documents page to show "Emission Certificate Expiry Date" instead of "Emission certificate issue date" for proper expiry date capture
 - REMOVED date restrictions for emission certificate expiry to allow proper future expiry date capture and storage
+- ENHANCED vehicle dashboard tiles to fetch emission expiry dates from upload documents page instead of vehicle database
+- UPDATED vehicle cards to load emission documents from local storage and display document-based expiry dates
+- INTEGRATED emission document metadata with vehicle completeness tracking for accurate progress calculation
 - ENHANCED expiry date display with color-coded status indicators (red for expired, orange for expiring, yellow for due soon, gray for normal)
 - IMPROVED vehicle tile information relevance by focusing on upcoming renewal dates rather than historical dates
 - MAINTAINED consistency with document management system's expiry-focused approach for better user experience
