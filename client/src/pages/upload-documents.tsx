@@ -136,7 +136,7 @@ export default function UploadDocuments() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  const [selectedType, setSelectedType] = useState<DocumentType>("emission");
+  const [selectedType, setSelectedType] = useState<DocumentType>("insurance");
   const [selectedFiles, setSelectedFiles] = useState<FileWithCustomName[]>([]);
   const [expiryDate, setExpiryDate] = useState<string>("");
   const [documentName, setDocumentName] = useState<string>("");
