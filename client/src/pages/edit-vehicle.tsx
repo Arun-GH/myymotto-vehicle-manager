@@ -94,6 +94,7 @@ export default function EditVehicle() {
       serviceIntervalMonths: null,
       vehicleType: "",
       fuelType: "",
+      userType: "Private",
     },
   });
 
@@ -123,6 +124,7 @@ export default function EditVehicle() {
         serviceIntervalMonths: vehicle.serviceIntervalMonths || null,
         vehicleType: vehicle.vehicleType || "",
         fuelType: vehicle.fuelType || "",
+        userType: vehicle.userType || "Private",
       });
       
       // Check if make or model are custom (not in dropdown)
@@ -271,6 +273,7 @@ export default function EditVehicle() {
         averageUsagePerMonth: data.averageUsagePerMonth || null,
         serviceIntervalKms: data.serviceIntervalKms || null,
         serviceIntervalMonths: data.serviceIntervalMonths || null,
+        userType: data.userType?.trim() || "Private", // Default to Private if not provided
       };
 
 
@@ -486,8 +489,8 @@ export default function EditVehicle() {
                   </div>
                 </div>
 
-                {/* Vehicle Type Section - First and Mandatory */}
-                <div className="mb-4">
+                {/* Vehicle Type and User Type Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                   <FormField
                     control={form.control}
                     name="vehicleType"
@@ -505,6 +508,29 @@ export default function EditVehicle() {
                                   {type}
                                 </SelectItem>
                               ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="userType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-semibold">User Type *</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className="h-8">
+                              <SelectValue placeholder="Select user type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Private">Private</SelectItem>
+                              <SelectItem value="Commercial">Commercial</SelectItem>
+                              <SelectItem value="Taxi services">Taxi services</SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>

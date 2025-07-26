@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 26, 2025**: ADDED User Type classification dropdown to vehicle management system
+- IMPLEMENTED User Type dropdown field on Add Vehicle page with three options: Private, Commercial, Taxi services
+- ADDED userType field to database schema with proper default value "Private" for existing vehicles
+- ENHANCED both Add Vehicle and Edit Vehicle pages with userType field in grid layout alongside Vehicle Type
+- UPDATED database migration to include new user_type column with NOT NULL constraint and default value
+- COMPLETED form validation and data handling for user type classification across entire vehicle management system
+- MAINTAINED consistent mobile-optimized design with proper dropdown styling and validation
+- PRESERVED all existing vehicle functionality while adding comprehensive user type categorization
+
 **July 25, 2025**: COMPLETED mobile APK build preparation and fixed profile picture upload system
 - FIXED critical upload path bug: changed uploadResult.path to uploadResult.filePath to match server response format
 - RESOLVED profile picture not being saved to database by correcting API response field mapping  

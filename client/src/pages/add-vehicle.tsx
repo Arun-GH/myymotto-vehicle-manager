@@ -98,6 +98,7 @@ export default function AddVehicle() {
       serviceIntervalMonths: 0,
       vehicleType: "4-wheeler",
       fuelType: "",
+      userType: "Private",
     },
   });
 
@@ -225,6 +226,7 @@ export default function AddVehicle() {
         ownerPhone: data.ownerPhone?.trim() || null,
         insuranceCompany: data.insuranceCompany?.trim() || null,
         fuelType: data.fuelType?.trim() || null,
+        userType: data.userType?.trim() || "Private", // Default to Private if not provided
         // Ensure year is a number
         year: Number(data.year),
       };
@@ -454,29 +456,54 @@ export default function AddVehicle() {
                   
 
                 </div>
-                {/* Vehicle Type - First Field */}
-                <FormField
-                  control={form.control}
-                  name="vehicleType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs font-medium">Vehicle Type *</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={handleVehicleTypeChange} value={field.value}>
-                          <SelectTrigger className="h-9">
-                            <SelectValue placeholder="Select vehicle type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="2-wheeler">2-Wheeler</SelectItem>
-                            <SelectItem value="3-wheeler">3-Wheeler</SelectItem>
-                            <SelectItem value="4-wheeler">4-Wheeler</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Vehicle Type and User Type - Grid Layout */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="vehicleType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-medium">Vehicle Type *</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={handleVehicleTypeChange} value={field.value}>
+                            <SelectTrigger className="h-9">
+                              <SelectValue placeholder="Select vehicle type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="2-wheeler">2-Wheeler</SelectItem>
+                              <SelectItem value="3-wheeler">3-Wheeler</SelectItem>
+                              <SelectItem value="4-wheeler">4-Wheeler</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="userType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-medium">User Type *</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className="h-9">
+                              <SelectValue placeholder="Select user type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Private">Private</SelectItem>
+                              <SelectItem value="Commercial">Commercial</SelectItem>
+                              <SelectItem value="Taxi services">Taxi services</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <FormField
