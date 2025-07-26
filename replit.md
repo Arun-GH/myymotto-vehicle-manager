@@ -19,6 +19,9 @@ Preferred communication style: Simple, everyday language.
 - COMPLETED full integration from frontend form input to database storage with proper data type conversion
 - MAINTAINED existing service log functionality while adding comprehensive bill tracking capability
 - ENSURED mobile-optimized design with consistent styling matching existing service form fields
+- ENHANCED service logs page to display bill amount for each service entry with proper rupee formatting
+- ADDED yearly service spending summary card showing total amount spent on services for current year
+- IMPLEMENTED proper currency formatting with Indian rupee symbol and thousands separators
 
 **July 26, 2025**: ADDED User Type classification dropdown to vehicle management system
 - IMPLEMENTED User Type dropdown field on Add Vehicle page with three options: Private, Commercial, Taxi services

@@ -1,5 +1,5 @@
 import { useParams, Link } from "wouter";
-import { ArrowLeft, Plus, Eye, FileText, Calendar, MapPin, NotebookPen, Wrench, Settings, Bell, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Eye, FileText, Calendar, MapPin, NotebookPen, Wrench, Settings, Bell, Trash2, IndianRupee } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -85,6 +85,26 @@ export default function ServiceLogs() {
     }
   };
 
+  // Calculate yearly total spending
+  const currentYear = new Date().getFullYear();
+  const yearlyTotal = serviceLogs?.reduce((total, log) => {
+    const logYear = new Date(log.serviceDate).getFullYear();
+    if (logYear === currentYear && log.billAmount) {
+      return total + (log.billAmount / 100); // Convert paise to rupees
+    }
+    return total;
+  }, 0) || 0;
+
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  };
+
   if (vehicleLoading || logsLoading || maintenanceLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
@@ -144,6 +164,25 @@ export default function ServiceLogs() {
                   {vehicle.make?.toUpperCase()} {vehicle.model?.toUpperCase()}
                 </h2>
                 <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Yearly Service Spending Summary */}
+        {serviceLogs && serviceLogs.length > 0 && yearlyTotal > 0 && (
+          <Card className="shadow-orange bg-gradient-to-r from-green-50 to-blue-50">
+            <CardContent className="p-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <IndianRupee className="w-4 h-4 text-green-600" />
+                  <span className="text-xs font-medium text-gray-700">
+                    Total Service Spending {currentYear}
+                  </span>
+                </div>
+                <div className="text-sm font-bold text-green-700">
+                  {formatCurrency(yearlyTotal)}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -303,6 +342,13 @@ export default function ServiceLogs() {
                           <MapPin className="w-2.5 h-2.5" />
                           <span>{log.serviceCentre}</span>
                         </div>
+                        
+                        {log.billAmount && (
+                          <div className="flex items-center space-x-1 text-xs text-green-600">
+                            <IndianRupee className="w-2.5 h-2.5" />
+                            <span className="font-medium">{formatCurrency(log.billAmount / 100)}</span>
+                          </div>
+                        )}
                         
                         {log.notes && (
                           <div className="flex items-start space-x-1 text-xs text-gray-600">
