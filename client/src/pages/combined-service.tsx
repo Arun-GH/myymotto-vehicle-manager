@@ -198,6 +198,7 @@ const serviceLogSchema = z.object({
   serviceDate: z.string().min(1, "Service date is required"),
   serviceCentre: z.string().min(1, "Service centre is required"),
   billAmount: z.number().positive("Bill amount must be positive").optional().nullable(),
+  serviceIntervalMonths: z.number().min(1, "Service interval must be at least 1 month").max(24, "Service interval cannot exceed 24 months").optional().nullable(),
   notes: z.string().optional(),
 });
 
@@ -247,6 +248,7 @@ export default function CombinedServicePage() {
       serviceDate: "",
       serviceCentre: "",
       billAmount: null,
+      serviceIntervalMonths: null,
       notes: "",
     },
   });
@@ -289,6 +291,9 @@ export default function CombinedServicePage() {
       formData.append("serviceCentre", data.serviceCentre);
       if (data.billAmount !== null && data.billAmount !== undefined) {
         formData.append("billAmount", (data.billAmount * 100).toString()); // Convert to paise
+      }
+      if (data.serviceIntervalMonths !== null && data.serviceIntervalMonths !== undefined) {
+        formData.append("serviceIntervalMonths", data.serviceIntervalMonths.toString());
       }
       if (data.notes) formData.append("notes", data.notes);
       if (data.invoice) formData.append("invoice", data.invoice);
@@ -579,6 +584,52 @@ export default function CombinedServicePage() {
                       <p className="text-sm text-red-600">{serviceForm.formState.errors.billAmount.message}</p>
                     )}
                   </div>
+
+                  {/* Service Interval Fields - Only for General Service (Paid) */}
+                  {serviceForm.watch("serviceType") === "General Service (Paid)" && (
+                    <>
+                      <div className="space-y-1">
+                        <Label htmlFor="serviceIntervalMonths" className="text-xs">Months to Next Service</Label>
+                        <Input
+                          id="serviceIntervalMonths"
+                          type="number"
+                          {...serviceForm.register("serviceIntervalMonths", { 
+                            setValueAs: (v: string) => v === "" ? null : parseInt(v) 
+                          })}
+                          placeholder="e.g., 6"
+                          className="h-8"
+                          min="1"
+                          max="24"
+                        />
+                        {serviceForm.formState.errors.serviceIntervalMonths && (
+                          <p className="text-sm text-red-600">{serviceForm.formState.errors.serviceIntervalMonths.message}</p>
+                        )}
+                      </div>
+
+                      {/* Calculated Next Service Date */}
+                      {serviceForm.watch("serviceDate") && serviceForm.watch("serviceIntervalMonths") && (
+                        <div className="space-y-1">
+                          <Label className="text-xs">Next Service Date (Calculated)</Label>
+                          <div className="p-2 bg-green-50 border border-green-200 rounded text-xs text-green-800">
+                            {(() => {
+                              const serviceDate = serviceForm.watch("serviceDate");
+                              const intervalMonths = serviceForm.watch("serviceIntervalMonths");
+                              if (serviceDate && intervalMonths) {
+                                const date = new Date(serviceDate);
+                                date.setMonth(date.getMonth() + intervalMonths);
+                                return date.toLocaleDateString('en-GB', { 
+                                  day: '2-digit', 
+                                  month: 'short', 
+                                  year: 'numeric' 
+                                });
+                              }
+                              return "";
+                            })()}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
 
                   <div className="space-y-1">
                     <Label htmlFor="serviceCentre" className="text-xs">Service Centre</Label>

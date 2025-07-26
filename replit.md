@@ -10,6 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 26, 2025**: COMPLETED comprehensive service interval tracking system for General Service (Paid) across entire application
+- ENHANCED database schema with service_interval_months field in serviceLogs table and successfully applied migration (npm run db:push)
+- IMPLEMENTED conditional service interval fields in both combined-service.tsx and add-service-log.tsx that only display when "General Service (Paid)" is selected as service type
+- ADDED intelligent form validation with 1-24 month range limits and comprehensive error handling for service interval input
+- ENHANCED frontend with real-time next service date calculation displaying formatted dates (DD-MMM-YYYY) when both service date and interval months are provided
+- UPDATED server-side API endpoints (POST /api/service-logs and PUT /api/service-logs/:id) to properly handle serviceIntervalMonths field processing
+- INTEGRATED service interval data with existing storage interface using InsertServiceLog type ensuring seamless database operations
+- COMPLETED full frontend-backend integration: form input → validation → API processing → database storage with proper data type conversion
+- ENHANCED user experience with visual feedback showing calculated next service date in green-themed info cards
+- MAINTAINED backward compatibility with existing service logs while adding new interval tracking capability
+- SERVICE INTERVAL SYSTEM: Captures maintenance intervals only for paid general services, calculates future service dates, stores interval data for service scheduling and reminder generation
+
 **January 26, 2025**: COMPLETED comprehensive insurance data refactoring from vehicle database to local document storage
 - MAJOR ARCHITECTURAL CHANGE: Removed redundant insurance data capture from vehicle forms and centralized all insurance information in Upload Documents page
 - UPDATED vehicle-card.tsx component to fetch insurance data (provider, issued date, expiry date) from local document storage instead of vehicle database fields

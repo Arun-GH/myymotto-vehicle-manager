@@ -98,6 +98,7 @@ const serviceLogSchema = z.object({
   serviceDate: z.string().min(1, "Service date is required"),
   serviceCentre: z.string().min(1, "Service centre is required"),
   billAmount: z.number().positive("Bill amount must be positive").optional().nullable(),
+  serviceIntervalMonths: z.number().min(1, "Service interval must be at least 1 month").max(24, "Service interval cannot exceed 24 months").optional().nullable(),
   notes: z.string().optional(),
 });
 
@@ -128,6 +129,7 @@ export default function AddServiceLog() {
       serviceDate: "",
       serviceCentre: "",
       billAmount: null,
+      serviceIntervalMonths: null,
       notes: "",
     },
   });
@@ -141,6 +143,9 @@ export default function AddServiceLog() {
       formData.append("serviceCentre", data.serviceCentre);
       if (data.billAmount !== null && data.billAmount !== undefined) {
         formData.append("billAmount", (data.billAmount * 100).toString()); // Convert to paise
+      }
+      if (data.serviceIntervalMonths !== null && data.serviceIntervalMonths !== undefined) {
+        formData.append("serviceIntervalMonths", data.serviceIntervalMonths.toString());
       }
       if (data.notes) formData.append("notes", data.notes);
       if (data.invoice) formData.append("invoice", data.invoice);
@@ -366,6 +371,62 @@ export default function AddServiceLog() {
                   <p className="text-sm text-red-600">{form.formState.errors.billAmount.message}</p>
                 )}
               </div>
+
+              {/* Service Interval Fields - Only for General Service (Paid) */}
+              {form.watch("serviceType") === "General Service (Paid)" && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="serviceIntervalMonths" className="text-sm font-medium text-gray-700">
+                      Months to Next Service
+                    </Label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Input
+                        id="serviceIntervalMonths"
+                        type="number"
+                        className="h-9 pl-10"
+                        {...form.register("serviceIntervalMonths", { 
+                          setValueAs: (v: string) => v === "" ? null : parseInt(v) 
+                        })}
+                        placeholder="e.g., 6"
+                        min="1"
+                        max="24"
+                      />
+                    </div>
+                    {form.formState.errors.serviceIntervalMonths && (
+                      <p className="text-sm text-red-600">{form.formState.errors.serviceIntervalMonths.message}</p>
+                    )}
+                  </div>
+
+                  {/* Calculated Next Service Date */}
+                  {form.watch("serviceDate") && form.watch("serviceIntervalMonths") && (
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-700">Next Service Date (Calculated)</Label>
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <Calendar className="w-4 h-4 text-green-600" />
+                          <span className="text-sm text-green-800 font-medium">
+                            {(() => {
+                              const serviceDate = form.watch("serviceDate");
+                              const intervalMonths = form.watch("serviceIntervalMonths");
+                              if (serviceDate && intervalMonths) {
+                                const date = new Date(serviceDate);
+                                date.setMonth(date.getMonth() + intervalMonths);
+                                return date.toLocaleDateString('en-GB', { 
+                                  day: '2-digit', 
+                                  month: 'short', 
+                                  year: 'numeric' 
+                                });
+                              }
+                              return "";
+                            })()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
 
               {/* Service Centre */}
               <div className="space-y-2">

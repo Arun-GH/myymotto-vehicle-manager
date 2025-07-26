@@ -101,6 +101,7 @@ export const serviceLogs = pgTable("service_logs", {
   serviceDate: date("service_date").notNull(),
   serviceCentre: text("service_centre").notNull(),
   billAmount: integer("bill_amount"), // Service bill amount in paise (₹100 = 10000 paise)
+  serviceIntervalMonths: integer("service_interval_months"), // Months to next service (only for General Service (Paid))
   notes: text("notes"),
   invoicePath: text("invoice_path"), // Path to uploaded invoice image
   createdAt: timestamp("created_at").defaultNow().notNull(),
