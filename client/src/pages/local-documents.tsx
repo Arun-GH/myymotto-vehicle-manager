@@ -118,6 +118,26 @@ export default function LocalDocuments() {
     }).format(amount);
   };
 
+  const getExpiryStatus = (expiryDate: string) => {
+    if (!expiryDate) return { status: "unknown", color: "gray", text: "No expiry" };
+    
+    const expiry = new Date(expiryDate);
+    const today = new Date();
+    const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysUntilExpiry < 0) {
+      return { status: "expired", color: "red", text: "Expired" };
+    } else if (daysUntilExpiry <= 7) {
+      return { status: "critical", color: "red", text: `${daysUntilExpiry}d left` };
+    } else if (daysUntilExpiry <= 30) {
+      return { status: "warning", color: "orange", text: `${daysUntilExpiry}d left` };
+    } else if (daysUntilExpiry <= 90) {
+      return { status: "due_soon", color: "yellow", text: `${daysUntilExpiry}d left` };
+    } else {
+      return { status: "active", color: "green", text: `${daysUntilExpiry}d left` };
+    }
+  };
+
   const groupedDocuments = documents.reduce((acc, doc) => {
     if (!acc[doc.type]) acc[doc.type] = [];
     acc[doc.type].push(doc);
@@ -272,6 +292,26 @@ export default function LocalDocuments() {
                               {document.metadata.documentName}
                             </span>
                           )}
+                          {/* Expiry Status Indicator */}
+                          {(document.metadata?.expiryDate || document.metadata?.insuranceExpiryDate) && (
+                            (() => {
+                              const expiryDate = document.metadata?.expiryDate || document.metadata?.insuranceExpiryDate;
+                              if (!expiryDate) return null;
+                              const status = getExpiryStatus(expiryDate);
+                              const colorClasses: Record<string, string> = {
+                                red: "text-red-700 bg-red-50 border-red-200",
+                                orange: "text-orange-700 bg-orange-50 border-orange-200", 
+                                yellow: "text-yellow-700 bg-yellow-50 border-yellow-200",
+                                green: "text-green-700 bg-green-50 border-green-200",
+                                gray: "text-gray-700 bg-gray-50 border-gray-200"
+                              };
+                              return (
+                                <span className={`text-[9px] font-medium px-1 py-0.5 rounded-sm border ${colorClasses[status.color] || colorClasses.gray}`}>
+                                  {status.text}
+                                </span>
+                              );
+                            })()
+                          )}
                         </div>
                         <p className="font-medium text-xs truncate">{document.fileName}</p>
                         <div className="text-[10px] text-muted-foreground flex items-center space-x-1.5 mt-0.5">
@@ -287,31 +327,63 @@ export default function LocalDocuments() {
                           {document.metadata?.expiryDate && (
                             <span className="text-green-600">Expiry: {formatDate(document.metadata.expiryDate)}</span>
                           )}
+                          {document.metadata?.insuranceExpiryDate && (
+                            <span className="text-red-600">Insurance Expiry: {formatDate(document.metadata.insuranceExpiryDate)}</span>
+                          )}
+
                         </div>
                         
-                        {/* Amount Fields Display */}
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {document.metadata?.billAmount && (
-                            <span className="text-[10px] font-medium text-green-700 bg-green-50 px-1.5 py-0.5 rounded-sm border border-green-200">
-                              Bill: {formatCurrency(document.metadata.billAmount)}
-                            </span>
-                          )}
-                          {document.metadata?.taxAmount && (
-                            <span className="text-[10px] font-medium text-red-700 bg-red-50 px-1.5 py-0.5 rounded-sm border border-red-200">
-                              Tax: {formatCurrency(document.metadata.taxAmount)}
-                            </span>
-                          )}
-                          {document.metadata?.permitFee && (
-                            <span className="text-[10px] font-medium text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded-sm border border-indigo-200">
-                              Permit Fee: {formatCurrency(document.metadata.permitFee)}
-                            </span>
-                          )}
-                          {document.metadata?.rechargeAmount && (
-                            <span className="text-[10px] font-medium text-pink-700 bg-pink-50 px-1.5 py-0.5 rounded-sm border border-pink-200">
-                              Recharge: {formatCurrency(document.metadata.rechargeAmount)}
-                            </span>
-                          )}
-                        </div>
+                        {/* Insurance Details - Provider and Financial Info */}
+                        {document.type === 'insurance' && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {document.metadata?.insuranceProvider && (
+                              <span className="text-[10px] font-medium text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded-sm border border-blue-200">
+                                Provider: {document.metadata.insuranceProvider}
+                              </span>
+                            )}
+                            {document.metadata?.insuranceIssuedDate && (
+                              <span className="text-[10px] font-medium text-green-700 bg-green-50 px-1.5 py-0.5 rounded-sm border border-green-200">
+                                Issued: {formatDate(document.metadata.insuranceIssuedDate)}
+                              </span>
+                            )}
+                            {document.metadata?.sumInsured && (
+                              <span className="text-[10px] font-medium text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-sm border border-purple-200">
+                                Sum Insured: {formatCurrency(document.metadata.sumInsured)}
+                              </span>
+                            )}
+                            {document.metadata?.insurancePremium && (
+                              <span className="text-[10px] font-medium text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded-sm border border-orange-200">
+                                Premium: {formatCurrency(document.metadata.insurancePremium)}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Amount Fields Display for Other Documents */}
+                        {document.type !== 'insurance' && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {document.metadata?.billAmount && (
+                              <span className="text-[10px] font-medium text-green-700 bg-green-50 px-1.5 py-0.5 rounded-sm border border-green-200">
+                                Bill: {formatCurrency(document.metadata.billAmount)}
+                              </span>
+                            )}
+                            {document.metadata?.taxAmount && (
+                              <span className="text-[10px] font-medium text-red-700 bg-red-50 px-1.5 py-0.5 rounded-sm border border-red-200">
+                                Tax: {formatCurrency(document.metadata.taxAmount)}
+                              </span>
+                            )}
+                            {document.metadata?.permitFee && (
+                              <span className="text-[10px] font-medium text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded-sm border border-indigo-200">
+                                Permit Fee: {formatCurrency(document.metadata.permitFee)}
+                              </span>
+                            )}
+                            {document.metadata?.rechargeAmount && (
+                              <span className="text-[10px] font-medium text-pink-700 bg-pink-50 px-1.5 py-0.5 rounded-sm border border-pink-200">
+                                Recharge: {formatCurrency(document.metadata.rechargeAmount)}
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                     
