@@ -53,6 +53,13 @@ Preferred communication style: Simple, everyday language.
 - MAINTAINED message functionality while preventing annoying repeated displays of the same daily message
 - PRESERVED admin's ability to send new messages which will be displayed until dismissed by users
 
+**July 27, 2025**: COMPLETED year input field restrictions to prevent future year entries in vehicle forms
+- IMPLEMENTED min="1900" and max={new Date().getFullYear()} attributes on year input fields in both Add Vehicle and Edit Vehicle pages
+- ADDED automatic validation to prevent users from entering future years or years before 1900 in vehicle registration
+- ENHANCED form validation with client-side restrictions ensuring only valid vehicle manufacturing years can be entered
+- UPDATED both add-vehicle.tsx and edit-vehicle.tsx with consistent year range limitations for data integrity
+- MAINTAINED existing form functionality while adding proper year boundary enforcement for realistic vehicle data entry
+
 **July 27, 2025**: COMPLETED insurance quick action integration with document storage system
 - UPDATED insurance quick action button to pull insurance details from Documents page instead of vehicle database
 - ENHANCED insurance page to use document storage data for provider, dates, sum insured, and premium amounts

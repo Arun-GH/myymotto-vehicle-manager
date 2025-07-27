@@ -597,6 +597,8 @@ export default function EditVehicle() {
                             type="number" 
                             placeholder="2024" 
                             className="h-8"
+                            min="1900"
+                            max={new Date().getFullYear()}
                             {...field} 
                             onChange={(e) => field.onChange(parseInt(e.target.value))}
                           />
