@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car, Plus, Edit, Share2 } from "lucide-react";
+import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car, Plus, Edit, Share2, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ export default function LocalDocuments() {
   const [documents, setDocuments] = useState<LocalDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [storageInfo, setStorageInfo] = useState({ used: 0, available: 0 });
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
 
   // Fetch vehicle data
   const { data: vehicle, isLoading: vehicleLoading } = useQuery({
@@ -83,6 +84,14 @@ export default function LocalDocuments() {
   const handleShareDocument = async (document: LocalDocument) => {
     try {
       // Create blob URL for sharing
+      if (!document.fileData) {
+        toast({
+          title: "Share Failed",
+          description: "No file data available to share",
+          variant: "destructive",
+        });
+        return;
+      }
       const blob = new Blob([document.fileData], { type: document.mimeType });
       const file = new File([blob], document.fileName, { type: document.mimeType });
       
@@ -95,7 +104,7 @@ export default function LocalDocuments() {
         });
       } else {
         // Fallback: Show share options
-        const blob2 = new Blob([document.fileData], { type: document.mimeType });
+        const blob2 = new Blob([document.fileData!], { type: document.mimeType });
         const url = URL.createObjectURL(blob2);
         
         // Try different share methods
@@ -202,6 +211,13 @@ export default function LocalDocuments() {
     } else {
       return { status: "active", color: "green", text: `${daysUntilExpiry}d left` };
     }
+  };
+
+  const toggleSection = (sectionType: string) => {
+    setCollapsedSections(prev => ({
+      ...prev,
+      [sectionType]: !prev[sectionType]
+    }));
   };
 
   const groupedDocuments = documents.reduce((acc, doc) => {
@@ -338,14 +354,31 @@ export default function LocalDocuments() {
           Object.entries(groupedDocuments).map(([type, docs]) => (
             <Card key={type} className="card-hover shadow-orange border-l-4 border-l-purple-500 mb-1.5">
               <CardHeader className="pb-0.5 px-1.5 pt-1.5">
-                <CardTitle className="flex items-center space-x-1.5 text-xs">
+                <CardTitle 
+                  className={`flex items-center space-x-1.5 text-xs ${type === 'fuel' ? 'cursor-pointer hover:bg-gray-50 rounded p-1 -m-1' : ''}`}
+                  onClick={type === 'fuel' ? () => toggleSection(type) : undefined}
+                >
                   <div className={`w-3 h-3 rounded-full ${documentTypes[type]?.color || 'bg-gray-500'}`} />
                   <span>{documentTypes[type]?.label || type}</span>
                   <Badge variant="secondary" className="ml-auto text-xs h-4 px-1.5">{docs.length}</Badge>
+                  {type === 'fuel' && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-4 w-4 p-0 ml-1"
+                    >
+                      {collapsedSections[type] ? (
+                        <ChevronDown className="w-3 h-3" />
+                      ) : (
+                        <ChevronUp className="w-3 h-3" />
+                      )}
+                    </Button>
+                  )}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-0.5 px-1.5 pb-1.5">
-                {docs.map((document) => (
+              {(!collapsedSections[type] || type !== 'fuel') && (
+                <CardContent className="space-y-0.5 px-1.5 pb-1.5">
+                  {docs.map((document) => (
                   <div key={document.id} className="border rounded-lg p-1.5 space-y-1">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
@@ -502,8 +535,9 @@ export default function LocalDocuments() {
                       </Button>
                     </div>
                   </div>
-                ))}
-              </CardContent>
+                  ))}
+                </CardContent>
+              )}
             </Card>
           ))
         )}
