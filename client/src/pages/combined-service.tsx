@@ -249,6 +249,12 @@ export default function CombinedServicePage() {
   const [selectedServiceFile, setSelectedServiceFile] = useState<File | null>(null);
   const [showCustomServiceInput, setShowCustomServiceInput] = useState(false);
   const [customServiceType, setCustomServiceType] = useState('');
+  const [isEditingServiceFileName, setIsEditingServiceFileName] = useState(false);
+  const [tempServiceFileName, setTempServiceFileName] = useState("");
+  const [isEditingWarrantyFileName, setIsEditingWarrantyFileName] = useState(false);
+  const [tempWarrantyFileName, setTempWarrantyFileName] = useState("");
+  const [isEditingInvoiceFileName, setIsEditingInvoiceFileName] = useState(false);
+  const [tempInvoiceFileName, setTempInvoiceFileName] = useState("");
   const warrantyFileRef = useRef<HTMLInputElement>(null);
   const invoiceFileRef = useRef<HTMLInputElement>(null);
   const warrantyCameraRef = useRef<HTMLInputElement>(null);
@@ -436,10 +442,72 @@ export default function CombinedServicePage() {
   const handleFileSelect = (file: File | null, type: 'warranty' | 'invoice' | 'service') => {
     if (type === 'warranty') {
       setWarrantyFile(file);
+      // For camera captured files, enable rename mode
+      if (file && warrantyFileRef.current?.getAttribute("capture")) {
+        setIsEditingWarrantyFileName(true);
+        setTempWarrantyFileName(file.name.replace(/\.[^/.]+$/, ""));
+      }
     } else if (type === 'invoice') {
       setInvoiceFile(file);
+      // For camera captured files, enable rename mode
+      if (file && invoiceFileRef.current?.getAttribute("capture")) {
+        setIsEditingInvoiceFileName(true);
+        setTempInvoiceFileName(file.name.replace(/\.[^/.]+$/, ""));
+      }
     } else if (type === 'service') {
       setSelectedServiceFile(file);
+      // For camera captured files, enable rename mode
+      if (file && serviceFileInputRef.current?.getAttribute("capture")) {
+        setIsEditingServiceFileName(true);
+        setTempServiceFileName(file.name.replace(/\.[^/.]+$/, ""));
+      }
+    }
+  };
+
+  const saveFileName = (type: 'warranty' | 'invoice' | 'service') => {
+    let file, tempName, setFile, setEditing;
+    
+    if (type === 'warranty') {
+      file = warrantyFile;
+      tempName = tempWarrantyFileName;
+      setFile = setWarrantyFile;
+      setEditing = setIsEditingWarrantyFileName;
+    } else if (type === 'invoice') {
+      file = invoiceFile;
+      tempName = tempInvoiceFileName;
+      setFile = setInvoiceFile;
+      setEditing = setIsEditingInvoiceFileName;
+    } else if (type === 'service') {
+      file = selectedServiceFile;
+      tempName = tempServiceFileName;
+      setFile = setSelectedServiceFile;
+      setEditing = setIsEditingServiceFileName;
+    }
+    
+    if (file && tempName?.trim()) {
+      const extension = file.name.split('.').pop();
+      const newFileName = tempName.trim() + '.' + extension;
+      
+      const renamedFile = new File([file], newFileName, {
+        type: file.type,
+        lastModified: file.lastModified
+      });
+      
+      setFile(renamedFile);
+    }
+    setEditing(false);
+  };
+
+  const cancelFileNameEdit = (type: 'warranty' | 'invoice' | 'service') => {
+    if (type === 'warranty') {
+      setIsEditingWarrantyFileName(false);
+      setTempWarrantyFileName("");
+    } else if (type === 'invoice') {
+      setIsEditingInvoiceFileName(false);
+      setTempInvoiceFileName("");
+    } else if (type === 'service') {
+      setIsEditingServiceFileName(false);
+      setTempServiceFileName("");
     }
   };
 
@@ -710,15 +778,60 @@ export default function CombinedServicePage() {
                     </div>
                     {selectedServiceFile && (
                       <div className="text-sm text-green-600 flex items-center justify-between bg-green-50 p-2 rounded">
-                        <span>📄 {selectedServiceFile.name}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleFileSelect(null, 'service')}
-                        >
-                          <Trash2 className="w-4 h-4 text-red-500" />
-                        </Button>
+                        {isEditingServiceFileName ? (
+                          <div className="flex items-center space-x-2 flex-1">
+                            <span>📄</span>
+                            <Input
+                              value={tempServiceFileName}
+                              onChange={(e) => setTempServiceFileName(e.target.value)}
+                              className="h-6 text-xs flex-1"
+                              placeholder="Enter file name"
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') saveFileName('service');
+                                if (e.key === 'Escape') cancelFileNameEdit('service');
+                              }}
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => saveFileName('service')}
+                              className="text-green-600 hover:text-green-800 p-1 h-6"
+                            >
+                              ✓
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => cancelFileNameEdit('service')}
+                              className="text-gray-600 hover:text-gray-800 p-1 h-6"
+                            >
+                              ✕
+                            </Button>
+                          </div>
+                        ) : (
+                          <>
+                            <span 
+                              className="cursor-pointer hover:underline"
+                              onClick={() => {
+                                setIsEditingServiceFileName(true);
+                                setTempServiceFileName(selectedServiceFile.name.replace(/\.[^/.]+$/, ""));
+                              }}
+                            >
+                              📄 {selectedServiceFile.name}
+                            </span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleFileSelect(null, 'service')}
+                            >
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </Button>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
@@ -881,15 +994,60 @@ export default function CombinedServicePage() {
               </div>
               {warrantyFile && (
                 <div className="text-xs text-green-600 flex items-center justify-between bg-green-50 p-1.5 rounded">
-                  <span>📄 {warrantyFile.name}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleFileSelect(null, 'warranty')}
-                    className="h-6 w-6 p-0"
-                  >
-                    <Trash2 className="w-3 h-3 text-red-500" />
-                  </Button>
+                  {isEditingWarrantyFileName ? (
+                    <div className="flex items-center space-x-2 flex-1">
+                      <span>📄</span>
+                      <Input
+                        value={tempWarrantyFileName}
+                        onChange={(e) => setTempWarrantyFileName(e.target.value)}
+                        className="h-5 text-xs flex-1"
+                        placeholder="Enter file name"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') saveFileName('warranty');
+                          if (e.key === 'Escape') cancelFileNameEdit('warranty');
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => saveFileName('warranty')}
+                        className="text-green-600 hover:text-green-800 p-1 h-5"
+                      >
+                        ✓
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => cancelFileNameEdit('warranty')}
+                        className="text-gray-600 hover:text-gray-800 p-1 h-5"
+                      >
+                        ✕
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <span 
+                        className="cursor-pointer hover:underline"
+                        onClick={() => {
+                          setIsEditingWarrantyFileName(true);
+                          setTempWarrantyFileName(warrantyFile.name.replace(/\.[^/.]+$/, ""));
+                        }}
+                      >
+                        📄 {warrantyFile.name}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleFileSelect(null, 'warranty')}
+                        className="h-6 w-6 p-0"
+                      >
+                        <Trash2 className="w-3 h-3 text-red-500" />
+                      </Button>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -911,15 +1069,60 @@ export default function CombinedServicePage() {
               </div>
               {invoiceFile && (
                 <div className="text-xs text-green-600 flex items-center justify-between bg-green-50 p-1.5 rounded">
-                  <span>📄 {invoiceFile.name}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleFileSelect(null, 'invoice')}
-                    className="h-6 w-6 p-0"
-                  >
-                    <Trash2 className="w-3 h-3 text-red-500" />
-                  </Button>
+                  {isEditingInvoiceFileName ? (
+                    <div className="flex items-center space-x-2 flex-1">
+                      <span>📄</span>
+                      <Input
+                        value={tempInvoiceFileName}
+                        onChange={(e) => setTempInvoiceFileName(e.target.value)}
+                        className="h-5 text-xs flex-1"
+                        placeholder="Enter file name"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') saveFileName('invoice');
+                          if (e.key === 'Escape') cancelFileNameEdit('invoice');
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => saveFileName('invoice')}
+                        className="text-green-600 hover:text-green-800 p-1 h-5"
+                      >
+                        ✓
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => cancelFileNameEdit('invoice')}
+                        className="text-gray-600 hover:text-gray-800 p-1 h-5"
+                      >
+                        ✕
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <span 
+                        className="cursor-pointer hover:underline"
+                        onClick={() => {
+                          setIsEditingInvoiceFileName(true);
+                          setTempInvoiceFileName(invoiceFile.name.replace(/\.[^/.]+$/, ""));
+                        }}
+                      >
+                        📄 {invoiceFile.name}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleFileSelect(null, 'invoice')}
+                        className="h-6 w-6 p-0"
+                      >
+                        <Trash2 className="w-3 h-3 text-red-500" />
+                      </Button>
+                    </>
+                  )}
                 </div>
               )}
             </div>

@@ -24,6 +24,12 @@ Preferred communication style: Simple, everyday language.
 - REMOVED redundant success toast notifications from vehicle operations - professional dialogs now serve as success confirmation
 - FIXED 404 routing error in document update dialogs by correcting navigation paths from query parameters to proper URL structure (/vehicle/:id/upload)
 - FIXED service log navigation to redirect users to Service Logs page after successful service entry instead of dashboard or add service page
+- IMPLEMENTED file rename feature for camera-captured photos in service detail pages with inline editing functionality
+- ADDED rename capability to add-service-log.tsx page for invoice files with click-to-edit filename functionality
+- ENHANCED combined-service.tsx with rename feature for service files, warranty cards, and invoice files in both service details and maintenance dialogs
+- CREATED comprehensive rename system with auto-enable for camera captures, inline editing with input field, save/cancel actions via Enter/Escape keys, and visual feedback
+- ADDED mobile-optimized rename interface with proper input sizing, button styling, and keyboard navigation for enhanced user experience
+- INTEGRATED seamless file renaming workflow: camera capture → auto-enable rename mode → inline editing → save with new filename → maintain file extension
 
 **July 27, 2025**: COMPLETED Make/Model dropdown fix and service log date sorting with comprehensive vehicle type support
 - CRITICAL BUG FIX: Completely resolved Make and Model dropdown reset issue in edit vehicle page by fixing data source timing and state synchronization

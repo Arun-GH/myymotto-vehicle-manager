@@ -144,6 +144,8 @@ export default function AddServiceLog() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [showCustomServiceInput, setShowCustomServiceInput] = useState(false);
+  const [isEditingFileName, setIsEditingFileName] = useState(false);
+  const [tempFileName, setTempFileName] = useState("");
 
   // Get service type from URL query parameter
   const urlParams = new URLSearchParams(window.location.search);
@@ -214,7 +216,33 @@ export default function AddServiceLog() {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      // For camera captured files, enable rename mode
+      if (event.target.getAttribute("capture")) {
+        setIsEditingFileName(true);
+        setTempFileName(file.name.replace(/\.[^/.]+$/, "")); // Remove extension for editing
+      }
     }
+  };
+
+  const saveFileName = () => {
+    if (selectedFile && tempFileName.trim()) {
+      const extension = selectedFile.name.split('.').pop();
+      const newFileName = tempFileName.trim() + '.' + extension;
+      
+      // Create a new File object with the updated name
+      const renamedFile = new File([selectedFile], newFileName, {
+        type: selectedFile.type,
+        lastModified: selectedFile.lastModified
+      });
+      
+      setSelectedFile(renamedFile);
+    }
+    setIsEditingFileName(false);
+  };
+
+  const cancelFileNameEdit = () => {
+    setIsEditingFileName(false);
+    setTempFileName("");
   };
 
   const handleCameraCapture = () => {
@@ -519,24 +547,67 @@ export default function AddServiceLog() {
                 {selectedFile ? (
                   <div className="p-3 border border-green-200 rounded-lg bg-green-50">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 flex-1">
                         <Upload className="w-4 h-4 text-green-600" />
-                        <span className="text-sm text-green-700 font-medium">
-                          {selectedFile.name}
-                        </span>
+                        {isEditingFileName ? (
+                          <div className="flex items-center space-x-2 flex-1">
+                            <Input
+                              value={tempFileName}
+                              onChange={(e) => setTempFileName(e.target.value)}
+                              className="h-7 text-sm flex-1"
+                              placeholder="Enter file name"
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') saveFileName();
+                                if (e.key === 'Escape') cancelFileNameEdit();
+                              }}
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={saveFileName}
+                              className="text-green-600 hover:text-green-800 p-1 h-7"
+                            >
+                              ✓
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={cancelFileNameEdit}
+                              className="text-gray-600 hover:text-gray-800 p-1 h-7"
+                            >
+                              ✕
+                            </Button>
+                          </div>
+                        ) : (
+                          <span 
+                            className="text-sm text-green-700 font-medium cursor-pointer hover:underline flex-1"
+                            onClick={() => {
+                              setIsEditingFileName(true);
+                              setTempFileName(selectedFile.name.replace(/\.[^/.]+$/, ""));
+                            }}
+                          >
+                            {selectedFile.name}
+                          </span>
+                        )}
                       </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={removeFile}
-                        className="text-red-600 hover:text-red-800 p-1"
-                      >
-                        ✕
-                      </Button>
+                      {!isEditingFileName && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={removeFile}
+                          className="text-red-600 hover:text-red-800 p-1"
+                        >
+                          ✕
+                        </Button>
+                      )}
                     </div>
                     <p className="text-xs text-green-600 mt-1">
                       File selected ({(selectedFile.size / 1024).toFixed(1)} KB)
+                      {isEditingFileName && " • Click filename to rename"}
                     </p>
                   </div>
                 ) : (
