@@ -63,6 +63,17 @@ Preferred communication style: Simple, everyday language.
 - MAINTAINED data integrity by restricting selection range from 1900-01 to current year-month
 - PRESERVED existing form functionality while upgrading to intuitive date picker interface for better user experience
 
+**July 27, 2025**: COMPLETED notification system optimization to refresh once daily or on user login
+- REPLACED frequent notification polling (every 30 seconds) with efficient once-daily refresh system using localStorage timestamp tracking
+- IMPLEMENTED localStorage-based caching system (notifications_last_fetched) to track when notifications were last loaded
+- ENHANCED notification bell component with intelligent refresh logic that only fetches notifications when needed (new day or user login)
+- UPDATED authentication flow to clear notification cache on all login methods: OTP verification, PIN login, biometric setup, and authentication skips
+- ADDED useEffect hook to notification bell for automatic cache invalidation when notifications need refresh
+- CONFIGURED TanStack Query with 24-hour stale time and cache time to prevent unnecessary API calls
+- CREATED shouldFetchNotifications() helper function to determine when notification refresh is needed
+- ENHANCED user experience by eliminating constant notification API calls while ensuring fresh data on daily basis and login events
+- MAINTAINED real-time notification accuracy while significantly reducing server load and improving app performance
+
 **July 27, 2025**: COMPLETED insurance quick action integration with document storage system
 - UPDATED insurance quick action button to pull insurance details from Documents page instead of vehicle database
 - ENHANCED insurance page to use document storage data for provider, dates, sum insured, and premium amounts

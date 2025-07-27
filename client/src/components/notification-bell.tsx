@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import NotificationsPanel from "./notifications-panel";
 
@@ -12,17 +12,52 @@ interface Notification {
 
 export default function NotificationBell() {
   const [showNotifications, setShowNotifications] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Check for notification cache reset and refetch if needed
+  useEffect(() => {
+    const checkNotificationRefresh = () => {
+      if (shouldFetchNotifications()) {
+        // Invalidate and refetch notifications when needed
+        queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
+      }
+    };
+
+    // Check on component mount and when focus returns to the page
+    checkNotificationRefresh();
+    
+    const handleFocus = () => checkNotificationRefresh();
+    window.addEventListener('focus', handleFocus);
+    
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [queryClient]);
 
   const { data: notifications = [] } = useQuery<Notification[]>({
     queryKey: ["/api/notifications"],
     queryFn: async () => {
       const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
       const response = await apiRequest("GET", `/api/notifications?userId=${currentUserId}`);
-      return response.json();
+      const data = await response.json();
+      
+      // Update last fetch timestamp
+      const today = new Date().toDateString();
+      localStorage.setItem('notifications_last_fetched', today);
+      
+      return data;
     },
-    refetchInterval: 30000, // Check every 30 seconds
-    staleTime: 10000 // Consider data stale after 10 seconds
+    enabled: shouldFetchNotifications(), // Only fetch when needed
+    staleTime: 24 * 60 * 60 * 1000, // Consider data stale after 24 hours
+    gcTime: 24 * 60 * 60 * 1000 // Keep in cache for 24 hours
   });
+
+  // Helper function to determine if notifications should be fetched
+  function shouldFetchNotifications(): boolean {
+    const lastFetched = localStorage.getItem('notifications_last_fetched');
+    const today = new Date().toDateString();
+    
+    // Fetch if never fetched before or if it's a new day
+    return !lastFetched || lastFetched !== today;
+  }
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 

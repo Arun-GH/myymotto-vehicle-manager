@@ -145,6 +145,9 @@ export default function SignIn() {
       localStorage.setItem("lastUsedIdentifier", identifier);
       localStorage.setItem("hasPin", "true");
       
+      // Clear notification cache to refresh notifications on login
+      localStorage.removeItem("notifications_last_fetched");
+      
       // Always go to dashboard for PIN login users (they already have profiles)
       toast({
         title: "Welcome Back!",
@@ -216,6 +219,9 @@ export default function SignIn() {
       localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("authMethod", "biometric");
       
+      // Clear notification cache to refresh notifications on login
+      localStorage.removeItem("notifications_last_fetched");
+      
       // Check if user has profile
       const hasProfile = localStorage.getItem("hasProfile") === "true";
       if (hasProfile) {
@@ -246,6 +252,9 @@ export default function SignIn() {
       localStorage.setItem("userId", data.userId.toString());
       localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("authMethod", "otp");
+      
+      // Clear notification cache to refresh notifications on login
+      localStorage.removeItem("notifications_last_fetched");
       
       // Always proceed to next screen based on profile status
       if (data.hasProfile) {
@@ -348,6 +357,10 @@ export default function SignIn() {
     // Store basic authentication state and proceed
     localStorage.setItem("currentUserId", userId!.toString());
     localStorage.setItem("authMethod", "otp");
+    
+    // Clear notification cache to refresh notifications on login
+    localStorage.removeItem("notifications_last_fetched");
+    
     setLocation("/profile");
   };
 
@@ -355,6 +368,9 @@ export default function SignIn() {
     // Store authentication state and proceed
     localStorage.setItem("currentUserId", userId!.toString());
     localStorage.setItem("authMethod", "pin");
+    
+    // Clear notification cache to refresh notifications on login
+    localStorage.removeItem("notifications_last_fetched");
     
     const hasProfile = localStorage.getItem("hasProfile") === "true";
     if (hasProfile) {
