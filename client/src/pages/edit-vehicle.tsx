@@ -101,6 +101,7 @@ export default function EditVehicle() {
   // Update form when vehicle data is loaded
   useEffect(() => {
     if (vehicle) {
+      console.log("Resetting form with vehicle data:", vehicle.make, vehicle.model, vehicle.vehicleType);
       form.reset({
         make: vehicle.make || "",
         model: vehicle.model || "",
@@ -165,6 +166,10 @@ export default function EditVehicle() {
       if (vehicle.thumbnailPath) {
         setThumbnailPreview(vehicle.thumbnailPath);
       }
+      
+      // Debug: Check form values after reset
+      console.log("Form values after reset:", form.getValues());
+      console.log("Available makes for type:", vehicle.vehicleType, getAllMakesForType(vehicle.vehicleType));
     }
   }, [vehicle, form]);
 
@@ -565,7 +570,7 @@ export default function EditVehicle() {
                                 <SelectValue placeholder="Select make" />
                               </SelectTrigger>
                               <SelectContent>
-                                {getAllMakesForType(watchedVehicleType || "4-wheeler").map((make) => (
+                                {getAllMakesForType(vehicle?.vehicleType || "4-wheeler").map((make) => (
                                   <SelectItem key={make} value={make}>
                                     {make.toUpperCase()}
                                   </SelectItem>
@@ -614,7 +619,7 @@ export default function EditVehicle() {
                                 <SelectValue placeholder="Select model" />
                               </SelectTrigger>
                               <SelectContent>
-                                {watchedMake && getModelsForMake(watchedMake, watchedVehicleType || "4-wheeler").map((model) => (
+                                {watchedMake && getModelsForMake(watchedMake, vehicle?.vehicleType || "4-wheeler").map((model) => (
                                   <SelectItem key={model} value={model}>
                                     {model}
                                   </SelectItem>
