@@ -6,6 +6,7 @@ import ColorfulLogo from "@/components/colorful-logo";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface NewsItem {
   id: string;
@@ -21,6 +22,9 @@ interface NewsItem {
 export default function NewsTidbits() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // State for selected category filter - default to "offers"
+  const [selectedCategory, setSelectedCategory] = useState<string>("offers");
 
   // Fetch news data from API
   const { data: newsItems = [], isLoading, error } = useQuery<NewsItem[]>({
@@ -97,6 +101,47 @@ export default function NewsTidbits() {
     }
   };
 
+  // Filter news items based on selected category
+  const filteredNewsItems = newsItems.filter(item => 
+    selectedCategory === "all" ? true : item.category === selectedCategory
+  );
+
+  // Category button configuration
+  const categories = [
+    { id: "launch", label: "Launches", icon: Zap, color: "green" },
+    { id: "event", label: "Events", icon: Calendar, color: "purple" },
+    { id: "policy", label: "Policies", icon: AlertTriangle, color: "red" },
+    { id: "offers", label: "Offers", icon: DollarSign, color: "orange" }
+  ];
+
+  const getCategoryButtonStyle = (categoryId: string, color: string) => {
+    const isSelected = selectedCategory === categoryId;
+    const baseClasses = "flex-1 p-3 text-center transition-all duration-200 flex flex-col items-center space-y-1";
+    
+    switch (color) {
+      case "green":
+        return `${baseClasses} ${isSelected 
+          ? "bg-green-100 text-green-800 border-2 border-green-500 shadow-lg" 
+          : "bg-white text-green-600 border border-green-200 hover:bg-green-50"}`;
+      case "purple":
+        return `${baseClasses} ${isSelected 
+          ? "bg-purple-100 text-purple-800 border-2 border-purple-500 shadow-lg" 
+          : "bg-white text-purple-600 border border-purple-200 hover:bg-purple-50"}`;
+      case "red":
+        return `${baseClasses} ${isSelected 
+          ? "bg-red-100 text-red-800 border-2 border-red-500 shadow-lg" 
+          : "bg-white text-red-600 border border-red-200 hover:bg-red-50"}`;
+      case "orange":
+        return `${baseClasses} ${isSelected 
+          ? "bg-orange-100 text-orange-800 border-2 border-orange-500 shadow-lg" 
+          : "bg-white text-orange-600 border border-orange-200 hover:bg-orange-50"}`;
+      default:
+        return `${baseClasses} ${isSelected 
+          ? "bg-gray-100 text-gray-800 border-2 border-gray-500 shadow-lg" 
+          : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50">
       {/* Header */}
@@ -154,36 +199,23 @@ export default function NewsTidbits() {
 
       {/* Content */}
       <div className="p-4 space-y-4">
-        {/* Stats Summary */}
+        {/* Category Filter Buttons */}
         <div className="grid grid-cols-4 gap-2 mb-4">
-          <Card className="p-2 text-center bg-green-100 shadow-orange-200 shadow-md">
-            <div className="flex items-center justify-center space-x-1 mb-1">
-              <Zap className="w-3 h-3 text-green-600" />
-              <span className="text-xs font-bold text-green-800">Launches</span>
-            </div>
-            <p className="text-lg font-bold text-green-600">{newsItems.filter(item => item.category === 'launch').length}</p>
-          </Card>
-          <Card className="p-2 text-center bg-purple-100 shadow-orange-200 shadow-md">
-            <div className="flex items-center justify-center space-x-1 mb-1">
-              <Calendar className="w-3 h-3 text-purple-600" />
-              <span className="text-xs font-bold text-purple-800">Events</span>
-            </div>
-            <p className="text-lg font-bold text-purple-600">{newsItems.filter(item => item.category === 'event').length}</p>
-          </Card>
-          <Card className="p-2 text-center bg-red-100 shadow-orange-200 shadow-md">
-            <div className="flex items-center justify-center space-x-1 mb-1">
-              <AlertTriangle className="w-3 h-3 text-red-600" />
-              <span className="text-xs font-bold text-red-800">Policies</span>
-            </div>
-            <p className="text-lg font-bold text-red-600">{newsItems.filter(item => item.category === 'policy').length}</p>
-          </Card>
-          <Card className="p-2 text-center bg-orange-100 shadow-orange-200 shadow-md">
-            <div className="flex items-center justify-center space-x-1 mb-1">
-              <DollarSign className="w-3 h-3 text-orange-600" />
-              <span className="text-xs font-bold text-orange-800">Offers</span>
-            </div>
-            <p className="text-lg font-bold text-orange-600">{newsItems.filter(item => item.category === 'offers').length}</p>
-          </Card>
+          {categories.map((category) => {
+            const IconComponent = category.icon;
+            const itemCount = newsItems.filter(item => item.category === category.id).length;
+            return (
+              <Card
+                key={category.id}
+                className={`cursor-pointer rounded-lg shadow-orange-200 shadow-md ${getCategoryButtonStyle(category.id, category.color)}`}
+                onClick={() => setSelectedCategory(category.id)}
+              >
+                <IconComponent className="w-4 h-4" />
+                <span className="text-xs font-bold">{category.label}</span>
+                <span className="text-lg font-bold">{itemCount}</span>
+              </Card>
+            );
+          })}
         </div>
 
         {/* News Items */}
@@ -228,25 +260,37 @@ export default function NewsTidbits() {
               Try Again
             </Button>
           </Card>
-        ) : newsItems.length === 0 ? (
+        ) : filteredNewsItems.length === 0 ? (
           <Card className="p-6 text-center shadow-orange-200 shadow-md">
             <Newspaper className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-            <h3 className="font-semibold text-gray-800 mb-2">No News Available</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              No {categories.find(cat => cat.id === selectedCategory)?.label} Available
+            </h3>
             <p className="text-xs text-gray-600 mb-4">
-              No vehicle news found at the moment. Try refreshing to check for updates.
+              No {selectedCategory} news found at the moment. Try selecting a different category or refreshing for updates.
             </p>
-            <Button
-              onClick={() => refreshNewsMutation.mutate()}
-              disabled={refreshNewsMutation.isPending}
-              variant="outline"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh News
-            </Button>
+            <div className="flex gap-2 justify-center">
+              <Button
+                onClick={() => setSelectedCategory("offers")}
+                variant="outline"
+                size="sm"
+              >
+                View Offers
+              </Button>
+              <Button
+                onClick={() => refreshNewsMutation.mutate()}
+                disabled={refreshNewsMutation.isPending}
+                variant="outline"
+                size="sm"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh
+              </Button>
+            </div>
           </Card>
         ) : (
           <div className="space-y-3">
-            {newsItems.map((item) => (
+            {filteredNewsItems.map((item) => (
               <Card key={item.id} className={`p-4 shadow-orange-200 shadow-md ${getPriorityBorder(item.priority)}`}>
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center space-x-2">
