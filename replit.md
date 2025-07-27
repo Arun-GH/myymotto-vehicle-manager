@@ -10,7 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 27, 2025**: FIXED critical Make/Model dropdown reset issue and 3-wheeler service dropdown support across entire application
+**July 27, 2025**: COMPLETED Make/Model dropdown fix and service log date sorting with comprehensive vehicle type support
+- CRITICAL BUG FIX: Completely resolved Make and Model dropdown reset issue in edit vehicle page by fixing data source timing and state synchronization
+- ENHANCED form data loading: Changed dropdown options from watchedVehicleType to vehicle?.vehicleType to ensure correct options are loaded immediately
+- FIXED selectedMake state synchronization: Added setSelectedMake(vehicle.make) when form resets to sync state with form fields
+- ENHANCED Model dropdown logic: Changed from watchedMake only to (watchedMake || vehicle?.make) for proper fallback and immediate display
+- IMPLEMENTED comprehensive debugging with console logs for vehicle data loading, form reset values, and available dropdown options
+- VERIFIED data integrity: Confirmed all vehicle makes/models exist in predefined dropdown lists with proper categorization
+- ADDED service log date sorting: Implemented chronological sorting (latest first) for both service logs and maintenance records on service logs page
+- ENHANCED service history display: Service entries now display in proper date order with newest entries at the top for better user experience
+- CREATED sorted arrays with proper React state management using spread operator to prevent mutation issues
+- MAINTAINED backward compatibility while adding smart date sorting that handles missing dates by moving them to bottom of list
 - CRITICAL BUG FIX: Fixed Make and Model dropdowns resetting when editing vehicles instead of showing initially selected values
 - RESOLVED dropdown value binding issue by changing from selectedMake state to field.value for proper form field synchronization
 - UPDATED handleMakeChange functions in both add-vehicle.tsx and edit-vehicle.tsx to accept field.onChange parameter for proper form state management

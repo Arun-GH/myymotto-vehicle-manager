@@ -105,6 +105,23 @@ export default function ServiceLogs() {
     }).format(amount);
   };
 
+  // Sort service logs by date (latest first)
+  const sortedServiceLogs = serviceLogs ? [...serviceLogs].sort((a, b) => {
+    const dateA = new Date(a.serviceDate).getTime();
+    const dateB = new Date(b.serviceDate).getTime();
+    return dateB - dateA; // Latest first
+  }) : undefined;
+
+  // Sort maintenance records by date (latest first)
+  const sortedMaintenanceRecords = maintenanceRecords ? [...maintenanceRecords].sort((a, b) => {
+    if (!a.completedDate && !b.completedDate) return 0;
+    if (!a.completedDate) return 1; // Move records without date to end
+    if (!b.completedDate) return -1; // Move records without date to end
+    const dateA = new Date(a.completedDate).getTime();
+    const dateB = new Date(b.completedDate).getTime();
+    return dateB - dateA; // Latest first
+  }) : undefined;
+
   if (vehicleLoading || logsLoading || maintenanceLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
@@ -197,7 +214,7 @@ export default function ServiceLogs() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            {(!serviceLogs || serviceLogs.length === 0) && (!maintenanceRecords || maintenanceRecords.length === 0) ? (
+            {(!sortedServiceLogs || sortedServiceLogs.length === 0) && (!sortedMaintenanceRecords || sortedMaintenanceRecords.length === 0) ? (
               <div className="text-center py-4 px-2">
                 <NotebookPen className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                 <p className="text-sm text-gray-600 mb-1">No service logs yet</p>
@@ -214,7 +231,7 @@ export default function ServiceLogs() {
             ) : (
               <div className="space-y-1">
                 {/* Display maintenance records from Essential Replaces */}
-                {maintenanceRecords?.map((record) => (
+                {sortedMaintenanceRecords?.map((record) => (
                   <div
                     key={`maintenance-${record.id}`}
                     className="flex items-center justify-between p-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
@@ -319,7 +336,7 @@ export default function ServiceLogs() {
                 ))}
                 
                 {/* Display regular service logs */}
-                {serviceLogs?.map((log) => (
+                {sortedServiceLogs?.map((log) => (
                   <div
                     key={log.id}
                     className="flex items-center justify-between p-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
@@ -397,7 +414,7 @@ export default function ServiceLogs() {
         </Card>
 
         {/* Add Service Log Button - Always show when there are existing logs */}
-        {((serviceLogs && serviceLogs.length > 0) || (maintenanceRecords && maintenanceRecords.length > 0)) && (
+        {((sortedServiceLogs && sortedServiceLogs.length > 0) || (sortedMaintenanceRecords && sortedMaintenanceRecords.length > 0)) && (
           <div className="mt-2">
             <Link href={`/vehicle/${vehicleId}/service`}>
               <Button className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 h-8 text-xs">
