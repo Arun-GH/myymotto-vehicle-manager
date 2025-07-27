@@ -21,30 +21,7 @@ import ColorfulLogo from "@/components/colorful-logo";
 import ReferralDialog from "@/components/referral-dialog";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
-// Top Indian Insurance Providers
-const indianInsuranceProviders = [
-  "HDFC ERGO General Insurance",
-  "ICICI Lombard General Insurance",
-  "Bajaj Allianz General Insurance",
-  "Reliance General Insurance",
-  "Tata AIG General Insurance",
-  "New India Assurance",
-  "United India Insurance",
-  "National Insurance Company",
-  "Oriental Insurance Company",
-  "SBI General Insurance",
-  "Future Generali India Insurance",
-  "Cholamandalam MS General Insurance",
-  "Royal Sundaram General Insurance",
-  "Bharti AXA General Insurance",
-  "IFFCO Tokio General Insurance",
-  "Kotak Mahindra General Insurance",
-  "Universal Sompo General Insurance",
-  "Shriram General Insurance",
-  "Acko General Insurance",
-  "Digit Insurance",
-  "Other (Enter manually)"
-];
+
 
 export default function AddVehicle() {
   const [, setLocation] = useLocation();
@@ -54,7 +31,7 @@ export default function AddVehicle() {
   const [isCustomMake, setIsCustomMake] = useState(false);
   const [isCustomModel, setIsCustomModel] = useState(false);
   const [isCustomColor, setIsCustomColor] = useState(false);
-  const [isCustomInsuranceProvider, setIsCustomInsuranceProvider] = useState(false);
+
   const [showReferralDialog, setShowReferralDialog] = useState(false);
   const [showDocumentUpdateDialog, setShowDocumentUpdateDialog] = useState(false);
   const [createdVehicleId, setCreatedVehicleId] = useState<number | null>(null);
@@ -87,18 +64,6 @@ export default function AddVehicle() {
       engineNumber: "",
       ownerName: "",
       ownerPhone: "",
-      insuranceCompany: "",
-      insuranceExpiry: "",
-      insuranceExpiryDate: "",
-      insuranceSumInsured: "000",
-      insurancePremiumAmount: "000",
-      emissionExpiry: "",
-      rcExpiry: "",
-      lastServiceDate: "",
-      currentOdometerReading: 0,
-      averageUsagePerMonth: 0, 
-      serviceIntervalKms: 0,
-      serviceIntervalMonths: 0,
       vehicleType: "4-wheeler",
       fuelType: "",
       userType: "Private",
@@ -110,11 +75,10 @@ export default function AddVehicle() {
 
   // Calculate vehicle completeness based on current form values
   const formValues = form.watch();
-  // Include thumbnail image and insurance provider info for completeness calculation
+  // Include thumbnail image for completeness calculation
   const completenessData = {
     ...formValues,
     thumbnailPath: thumbnailImage ? 'photo-selected' : null,
-    insuranceProvider: formValues.insuranceCompany,
   };
   const completeness = calculateVehicleCompleteness(completenessData);
 
@@ -156,15 +120,7 @@ export default function AddVehicle() {
     }
   };
 
-  const handleInsuranceProviderChange = (provider: string) => {
-    if (provider === "Other (Enter manually)") {
-      setIsCustomInsuranceProvider(true);
-      form.setValue("insuranceCompany", "");
-    } else {
-      setIsCustomInsuranceProvider(false);
-      form.setValue("insuranceCompany", provider);
-    }
-  };
+
 
   const handleColorChange = (value: string) => {
     if (value === "Other") {
@@ -214,24 +170,10 @@ export default function AddVehicle() {
         ...data,
         userId: parseInt(currentUserId),
         thumbnailPath,
-        // Convert dates to proper database format - ensure dates are properly formatted or null
-        insuranceExpiry: formatDateForDb(data.insuranceExpiry),
-        insuranceExpiryDate: formatDateForDb(data.insuranceExpiryDate),
-        emissionExpiry: formatDateForDb(data.emissionExpiry),
-        rcExpiry: formatDateForDb(data.rcExpiry),
-        lastServiceDate: formatDateForDb(data.lastServiceDate),
-        // Ensure numeric fields are properly converted or null if empty (skip if default 0)
-        currentOdometerReading: (data.currentOdometerReading && data.currentOdometerReading !== 0) ? Number(data.currentOdometerReading) : null,
-        averageUsagePerMonth: (data.averageUsagePerMonth && data.averageUsagePerMonth !== 0) ? Number(data.averageUsagePerMonth) : null,
-        serviceIntervalKms: (data.serviceIntervalKms && data.serviceIntervalKms !== 0) ? Number(data.serviceIntervalKms) : null,
-        serviceIntervalMonths: (data.serviceIntervalMonths && data.serviceIntervalMonths !== 0) ? Number(data.serviceIntervalMonths) : null,
-        // Ensure string fields are properly null if empty (skip if default "000")
-        insuranceSumInsured: (data.insuranceSumInsured?.trim() && data.insuranceSumInsured !== "000") ? data.insuranceSumInsured.trim() : null,
-        insurancePremiumAmount: (data.insurancePremiumAmount?.trim() && data.insurancePremiumAmount !== "000") ? data.insurancePremiumAmount.trim() : null,
+        // Ensure string fields are properly null if empty
         chassisNumber: data.chassisNumber?.trim() || null,
         engineNumber: data.engineNumber?.trim() || null,
         ownerPhone: data.ownerPhone?.trim() || null,
-        insuranceCompany: data.insuranceCompany?.trim() || null,
         fuelType: data.fuelType?.trim() || null,
         userType: data.userType?.trim() || "Private", // Default to Private if not provided
         // Ensure year is a number

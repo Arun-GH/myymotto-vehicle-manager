@@ -20,30 +20,7 @@ import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 // Date conversion functions moved to standardized utilities
 
-// Top Indian Insurance Providers
-const indianInsuranceProviders = [
-  "HDFC ERGO General Insurance",
-  "ICICI Lombard General Insurance",
-  "Bajaj Allianz General Insurance",
-  "Reliance General Insurance",
-  "Tata AIG General Insurance",
-  "New India Assurance",
-  "United India Insurance",
-  "National Insurance Company",
-  "Oriental Insurance Company",
-  "SBI General Insurance",
-  "Future Generali India Insurance",
-  "Cholamandalam MS General Insurance",
-  "Royal Sundaram General Insurance",
-  "Bharti AXA General Insurance",
-  "IFFCO Tokio General Insurance",
-  "Kotak Mahindra General Insurance",
-  "Universal Sompo General Insurance",
-  "Shriram General Insurance",
-  "Acko General Insurance",
-  "Digit Insurance",
-  "Other (Enter manually)"
-];
+
 
 export default function EditVehicle() {
   const [, setLocation] = useLocation();
@@ -55,7 +32,7 @@ export default function EditVehicle() {
   const [isCustomMake, setIsCustomMake] = useState(false);
   const [isCustomModel, setIsCustomModel] = useState(false);
   const [isCustomColor, setIsCustomColor] = useState(false);
-  const [isCustomInsuranceProvider, setIsCustomInsuranceProvider] = useState(false);
+
   const [showDocumentUpdateDialog, setShowDocumentUpdateDialog] = useState(false);
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
@@ -83,17 +60,6 @@ export default function EditVehicle() {
       engineNumber: "",
       ownerName: "",
       ownerPhone: "",
-      insuranceExpiry: "",
-      insuranceExpiryDate: "",
-      insuranceSumInsured: "",
-      insurancePremiumAmount: "",
-      emissionExpiry: "",
-      rcExpiry: "",
-      lastServiceDate: "",
-      currentOdometerReading: null,
-      averageUsagePerMonth: null,
-      serviceIntervalKms: null,
-      serviceIntervalMonths: null,
       vehicleType: "",
       fuelType: "",
       userType: "Private",
@@ -114,17 +80,6 @@ export default function EditVehicle() {
         engineNumber: vehicle.engineNumber || "",
         ownerName: vehicle.ownerName || "",
         ownerPhone: vehicle.ownerPhone || "",
-        insuranceExpiry: formatToddmmyyyy(vehicle.insuranceExpiry) || "",
-        insuranceExpiryDate: formatToddmmyyyy(vehicle.insuranceExpiryDate) || "",
-        insuranceSumInsured: vehicle.insuranceSumInsured || "",
-        insurancePremiumAmount: vehicle.insurancePremiumAmount || "",
-        emissionExpiry: formatToddmmyyyy(vehicle.emissionExpiry) || "",
-        rcExpiry: formatToddmmyyyy(vehicle.rcExpiry) || "",
-        lastServiceDate: formatToddmmyyyy(vehicle.lastServiceDate) || "",
-        currentOdometerReading: vehicle.currentOdometerReading || null,
-        averageUsagePerMonth: vehicle.averageUsagePerMonth || null,
-        serviceIntervalKms: vehicle.serviceIntervalKms || null,
-        serviceIntervalMonths: vehicle.serviceIntervalMonths || null,
         vehicleType: vehicle.vehicleType || "",
         fuelType: vehicle.fuelType || "",
         userType: vehicle.userType || "Private",
@@ -158,12 +113,7 @@ export default function EditVehicle() {
         setIsCustomColor(false);
       }
 
-      // Check if insurance company is custom (not in dropdown)
-      if (vehicle.insuranceCompany && !indianInsuranceProviders.includes(vehicle.insuranceCompany)) {
-        setIsCustomInsuranceProvider(true);
-      } else {
-        setIsCustomInsuranceProvider(false);
-      }
+
       
       if (vehicle.thumbnailPath) {
         setThumbnailPreview(vehicle.thumbnailPath);
@@ -220,15 +170,7 @@ export default function EditVehicle() {
     }
   };
 
-  const handleInsuranceProviderChange = (provider: string) => {
-    if (provider === "Other (Enter manually)") {
-      setIsCustomInsuranceProvider(true);
-      form.setValue("insuranceCompany", "");
-    } else {
-      setIsCustomInsuranceProvider(false);
-      form.setValue("insuranceCompany", provider);
-    }
-  };
+
 
   const handleColorChange = (value: string) => {
     if (value === "Other") {
@@ -279,15 +221,6 @@ export default function EditVehicle() {
       const cleanedData = {
         ...data,
         thumbnailPath,
-        insuranceExpiry: formatForDatabase(data.insuranceExpiry?.trim() || "") || null,
-        insuranceExpiryDate: formatForDatabase(data.insuranceExpiryDate?.trim() || "") || null,
-        emissionExpiry: formatForDatabase(data.emissionExpiry?.trim() || "") || null,
-        rcExpiry: formatForDatabase(data.rcExpiry?.trim() || "") || null,
-        lastServiceDate: formatForDatabase(data.lastServiceDate?.trim() || "") || null,
-        currentOdometerReading: data.currentOdometerReading || null,
-        averageUsagePerMonth: data.averageUsagePerMonth || null,
-        serviceIntervalKms: data.serviceIntervalKms || null,
-        serviceIntervalMonths: data.serviceIntervalMonths || null,
         userType: data.userType?.trim() || "Private", // Default to Private if not provided
       };
 

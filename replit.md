@@ -10,6 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 27, 2025**: COMPLETED comprehensive vehicle form streamlining by removing insurance and service details for single source of truth
+- MAJOR ARCHITECTURAL CLEANUP: Successfully completed removal of insurance and service detail fields from vehicle forms (add-vehicle.tsx and edit-vehicle.tsx)
+- REMOVED insurance provider constants, state variables, and form field references that were creating data duplication with document storage system
+- CLEANED UP form default values by removing insuranceCompany, insuranceExpiry, insuranceExpiryDate, insuranceSumInsured, insurancePremiumAmount, emissionExpiry, rcExpiry, lastServiceDate, currentOdometerReading, averageUsagePerMonth, serviceIntervalKms, and serviceIntervalMonths fields
+- STREAMLINED form initialization in edit-vehicle.tsx by removing insurance and service field mappings from vehicle data reset logic
+- ELIMINATED redundant insurance provider change handlers and custom provider state management (isCustomInsuranceProvider)
+- SIMPLIFIED mutation data by removing insurance and service field processing from both POST /api/vehicles and PUT /api/vehicles requests
+- ESTABLISHED single source of truth: Vehicle forms capture essential vehicle info → Upload Documents page handles detailed insurance/service data → Vehicle tiles display document-based information
+- MAINTAINED all existing functionality while eliminating data duplication between vehicle database and document storage systems
+- ENHANCED data integrity by ensuring insurance and service information flows through specialized document management system only
+- PRESERVED vehicle completeness tracking and all core vehicle management features while creating cleaner, more focused vehicle registration experience
+
 **July 27, 2025**: COMPLETED professional document update prompts after vehicle operations
 - IMPLEMENTED professional document update dialogs for both Add Vehicle and Edit Vehicle pages with mobile-optimized design
 - ENHANCED Add Vehicle page with completion prompt showing gradient circular icon, professional messaging, and dual action buttons
