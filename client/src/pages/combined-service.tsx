@@ -180,7 +180,7 @@ const twoWheelerServiceTypes = [
   'Suspension Service',
   'Fork Oil Change',
   'Shock Absorber Service',
-  'Headlight/Taillight Service',
+  'Headlight/Tailight Service',
   'Horn & Electrical Check',
   'Speedometer Service',
   'Exhaust Service/Repair',
@@ -190,6 +190,37 @@ const twoWheelerServiceTypes = [
   'Insurance Claim Work',
   'Accident Repair',
   'Engine Overhaul/Rebore',
+  'Other (Please specify)'
+];
+
+// Common 3-wheeler service types for dropdown
+const threeWheelerServiceTypes = [
+  'Engine Oil Change',
+  'Oil Filter Replacement',
+  'Air Filter Replacement',
+  'Brake Service & Inspection',
+  'Brake Pad Replacement',
+  'Brake Fluid Change',
+  'Transmission Service',
+  'Clutch Service & Adjustment',
+  'Battery Check & Replacement',
+  'Tire Replacement',
+  'Wheel Alignment',
+  'Suspension Service',
+  'Spark Plug Replacement',
+  'General Service (Paid)',
+  'Free Service',
+  'Chain/Belt Drive Service',
+  'Fuel System Cleaning',
+  'Electrical System Check',
+  'Cooling System Service',
+  'Carburetor Service',
+  'Horn & Light Check',
+  'Speedometer Service',
+  'Body Work & Repairs',
+  'Insurance Claim Work',
+  'Accident Repair',
+  'Engine Overhaul',
   'Other (Please specify)'
 ];
 
@@ -507,7 +538,7 @@ export default function CombinedServicePage() {
                 <form onSubmit={serviceForm.handleSubmit(handleServiceSubmit)} className="space-y-3">
                   <div className="space-y-1">
                     <Label htmlFor="serviceType" className="text-xs">Service Type</Label>
-                    {vehicle?.vehicleType === '4-wheeler' || vehicle?.vehicleType === '2-wheeler' ? (
+                    {['4-wheeler', '2-wheeler', '3-wheeler'].includes(vehicle?.vehicleType || '') ? (
                       <div className="space-y-2">
                         <Select 
                           value={showCustomServiceInput ? 'Other (Please specify)' : serviceForm.watch("serviceType")} 
@@ -525,7 +556,12 @@ export default function CombinedServicePage() {
                             <SelectValue placeholder="Select service type..." />
                           </SelectTrigger>
                           <SelectContent>
-                            {(vehicle?.vehicleType === '4-wheeler' ? fourWheelerServiceTypes : twoWheelerServiceTypes).map((serviceType) => (
+                            {(() => {
+                              if (vehicle?.vehicleType === '4-wheeler') return fourWheelerServiceTypes;
+                              if (vehicle?.vehicleType === '2-wheeler') return twoWheelerServiceTypes;
+                              if (vehicle?.vehicleType === '3-wheeler') return threeWheelerServiceTypes;
+                              return [];
+                            })().map((serviceType) => (
                               <SelectItem key={serviceType} value={serviceType}>
                                 {serviceType}
                               </SelectItem>

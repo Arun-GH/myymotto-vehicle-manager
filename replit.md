@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 27, 2025**: FIXED 3-wheeler service dropdown support and completed comprehensive service interval tracking system for General Service (Paid) across entire application
+- CRITICAL BUG FIX: Added 3-wheeler support to service management pages (combined-service.tsx and add-service-log.tsx) - dropdown now shows for all vehicle types (4-wheeler, 2-wheeler, 3-wheeler)
+- IMPLEMENTED comprehensive 3-wheeler service type dropdown with 27 common service types including Engine Oil Change, Brake Service, Transmission Service, Clutch Service, Battery Replacement, Tire Replacement, Suspension Service, and specialized 3-wheeler services
+- FIXED service type dropdown condition from checking only 4-wheeler/2-wheeler to include 3-wheeler vehicles using array.includes() pattern
+- ENHANCED service type selection logic with conditional service type array selection based on vehicle type for accurate service options
+- COMPLETED proper service type categorization: 4-wheelers get car services, 2-wheelers get motorcycle services, 3-wheelers get auto-rickshaw/commercial vehicle services
+- MAINTAINED backward compatibility with existing vehicle service logs while expanding support for all vehicle types
+- RESOLVED user issue where 3-wheeler vehicles (like Eicher Pro 1110) were falling back to manual input instead of showing prepopulated dropdown options
+
 **July 26, 2025**: COMPLETED comprehensive service interval tracking system for General Service (Paid) across entire application
 - ENHANCED database schema with service_interval_months field in serviceLogs table and successfully applied migration (npm run db:push)
 - IMPLEMENTED conditional service interval fields in both combined-service.tsx and add-service-log.tsx that only display when "General Service (Paid)" is selected as service type

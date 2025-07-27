@@ -93,6 +93,37 @@ const twoWheelerServiceTypes = [
   'Other (Please specify)'
 ];
 
+// Common 3-wheeler service types for dropdown
+const threeWheelerServiceTypes = [
+  'Engine Oil Change',
+  'Oil Filter Replacement',
+  'Air Filter Replacement',
+  'Brake Service & Inspection',
+  'Brake Pad Replacement',
+  'Brake Fluid Change',
+  'Transmission Service',
+  'Clutch Service & Adjustment',
+  'Battery Check & Replacement',
+  'Tire Replacement',
+  'Wheel Alignment',
+  'Suspension Service',
+  'Spark Plug Replacement',
+  'General Service (Paid)',
+  'Free Service',
+  'Chain/Belt Drive Service',
+  'Fuel System Cleaning',
+  'Electrical System Check',
+  'Cooling System Service',
+  'Carburetor Service',
+  'Horn & Light Check',
+  'Speedometer Service',
+  'Body Work & Repairs',
+  'Insurance Claim Work',
+  'Accident Repair',
+  'Engine Overhaul',
+  'Other (Please specify)'
+];
+
 const serviceLogSchema = z.object({
   serviceType: z.string().min(1, "Service type is required"),
   serviceDate: z.string().min(1, "Service date is required"),
@@ -278,7 +309,7 @@ export default function AddServiceLog() {
                 <Label htmlFor="serviceType" className="text-sm font-medium text-gray-700">
                   Service Type *
                 </Label>
-                {vehicle?.vehicleType === '4-wheeler' || vehicle?.vehicleType === '2-wheeler' ? (
+                {['4-wheeler', '2-wheeler', '3-wheeler'].includes(vehicle?.vehicleType || '') ? (
                   <div className="space-y-2">
                     <Select 
                       value={showCustomServiceInput ? 'Other (Please specify)' : form.watch("serviceType")} 
@@ -296,7 +327,12 @@ export default function AddServiceLog() {
                         <SelectValue placeholder="Select service type..." />
                       </SelectTrigger>
                       <SelectContent>
-                        {(vehicle?.vehicleType === '4-wheeler' ? fourWheelerServiceTypes : twoWheelerServiceTypes).map((serviceType) => (
+                        {(() => {
+                          if (vehicle?.vehicleType === '4-wheeler') return fourWheelerServiceTypes;
+                          if (vehicle?.vehicleType === '2-wheeler') return twoWheelerServiceTypes;
+                          if (vehicle?.vehicleType === '3-wheeler') return threeWheelerServiceTypes;
+                          return [];
+                        })().map((serviceType) => (
                           <SelectItem key={serviceType} value={serviceType}>
                             {serviceType}
                           </SelectItem>
