@@ -892,7 +892,7 @@ export default function EditVehicle() {
             <AlertDialogAction 
               onClick={() => {
                 setShowDocumentUpdateDialog(false);
-                setLocation(`/upload-documents?vehicleId=${vehicleId}`);
+                setLocation(`/vehicle/${vehicleId}/upload`);
               }}
               className="w-full h-11 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-200 text-base"
             >

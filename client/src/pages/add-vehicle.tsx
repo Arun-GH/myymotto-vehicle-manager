@@ -829,7 +829,7 @@ export default function AddVehicle() {
               onClick={() => {
                 setShowDocumentUpdateDialog(false);
                 if (createdVehicleId) {
-                  setLocation(`/upload-documents?vehicleId=${createdVehicleId}`);
+                  setLocation(`/vehicle/${createdVehicleId}/upload`);
                 }
               }}
               className="w-full h-11 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-200 text-base"
