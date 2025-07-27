@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Info, Phone, MessageCircle, Star, ChevronDown, ExternalLink, MoreVertical, X, LogOut, Shield } from "lucide-react";
+import { Info, Phone, MessageCircle, Star, ChevronDown, ExternalLink, MoreVertical, X, LogOut, Shield, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -123,6 +123,10 @@ export default function InfoDropdown() {
           <DropdownMenuItem onClick={() => setLocation("/account-management")} className="cursor-pointer text-orange-600 hover:text-orange-700 hover:bg-orange-50">
             <Shield className="w-4 h-4 mr-2" />
             Account Management
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setLocation("/calendar-reminder")} className="cursor-pointer text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+            <Bell className="w-4 h-4 mr-2" />
+            Alert & Reminders
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleContact} className="cursor-pointer">
             <Phone className="w-4 h-4 mr-2" />
