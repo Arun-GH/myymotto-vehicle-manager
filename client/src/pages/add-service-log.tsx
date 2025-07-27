@@ -557,6 +557,7 @@ export default function AddServiceLog() {
                               className="h-7 text-sm flex-1"
                               placeholder="Enter file name"
                               autoFocus
+                              onFocus={(e) => e.target.select()}
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') saveFileName();
                                 if (e.key === 'Escape') cancelFileNameEdit();

@@ -42,6 +42,7 @@ Preferred communication style: Simple, everyday language.
 - CREATED comprehensive rename system with auto-enable for camera captures, inline editing with input field, save/cancel actions via Enter/Escape keys, and visual feedback
 - ADDED mobile-optimized rename interface with proper input sizing, button styling, and keyboard navigation for enhanced user experience
 - INTEGRATED seamless file renaming workflow: camera capture → auto-enable rename mode → inline editing → save with new filename → maintain file extension
+- ENHANCED file rename user experience: Added automatic text selection (onFocus={(e) => e.target.select()}) to all rename input fields, allowing users to immediately type new filename without manually deleting system-generated names
 
 **July 27, 2025**: COMPLETED insurance quick action integration with document storage system
 - UPDATED insurance quick action button to pull insurance details from Documents page instead of vehicle database

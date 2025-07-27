@@ -493,9 +493,9 @@ export default function CombinedServicePage() {
         lastModified: file.lastModified
       });
       
-      setFile(renamedFile);
+      setFile?.(renamedFile);
     }
-    setEditing(false);
+    setEditing?.(false);
   };
 
   const cancelFileNameEdit = (type: 'warranty' | 'invoice' | 'service') => {
@@ -787,6 +787,7 @@ export default function CombinedServicePage() {
                               className="h-6 text-xs flex-1"
                               placeholder="Enter file name"
                               autoFocus
+                              onFocus={(e) => e.target.select()}
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') saveFileName('service');
                                 if (e.key === 'Escape') cancelFileNameEdit('service');
@@ -1003,6 +1004,7 @@ export default function CombinedServicePage() {
                         className="h-5 text-xs flex-1"
                         placeholder="Enter file name"
                         autoFocus
+                        onFocus={(e) => e.target.select()}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') saveFileName('warranty');
                           if (e.key === 'Escape') cancelFileNameEdit('warranty');
@@ -1078,6 +1080,7 @@ export default function CombinedServicePage() {
                         className="h-5 text-xs flex-1"
                         placeholder="Enter file name"
                         autoFocus
+                        onFocus={(e) => e.target.select()}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') saveFileName('invoice');
                           if (e.key === 'Escape') cancelFileNameEdit('invoice');
