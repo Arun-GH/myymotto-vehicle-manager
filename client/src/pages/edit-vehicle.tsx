@@ -881,35 +881,37 @@ export default function EditVehicle() {
 
       {/* Document Update Dialog */}
       <AlertDialog open={showDocumentUpdateDialog} onOpenChange={setShowDocumentUpdateDialog}>
-        <AlertDialogContent className="w-[90%] max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-orange-600" />
-              Update Vehicle Documents
+        <AlertDialogContent className="w-[95%] max-w-sm mx-auto bg-white/95 backdrop-blur-sm border-0 shadow-2xl shadow-orange-500/20 rounded-xl">
+          <AlertDialogHeader className="text-center pb-2">
+            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+              <CheckCircle className="w-8 h-8 text-white" />
+            </div>
+            <AlertDialogTitle className="text-lg font-bold text-gray-900 leading-tight">
+              Vehicle Updated Successfully
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              Your vehicle details have been updated successfully. Would you like to review and update your vehicle documents like insurance, RC book, and emission certificate to ensure everything is current?
+            <AlertDialogDescription className="text-sm text-gray-600 leading-relaxed mt-2 px-2">
+              Keep your vehicle profile current by reviewing and updating your documents. Ensure insurance, RC book, and emission certificates are up to date.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-            <AlertDialogCancel 
-              onClick={() => {
-                setShowDocumentUpdateDialog(false);
-                setLocation("/");
-              }}
-              className="w-full sm:w-auto"
-            >
-              Later
-            </AlertDialogCancel>
+          <AlertDialogFooter className="flex-col gap-3 pt-4">
             <AlertDialogAction 
               onClick={() => {
                 setShowDocumentUpdateDialog(false);
                 setLocation(`/upload-documents?vehicleId=${vehicleId}`);
               }}
-              className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700"
+              className="w-full h-11 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-200 text-base"
             >
-              Update Documents
+              Review Documents
             </AlertDialogAction>
+            <AlertDialogCancel 
+              onClick={() => {
+                setShowDocumentUpdateDialog(false);
+                setLocation("/");
+              }}
+              className="w-full h-10 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0 rounded-lg transition-all duration-200 text-sm"
+            >
+              Return to Dashboard
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
