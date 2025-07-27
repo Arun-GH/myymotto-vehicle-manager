@@ -167,9 +167,13 @@ export default function EditVehicle() {
         setThumbnailPreview(vehicle.thumbnailPath);
       }
       
+      // Set selectedMake state to sync with form field
+      setSelectedMake(vehicle.make || "");
+      
       // Debug: Check form values after reset
       console.log("Form values after reset:", form.getValues());
       console.log("Available makes for type:", vehicle.vehicleType, getAllMakesForType(vehicle.vehicleType));
+      console.log("Available models for make:", vehicle.make, getModelsForMake(vehicle.make || "", vehicle.vehicleType || "4-wheeler"));
     }
   }, [vehicle, form]);
 
@@ -614,12 +618,12 @@ export default function EditVehicle() {
                               onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                             />
                           ) : (
-                            <Select onValueChange={(value) => handleModelChange(value, field.onChange)} value={field.value} disabled={!watchedMake && !isCustomMake}>
+                            <Select onValueChange={(value) => handleModelChange(value, field.onChange)} value={field.value} disabled={!(watchedMake || vehicle?.make) && !isCustomMake}>
                               <SelectTrigger className="h-8">
                                 <SelectValue placeholder="Select model" />
                               </SelectTrigger>
                               <SelectContent>
-                                {watchedMake && getModelsForMake(watchedMake, vehicle?.vehicleType || "4-wheeler").map((model) => (
+                                {(watchedMake || vehicle?.make) && getModelsForMake(watchedMake || vehicle?.make || "", vehicle?.vehicleType || "4-wheeler").map((model) => (
                                   <SelectItem key={model} value={model}>
                                     {model}
                                   </SelectItem>
