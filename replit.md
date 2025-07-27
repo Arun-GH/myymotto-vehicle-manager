@@ -44,6 +44,15 @@ Preferred communication style: Simple, everyday language.
 - INTEGRATED seamless file renaming workflow: camera capture → auto-enable rename mode → inline editing → save with new filename → maintain file extension
 - ENHANCED file rename user experience: Added automatic text selection (onFocus={(e) => e.target.select()}) to all rename input fields, allowing users to immediately type new filename without manually deleting system-generated names
 
+**July 27, 2025**: COMPLETED admin message dismissal tracking system to prevent repeated daily display
+- IMPLEMENTED localStorage-based tracking system for admin message dismissals using unique keys with message ID and date
+- ENHANCED AdminMessageBanner component to check if user has already dismissed today's message before displaying
+- ADDED handleDismiss function that stores dismissal state in localStorage with format: admin_message_dismissed_{messageId}_{dateString}
+- CREATED automatic cleanup system that removes old dismissed message entries (older than 7 days) to prevent localStorage bloat
+- ENSURED admin messages won't show again on the same day once user closes them, improving user experience
+- MAINTAINED message functionality while preventing annoying repeated displays of the same daily message
+- PRESERVED admin's ability to send new messages which will be displayed until dismissed by users
+
 **July 27, 2025**: COMPLETED insurance quick action integration with document storage system
 - UPDATED insurance quick action button to pull insurance details from Documents page instead of vehicle database
 - ENHANCED insurance page to use document storage data for provider, dates, sum insured, and premium amounts

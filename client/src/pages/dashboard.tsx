@@ -22,20 +22,56 @@ function AdminMessageBanner() {
   const [adminMessage, setAdminMessage] = useState<any>(null);
 
   useEffect(() => {
+    cleanupOldDismissals();
     loadTodaysMessage();
   }, []);
+
+  const cleanupOldDismissals = () => {
+    // Clean up old dismissed message entries (older than 7 days)
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('admin_message_dismissed_')) {
+        const parts = key.split('_');
+        if (parts.length >= 5) {
+          const dateString = parts.slice(4).join('_');
+          const dismissedDate = new Date(dateString);
+          const daysDiff = (Date.now() - dismissedDate.getTime()) / (1000 * 60 * 60 * 24);
+          if (daysDiff > 7) {
+            keysToRemove.push(key);
+          }
+        }
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+  };
 
   const loadTodaysMessage = async () => {
     try {
       const response = await apiRequest("GET", "/api/todays-message");
       const data = await response.json();
       if (data && data.message) {
+        // Check if user has already dismissed this message today
+        const today = new Date().toDateString();
+        const dismissedKey = `admin_message_dismissed_${data.id}_${today}`;
+        const isDismissed = localStorage.getItem(dismissedKey) === 'true';
+        
         setAdminMessage(data);
-        setShowMessage(true);
+        setShowMessage(!isDismissed);
       }
     } catch (error) {
       console.error("Error loading today's message:", error);
     }
+  };
+
+  const handleDismiss = () => {
+    if (adminMessage) {
+      // Store dismissal in localStorage with message ID and today's date
+      const today = new Date().toDateString();
+      const dismissedKey = `admin_message_dismissed_${adminMessage.id}_${today}`;
+      localStorage.setItem(dismissedKey, 'true');
+    }
+    setShowMessage(false);
   };
 
   if (!showMessage || !adminMessage) return null;
@@ -44,7 +80,7 @@ function AdminMessageBanner() {
     <div className="mx-3 mb-4">
       <div className="bg-gradient-to-r from-orange-100 to-yellow-100 border border-orange-200 rounded-lg p-4 relative">
         <button
-          onClick={() => setShowMessage(false)}
+          onClick={handleDismiss}
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
         >
           <X className="w-4 h-4" />
