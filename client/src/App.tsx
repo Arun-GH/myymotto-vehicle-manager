@@ -36,6 +36,7 @@ import BroadcastPage from "@/pages/broadcast";
 import AdminDashboard from "@/pages/admin-dashboard";
 import AccountManagement from "@/pages/account-management";
 import SearchPage from "@/pages/search";
+import CalendarReminder from "@/pages/calendar-reminder";
 
 import NotFound from "@/pages/not-found";
 
@@ -181,6 +182,7 @@ function Router() {
       <Route path="/broadcast" component={BroadcastPage} />
       <Route path="/admin-dashboard" component={AdminDashboard} />
       <Route path="/account-management" component={AccountManagement} />
+      <Route path="/calendar-reminder" component={CalendarReminder} />
       <Route component={NotFound} />
     </Switch>
   );

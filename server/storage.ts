@@ -1,4 +1,4 @@
-import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, adminMessages, accountInformation, invoices, documentExpiries, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse, type AdminMessage, type InsertAdminMessage, type AccountInformation, type InsertAccountInformation, type Invoice, type InsertInvoice, type DocumentExpiry, type InsertDocumentExpiry } from "@shared/schema";
+import { vehicles, documents, users, userProfiles, otpVerifications, notifications, emergencyContacts, trafficViolations, maintenanceSchedules, maintenanceRecords, serviceLogs, serviceAlerts, newsItems, newsUpdateLog, dashboardWidgets, ratings, broadcasts, broadcastResponses, adminMessages, accountInformation, invoices, documentExpiries, calendarReminders, type Vehicle, type InsertVehicle, type Document, type InsertDocument, type User, type InsertUser, type UserProfile, type InsertUserProfile, type OtpVerification, type InsertOtpVerification, type Notification, type InsertNotification, type EmergencyContact, type InsertEmergencyContact, type TrafficViolation, type InsertTrafficViolation, type MaintenanceSchedule, type InsertMaintenanceSchedule, type MaintenanceRecord, type InsertMaintenanceRecord, type ServiceLog, type InsertServiceLog, type ServiceAlert, type InsertServiceAlert, type NewsItem, type InsertNewsItem, type NewsUpdateLog, type InsertNewsUpdateLog, type DashboardWidget, type InsertDashboardWidget, type Rating, type InsertRating, type Broadcast, type InsertBroadcast, type BroadcastResponse, type InsertBroadcastResponse, type AdminMessage, type InsertAdminMessage, type AccountInformation, type InsertAccountInformation, type Invoice, type InsertInvoice, type DocumentExpiry, type InsertDocumentExpiry, type CalendarReminder, type InsertCalendarReminder } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lte, lt, desc, gte, isNull, or, inArray, sql } from "drizzle-orm";
 
@@ -172,6 +172,15 @@ export interface IStorage {
   markInvoiceAsPaid(id: number, paymentDate: Date): Promise<Invoice | undefined>;
   getInvoicesByDateRange(startDate: Date, endDate: Date): Promise<Invoice[]>;
   getOverdueInvoices(): Promise<Invoice[]>;
+  
+  // Calendar Reminder methods
+  getCalendarReminders(userId: number): Promise<CalendarReminder[]>;
+  getCalendarReminder(id: number, userId: number): Promise<CalendarReminder | undefined>;
+  createCalendarReminder(reminder: InsertCalendarReminder & { userId: number }): Promise<CalendarReminder>;
+  updateCalendarReminder(id: number, userId: number, reminder: Partial<InsertCalendarReminder>): Promise<CalendarReminder | undefined>;
+  deleteCalendarReminder(id: number, userId: number): Promise<boolean>;
+  getPendingReminders(): Promise<CalendarReminder[]>;
+  markReminderNotified(id: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -1762,6 +1771,98 @@ export class DatabaseStorage implements IStorage {
         )
       )
       .orderBy(invoices.dueDate);
+  }
+
+  // Calendar Reminder methods
+  async getCalendarReminders(userId: number): Promise<CalendarReminder[]> {
+    return await db
+      .select()
+      .from(calendarReminders)
+      .where(eq(calendarReminders.userId, userId))
+      .orderBy(desc(calendarReminders.reminderDate));
+  }
+
+  async getCalendarReminder(id: number, userId: number): Promise<CalendarReminder | undefined> {
+    const [reminder] = await db
+      .select()
+      .from(calendarReminders)
+      .where(
+        and(
+          eq(calendarReminders.id, id),
+          eq(calendarReminders.userId, userId)
+        )
+      );
+    return reminder;
+  }
+
+  async createCalendarReminder(reminder: InsertCalendarReminder & { userId: number }): Promise<CalendarReminder> {
+    const [newReminder] = await db
+      .insert(calendarReminders)
+      .values({
+        ...reminder,
+        reminderDate: new Date(reminder.reminderDate),
+      })
+      .returning();
+    return newReminder;
+  }
+
+  async updateCalendarReminder(id: number, userId: number, reminder: Partial<InsertCalendarReminder>): Promise<CalendarReminder | undefined> {
+    const updateData: any = { ...reminder, updatedAt: new Date() };
+    if (reminder.reminderDate) {
+      updateData.reminderDate = new Date(reminder.reminderDate);
+    }
+    
+    const [updated] = await db
+      .update(calendarReminders)
+      .set(updateData)
+      .where(
+        and(
+          eq(calendarReminders.id, id),
+          eq(calendarReminders.userId, userId)
+        )
+      )
+      .returning();
+    return updated;
+  }
+
+  async deleteCalendarReminder(id: number, userId: number): Promise<boolean> {
+    const result = await db
+      .delete(calendarReminders)
+      .where(
+        and(
+          eq(calendarReminders.id, id),
+          eq(calendarReminders.userId, userId)
+        )
+      );
+    return result.rowCount > 0;
+  }
+
+  async getPendingReminders(): Promise<CalendarReminder[]> {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    
+    const dayAfterTomorrow = new Date(tomorrow);
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1);
+    
+    return await db
+      .select()
+      .from(calendarReminders)
+      .where(
+        and(
+          gte(calendarReminders.reminderDate, tomorrow),
+          lt(calendarReminders.reminderDate, dayAfterTomorrow),
+          eq(calendarReminders.notificationSent, false),
+          eq(calendarReminders.isCompleted, false)
+        )
+      );
+  }
+
+  async markReminderNotified(id: number): Promise<void> {
+    await db
+      .update(calendarReminders)
+      .set({ notificationSent: true, updatedAt: new Date() })
+      .where(eq(calendarReminders.id, id));
   }
 
   // Document Expiry methods

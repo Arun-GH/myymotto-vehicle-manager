@@ -2,7 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, insertMaintenanceRecordSchema, insertRatingSchema, insertBroadcastSchema, insertAccountInformationSchema, insertInvoiceSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact, type InsertMaintenanceRecord, type Rating, type InsertBroadcast, type InsertAccountInformation, type InsertInvoice } from "@shared/schema";
+import { insertVehicleSchema, insertDocumentSchema, insertUserProfileSchema, signInSchema, verifyOtpSchema, setPinSchema, pinLoginSchema, biometricSetupSchema, insertUserSchema, insertNotificationSchema, insertEmergencyContactSchema, insertMaintenanceRecordSchema, insertRatingSchema, insertBroadcastSchema, insertAccountInformationSchema, insertInvoiceSchema, insertCalendarReminderSchema, type InsertVehicle, type InsertDocument, type InsertUserProfile, type SignInData, type VerifyOtpData, type InsertUser, type InsertNotification, type InsertEmergencyContact, type InsertMaintenanceRecord, type Rating, type InsertBroadcast, type InsertAccountInformation, type InsertInvoice, type InsertCalendarReminder } from "@shared/schema";
 import { maintenanceService } from "./maintenance-service";
 import { newsService } from "./news-service";
 import { trafficViolationService } from "./traffic-violation-service";
@@ -2562,6 +2562,172 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching today's message:", error);
       res.status(500).json({ message: "Failed to fetch today's message" });
+    }
+  });
+
+  // Calendar Reminder API routes
+  app.get("/api/calendar-reminders", async (req, res) => {
+    try {
+      const userId = req.query.userId as string;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const parsedUserId = parseInt(userId);
+      if (isNaN(parsedUserId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
+      
+      const reminders = await storage.getCalendarReminders(parsedUserId);
+      res.json(reminders);
+    } catch (error) {
+      console.error("Error fetching calendar reminders:", error);
+      res.status(500).json({ message: "Failed to fetch calendar reminders" });
+    }
+  });
+
+  app.get("/api/calendar-reminders/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const userId = req.query.userId as string;
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const parsedUserId = parseInt(userId);
+      if (isNaN(parsedUserId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
+      
+      const reminder = await storage.getCalendarReminder(id, parsedUserId);
+      
+      if (!reminder) {
+        return res.status(404).json({ message: "Calendar reminder not found" });
+      }
+      
+      res.json(reminder);
+    } catch (error) {
+      console.error("Error fetching calendar reminder:", error);
+      res.status(500).json({ message: "Failed to fetch calendar reminder" });
+    }
+  });
+
+  app.post("/api/calendar-reminders", async (req, res) => {
+    try {
+      const validatedData = insertCalendarReminderSchema.parse(req.body);
+      const userId = req.body.userId;
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const reminder = await storage.createCalendarReminder({
+        ...validatedData,
+        userId
+      });
+      
+      res.status(201).json(reminder);
+    } catch (error) {
+      console.error("Error creating calendar reminder:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Failed to create calendar reminder" });
+      }
+    }
+  });
+
+  app.put("/api/calendar-reminders/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const userId = req.body.userId;
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const parsedUserId = parseInt(userId);
+      if (isNaN(parsedUserId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
+      
+      const validatedData = insertCalendarReminderSchema.partial().parse(req.body);
+      
+      const reminder = await storage.updateCalendarReminder(id, parsedUserId, validatedData);
+      
+      if (!reminder) {
+        return res.status(404).json({ message: "Calendar reminder not found" });
+      }
+      
+      res.json(reminder);
+    } catch (error) {
+      console.error("Error updating calendar reminder:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Failed to update calendar reminder" });
+      }
+    }
+  });
+
+  app.delete("/api/calendar-reminders/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const userId = req.query.userId as string;
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const parsedUserId = parseInt(userId);
+      if (isNaN(parsedUserId)) {
+        return res.status(400).json({ message: "Invalid User ID format" });
+      }
+      
+      const success = await storage.deleteCalendarReminder(id, parsedUserId);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Calendar reminder not found" });
+      }
+      
+      res.json({ message: "Calendar reminder deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting calendar reminder:", error);
+      res.status(500).json({ message: "Failed to delete calendar reminder" });
+    }
+  });
+
+  app.post("/api/calendar-reminders/process-notifications", async (req, res) => {
+    try {
+      const pendingReminders = await storage.getPendingReminders();
+      let notificationsSent = 0;
+      
+      for (const reminder of pendingReminders) {
+        // Create notification for the reminder
+        await storage.createNotification({
+          userId: reminder.userId,
+          vehicleId: null,
+          type: 'calendar_reminder',
+          title: 'Calendar Reminder',
+          message: `Don't forget: ${reminder.title}`,
+          isRead: false,
+          actionUrl: '/calendar-reminder'
+        });
+        
+        // Mark reminder as notified
+        await storage.markReminderNotified(reminder.id);
+        notificationsSent++;
+      }
+      
+      res.json({
+        success: true,
+        message: `Processed ${notificationsSent} calendar reminder notifications`,
+        notificationsSent
+      });
+    } catch (error) {
+      console.error("Error processing calendar reminder notifications:", error);
+      res.status(500).json({ message: "Failed to process calendar reminder notifications" });
     }
   });
 

@@ -74,6 +74,18 @@ export const newsItems = pgTable("news_items", {
   lastUpdated: timestamp("last_updated").defaultNow().notNull(),
 });
 
+export const calendarReminders = pgTable("calendar_reminders", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  title: text("title").notNull(),
+  details: text("details").notNull(),
+  reminderDate: timestamp("reminder_date").notNull(),
+  notificationSent: boolean("notification_sent").default(false).notNull(),
+  isCompleted: boolean("is_completed").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const newsUpdateLog = pgTable("news_update_log", {
   id: serial("id").primaryKey(),
   updateType: text("update_type").notNull(), // 'scheduled', 'manual', 'api'
@@ -630,6 +642,23 @@ export const insertTrafficViolationSchema = createInsertSchema(trafficViolations
 
 export type TrafficViolation = typeof trafficViolations.$inferSelect;
 export type InsertTrafficViolation = z.infer<typeof insertTrafficViolationSchema>;
+
+// Calendar reminder schema
+export const insertCalendarReminderSchema = createInsertSchema(calendarReminders).omit({
+  id: true,
+  userId: true,
+  notificationSent: true,
+  isCompleted: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  title: z.string().min(1, "Title is required").max(100, "Title must be less than 100 characters"),
+  details: z.string().min(1, "Details are required").max(500, "Details must be less than 500 characters"),
+  reminderDate: z.string().min(1, "Reminder date is required"),
+});
+
+export type CalendarReminder = typeof calendarReminders.$inferSelect;
+export type InsertCalendarReminder = z.infer<typeof insertCalendarReminderSchema>;
 
 // Subscription and Payment types
 export const insertSubscriptionSchema = createInsertSchema(subscriptions).omit({

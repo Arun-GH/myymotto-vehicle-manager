@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Plus, Car, Megaphone } from "lucide-react";
+import { Plus, Car, Megaphone, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -11,6 +11,17 @@ export default function FloatingActionButton() {
       {/* Action Options - shown when main button is clicked */}
       {showOptions && (
         <div className="absolute bottom-16 right-0 space-y-2 mb-2">
+          {/* Calendar Reminder Option */}
+          <Link href="/calendar-reminder">
+            <Button
+              size="sm"
+              className="w-12 h-12 rounded-full bg-blue-500 hover:bg-blue-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              onClick={() => setShowOptions(false)}
+            >
+              <Calendar className="w-5 h-5" />
+            </Button>
+          </Link>
+          
           {/* Add Vehicle Option */}
           <Link href="/add-vehicle">
             <Button
