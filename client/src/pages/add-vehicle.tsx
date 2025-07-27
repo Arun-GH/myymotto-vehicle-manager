@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 
 import ColorfulLogo from "@/components/colorful-logo";
@@ -55,6 +56,8 @@ export default function AddVehicle() {
   const [isCustomColor, setIsCustomColor] = useState(false);
   const [isCustomInsuranceProvider, setIsCustomInsuranceProvider] = useState(false);
   const [showReferralDialog, setShowReferralDialog] = useState(false);
+  const [showDocumentUpdateDialog, setShowDocumentUpdateDialog] = useState(false);
+  const [createdVehicleId, setCreatedVehicleId] = useState<number | null>(null);
   
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
@@ -248,8 +251,9 @@ export default function AddVehicle() {
       queryClient.invalidateQueries({ queryKey: ["/api/vehicles"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       
-      // Show referral dialog for every vehicle addition
-      setShowReferralDialog(true);
+      // Store created vehicle ID and show document update dialog
+      setCreatedVehicleId(vehicle.id);
+      setShowDocumentUpdateDialog(true);
     },
     onError: (error) => {
       // Check if it's a subscription error
@@ -805,6 +809,43 @@ export default function AddVehicle() {
       </div>
 
 
+
+      {/* Document Update Dialog */}
+      <AlertDialog open={showDocumentUpdateDialog} onOpenChange={setShowDocumentUpdateDialog}>
+        <AlertDialogContent className="w-[90%] max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-orange-600" />
+              Update Vehicle Documents
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Great! Your vehicle has been added successfully. Would you like to upload important documents like insurance, RC book, and emission certificate to keep your vehicle information complete?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel 
+              onClick={() => {
+                setShowDocumentUpdateDialog(false);
+                setShowReferralDialog(true);
+              }}
+              className="w-full sm:w-auto"
+            >
+              Later
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                setShowDocumentUpdateDialog(false);
+                if (createdVehicleId) {
+                  setLocation(`/upload-documents?vehicleId=${createdVehicleId}`);
+                }
+              }}
+              className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700"
+            >
+              Upload Documents
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Referral Dialog */}
       <ReferralDialog 

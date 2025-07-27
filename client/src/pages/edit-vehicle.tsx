@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Car, Save, Camera, Settings, Shield, Upload, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
+import { ArrowLeft, Car, Save, Camera, Settings, Shield, Upload, TrendingUp, AlertCircle, CheckCircle, FileText } from "lucide-react";
 import { insertVehicleSchema, type InsertVehicle } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
@@ -55,6 +56,7 @@ export default function EditVehicle() {
   const [isCustomModel, setIsCustomModel] = useState(false);
   const [isCustomColor, setIsCustomColor] = useState(false);
   const [isCustomInsuranceProvider, setIsCustomInsuranceProvider] = useState(false);
+  const [showDocumentUpdateDialog, setShowDocumentUpdateDialog] = useState(false);
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
 
@@ -303,7 +305,9 @@ export default function EditVehicle() {
         title: "Vehicle Updated",
         description: "Your vehicle has been successfully updated.",
       });
-      setLocation("/");
+      
+      // Show document update dialog
+      setShowDocumentUpdateDialog(true);
     },
     onError: (error) => {
       toast({
@@ -874,6 +878,41 @@ export default function EditVehicle() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Document Update Dialog */}
+      <AlertDialog open={showDocumentUpdateDialog} onOpenChange={setShowDocumentUpdateDialog}>
+        <AlertDialogContent className="w-[90%] max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-orange-600" />
+              Update Vehicle Documents
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Your vehicle details have been updated successfully. Would you like to review and update your vehicle documents like insurance, RC book, and emission certificate to ensure everything is current?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel 
+              onClick={() => {
+                setShowDocumentUpdateDialog(false);
+                setLocation("/");
+              }}
+              className="w-full sm:w-auto"
+            >
+              Later
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                setShowDocumentUpdateDialog(false);
+                setLocation(`/upload-documents?vehicleId=${vehicleId}`);
+              }}
+              className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700"
+            >
+              Update Documents
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
