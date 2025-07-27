@@ -10,7 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 27, 2025**: FIXED 3-wheeler service dropdown support and completed comprehensive service interval tracking system for General Service (Paid) across entire application
+**July 27, 2025**: FIXED critical Make/Model dropdown reset issue and 3-wheeler service dropdown support across entire application
+- CRITICAL BUG FIX: Fixed Make and Model dropdowns resetting when editing vehicles instead of showing initially selected values
+- RESOLVED dropdown value binding issue by changing from selectedMake state to field.value for proper form field synchronization
+- UPDATED handleMakeChange functions in both add-vehicle.tsx and edit-vehicle.tsx to accept field.onChange parameter for proper form state management
+- ENHANCED Select component onValueChange to pass field.onChange ensuring dropdowns display existing vehicle data correctly
+- FIXED edit vehicle page to properly populate Make and Model dropdowns with saved vehicle information upon clicking edit button
+- MAINTAINED consistent dropdown behavior across Add Vehicle and Edit Vehicle pages with proper form field connection
 - CRITICAL BUG FIX: Added 3-wheeler support to service management pages (combined-service.tsx and add-service-log.tsx) - dropdown now shows for all vehicle types (4-wheeler, 2-wheeler, 3-wheeler)
 - IMPLEMENTED comprehensive 3-wheeler service type dropdown with 27 common service types including Engine Oil Change, Brake Service, Transmission Service, Clutch Service, Battery Replacement, Tire Replacement, Suspension Service, and specialized 3-wheeler services
 - FIXED service type dropdown condition from checking only 4-wheeler/2-wheeler to include 3-wheeler vehicles using array.includes() pattern

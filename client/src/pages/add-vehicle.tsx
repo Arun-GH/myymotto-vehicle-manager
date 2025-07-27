@@ -126,14 +126,16 @@ export default function AddVehicle() {
   };
 
   // Reset model when make changes
-  const handleMakeChange = (make: string) => {
+  const handleMakeChange = (make: string, fieldOnChange?: (value: string) => void) => {
     setSelectedMake(make);
     if (make === "Other") {
       setIsCustomMake(true);
       form.setValue("make", "");
+      if (fieldOnChange) fieldOnChange("");
     } else {
       setIsCustomMake(false);
       form.setValue("make", make);
+      if (fieldOnChange) fieldOnChange(make);
     }
     form.setValue("model", ""); // Reset model when make changes
     setIsCustomModel(false);
@@ -523,7 +525,7 @@ export default function AddVehicle() {
                               onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                             />
                           ) : (
-                            <Select onValueChange={handleMakeChange} value={selectedMake}>
+                            <Select onValueChange={(value) => handleMakeChange(value, field.onChange)} value={field.value}>
                               <SelectTrigger className="h-9">
                                 <SelectValue placeholder="Select make" />
                               </SelectTrigger>
