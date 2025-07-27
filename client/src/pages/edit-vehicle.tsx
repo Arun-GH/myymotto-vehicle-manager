@@ -594,13 +594,21 @@ export default function EditVehicle() {
                         <FormLabel className="text-xs">Year *</FormLabel>
                         <FormControl>
                           <Input 
-                            type="number" 
-                            placeholder="2024" 
+                            type="month" 
+                            placeholder="2024-01" 
                             className="h-8"
-                            min="1900"
-                            max={new Date().getFullYear()}
-                            {...field} 
-                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                            min="1900-01"
+                            max={`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`}
+                            value={field.value ? `${field.value}-01` : ""}
+                            onChange={(e) => {
+                              const dateValue = e.target.value;
+                              if (dateValue) {
+                                const year = parseInt(dateValue.split('-')[0]);
+                                field.onChange(year);
+                              } else {
+                                field.onChange("");
+                              }
+                            }}
                           />
                         </FormControl>
                         <FormMessage />

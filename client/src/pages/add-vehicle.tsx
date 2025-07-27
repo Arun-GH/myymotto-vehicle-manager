@@ -564,13 +564,21 @@ export default function AddVehicle() {
                         <FormLabel className="text-xs font-medium">Year * (e.g. 2020)</FormLabel>
                         <FormControl>
                           <Input 
-                            type="number" 
-                            placeholder="2020"
+                            type="month" 
+                            placeholder="2020-01"
                             className="h-9"
-                            min="1900"
-                            max={new Date().getFullYear()}
-                            {...field} 
-                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : "")}
+                            min="1900-01"
+                            max={`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`}
+                            value={field.value ? `${field.value}-01` : ""}
+                            onChange={(e) => {
+                              const dateValue = e.target.value;
+                              if (dateValue) {
+                                const year = parseInt(dateValue.split('-')[0]);
+                                field.onChange(year);
+                              } else {
+                                field.onChange("");
+                              }
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
