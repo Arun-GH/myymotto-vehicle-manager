@@ -199,7 +199,7 @@ export default function AddServiceLog() {
         title: "Service Log Added",
         description: "Service log has been added successfully.",
       });
-      setLocation("/");
+      setLocation(`/vehicle/${vehicleId}/service-logs`);
     },
     onError: (error) => {
       toast({

@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { useParams, Link } from 'wouter';
+import { useParams, Link, useLocation } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Settings, Bell, Calendar, Camera, Upload, FileText, Trash2, Wrench, Plus, MapPin, NotebookPen } from 'lucide-react';
 import { useForm } from "react-hook-form";
@@ -237,6 +237,7 @@ type ServiceLogForm = z.infer<typeof serviceLogSchema>;
 
 export default function CombinedServicePage() {
   const { id } = useParams<{ id: string }>();
+  const [, setLocation] = useLocation();
   const [serviceDetailsOpen, setServiceDetailsOpen] = useState(false);
   const [essentialReplacesOpen, setEssentialReplacesOpen] = useState(false);
   const [selectedMaintenance, setSelectedMaintenance] = useState<MaintenanceItem | null>(null);
@@ -350,6 +351,8 @@ export default function CombinedServicePage() {
       serviceForm.reset();
       setSelectedServiceFile(null);
       setServiceDetailsOpen(false);
+      // Navigate to service logs page
+      setLocation(`/vehicle/${id}/service-logs`);
     },
     onError: (error) => {
       toast({
