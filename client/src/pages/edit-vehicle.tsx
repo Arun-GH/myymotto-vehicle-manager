@@ -301,11 +301,6 @@ export default function EditVehicle() {
       queryClient.invalidateQueries({ queryKey: ["/api/vehicles", vehicleId] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       
-      toast({
-        title: "Vehicle Updated",
-        description: "Your vehicle has been successfully updated.",
-      });
-      
       // Show document update dialog
       setShowDocumentUpdateDialog(true);
     },

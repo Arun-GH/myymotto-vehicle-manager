@@ -21,6 +21,7 @@ Preferred communication style: Simple, everyday language.
 - OPTIMIZED dialog content with proper spacing, leading text, and descriptive messaging for document importance
 - MAINTAINED consistent brand theming with orange-to-red gradients and professional visual hierarchy
 - INTEGRATED seamlessly with existing referral dialog flow for Add Vehicle maintaining complete user journey
+- REMOVED redundant success toast notifications from vehicle operations - professional dialogs now serve as success confirmation
 
 **July 27, 2025**: COMPLETED Make/Model dropdown fix and service log date sorting with comprehensive vehicle type support
 - CRITICAL BUG FIX: Completely resolved Make and Model dropdown reset issue in edit vehicle page by fixing data source timing and state synchronization
