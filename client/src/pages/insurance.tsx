@@ -80,9 +80,11 @@ export default function Insurance() {
 
   const openDocument = async (document: LocalDocument) => {
     try {
-      const blob = new Blob([document.fileData], { type: document.mimeType });
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
+      if (document.fileData) {
+        const blob = new Blob([document.fileData], { type: document.mimeType });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      }
     } catch (error) {
       console.error('Error opening document:', error);
     }
@@ -196,8 +198,11 @@ export default function Insurance() {
         ) : (
           <div className="space-y-3">
             {vehicles.map((vehicle: Vehicle) => {
-              const insuranceStatus = getInsuranceStatus(vehicle.insuranceExpiry || "");
-              const expiryDate = getExpiryDate(vehicle.insuranceExpiry || "");
+              const vehicleInsuranceDocs = insuranceDocuments[vehicle.id] || [];
+              const latestInsuranceDoc = vehicleInsuranceDocs.length > 0 ? vehicleInsuranceDocs[0] : null;
+              const insuranceStatus = latestInsuranceDoc?.metadata?.insuranceExpiryDate 
+                ? getInsuranceStatus(latestInsuranceDoc.metadata.insuranceExpiryDate) 
+                : { status: "No Data", color: "gray" };
               const isExpanded = expandedVehicleId === vehicle.id;
               
               return (
@@ -227,9 +232,9 @@ export default function Insurance() {
                           >
                             {insuranceStatus.status}
                           </Badge>
-                          {vehicle.insuranceCompany && (
+                          {latestInsuranceDoc?.metadata?.insuranceProvider && (
                             <div className="text-xs text-gray-500 mt-1 max-w-24 truncate">
-                              {vehicle.insuranceCompany}
+                              {latestInsuranceDoc.metadata.insuranceProvider}
                             </div>
                           )}
                         </div>
@@ -252,61 +257,57 @@ export default function Insurance() {
                         <div className="bg-blue-50 p-2 rounded text-center">
                           <div className="text-xs text-blue-600 font-medium">Issue</div>
                           <div className="text-sm font-semibold">
-                            {vehicle.insuranceExpiry ? format(new Date(vehicle.insuranceExpiry), 'dd/MM/yy') : 'N/A'}
+                            {latestInsuranceDoc?.metadata?.insuranceIssuedDate ? format(new Date(latestInsuranceDoc.metadata.insuranceIssuedDate), 'dd/MM/yy') : 'N/A'}
                           </div>
                         </div>
                         <div className="bg-red-50 p-2 rounded text-center">
                           <div className="text-xs text-red-600 font-medium">Expires</div>
                           <div className="text-sm font-semibold">
-                            {vehicle.insuranceExpiryDate ? format(new Date(vehicle.insuranceExpiryDate), 'dd/MM/yy') : 'N/A'}
+                            {latestInsuranceDoc?.metadata?.insuranceExpiryDate ? format(new Date(latestInsuranceDoc.metadata.insuranceExpiryDate), 'dd/MM/yy') : 'N/A'}
                           </div>
                         </div>
                         <div className="bg-green-50 p-2 rounded text-center">
                           <div className="text-xs text-green-600 font-medium">Provider</div>
                           <div className="text-xs font-semibold truncate">
-                            {vehicle.insuranceCompany ? vehicle.insuranceCompany.split(' ')[0] : 'N/A'}
+                            {latestInsuranceDoc?.metadata?.insuranceProvider ? latestInsuranceDoc.metadata.insuranceProvider.split(' ')[0] : 'N/A'}
                           </div>
                         </div>
                       </div>
 
                       {/* Financial Details - Single Row */}
-                      {(vehicle.insuranceSumInsured || vehicle.insurancePremiumAmount || vehicle.ocrSumInsured || vehicle.ocrPremiumAmount) && (
+                      {(latestInsuranceDoc?.metadata?.sumInsured || latestInsuranceDoc?.metadata?.insurancePremium) && (
                         <div className="grid grid-cols-2 gap-2">
-                          {(vehicle.insuranceSumInsured || vehicle.ocrSumInsured) && (
+                          {latestInsuranceDoc?.metadata?.sumInsured && (
                             <div className="bg-green-50 p-2 rounded text-center">
                               <div className="text-xs text-green-600 font-medium">Sum Insured</div>
                               <div className="text-sm font-bold text-green-700">
-                                ₹{Number(vehicle.insuranceSumInsured || vehicle.ocrSumInsured).toLocaleString('en-IN')}
+                                ₹{Number(latestInsuranceDoc.metadata.sumInsured).toLocaleString('en-IN')}
                               </div>
                             </div>
                           )}
-                          {(vehicle.insurancePremiumAmount || vehicle.ocrPremiumAmount) && (
+                          {latestInsuranceDoc?.metadata?.insurancePremium && (
                             <div className="bg-blue-50 p-2 rounded text-center">
                               <div className="text-xs text-blue-600 font-medium">Premium</div>
                               <div className="text-sm font-bold text-blue-700">
-                                ₹{Number(vehicle.insurancePremiumAmount || vehicle.ocrPremiumAmount).toLocaleString('en-IN')}
+                                ₹{Number(latestInsuranceDoc.metadata.insurancePremium).toLocaleString('en-IN')}
                               </div>
                             </div>
                           )}
                         </div>
                       )}
 
-                      {/* Policy Info - Inline */}
-                      {(vehicle.ocrPolicyNumber || vehicle.ocrInsuredName) && (
+                      {/* Policy Info - Show when available */}
+                      {latestInsuranceDoc && (
                         <div className="bg-purple-50 p-2 rounded">
                           <div className="flex justify-between items-center text-xs">
-                            {vehicle.ocrPolicyNumber && (
-                              <div>
-                                <span className="text-purple-600 font-medium">Policy: </span>
-                                <span className="font-semibold">{vehicle.ocrPolicyNumber}</span>
-                              </div>
-                            )}
-                            {vehicle.ocrInsuredName && (
-                              <div className="text-right">
-                                <span className="text-purple-600 font-medium">Name: </span>
-                                <span className="font-semibold truncate max-w-24">{vehicle.ocrInsuredName}</span>
-                              </div>
-                            )}
+                            <div>
+                              <span className="text-purple-600 font-medium">Document: </span>
+                              <span className="font-semibold">Insurance Copy</span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-purple-600 font-medium">Uploaded: </span>
+                              <span className="font-semibold">{format(new Date(latestInsuranceDoc.uploadedAt), 'dd/MM/yy')}</span>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -344,14 +345,14 @@ export default function Insurance() {
                           <ExternalLink className="w-3 h-3 mr-1" />
                           Renew via PolicyBazaar
                         </Button>
-                        {vehicle.insuranceCompany && (
+                        {latestInsuranceDoc?.metadata?.insuranceProvider && (
                           <Button 
-                            onClick={() => window.open(getProviderWebsite(vehicle.insuranceCompany!), '_blank')}
+                            onClick={() => window.open(getProviderWebsite(latestInsuranceDoc.metadata.insuranceProvider!), '_blank')}
                             variant="outline"
                             className="flex-1 border-orange-200 text-orange-700 hover:bg-orange-50 h-8 text-xs px-2"
                           >
                             <ExternalLink className="w-3 h-3 mr-1" />
-                            {vehicle.insuranceCompany.split(' ')[0]}
+                            {latestInsuranceDoc.metadata.insuranceProvider.split(' ')[0]}
                           </Button>
                         )}
                       </div>
