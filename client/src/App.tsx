@@ -55,6 +55,9 @@ function Router() {
     // After splash, check authentication and redirect accordingly
     if (!isAuthenticated) {
       setLocation("/sign-in");
+    } else {
+      // User is authenticated, redirect to dashboard
+      setLocation("/");
     }
   };
 
@@ -111,6 +114,9 @@ function Router() {
 
   // Authentication and routing logic
   useEffect(() => {
+    // Skip routing logic during splash screen
+    if (showSplash) return;
+    
     if (!isAuthenticated && location !== "/sign-in") {
       setLocation("/sign-in");
     } else if (isAuthenticated && !isLoading && !vehiclesLoading) {
