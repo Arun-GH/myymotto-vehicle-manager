@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car, Plus, Edit } from "lucide-react";
+import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car, Plus, Edit, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -78,6 +78,72 @@ export default function LocalDocuments() {
 
   const handleDownloadDocument = (document: LocalDocument) => {
     localDocumentStorage.downloadDocument(document);
+  };
+
+  const handleShareDocument = async (document: LocalDocument) => {
+    try {
+      // Create blob URL for sharing
+      const blob = new Blob([document.fileData], { type: document.mimeType });
+      const file = new File([blob], document.fileName, { type: document.mimeType });
+      
+      // Check if Web Share API is supported and can share files
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: `${document.fileName} - ${vehicle.make} ${vehicle.model}`,
+          text: `Sharing document: ${document.fileName} for ${vehicle.make} ${vehicle.model}`,
+          files: [file]
+        });
+      } else {
+        // Fallback: Show share options
+        const blob2 = new Blob([document.fileData], { type: document.mimeType });
+        const url = URL.createObjectURL(blob2);
+        
+        // Try different share methods
+        const shareOptions = [
+          {
+            name: "WhatsApp",
+            action: () => {
+              const message = `Sharing document: ${document.fileName} for ${vehicle.make} ${vehicle.model}`;
+              window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+              // Note: WhatsApp Web doesn't support direct file sharing via URL, user will need to manually attach
+              toast({
+                title: "WhatsApp Share",
+                description: "Please manually attach the downloaded file to your WhatsApp message.",
+              });
+              localDocumentStorage.downloadDocument(document);
+            }
+          },
+          {
+            name: "Email",
+            action: () => {
+              const subject = `Document: ${document.fileName} - ${vehicle.make} ${vehicle.model}`;
+              const body = `Please find attached the document: ${document.fileName} for ${vehicle.make} ${vehicle.model}`;
+              window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+              toast({
+                title: "Email Share",
+                description: "Please manually attach the downloaded file to your email.",
+              });
+              localDocumentStorage.downloadDocument(document);
+            }
+          }
+        ];
+
+        // Show a toast with share instructions
+        toast({
+          title: "Share Document",
+          description: "Document will be downloaded. You can then share it via your preferred app.",
+        });
+        localDocumentStorage.downloadDocument(document);
+      }
+    } catch (error) {
+      console.error('Error sharing document:', error);
+      toast({
+        title: "Share Failed",
+        description: "Unable to share document. File will be downloaded instead.",
+        variant: "destructive",
+      });
+      localDocumentStorage.downloadDocument(document);
+    }
   };
 
   const handleDeleteDocument = async (document: LocalDocument) => {
@@ -414,11 +480,11 @@ export default function LocalDocuments() {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleDownloadDocument(document)}
+                            onClick={() => handleShareDocument(document)}
                             className="flex-1 h-6 text-[10px] py-0"
                           >
-                            <Download className="w-2.5 h-2.5 mr-0.5" />
-                            Download
+                            <Share2 className="w-2.5 h-2.5 mr-0.5" />
+                            Share
                           </Button>
                         </>
                       ) : (
