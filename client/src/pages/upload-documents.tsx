@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams, Link } from "wouter";
-import { ArrowLeft, Upload, Camera, FileText, Calendar, CheckCircle, Bell, Settings, Scan, DollarSign, File, Edit2 } from "lucide-react";
+import { ArrowLeft, Upload, Camera, FileText, Calendar, CheckCircle, Bell, Settings, Scan, DollarSign, File, Edit2, Check, X } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -45,6 +45,14 @@ function FilePreviewCard({ file, onRename, onRemove }: FilePreviewCardProps) {
     return lastDotIndex > 0 ? name.substring(0, lastDotIndex) : name;
   });
 
+  const handleStartEdit = () => {
+    // Reset filename to current display name when starting edit
+    const name = displayName;
+    const lastDotIndex = name.lastIndexOf('.');
+    setFileName(lastDotIndex > 0 ? name.substring(0, lastDotIndex) : name);
+    setIsEditing(true);
+  };
+
   const handleSave = () => {
     if (fileName.trim()) {
       onRename(fileName.trim());
@@ -52,15 +60,19 @@ function FilePreviewCard({ file, onRename, onRemove }: FilePreviewCardProps) {
     }
   };
 
+  const handleCancel = () => {
+    setIsEditing(false);
+    // Reset to original name
+    const name = displayName;
+    const lastDotIndex = name.lastIndexOf('.');
+    setFileName(lastDotIndex > 0 ? name.substring(0, lastDotIndex) : name);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSave();
     } else if (e.key === 'Escape') {
-      setIsEditing(false);
-      // Reset to original name
-      const name = file.name;
-      const lastDotIndex = name.lastIndexOf('.');
-      setFileName(lastDotIndex > 0 ? name.substring(0, lastDotIndex) : name);
+      handleCancel();
     }
   };
 
@@ -75,13 +87,13 @@ function FilePreviewCard({ file, onRename, onRemove }: FilePreviewCardProps) {
             <Input
               value={fileName}
               onChange={(e) => setFileName(e.target.value)}
-              onBlur={handleSave}
               onKeyDown={handleKeyPress}
               className="h-6 text-xs font-medium p-1 border-orange-200 focus:border-orange-400"
               autoFocus
+              onFocus={(e) => e.target.select()} // Pre-select text when focused
             />
           ) : (
-            <p className="text-xs font-medium truncate cursor-pointer" onClick={() => setIsEditing(true)}>
+            <p className="text-xs font-medium truncate cursor-pointer" onClick={handleStartEdit}>
               {displayName}
             </p>
           )}
@@ -92,28 +104,57 @@ function FilePreviewCard({ file, onRename, onRemove }: FilePreviewCardProps) {
       </div>
       
       <div className="flex items-center space-x-1 shrink-0">
-        {!isEditing && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsEditing(true)}
-            className="text-blue-600 hover:text-blue-700 h-5 w-5 p-0"
-            title="Rename file"
-          >
-            <Edit2 className="w-2.5 h-2.5" />
-          </Button>
+        {isEditing ? (
+          <>
+            {/* Checkmark button to confirm rename */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleSave}
+              className="text-green-600 hover:text-green-700 h-5 w-5 p-0"
+              title="Confirm rename"
+            >
+              <Check className="w-2.5 h-2.5" />
+            </Button>
+            {/* Cancel button */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleCancel}
+              className="text-gray-600 hover:text-gray-700 h-5 w-5 p-0"
+              title="Cancel rename"
+            >
+              <X className="w-2.5 h-2.5" />
+            </Button>
+          </>
+        ) : (
+          <>
+            {/* Edit button */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleStartEdit}
+              className="text-blue-600 hover:text-blue-700 h-5 w-5 p-0"
+              title="Rename file"
+            >
+              <Edit2 className="w-2.5 h-2.5" />
+            </Button>
+            {/* Remove button */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onRemove}
+              className="text-red-600 hover:text-red-700 h-5 w-5 p-0"
+              title="Remove file"
+            >
+              ×
+            </Button>
+          </>
         )}
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onRemove}
-          className="text-red-600 hover:text-red-700 h-5 w-5 p-0"
-          title="Remove file"
-        >
-          ×
-        </Button>
       </div>
     </div>
   );
