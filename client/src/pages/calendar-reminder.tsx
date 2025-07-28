@@ -128,7 +128,7 @@ export default function CalendarReminder() {
                 <div className="text-base font-bold">
                   <ColorfulLogo />
                 </div>
-                <p className="text-xs text-red-600">Timely Care For Your Carrier</p>
+                <p className="text-xs text-red-600">Timely Care for your carrier</p>
               </div>
             </div>
             <div className="flex items-center space-x-1">
