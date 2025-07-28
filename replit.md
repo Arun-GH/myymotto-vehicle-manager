@@ -10,6 +10,26 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 28, 2025**: COMPLETED service log improvements with general service tracking and user guidance
+- ENHANCED vehicle dashboard tiles to display "Latest General Service" date instead of generic last service date
+- IMPLEMENTED intelligent general service detection specifically looking for "General Service (Paid)" entries
+- ADDED informational message on service logs page when no general service entries exist, encouraging users to record general service details
+- CREATED blue-themed information card with Settings icon, explanatory text, and direct "Add General Service" button
+- UPDATED vehicle card service date display to show "Latest General Service: Not recorded" when no general service exists
+- ENHANCED service logs page to detect missing general service entries and provide contextual guidance
+- INTEGRATED general service tracking with existing service log functionality for better vehicle maintenance monitoring
+- MAINTAINED all existing service log functionality while adding specialized general service detection and user prompts
+
+**July 28, 2025**: COMPLETED comprehensive profile form validation with input restrictions for data integrity
+- IMPLEMENTED frontend input validation for Full Name field automatically removing numerical characters when typed
+- ADDED backend Zod schema validation with regex pattern requiring only letters and spaces in name field
+- ENHANCED Pin Code field to allow both text and numbers as requested with updated placeholder text
+- RESTRICTED Phone Number field to accept only numbers, plus signs, parentheses, hyphens, and spaces
+- CREATED dual-layer validation system with frontend onChange restrictions and backend schema validation
+- UPDATED profile form placeholders to clearly indicate validation rules for better user guidance
+- ENHANCED data integrity by preventing invalid character input at both client and server levels
+- MAINTAINED all existing profile functionality while adding comprehensive input validation
+
 **July 28, 2025**: COMPLETED comprehensive data backup system to prevent data loss when users switch phones
 - IMPLEMENTED complete BackupManager class with export to file, email sharing, and Google Drive integration capabilities
 - ADDED comprehensive backup functionality to Settings page with statistics tracking (total documents, file size, last backup date)

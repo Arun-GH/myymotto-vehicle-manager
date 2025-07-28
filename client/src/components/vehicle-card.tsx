@@ -124,16 +124,16 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   const insuranceStatus = getDocumentExpiryStatus(insuranceExpiryDate);
   const emissionStatus = getDocumentExpiryStatus(emissionExpiryDate);
   
-  // Calculate last service date and next service date from service logs
-  const getLastServiceDate = () => {
+  // Calculate last general service date specifically
+  const getLastGeneralServiceDate = () => {
     if (!serviceLogs || serviceLogs.length === 0) return null;
     
-    // Sort service logs by date (newest first)
-    const sortedLogs = serviceLogs
-      .filter(log => log.serviceDate)
-      .sort((a, b) => new Date(b.serviceDate).getTime() - new Date(a.serviceDate).getTime());
+    // Sort general service logs by date (newest first) - looking for "General Service (Paid)"
+    const generalServiceLogs = serviceLogs
+      .filter((log: any) => log.serviceDate && log.serviceType === "General Service (Paid)")
+      .sort((a: any, b: any) => new Date(b.serviceDate).getTime() - new Date(a.serviceDate).getTime());
     
-    return sortedLogs.length > 0 ? sortedLogs[0].serviceDate : null;
+    return generalServiceLogs.length > 0 ? generalServiceLogs[0].serviceDate : null;
   };
   
   const getNextServiceDate = () => {
@@ -141,8 +141,8 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
     
     // Find the most recent service log with service interval
     const sortedLogs = serviceLogs
-      .filter(log => log.serviceDate && log.serviceIntervalMonths)
-      .sort((a, b) => new Date(b.serviceDate).getTime() - new Date(a.serviceDate).getTime());
+      .filter((log: any) => log.serviceDate && log.serviceIntervalMonths)
+      .sort((a: any, b: any) => new Date(b.serviceDate).getTime() - new Date(a.serviceDate).getTime());
     
     if (sortedLogs.length === 0) return null;
     
@@ -153,11 +153,11 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
     return serviceDate.toISOString().split('T')[0];
   };
   
-  const lastServiceDate = getLastServiceDate();
+  const lastGeneralServiceDate = getLastGeneralServiceDate();
   const nextServiceDate = getNextServiceDate();
   
-  const serviceStatus = getServiceStatus(lastServiceDate);
-  const nextServiceInfo = calculateNextServiceDate(lastServiceDate, null);
+  const serviceStatus = getServiceStatus(lastGeneralServiceDate);
+  const nextServiceInfo = calculateNextServiceDate(lastGeneralServiceDate, null);
 
   // Check for missing details
   const missingDetails = [];
@@ -322,9 +322,9 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           </div>
           <div className="space-y-1">
             <div className="flex flex-col">
-              <span className="text-amber-800 font-bold text-xs">Last Service Date:</span>
+              <span className="text-amber-800 font-bold text-xs">Latest General Service:</span>
               <span className="text-gray-800 text-xs">
-                {lastServiceDate ? formatToDDMMMYYYY(new Date(lastServiceDate)) : "Not set"}
+                {lastGeneralServiceDate ? formatToDDMMMYYYY(new Date(lastGeneralServiceDate)) : "Not recorded"}
               </span>
             </div>
             <div className="flex flex-col">

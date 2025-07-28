@@ -122,6 +122,11 @@ export default function ServiceLogs() {
     return dateB - dateA; // Latest first
   }) : undefined;
 
+  // Check if there's any general service entry
+  const hasGeneralService = sortedServiceLogs ? sortedServiceLogs.some(log => 
+    log.serviceType === "General Service (Paid)"
+  ) : false;
+
   if (vehicleLoading || logsLoading || maintenanceLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
@@ -181,6 +186,29 @@ export default function ServiceLogs() {
                   {vehicle.make?.toUpperCase()} {vehicle.model?.toUpperCase()}
                 </h2>
                 <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* General Service Information Message */}
+        {serviceLogs && serviceLogs.length > 0 && !hasGeneralService && (
+          <Card className="shadow-orange bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+            <CardContent className="p-3">
+              <div className="flex items-start space-x-2">
+                <Settings className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h3 className="text-xs font-semibold text-blue-800 mb-1">Record Your General Service</h3>
+                  <p className="text-[10px] text-blue-700 mb-2 leading-tight">
+                    Track your regular general service details to monitor vehicle maintenance and set service intervals for timely reminders.
+                  </p>
+                  <Link href={`/vehicle/${vehicleId}/service`}>
+                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 h-6 text-[10px] px-2">
+                      <Plus className="w-2.5 h-2.5 mr-1" />
+                      Add General Service
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </CardContent>
           </Card>
