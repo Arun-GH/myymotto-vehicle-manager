@@ -35,9 +35,18 @@ export default function NotificationBell() {
   const { data: notifications = [] } = useQuery<Notification[]>({
     queryKey: ["/api/notifications"],
     queryFn: async () => {
-      const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+      // Try multiple sources for userId
+      let currentUserId = localStorage.getItem("currentUserId") || 
+                          localStorage.getItem("userId") || 
+                          sessionStorage.getItem("currentUserId") ||
+                          sessionStorage.getItem("userId") ||
+                          "1"; // Fallback to user 1
+      
+      console.log("Fetching notifications for userId:", currentUserId);
       const response = await apiRequest("GET", `/api/notifications?userId=${currentUserId}`);
       const data = await response.json();
+      
+      console.log("Received notifications:", data.length);
       
       // Update last fetch timestamp
       const today = new Date().toDateString();
@@ -45,8 +54,8 @@ export default function NotificationBell() {
       
       return data;
     },
-    enabled: shouldFetchNotifications(), // Only fetch when needed
-    staleTime: 24 * 60 * 60 * 1000, // Consider data stale after 24 hours
+    enabled: true, // Always enable to ensure notifications are fetched
+    staleTime: 5 * 60 * 1000, // Consider data stale after 5 minutes for more responsive updates
     gcTime: 24 * 60 * 60 * 1000 // Keep in cache for 24 hours
   });
 
