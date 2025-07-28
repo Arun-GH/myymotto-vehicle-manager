@@ -248,50 +248,75 @@ export class BackupManager {
     // Clean the entire backup data to prevent circular references
     const cleanBackupData = this.cleanObjectForSerialization(backupData);
     
-    // Create a downloadable JSON file first
+    // Create a downloadable JSON file
+    const fileName = `myymotto-${backupType}-backup-${new Date().toISOString().split('T')[0]}.json`;
     const jsonBlob = new Blob([JSON.stringify(cleanBackupData, null, 2)], {
       type: 'application/json',
     });
     const url = URL.createObjectURL(jsonBlob);
     
-    // Create simplified email content without the full JSON data
-    const subject = encodeURIComponent(`Myymotto ${backupType === 'full' ? 'Complete' : 'Documents'} Data Backup`);
-    const body = encodeURIComponent(`Dear User,
-
-I have created your Myymotto ${backupType === 'full' ? 'complete' : 'documents-only'} data backup.
-
-Backup Details:
-- Schema Version: ${cleanBackupData.schemaVersion}
-- Documents: ${cleanBackupData.metadata.fieldCount.documents}
-- Vehicles: ${cleanBackupData.metadata.fieldCount.vehicles}
-${backupType === 'full' ? `- Service Logs: ${cleanBackupData.metadata.fieldCount.serviceLogs}\n- Notifications: ${cleanBackupData.metadata.fieldCount.notifications}\n` : ''}
-- Total Size: ${this.formatFileSize(cleanBackupData.metadata.totalSize)}
-- Export Date: ${cleanBackupData.metadata.exportedOn}
-
-IMPORTANT: The backup file will download automatically when you send this email. Please attach the downloaded .json file to this email before sending.
-
-To restore this data on a new device:
-1. Install Myymotto app
-2. Go to Settings → Data Management → Restore Backup
-3. Upload the attached backup file
-
-Keep this backup file safe and secure. It contains your personal vehicle documents and information.
-
-Best regards,
-Myymotto Team`);
-    
     // Trigger download first
     const link = document.createElement('a');
     link.href = url;
-    link.download = `myymotto-${backupType}-backup-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    // Open email client with instructions to attach the downloaded file
+    // Create simplified email content with clear attachment instructions
+    const subject = encodeURIComponent(`Myymotto ${backupType === 'full' ? 'Complete' : 'Documents'} Data Backup - ${cleanBackupData.metadata.exportedOn}`);
+    const body = encodeURIComponent(`Dear User,
+
+Your Myymotto ${backupType === 'full' ? 'complete' : 'documents-only'} data backup has been created successfully!
+
+📁 BACKUP FILE DOWNLOADED: ${fileName}
+
+📊 Backup Summary:
+• Documents: ${cleanBackupData.metadata.fieldCount.documents} files
+• Vehicles: ${cleanBackupData.metadata.fieldCount.vehicles} entries
+${backupType === 'full' ? `• Service Logs: ${cleanBackupData.metadata.fieldCount.serviceLogs} records\n• Notifications: ${cleanBackupData.metadata.fieldCount.notifications} alerts\n` : ''}• Total Size: ${this.formatFileSize(cleanBackupData.metadata.totalSize)}
+• Created: ${cleanBackupData.metadata.exportedOn}
+• Schema: v${cleanBackupData.schemaVersion}
+
+📎 NEXT STEPS:
+1. Find the downloaded file "${fileName}" in your Downloads folder
+2. Attach this file to this email before sending
+3. Send this email to yourself or save the file in cloud storage
+
+🔄 TO RESTORE ON NEW DEVICE:
+1. Install Myymotto app
+2. Go to Settings → Data Management → Restore Backup  
+3. Upload the ${fileName} file
+4. All your vehicles, documents, and data will be restored
+
+⚠️ IMPORTANT: Keep this backup file secure - it contains your personal vehicle documents and information.
+
+Best regards,
+Myymotto Team`);
+    
+    // Show user notification about the process
+    if (typeof window !== 'undefined' && 'navigator' in window && 'share' in navigator) {
+      // Use Web Share API if available (mobile browsers)
+      try {
+        await navigator.share({
+          title: `Myymotto Data Backup - ${cleanBackupData.metadata.exportedOn}`,
+          text: `Your Myymotto backup file "${fileName}" has been downloaded. Please attach this file when sharing.`,
+        });
+        return;
+      } catch (error) {
+        // Fall back to mailto if sharing fails
+      }
+    }
+    
+    // Open email client with instructions
     const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
     window.open(mailtoLink, '_blank');
+    
+    // Show additional notification to user
+    setTimeout(() => {
+      alert(`✅ Backup Downloaded!\n\nFile: ${fileName}\n\nNext Steps:\n1. Check your Downloads folder\n2. Attach the downloaded file to your email\n3. Send the email to yourself or save to cloud storage`);
+    }, 1000);
   }
   
   // Enhanced restore with schema migration support
