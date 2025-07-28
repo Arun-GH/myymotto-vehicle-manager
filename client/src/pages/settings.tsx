@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Camera, MapPin, Users, Image, Mic, Shield, Check, X, Settings as SettingsIcon, LayoutGrid } from "lucide-react";
+import { ArrowLeft, Camera, MapPin, Users, Image, Mic, Shield, Check, X, Settings as SettingsIcon, LayoutGrid, Download, Upload, Mail, Cloud, HardDrive, RefreshCw, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +7,8 @@ import { Link } from "wouter";
 import ColorfulLogo from "@/components/colorful-logo";
 import BottomNav from "@/components/bottom-nav";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
+import { BackupManager } from "@/lib/backup-utils";
+import { useToast } from "@/hooks/use-toast";
 
 interface Permission {
   id: string;
@@ -18,6 +20,16 @@ interface Permission {
 }
 
 export default function Settings() {
+  const { toast } = useToast();
+  const [backupStats, setBackupStats] = useState({
+    totalDocuments: 0,
+    totalSize: '0 Bytes',
+    lastBackup: null as string | null,
+    needsBackup: false,
+  });
+  const [isBackingUp, setIsBackingUp] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
+  
   const [permissions, setPermissions] = useState<Permission[]>([
     {
       id: 'camera',
@@ -62,6 +74,20 @@ export default function Settings() {
   ]);
 
   const [isRequesting, setIsRequesting] = useState(false);
+
+  // Load backup stats and existing permissions on component mount
+  useEffect(() => {
+    loadBackupStats();
+  }, []);
+
+  const loadBackupStats = async () => {
+    try {
+      const stats = await BackupManager.getBackupStats();
+      setBackupStats(stats);
+    } catch (error) {
+      console.error('Failed to load backup stats:', error);
+    }
+  };
 
   // Load existing permissions on component mount
   useEffect(() => {
@@ -171,6 +197,98 @@ export default function Settings() {
     } else {
       // Request permission
       requestPermission(permissionId);
+    }
+  };
+
+  // Backup action functions
+  const handleDownloadBackup = async () => {
+    setIsBackingUp(true);
+    try {
+      const userId = localStorage.getItem('currentUserId') || '1';
+      await BackupManager.exportToFile(userId);
+      BackupManager.markBackupCompleted();
+      await loadBackupStats();
+      toast({
+        title: "Backup Downloaded",
+        description: "Your data has been saved to your device downloads.",
+      });
+    } catch (error) {
+      toast({
+        title: "Backup Failed",
+        description: error instanceof Error ? error.message : "Failed to create backup",
+        variant: "destructive",
+      });
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
+
+  const handleEmailBackup = async () => {
+    setIsBackingUp(true);
+    try {
+      const userId = localStorage.getItem('currentUserId') || '1';
+      await BackupManager.shareViaEmail(userId);
+      BackupManager.markBackupCompleted();
+      await loadBackupStats();
+      toast({
+        title: "Email Opened",
+        description: "Send the email to save your backup safely.",
+      });
+    } catch (error) {
+      toast({
+        title: "Email Failed",
+        description: error instanceof Error ? error.message : "Failed to create email backup",
+        variant: "destructive",
+      });
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
+
+  const handleGoogleDriveBackup = async () => {
+    setIsBackingUp(true);
+    try {
+      const userId = localStorage.getItem('currentUserId') || '1';
+      await BackupManager.uploadToGoogleDrive(userId);
+      BackupManager.markBackupCompleted();
+      await loadBackupStats();
+      toast({
+        title: "Backup Ready",
+        description: "File is ready to upload to Google Drive.",
+      });
+    } catch (error) {
+      toast({
+        title: "Drive Backup Failed",
+        description: error instanceof Error ? error.message : "Failed to prepare Drive backup",
+        variant: "destructive",
+      });
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
+
+  const handleRestoreBackup = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsRestoring(true);
+    try {
+      await BackupManager.restoreFromFile(file);
+      await loadBackupStats();
+      toast({
+        title: "Restore Complete",
+        description: "Your data has been restored successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Restore Failed",
+        description: error instanceof Error ? error.message : "Failed to restore backup",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRestoring(false);
+      // Reset file input
+      event.target.value = '';
     }
   };
 
@@ -293,10 +411,117 @@ export default function Settings() {
           </CardContent>
         </Card>
 
+        {/* Data Backup & Management Card */}
+        <Card className="mb-6 shadow-orange">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <HardDrive className="w-5 h-5 text-green-600" />
+              <span>Data Management</span>
+              {backupStats.needsBackup && (
+                <AlertTriangle className="w-4 h-4 text-orange-500" />
+              )}
+            </CardTitle>
+            <CardDescription>
+              Backup your vehicle documents and data to prevent loss when switching phones
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Backup Status */}
+            <div className="bg-gray-50 rounded-lg p-3">
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div>
+                  <p className="text-lg font-semibold text-gray-800">{backupStats.totalDocuments}</p>
+                  <p className="text-xs text-gray-600">Documents</p>
+                </div>
+                <div>
+                  <p className="text-lg font-semibold text-gray-800">{backupStats.totalSize}</p>
+                  <p className="text-xs text-gray-600">Total Size</p>
+                </div>
+              </div>
+              <div className="mt-2 text-center">
+                <p className="text-xs text-gray-600">
+                  Last backup: {backupStats.lastBackup || 'Never'}
+                </p>
+                {backupStats.needsBackup && (
+                  <p className="text-xs text-orange-600 font-medium mt-1">
+                    ⚠️ Backup recommended (weekly backup keeps your data safe)
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Backup Options */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                Backup Options
+              </h3>
+              <div className="grid grid-cols-1 gap-2">
+                <Button
+                  onClick={handleDownloadBackup}
+                  disabled={isBackingUp}
+                  className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  {isBackingUp ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+                  Download Backup File
+                </Button>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    onClick={handleEmailBackup}
+                    disabled={isBackingUp}
+                    variant="outline"
+                    className="h-10"
+                  >
+                    {isBackingUp ? <RefreshCw className="w-3 h-3 mr-1 animate-spin" /> : <Mail className="w-3 h-3 mr-1" />}
+                    Email Backup
+                  </Button>
+                  <Button
+                    onClick={handleGoogleDriveBackup}
+                    disabled={isBackingUp}
+                    variant="outline"
+                    className="h-10"
+                  >
+                    {isBackingUp ? <RefreshCw className="w-3 h-3 mr-1 animate-spin" /> : <Cloud className="w-3 h-3 mr-1" />}
+                    Google Drive
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Restore Section */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                Restore Data
+              </h3>
+              <div className="relative">
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleRestoreBackup}
+                  disabled={isRestoring}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <Button
+                  disabled={isRestoring}
+                  variant="outline"
+                  className="w-full h-10 border-orange-300 text-orange-700 hover:bg-orange-50"
+                >
+                  {isRestoring ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
+                  Restore from Backup File
+                </Button>
+              </div>
+              <p className="text-xs text-gray-500 mt-1 text-center">
+                Select a backup file to restore your data
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Privacy Note */}
         <div className="bg-blue-50 rounded-lg p-4 border border-blue-200 mb-6">
           <p className="text-xs text-blue-800 text-center">
-            🔒 Your privacy is important to us. These permissions are only used for app functionality and data stays on your device.
+            🔒 Your privacy is important to us. All backups are created locally and never stored on our servers.
           </p>
         </div>
 

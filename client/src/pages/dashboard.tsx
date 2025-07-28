@@ -15,6 +15,7 @@ import VehicleSelectorModal from "@/components/vehicle-selector-modal";
 import { Button } from "@/components/ui/button";
 
 import ColorfulLogo from "@/components/colorful-logo";
+import BackupReminder from "@/components/backup-reminder";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 function AdminMessageBanner() {
@@ -178,6 +179,12 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pb-20 bg-warm-pattern">
+        {/* Backup Reminder for existing users */}
+        {vehicles.length > 0 && (
+          <div className="px-3 pt-3">
+            <BackupReminder />
+          </div>
+        )}
         {/* Vehicle Count Label */}
         <div className="px-3 py-2">
           <div className="flex items-center justify-between">
