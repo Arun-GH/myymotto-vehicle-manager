@@ -852,6 +852,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test route to trigger document expiry notifications manually
+  app.post("/api/test-notifications", async (req, res) => {
+    try {
+      const userId = req.body.userId as number;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      console.log(`Manually triggering document expiry check for user ${userId}`);
+      await documentExpiryService.runExpiryCheckProcess(userId);
+      
+      res.json({ message: "Notification check triggered successfully" });
+    } catch (error) {
+      console.error("Error triggering notifications:", error);
+      res.status(500).json({ message: "Failed to trigger notifications" });
+    }
+  });
+
   // Notification routes
   app.get("/api/notifications", async (req, res) => {
     try {

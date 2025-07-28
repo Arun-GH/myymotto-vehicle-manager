@@ -74,38 +74,14 @@ export class DocumentExpiryService {
         // Get expiry date from vehicle record (like emission expiry, RC expiry)
         expiryDate = vehicle[docType.expiryField];
       } else if (docType.type === 'insurance') {
-        // Special handling for insurance - find maximum expiry date from multiple documents
-        const documents = await storage.getDocumentsByVehicle(vehicleId);
-        const insuranceDocs = documents.filter(doc => 
-          doc.documentType?.toLowerCase().includes('insurance') ||
-          doc.documentType === 'Insurance Copy'
-        );
-        
-        if (insuranceDocs.length > 0) {
-          // Find the maximum (latest) expiry date among all insurance documents
-          const expiryDates = insuranceDocs
-            .map(doc => doc.expiryDate)
-            .filter(date => date) // Remove null/undefined dates
-            .map(date => new Date(date!));
-          
-          if (expiryDates.length > 0) {
-            const maxExpiryDate = new Date(Math.max(...expiryDates.map(date => date.getTime())));
-            expiryDate = maxExpiryDate.toISOString().split('T')[0];
-            console.log(`Found ${insuranceDocs.length} insurance documents, using latest expiry: ${expiryDate}`);
-          }
-        }
+        // Special handling for insurance - get from local storage since it's stored there
+        console.log(`Checking insurance expiry for vehicle ${vehicleId} from local document storage`);
+        // Insurance data is stored in local storage, not database - will be checked during login/authentication flow
+        return; // Skip database check for insurance, handled by frontend
       } else {
-        // Check if document exists in uploaded documents
-        const documents = await storage.getDocumentsByVehicle(vehicleId);
-        const docMatch = documents.find(doc => 
-          doc.documentType?.toLowerCase().includes(docType.type.replace('_', '')) ||
-          doc.documentType === docType.type ||
-          (docType.type === 'rc_book' && doc.documentType === 'RC Book Copy')
-        );
-        
-        if (docMatch && docMatch.expiryDate) {
-          expiryDate = docMatch.expiryDate;
-        }
+        // For other document types, we'll rely on the vehicle database fields
+        console.log(`No specific expiry field for ${docType.type}, skipping database check`);
+        return;
       }
       
       if (expiryDate) {
@@ -116,7 +92,7 @@ export class DocumentExpiryService {
     }
   }
 
-  // Process expiry notifications with weekly reminders
+  // Process expiry notifications - show continuous notifications until expiry date passes
   private async processExpiryNotifications(vehicleId: number, userId: number, documentType: string, expiryDate: string): Promise<void> {
     try {
       const today = new Date();
@@ -126,14 +102,13 @@ export class DocumentExpiryService {
       
       console.log(`Document ${documentType} for vehicle ${vehicleId} expires in ${daysDiff} days`);
       
-      // Create notifications for documents expiring within 30 days
-      if (daysDiff <= 30 && daysDiff > 0) {
-        // Check if we should send a notification (weekly intervals)
-        const shouldNotify = this.shouldSendWeeklyNotification(daysDiff);
-        
-        if (shouldNotify) {
-          await this.createExpiryNotification(vehicleId, userId, documentType, expiryDate, daysDiff);
-        }
+      // Show notifications until expiry date passes (daysDiff > 0 means future date)
+      if (daysDiff > 0) {
+        // Always create notification for any future expiry date (not just weekly intervals)
+        await this.createExpiryNotification(vehicleId, userId, documentType, expiryDate, daysDiff);
+      } else if (daysDiff <= 0) {
+        // Document has expired - create urgent notification
+        await this.createExpiredNotification(vehicleId, userId, documentType, expiryDate, Math.abs(daysDiff));
       }
     } catch (error) {
       console.error(`Error processing notifications for ${documentType}:`, error);
@@ -168,12 +143,12 @@ export class DocumentExpiryService {
         'insurance': `Your vehicle insurance expires in ${daysUntilExpiry} days (${expiryDate}). Renew now to stay protected and legally compliant.`
       };
 
-      // Check if notification for this specific day already exists
-      const existingNotifications = await storage.getNotificationsByVehicle(vehicleId, userId);
+      // Check if notification already exists for this document type (don't duplicate)
+      const existingNotifications = await storage.getNotificationsByVehicle(vehicleId);
       const existingNotification = existingNotifications.find(n => 
         n.type === documentType && 
         n.title === titleMap[documentType] &&
-        n.description?.includes(`${daysUntilExpiry} days`)
+        n.message?.includes(`${daysUntilExpiry} days`)
       );
 
       if (!existingNotification) {
@@ -191,6 +166,52 @@ export class DocumentExpiryService {
       }
     } catch (error) {
       console.error(`Error creating notification for ${documentType}:`, error);
+    }
+  }
+
+  // Create notification for expired documents
+  private async createExpiredNotification(vehicleId: number, userId: number, documentType: string, expiryDate: string, daysOverdue: number): Promise<void> {
+    try {
+      const titleMap: Record<string, string> = {
+        'road_tax': 'URGENT: Road Tax Expired!',
+        'fitness_certificate': 'URGENT: Fitness Certificate Expired!', 
+        'travel_permits': 'URGENT: Travel Permit Expired!',
+        'emission': 'URGENT: Emission Certificate Expired!',
+        'rc_book': 'URGENT: RC Book Expired!',
+        'insurance': 'URGENT: Vehicle Insurance Expired!'
+      };
+
+      const descriptionMap: Record<string, string> = {
+        'road_tax': `Your vehicle's Road Tax expired ${daysOverdue} days ago (${expiryDate}). Renew immediately to avoid penalties and legal issues.`,
+        'fitness_certificate': `Your vehicle's Fitness Certificate expired ${daysOverdue} days ago (${expiryDate}). Immediate renewal required for legal compliance.`,
+        'travel_permits': `Your vehicle's Travel Permit expired ${daysOverdue} days ago (${expiryDate}). Cannot travel until renewed.`,
+        'emission': `Your vehicle's Emission Certificate expired ${daysOverdue} days ago (${expiryDate}). Immediate renewal required to avoid violations.`,
+        'rc_book': `Your vehicle's RC Book expired ${daysOverdue} days ago (${expiryDate}). Vehicle registration invalid - renew immediately.`,
+        'insurance': `Your vehicle insurance expired ${daysOverdue} days ago (${expiryDate}). Driving without insurance is illegal - renew immediately!`
+      };
+
+      // Check if expired notification already exists
+      const existingNotifications = await storage.getNotificationsByVehicle(vehicleId);
+      const existingNotification = existingNotifications.find(n => 
+        n.type === documentType && 
+        n.title === titleMap[documentType]
+      );
+
+      if (!existingNotification) {
+        const notificationData = {
+          vehicleId,
+          type: documentType,
+          title: titleMap[documentType] || 'URGENT: Document Expired!',
+          message: descriptionMap[documentType] || `Your document expired ${daysOverdue} days ago. Renew immediately.`,
+          dueDate: expiryDate,
+          isRead: false,
+        };
+
+        await storage.createNotification(notificationData);
+        console.log(`Created EXPIRED ${documentType} notification for vehicle ${vehicleId}, expired ${daysOverdue} days ago`);
+      }
+    } catch (error) {
+      console.error(`Error creating expired notification for ${documentType}:`, error);
     }
   }
 
