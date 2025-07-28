@@ -166,7 +166,7 @@ export default function InfoDropdown() {
           </DialogHeader>
           <div className="text-center space-y-3 py-2">
             <p className="text-base text-gray-800 leading-relaxed font-medium">
-              <span className="text-orange-600 font-bold">Myymotto</span> - your complete mobile vehicle management companion
+              <span className="text-orange-600 font-bold">Myymotto</span> - your complete mobile vehicle management companion by Arudhih Solutions LLP
             </p>
             <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
               <p className="text-sm text-gray-700 leading-relaxed mb-2">
@@ -183,7 +183,7 @@ export default function InfoDropdown() {
               </p>
             </div>
             <p className="text-xs text-orange-600 font-medium italic">
-              "Timely Care For Your Carrier"
+              "Timely Care for your carrier"
             </p>
           </div>
           <div className="flex justify-center pt-4">
