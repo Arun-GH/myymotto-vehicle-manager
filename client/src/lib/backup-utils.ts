@@ -90,7 +90,9 @@ export class BackupManager {
     try {
       const response = await fetch(`/api/vehicles?userId=${userId}`);
       if (response.ok) {
-        return await response.json();
+        const vehicles = await response.json();
+        // Clean and serialize to avoid circular references
+        return this.cleanObjectForSerialization(vehicles);
       }
     } catch (error) {
       console.warn('Could not fetch vehicles from API, using localStorage');
@@ -108,7 +110,9 @@ export class BackupManager {
         const response = await fetch(`/api/service-logs/${vehicle.id}`);
         if (response.ok) {
           const logs = await response.json();
-          allServiceLogs.push(...logs);
+          // Clean and serialize to avoid circular references
+          const cleanLogs = this.cleanObjectForSerialization(logs);
+          allServiceLogs.push(...cleanLogs);
         }
       } catch (error) {
         console.warn(`Could not fetch service logs for vehicle ${vehicle.id}`);
@@ -121,7 +125,8 @@ export class BackupManager {
     try {
       const response = await fetch('/api/notifications');
       if (response.ok) {
-        return await response.json();
+        const notifications = await response.json();
+        return this.cleanObjectForSerialization(notifications);
       }
     } catch (error) {
       console.warn('Could not fetch notifications');
@@ -134,7 +139,8 @@ export class BackupManager {
       const userId = localStorage.getItem('currentUserId') || '1';
       const response = await fetch(`/api/profile/${userId}`);
       if (response.ok) {
-        return await response.json();
+        const profile = await response.json();
+        return this.cleanObjectForSerialization(profile);
       }
     } catch (error) {
       console.warn('Could not fetch profile from API, using localStorage');
@@ -145,6 +151,42 @@ export class BackupManager {
     return userProfile ? JSON.parse(userProfile) : null;
   }
   
+  // Utility method to clean objects and remove circular references
+  private static cleanObjectForSerialization(obj: any): any {
+    const seen = new WeakSet();
+    
+    const cleanObject = (item: any): any => {
+      if (item === null || typeof item !== 'object') {
+        return item;
+      }
+      
+      if (seen.has(item)) {
+        return '[Circular Reference]';
+      }
+      
+      seen.add(item);
+      
+      if (Array.isArray(item)) {
+        return item.map(cleanObject);
+      }
+      
+      const result: any = {};
+      for (const key in item) {
+        if (item.hasOwnProperty(key)) {
+          try {
+            result[key] = cleanObject(item[key]);
+          } catch (error) {
+            result[key] = '[Unable to serialize]';
+          }
+        }
+      }
+      
+      return result;
+    };
+    
+    return cleanObject(obj);
+  }
+
   private static getRelevantLocalStorageData(): Record<string, string> {
     const relevantKeys = [
       'currentUserId',
@@ -178,8 +220,11 @@ export class BackupManager {
   static async exportToFile(userId: string, backupType: 'full' | 'documents_only' = 'full'): Promise<void> {
     const backupData = await this.createBackup(userId, backupType);
     
+    // Clean the entire backup data to prevent circular references
+    const cleanBackupData = this.cleanObjectForSerialization(backupData);
+    
     // Convert backup to JSON blob
-    const jsonBlob = new Blob([JSON.stringify(backupData, null, 2)], {
+    const jsonBlob = new Blob([JSON.stringify(cleanBackupData, null, 2)], {
       type: 'application/json',
     });
     
@@ -200,20 +245,23 @@ export class BackupManager {
   static async shareViaEmail(userId: string, backupType: 'full' | 'documents_only' = 'full'): Promise<void> {
     const backupData = await this.createBackup(userId, backupType);
     
+    // Clean the entire backup data to prevent circular references
+    const cleanBackupData = this.cleanObjectForSerialization(backupData);
+    
     // Create email content
     const subject = encodeURIComponent(`Myymotto ${backupType === 'full' ? 'Complete' : 'Documents'} Data Backup`);
     const body = encodeURIComponent(`
 Dear User,
 
-This email contains your Myymotto ${backupType === 'full' ? 'complete' : 'documents-only'} data backup created on ${backupData.metadata.exportedOn}.
+This email contains your Myymotto ${backupType === 'full' ? 'complete' : 'documents-only'} data backup created on ${cleanBackupData.metadata.exportedOn}.
 
 Backup Details:
-- Schema Version: ${backupData.schemaVersion}
-- Documents: ${backupData.metadata.fieldCount.documents}
-- Vehicles: ${backupData.metadata.fieldCount.vehicles}
-${backupType === 'full' ? `- Service Logs: ${backupData.metadata.fieldCount.serviceLogs}\n- Notifications: ${backupData.metadata.fieldCount.notifications}\n` : ''}
-- Total Size: ${this.formatFileSize(backupData.metadata.totalSize)}
-- Export Date: ${backupData.metadata.exportedOn}
+- Schema Version: ${cleanBackupData.schemaVersion}
+- Documents: ${cleanBackupData.metadata.fieldCount.documents}
+- Vehicles: ${cleanBackupData.metadata.fieldCount.vehicles}
+${backupType === 'full' ? `- Service Logs: ${cleanBackupData.metadata.fieldCount.serviceLogs}\n- Notifications: ${cleanBackupData.metadata.fieldCount.notifications}\n` : ''}
+- Total Size: ${this.formatFileSize(cleanBackupData.metadata.totalSize)}
+- Export Date: ${cleanBackupData.metadata.exportedOn}
 
 To restore this data on a new device:
 1. Install Myymotto app
@@ -227,8 +275,8 @@ Best regards,
 Myymotto Team
 
 ---
-Backup Data (JSON Schema v${backupData.schemaVersion}):
-${JSON.stringify(backupData, null, 2)}
+Backup Data (JSON Schema v${cleanBackupData.schemaVersion}):
+${JSON.stringify(cleanBackupData, null, 2)}
     `);
     
     // Open email client
