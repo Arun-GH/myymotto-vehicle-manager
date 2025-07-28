@@ -201,16 +201,16 @@ export default function Settings() {
   };
 
   // Backup action functions
-  const handleDownloadBackup = async () => {
+  const handleDownloadBackup = async (backupType: 'full' | 'documents_only' = 'full') => {
     setIsBackingUp(true);
     try {
       const userId = localStorage.getItem('currentUserId') || '1';
-      await BackupManager.exportToFile(userId);
+      await BackupManager.exportToFile(userId, backupType);
       BackupManager.markBackupCompleted();
       await loadBackupStats();
       toast({
         title: "Backup Downloaded",
-        description: "Your data has been saved to your device downloads.",
+        description: `${backupType === 'full' ? 'Complete' : 'Documents-only'} backup saved to downloads.`,
       });
     } catch (error) {
       toast({
@@ -223,16 +223,16 @@ export default function Settings() {
     }
   };
 
-  const handleEmailBackup = async () => {
+  const handleEmailBackup = async (backupType: 'full' | 'documents_only' = 'full') => {
     setIsBackingUp(true);
     try {
       const userId = localStorage.getItem('currentUserId') || '1';
-      await BackupManager.shareViaEmail(userId);
+      await BackupManager.shareViaEmail(userId, backupType);
       BackupManager.markBackupCompleted();
       await loadBackupStats();
       toast({
         title: "Email Opened",
-        description: "Send the email to save your backup safely.",
+        description: `${backupType === 'full' ? 'Complete' : 'Documents-only'} backup prepared for email.`,
       });
     } catch (error) {
       toast({
@@ -245,16 +245,16 @@ export default function Settings() {
     }
   };
 
-  const handleGoogleDriveBackup = async () => {
+  const handleGoogleDriveBackup = async (backupType: 'full' | 'documents_only' = 'full') => {
     setIsBackingUp(true);
     try {
       const userId = localStorage.getItem('currentUserId') || '1';
-      await BackupManager.uploadToGoogleDrive(userId);
+      await BackupManager.uploadToGoogleDrive(userId, backupType);
       BackupManager.markBackupCompleted();
       await loadBackupStats();
       toast({
         title: "Backup Ready",
-        description: "File is ready to upload to Google Drive.",
+        description: `${backupType === 'full' ? 'Complete' : 'Documents-only'} backup ready for Google Drive.`,
       });
     } catch (error) {
       toast({
