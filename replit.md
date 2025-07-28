@@ -10,12 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 28, 2025**: FIXED critical vehicle deletion bug and completed emergency contacts page mobile-friendly enhancement
+**July 28, 2025**: FIXED critical vehicle deletion bug and enhanced splash screen with animated logo
 - CRITICAL BUG FIX: Resolved vehicle deletion failing with "vehicle not found" error caused by foreign key constraint violations with document_expiries table
 - FIXED SQL syntax error in vehicle deletion by removing invalid calendarReminders deletion (calendar reminders are user-specific, not vehicle-specific)
 - ENHANCED vehicle deletion logic in storage.ts to properly cascade delete all related records including documentExpiries table
 - COMPLETED comprehensive deletion process: notifications → service alerts → broadcasts → maintenance records → service logs → traffic violations → documents → document expiries → vehicle
 - FIXED vehicle deletion API call in vehicle-card.tsx to include proper userId parameter ensuring users can only delete their own vehicles
+- UPDATED splash screen with new green logo featuring smooth growing animation effect (0.3x to 1x scale over 1 second)
+- ENHANCED splash screen design with gradient background (green-50 to white), centered layout, and brand tagline display
 - ENHANCED emergency contacts page with mobile-first professional design and improved field validations
 - IMPLEMENTED input validation for name fields: automatically removes numbers and special characters, allowing only letters and spaces
 - ADDED phone number field validation: restricts input to numbers, plus signs, hyphens, spaces, and parentheses only
