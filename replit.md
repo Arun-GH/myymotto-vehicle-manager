@@ -31,13 +31,16 @@ Preferred communication style: Simple, everyday language.
 - MAINTAINED all existing emergency contacts functionality while adding comprehensive input restrictions and mobile optimization
 - ENHANCED user experience with real-time input filtering preventing invalid characters from being entered in name and phone fields
 
-**July 28, 2025**: COMPLETED future date prevention for service date inputs with dual validation system
+**July 28, 2025**: COMPLETED future date prevention for service date inputs with dual validation system and iOS compatibility fix
 - ENHANCED service date validation with HTML5 max attribute preventing future date selection in native date picker
 - ADDED JavaScript validation using react-hook-form validate function to block future dates with clear error message
 - IMPLEMENTED dual-layer validation: browser-level date picker restriction + form validation for complete future date prevention
 - UPDATED both add-service-log.tsx and combined-service.tsx with comprehensive date validation ensuring service dates cannot be in the future
 - MAINTAINED existing date picker functionality while adding robust future date blocking at both UI and validation levels
 - ENHANCED user experience by making future dates unselectable in calendar picker and showing validation errors if somehow bypassed
+- FIXED iOS Safari compatibility issue by adding active onChange validation that automatically resets future dates to today with user notification
+- IMPLEMENTED real-time date validation in maintenance dialog completion date field for consistent behavior across all date inputs
+- ADDED toast notifications when iOS users attempt to select future dates, automatically correcting invalid selections
 
 **July 28, 2025**: COMPLETED service log improvements with general service tracking and user guidance
 - ENHANCED vehicle dashboard tiles to display "Latest General Service" date instead of generic last service date

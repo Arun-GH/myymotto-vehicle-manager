@@ -413,6 +413,24 @@ export default function AddServiceLog() {
                       }
                     })}
                     max={new Date().toISOString().split('T')[0]}
+                    onChange={(e) => {
+                      const selectedDate = new Date(e.target.value);
+                      const today = new Date();
+                      today.setHours(23, 59, 59, 999);
+                      
+                      if (selectedDate > today) {
+                        // Reset to today's date if future date is selected
+                        e.target.value = new Date().toISOString().split('T')[0];
+                        toast({
+                          title: "Invalid Date",
+                          description: "Service date cannot be in the future. Date has been reset to today.",
+                          variant: "destructive",
+                        });
+                      }
+                      
+                      // Call the original onChange handler
+                      form.setValue("serviceDate", e.target.value);
+                    }}
                   />
                 </div>
                 {form.formState.errors.serviceDate && (

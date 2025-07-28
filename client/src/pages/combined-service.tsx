@@ -676,6 +676,24 @@ export default function CombinedServicePage() {
                       })}
                       className="h-8"
                       max={new Date().toISOString().split('T')[0]}
+                      onChange={(e) => {
+                        const selectedDate = new Date(e.target.value);
+                        const today = new Date();
+                        today.setHours(23, 59, 59, 999);
+                        
+                        if (selectedDate > today) {
+                          // Reset to today's date if future date is selected
+                          e.target.value = new Date().toISOString().split('T')[0];
+                          toast({
+                            title: "Invalid Date",
+                            description: "Service date cannot be in the future. Date has been reset to today.",
+                            variant: "destructive",
+                          });
+                        }
+                        
+                        // Call the original onChange handler
+                        serviceForm.setValue("serviceDate", e.target.value);
+                      }}
                     />
                     {serviceForm.formState.errors.serviceDate && (
                       <p className="text-sm text-red-600">{serviceForm.formState.errors.serviceDate.message}</p>
@@ -970,7 +988,24 @@ export default function CombinedServicePage() {
                 id="completedDate"
                 type="date"
                 value={completedDate}
-                onChange={(e) => setCompletedDate(e.target.value)}
+                onChange={(e) => {
+                  const selectedDate = new Date(e.target.value);
+                  const today = new Date();
+                  today.setHours(23, 59, 59, 999);
+                  
+                  if (selectedDate > today) {
+                    // Reset to today's date if future date is selected
+                    e.target.value = new Date().toISOString().split('T')[0];
+                    toast({
+                      title: "Invalid Date",
+                      description: "Completion date cannot be in the future. Date has been reset to today.",
+                      variant: "destructive",
+                    });
+                    setCompletedDate(new Date().toISOString().split('T')[0]);
+                  } else {
+                    setCompletedDate(e.target.value);
+                  }
+                }}
                 className="h-8 text-sm"
                 max={new Date().toISOString().split('T')[0]}
               />
