@@ -156,6 +156,12 @@ export default function SignIn() {
       setLocation("/");
     },
     onError: (error: any) => {
+      // Check if user is blocked
+      if (error.message?.includes("Account access restricted") || error.isBlocked) {
+        setLocation("/blocked-user");
+        return;
+      }
+      
       toast({
         title: "PIN Login Failed",
         description: error.message || "Invalid PIN",
@@ -279,6 +285,12 @@ export default function SignIn() {
       }
     },
     onError: (error: any) => {
+      // Check if user is blocked
+      if (error.message?.includes("Account access restricted") || error.isBlocked) {
+        setLocation("/blocked-user");
+        return;
+      }
+      
       toast({
         title: "Verification Failed",
         description: error.message || "Invalid OTP",

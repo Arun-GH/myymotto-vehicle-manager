@@ -37,6 +37,7 @@ import AdminDashboard from "@/pages/admin-dashboard";
 import AccountManagement from "@/pages/account-management";
 import SearchPage from "@/pages/search";
 import CalendarReminder from "@/pages/calendar-reminder";
+import BlockedUser from "@/pages/blocked-user";
 
 import NotFound from "@/pages/not-found";
 
@@ -163,6 +164,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/sign-in" component={SignIn} />
+      <Route path="/blocked-user" component={BlockedUser} />
       <Route path="/" component={Dashboard} />
       <Route path="/add-vehicle" component={AddVehicle} />
       <Route path="/vehicle/:id/edit" component={EditVehicle} />

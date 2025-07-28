@@ -250,6 +250,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         user = await storage.createUser(userData);
       }
       
+      // Check if user is blocked
+      if (user.isBlocked) {
+        return res.status(403).json({ 
+          message: "Account access restricted", 
+          isBlocked: true,
+          blockedReason: user.blockedReason || "Account has been blocked by admin",
+          contactEmail: "info@arudhih.com"
+        });
+      }
+      
       // Mark user as verified
       await storage.updateUser(user.id, { isVerified: true });
       
@@ -315,6 +325,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.verifyPin(identifier, pin);
       if (!user) {
         return res.status(400).json({ message: "Invalid PIN or user not found" });
+      }
+      
+      // Check if user is blocked
+      if (user.isBlocked) {
+        return res.status(403).json({ 
+          message: "Account access restricted", 
+          isBlocked: true,
+          blockedReason: user.blockedReason || "Account has been blocked by admin",
+          contactEmail: "info@arudhih.com"
+        });
       }
       
       // Check if user has profile
