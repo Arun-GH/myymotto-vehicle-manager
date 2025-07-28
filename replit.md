@@ -31,6 +31,8 @@ Preferred communication style: Simple, everyday language.
 - COMPLETED comprehensive data collection from multiple sources: API endpoints, localStorage, IndexedDB with intelligent fallback mechanisms
 - ENHANCED backup file naming with type indicators (myymotto-full-backup-2025-01-28.json vs myymotto-documents_only-backup-2025-01-28.json)
 - IMPLEMENTED robust restore workflow with automatic data source detection, API restoration, and comprehensive success confirmation
+- FIXED circular reference JSON serialization issue with cleanObjectForSerialization method handling WeakSet tracking and object cleaning
+- ENHANCED email backup functionality by separating file download from email compose to prevent "about:blank" page issues caused by large mailto URLs
 
 **July 27, 2025**: COMPLETED comprehensive vehicle form streamlining by removing insurance and service details for single source of truth
 - MAJOR ARCHITECTURAL CLEANUP: Successfully completed removal of insurance and service detail fields from vehicle forms (add-vehicle.tsx and edit-vehicle.tsx)

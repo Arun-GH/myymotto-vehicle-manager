@@ -248,12 +248,17 @@ export class BackupManager {
     // Clean the entire backup data to prevent circular references
     const cleanBackupData = this.cleanObjectForSerialization(backupData);
     
-    // Create email content
+    // Create a downloadable JSON file first
+    const jsonBlob = new Blob([JSON.stringify(cleanBackupData, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(jsonBlob);
+    
+    // Create simplified email content without the full JSON data
     const subject = encodeURIComponent(`Myymotto ${backupType === 'full' ? 'Complete' : 'Documents'} Data Backup`);
-    const body = encodeURIComponent(`
-Dear User,
+    const body = encodeURIComponent(`Dear User,
 
-This email contains your Myymotto ${backupType === 'full' ? 'complete' : 'documents-only'} data backup created on ${cleanBackupData.metadata.exportedOn}.
+I have created your Myymotto ${backupType === 'full' ? 'complete' : 'documents-only'} data backup.
 
 Backup Details:
 - Schema Version: ${cleanBackupData.schemaVersion}
@@ -263,23 +268,28 @@ ${backupType === 'full' ? `- Service Logs: ${cleanBackupData.metadata.fieldCount
 - Total Size: ${this.formatFileSize(cleanBackupData.metadata.totalSize)}
 - Export Date: ${cleanBackupData.metadata.exportedOn}
 
+IMPORTANT: The backup file will download automatically when you send this email. Please attach the downloaded .json file to this email before sending.
+
 To restore this data on a new device:
 1. Install Myymotto app
 2. Go to Settings → Data Management → Restore Backup
-3. Copy the JSON data below and save as .json file
-4. Upload this backup file
+3. Upload the attached backup file
 
-Important: Keep this backup file safe and secure. It contains your personal vehicle documents and information.
+Keep this backup file safe and secure. It contains your personal vehicle documents and information.
 
 Best regards,
-Myymotto Team
-
----
-Backup Data (JSON Schema v${cleanBackupData.schemaVersion}):
-${JSON.stringify(cleanBackupData, null, 2)}
-    `);
+Myymotto Team`);
     
-    // Open email client
+    // Trigger download first
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `myymotto-${backupType}-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    // Open email client with instructions to attach the downloaded file
     const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
     window.open(mailtoLink, '_blank');
   }
