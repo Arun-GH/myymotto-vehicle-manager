@@ -10,7 +10,10 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 28, 2025**: COMPLETED emergency contacts page mobile-friendly enhancement with professional field validations
+**July 28, 2025**: FIXED critical vehicle deletion bug and completed emergency contacts page mobile-friendly enhancement
+- CRITICAL BUG FIX: Resolved vehicle deletion failing with "vehicle not found" error caused by foreign key constraint violations with document_expiries table
+- ENHANCED vehicle deletion logic in storage.ts to properly cascade delete all related records including documentExpiries and calendarReminders tables
+- COMPLETED comprehensive deletion process: notifications → service alerts → broadcasts → maintenance records → service logs → traffic violations → documents → document expiries → calendar reminders → vehicle
 - ENHANCED emergency contacts page with mobile-first professional design and improved field validations
 - IMPLEMENTED input validation for name fields: automatically removes numbers and special characters, allowing only letters and spaces
 - ADDED phone number field validation: restricts input to numbers, plus signs, hyphens, spaces, and parentheses only

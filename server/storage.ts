@@ -710,6 +710,14 @@ export class DatabaseStorage implements IStorage {
       const documentsDeleted = await db.delete(documents).where(eq(documents.vehicleId, id));
       console.log(`Deleted ${documentsDeleted.rowCount || 0} documents`);
       
+      // Delete related document expiries - THIS WAS MISSING
+      const documentExpiriesDeleted = await db.delete(documentExpiries).where(eq(documentExpiries.vehicleId, id));
+      console.log(`Deleted ${documentExpiriesDeleted.rowCount || 0} document expiries`);
+      
+      // Delete related calendar reminders
+      const calendarRemindersDeleted = await db.delete(calendarReminders).where(eq(calendarReminders.vehicleId, id));
+      console.log(`Deleted ${calendarRemindersDeleted.rowCount || 0} calendar reminders`);
+      
       // Finally delete the vehicle  
       const result = await db.delete(vehicles).where(and(eq(vehicles.id, id), eq(vehicles.userId, userId)));
       console.log(`Deleted ${result.rowCount || 0} vehicles`);
