@@ -7,7 +7,9 @@ export class DocumentExpiryService {
     'road_tax',
     'fitness_certificate', 
     'travel_permits',
-    'emission'
+    'emission',
+    'rc_book',
+    'insurance'
   ];
 
   // Main entry point - run comprehensive expiry check process
@@ -50,7 +52,9 @@ export class DocumentExpiryService {
         { type: 'road_tax', expiryField: null }, // Will be checked from uploaded documents
         { type: 'fitness_certificate', expiryField: null },
         { type: 'travel_permits', expiryField: null },
-        { type: 'emission', expiryField: 'emissionExpiry' }
+        { type: 'emission', expiryField: 'emissionExpiry' },
+        { type: 'rc_book', expiryField: 'rcExpiry' },
+        { type: 'insurance', expiryField: null } // Special handling for multiple insurance documents
       ];
 
       for (const docType of documentTypes) {
@@ -67,14 +71,36 @@ export class DocumentExpiryService {
       let expiryDate: string | null = null;
       
       if (docType.expiryField && vehicle[docType.expiryField]) {
-        // Get expiry date from vehicle record (like emission expiry)
+        // Get expiry date from vehicle record (like emission expiry, RC expiry)
         expiryDate = vehicle[docType.expiryField];
+      } else if (docType.type === 'insurance') {
+        // Special handling for insurance - find maximum expiry date from multiple documents
+        const documents = await storage.getDocumentsByVehicle(vehicleId);
+        const insuranceDocs = documents.filter(doc => 
+          doc.documentType?.toLowerCase().includes('insurance') ||
+          doc.documentType === 'Insurance Copy'
+        );
+        
+        if (insuranceDocs.length > 0) {
+          // Find the maximum (latest) expiry date among all insurance documents
+          const expiryDates = insuranceDocs
+            .map(doc => doc.expiryDate)
+            .filter(date => date) // Remove null/undefined dates
+            .map(date => new Date(date!));
+          
+          if (expiryDates.length > 0) {
+            const maxExpiryDate = new Date(Math.max(...expiryDates.map(date => date.getTime())));
+            expiryDate = maxExpiryDate.toISOString().split('T')[0];
+            console.log(`Found ${insuranceDocs.length} insurance documents, using latest expiry: ${expiryDate}`);
+          }
+        }
       } else {
         // Check if document exists in uploaded documents
         const documents = await storage.getDocumentsByVehicle(vehicleId);
         const docMatch = documents.find(doc => 
           doc.documentType?.toLowerCase().includes(docType.type.replace('_', '')) ||
-          doc.documentType === docType.type
+          doc.documentType === docType.type ||
+          (docType.type === 'rc_book' && doc.documentType === 'RC Book Copy')
         );
         
         if (docMatch && docMatch.expiryDate) {
@@ -128,14 +154,18 @@ export class DocumentExpiryService {
         'road_tax': 'Road Tax Renewal Reminder',
         'fitness_certificate': 'Fitness Certificate Renewal Reminder', 
         'travel_permits': 'Travel Permit Renewal Reminder',
-        'emission': 'Emission Certificate Renewal Reminder'
+        'emission': 'Emission Certificate Renewal Reminder',
+        'rc_book': 'RC Book Renewal Reminder',
+        'insurance': 'Vehicle Insurance Renewal Reminder'
       };
 
       const descriptionMap: Record<string, string> = {
         'road_tax': `Your vehicle's Road Tax expires in ${daysUntilExpiry} days (${expiryDate}). Please renew to avoid penalties.`,
         'fitness_certificate': `Your vehicle's Fitness Certificate expires in ${daysUntilExpiry} days (${expiryDate}). Renewal is required for legal compliance.`,
         'travel_permits': `Your vehicle's Travel Permit expires in ${daysUntilExpiry} days (${expiryDate}). Please renew before traveling.`,
-        'emission': `Your vehicle's Emission Certificate expires in ${daysUntilExpiry} days (${expiryDate}). Get it renewed to avoid violations.`
+        'emission': `Your vehicle's Emission Certificate expires in ${daysUntilExpiry} days (${expiryDate}). Get it renewed to avoid violations.`,
+        'rc_book': `Your vehicle's RC Book expires in ${daysUntilExpiry} days (${expiryDate}). Please renew to maintain vehicle registration validity.`,
+        'insurance': `Your vehicle insurance expires in ${daysUntilExpiry} days (${expiryDate}). Renew now to stay protected and legally compliant.`
       };
 
       // Check if notification for this specific day already exists
@@ -175,7 +205,7 @@ export class DocumentExpiryService {
       const expiryData = {
         vehicleId,
         userId,
-        documentType: documentType as 'road_tax' | 'fitness_certificate' | 'travel_permits' | 'emission',
+        documentType: documentType as 'road_tax' | 'fitness_certificate' | 'travel_permits' | 'emission' | 'rc_book' | 'insurance',
         expiryDate,
         amount: amount || null,
         issueDate: new Date().toISOString().split('T')[0],

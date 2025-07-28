@@ -234,7 +234,7 @@ export const documentExpiries = pgTable("document_expiries", {
   id: serial("id").primaryKey(),
   vehicleId: integer("vehicle_id").references(() => vehicles.id).notNull(),
   userId: integer("user_id").references(() => users.id).notNull(),
-  documentType: text("document_type").notNull(), // "road_tax", "fitness_certificate", "travel_permits", "emission"
+  documentType: text("document_type").notNull(), // "road_tax", "fitness_certificate", "travel_permits", "emission", "rc_book", "insurance"
   expiryDate: date("expiry_date").notNull(),
   amount: integer("amount"), // Amount paid for document in paise
   issueDate: date("issue_date"),
