@@ -122,9 +122,9 @@ export default function ServiceLogs() {
     return dateB - dateA; // Latest first
   }) : undefined;
 
-  // Check if there's any general service entry
+  // Check if there's any general service entry (case-insensitive)
   const hasGeneralService = sortedServiceLogs ? sortedServiceLogs.some(log => 
-    log.serviceType === "General Service (Paid)"
+    log.serviceType && log.serviceType.toUpperCase() === "GENERAL SERVICE (PAID)"
   ) : false;
 
   if (vehicleLoading || logsLoading || maintenanceLoading) {

@@ -128,9 +128,9 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   const getLastGeneralServiceDate = () => {
     if (!serviceLogs || serviceLogs.length === 0) return null;
     
-    // Sort general service logs by date (newest first) - looking for "General Service (Paid)"
+    // Sort general service logs by date (newest first) - looking for "GENERAL SERVICE (PAID)" (case-insensitive)
     const generalServiceLogs = serviceLogs
-      .filter((log: any) => log.serviceDate && log.serviceType === "General Service (Paid)")
+      .filter((log: any) => log.serviceDate && log.serviceType && log.serviceType.toUpperCase() === "GENERAL SERVICE (PAID)")
       .sort((a: any, b: any) => new Date(b.serviceDate).getTime() - new Date(a.serviceDate).getTime());
     
     return generalServiceLogs.length > 0 ? generalServiceLogs[0].serviceDate : null;
