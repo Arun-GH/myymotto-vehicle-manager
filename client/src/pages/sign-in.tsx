@@ -158,7 +158,7 @@ export default function SignIn() {
     onError: (error: any) => {
       console.log("PIN login error:", error);
       // Check if user is blocked - 403 status indicates blocked user
-      if (error.message?.includes("403") || error.message?.includes("Account access restricted") || error.isBlocked) {
+      if (error.message?.includes("403:") && error.message?.includes("Account access restricted")) {
         setLocation("/blocked-user");
         return;
       }
@@ -288,7 +288,7 @@ export default function SignIn() {
     onError: (error: any) => {
       console.log("OTP verification error:", error);
       // Check if user is blocked - 403 status indicates blocked user
-      if (error.message?.includes("403") || error.message?.includes("Account access restricted") || error.isBlocked) {
+      if (error.message?.includes("403:") && error.message?.includes("Account access restricted")) {
         setLocation("/blocked-user");
         return;
       }

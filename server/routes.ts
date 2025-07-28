@@ -321,20 +321,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = pinLoginSchema.parse(req.body);
       const { identifier, pin } = validatedData;
       
+      // First check if user exists and is blocked
+      const existingUser = await storage.getUserByIdentifier(identifier);
+      if (existingUser && existingUser.isBlocked) {
+        return res.status(403).json({ 
+          message: "Account access restricted", 
+          isBlocked: true,
+          blockedReason: existingUser.blockedReason || "Account has been blocked by admin",
+          contactEmail: "info@arudhih.com"
+        });
+      }
+      
       // Verify PIN
       const user = await storage.verifyPin(identifier, pin);
       if (!user) {
         return res.status(400).json({ message: "Invalid PIN or user not found" });
-      }
-      
-      // Check if user is blocked
-      if (user.isBlocked) {
-        return res.status(403).json({ 
-          message: "Account access restricted", 
-          isBlocked: true,
-          blockedReason: user.blockedReason || "Account has been blocked by admin",
-          contactEmail: "info@arudhih.com"
-        });
       }
       
       // Check if user has profile
