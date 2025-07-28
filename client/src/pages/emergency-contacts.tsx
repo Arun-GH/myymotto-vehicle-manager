@@ -145,7 +145,7 @@ export default function EmergencyContacts() {
                   <div className="text-base font-bold">
                     <ColorfulLogo />
                   </div>
-                  <p className="text-xs text-red-600">Emergency Contacts</p>
+                  <p className="text-xs text-red-600">Timely Care for your carrier</p>
                 </div>
               </div>
               <div className="flex items-center space-x-1">
@@ -192,13 +192,13 @@ export default function EmergencyContacts() {
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
-                className="w-10 h-10 rounded-lg"
+                className="w-12 h-12 rounded-lg"
               />
               <div>
                 <div className="text-base font-bold">
                   <ColorfulLogo />
                 </div>
-                <p className="text-xs text-red-600">Emergency Contacts</p>
+                <p className="text-xs text-red-600">Timely Care for your carrier</p>
               </div>
             </div>
             <div className="flex items-center space-x-1">
@@ -370,34 +370,39 @@ export default function EmergencyContacts() {
         ) : (
           // Edit/Create Mode
           <Card className="shadow-orange">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center space-x-2 text-lg">
                 <Users className="w-5 h-5" />
                 <span>{hasContacts ? "Edit Emergency Contacts" : "Add Emergency Contacts"}</span>
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                   
                   {/* Emergency Contact Section */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-red-600 flex items-center space-x-2">
-                      <AlertTriangle className="w-5 h-5" />
+                  <div className="space-y-3">
+                    <h3 className="text-base font-semibold text-red-600 flex items-center space-x-2">
+                      <AlertTriangle className="w-4 h-4" />
                       <span>Emergency Contact</span>
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
                       <FormField
                         control={form.control}
                         name="emergencyName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel className="text-sm font-medium">Name</FormLabel>
                             <FormControl>
                               <Input 
                                 placeholder="Emergency contact name" 
                                 {...field}
-                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                                className="h-10"
+                                onChange={(e) => {
+                                  // Remove numbers and special characters, allow only letters and spaces
+                                  const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                                  field.onChange(value.toUpperCase());
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -409,12 +414,18 @@ export default function EmergencyContacts() {
                         name="emergencyPhone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
+                            <FormLabel className="text-sm font-medium">Phone Number</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Emergency contact phone" 
+                                placeholder="e.g., +91 9876543210" 
                                 {...field}
-                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                                className="h-10"
+                                type="tel"
+                                onChange={(e) => {
+                                  // Allow only numbers, +, -, spaces, and parentheses
+                                  const value = e.target.value.replace(/[^0-9+\-\s()]/g, '');
+                                  field.onChange(value);
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -425,23 +436,28 @@ export default function EmergencyContacts() {
                   </div>
 
                   {/* Insurance Company Section */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-blue-600 flex items-center space-x-2">
-                      <Shield className="w-5 h-5" />
+                  <div className="space-y-3">
+                    <h3 className="text-base font-semibold text-blue-600 flex items-center space-x-2">
+                      <Shield className="w-4 h-4" />
                       <span>Insurance Company</span>
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
                       <FormField
                         control={form.control}
                         name="insuranceName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Company Name</FormLabel>
+                            <FormLabel className="text-sm font-medium">Company Name</FormLabel>
                             <FormControl>
                               <Input 
                                 placeholder="Insurance company name" 
                                 {...field}
-                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                                className="h-10"
+                                onChange={(e) => {
+                                  // Remove numbers and special characters, allow only letters and spaces
+                                  const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                                  field.onChange(value.toUpperCase());
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -453,12 +469,18 @@ export default function EmergencyContacts() {
                         name="insurancePhone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
+                            <FormLabel className="text-sm font-medium">Phone Number</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Insurance company phone" 
+                                placeholder="e.g., 1800-XXX-XXXX" 
                                 {...field}
-                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                                className="h-10"
+                                type="tel"
+                                onChange={(e) => {
+                                  // Allow only numbers, +, -, spaces, and parentheses
+                                  const value = e.target.value.replace(/[^0-9+\-\s()]/g, '');
+                                  field.onChange(value);
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -469,9 +491,9 @@ export default function EmergencyContacts() {
                   </div>
 
                   {/* Roadside Assistance Section */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-yellow-600 flex items-center space-x-2">
-                      <Settings className="w-5 h-5" />
+                  <div className="space-y-3">
+                    <h3 className="text-base font-semibold text-orange-600 flex items-center space-x-2">
+                      <Settings className="w-4 h-4" />
                       <span>Roadside Assistance</span>
                     </h3>
                     <FormField
@@ -479,12 +501,18 @@ export default function EmergencyContacts() {
                       name="roadsidePhone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
+                          <FormLabel className="text-sm font-medium">Phone Number</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="Roadside assistance phone" 
+                              placeholder="e.g., 1800-XXX-XXXX" 
                               {...field}
-                              onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                              className="h-10"
+                              type="tel"
+                              onChange={(e) => {
+                                // Allow only numbers, +, -, spaces, and parentheses
+                                const value = e.target.value.replace(/[^0-9+\-\s()]/g, '');
+                                field.onChange(value);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -494,23 +522,28 @@ export default function EmergencyContacts() {
                   </div>
 
                   {/* Service Centre Section */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-green-600 flex items-center space-x-2">
-                      <Wrench className="w-5 h-5" />
+                  <div className="space-y-3">
+                    <h3 className="text-base font-semibold text-green-600 flex items-center space-x-2">
+                      <Wrench className="w-4 h-4" />
                       <span>Service Centre</span>
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
                       <FormField
                         control={form.control}
                         name="serviceCentreName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Centre Name</FormLabel>
+                            <FormLabel className="text-sm font-medium">Centre Name</FormLabel>
                             <FormControl>
                               <Input 
                                 placeholder="Service centre name" 
                                 {...field}
-                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                                className="h-10"
+                                onChange={(e) => {
+                                  // Remove numbers and special characters, allow only letters and spaces
+                                  const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                                  field.onChange(value.toUpperCase());
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -522,12 +555,18 @@ export default function EmergencyContacts() {
                         name="serviceCentrePhone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
+                            <FormLabel className="text-sm font-medium">Phone Number</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Service centre phone" 
+                                placeholder="e.g., +91 9876543210" 
                                 {...field}
-                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                                className="h-10"
+                                type="tel"
+                                onChange={(e) => {
+                                  // Allow only numbers, +, -, spaces, and parentheses
+                                  const value = e.target.value.replace(/[^0-9+\-\s()]/g, '');
+                                  field.onChange(value);
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -538,23 +577,28 @@ export default function EmergencyContacts() {
                   </div>
 
                   {/* Spare Parts Provider Section */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-purple-600 flex items-center space-x-2">
-                      <Settings className="w-5 h-5" />
+                  <div className="space-y-3">
+                    <h3 className="text-base font-semibold text-purple-600 flex items-center space-x-2">
+                      <Package className="w-4 h-4" />
                       <span>Spare Parts Provider</span>
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
                       <FormField
                         control={form.control}
                         name="sparePartsName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Provider Name</FormLabel>
+                            <FormLabel className="text-sm font-medium">Provider Name</FormLabel>
                             <FormControl>
                               <Input 
                                 placeholder="Spare parts provider name" 
                                 {...field}
-                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                                className="h-10"
+                                onChange={(e) => {
+                                  // Remove numbers and special characters, allow only letters and spaces
+                                  const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                                  field.onChange(value.toUpperCase());
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -566,12 +610,18 @@ export default function EmergencyContacts() {
                         name="sparePartsPhone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
+                            <FormLabel className="text-sm font-medium">Phone Number</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Spare parts provider phone" 
+                                placeholder="e.g., +91 9876543210" 
                                 {...field}
-                                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                                className="h-10"
+                                type="tel"
+                                onChange={(e) => {
+                                  // Allow only numbers, +, -, spaces, and parentheses
+                                  const value = e.target.value.replace(/[^0-9+\-\s()]/g, '');
+                                  field.onChange(value);
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -582,10 +632,10 @@ export default function EmergencyContacts() {
                   </div>
 
                   {/* Form Actions */}
-                  <div className="flex space-x-2 pt-4">
+                  <div className="flex flex-col space-y-2 pt-3">
                     <Button
                       type="submit"
-                      className="flex-1"
+                      className="w-full h-11"
                       disabled={createContactsMutation.isPending || updateContactsMutation.isPending}
                     >
                       {createContactsMutation.isPending || updateContactsMutation.isPending
@@ -596,6 +646,7 @@ export default function EmergencyContacts() {
                       <Button
                         type="button"
                         variant="outline"
+                        className="w-full h-10"
                         onClick={() => setIsEditing(false)}
                         disabled={createContactsMutation.isPending || updateContactsMutation.isPending}
                       >
