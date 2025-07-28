@@ -18,6 +18,7 @@ Preferred communication style: Simple, everyday language.
 - FIXED vehicle deletion API call in vehicle-card.tsx to include proper userId parameter ensuring users can only delete their own vehicles
 - UPDATED splash screen with new green logo featuring smooth growing animation effect (0.3x to 1x scale over 1 second)
 - ENHANCED splash screen design with gradient background (green-50 to white), centered layout, and brand tagline display
+- INCREASED logo size from 48x48 to 64x64 (w-48 h-48 to w-64 h-64) and extended display duration to 3.5 seconds for better visual impact
 - ENHANCED emergency contacts page with mobile-first professional design and improved field validations
 - IMPLEMENTED input validation for name fields: automatically removes numbers and special characters, allowing only letters and spaces
 - ADDED phone number field validation: restricts input to numbers, plus signs, hyphens, spaces, and parentheses only

@@ -19,7 +19,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     const completeTimer = setTimeout(() => {
       setIsVisible(false);
       setTimeout(onComplete, 300); // Allow fade out animation to complete
-    }, 2500);
+    }, 3500);
 
     return () => {
       clearTimeout(animationTimer);
@@ -34,7 +34,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           <img 
             src={logoImage} 
             alt="Myymotto Logo" 
-            className="w-48 h-48 object-contain"
+            className="w-64 h-64 object-contain"
           />
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-800 mb-1">Myymotto</h1>
@@ -51,7 +51,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         <img 
           src={logoImage} 
           alt="Myymotto Logo" 
-          className="w-48 h-48 object-contain transition-transform duration-1000 ease-out"
+          className="w-64 h-64 object-contain transition-transform duration-1000 ease-out"
           style={{ 
             transform: `scale(${logoScale})`,
           }}
