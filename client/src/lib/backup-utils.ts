@@ -270,7 +270,10 @@ export class BackupManager {
 
 Your Myymotto ${backupType === 'full' ? 'complete' : 'documents-only'} data backup has been created successfully!
 
-📁 BACKUP FILE DOWNLOADED: ${fileName}
+📁 BACKUP FILE LOCATION:
+Path: Downloads/${fileName}
+Full Path: /storage/emulated/0/Download/${fileName} (Android)
+Full Path: ~/Downloads/${fileName} (Desktop)
 
 📊 Backup Summary:
 • Documents: ${cleanBackupData.metadata.fieldCount.documents} files
@@ -280,9 +283,10 @@ ${backupType === 'full' ? `• Service Logs: ${cleanBackupData.metadata.fieldCou
 • Schema: v${cleanBackupData.schemaVersion}
 
 📎 NEXT STEPS:
-1. Find the downloaded file "${fileName}" in your Downloads folder
-2. Attach this file to this email before sending
-3. Send this email to yourself or save the file in cloud storage
+1. Navigate to Downloads folder on your device
+2. Look for file: ${fileName}
+3. Attach this exact file to this email before sending
+4. Send this email to yourself or save the file in cloud storage
 
 🔄 TO RESTORE ON NEW DEVICE:
 1. Install Myymotto app
@@ -315,7 +319,7 @@ Myymotto Team`);
     
     // Show additional notification to user
     setTimeout(() => {
-      alert(`✅ Backup Downloaded!\n\nFile: ${fileName}\n\nNext Steps:\n1. Check your Downloads folder\n2. Attach the downloaded file to your email\n3. Send the email to yourself or save to cloud storage`);
+      alert(`✅ Backup Downloaded!\n\nFile Location:\n📁 Downloads/${fileName}\n\nFull Paths:\n• Android: /storage/emulated/0/Download/${fileName}\n• Desktop: ~/Downloads/${fileName}\n\nNext Steps:\n1. Navigate to Downloads folder\n2. Find file: ${fileName}\n3. Attach this file to your email\n4. Send the email to yourself or save to cloud storage`);
     }, 1000);
   }
   
