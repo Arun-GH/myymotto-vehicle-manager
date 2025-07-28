@@ -455,15 +455,21 @@ export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  name: z.string().min(1, "Name is required"),
+  name: z.string()
+    .min(1, "Name is required")
+    .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
   age: z.number().min(1, "Age must be greater than 0").max(120, "Age must be reasonable"),
   gender: z.string().optional(),
   address: z.string().min(1, "Address is required"),
   bloodGroup: z.string().min(1, "Blood group is required"),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
-  pinCode: z.string().min(6, "Pin code must be at least 6 digits").max(6, "Pin code must be 6 digits"),
-  alternatePhone: z.string().optional(),
+  pinCode: z.string().min(1, "Pin code is required"),
+  alternatePhone: z.string()
+    .optional()
+    .refine((val) => !val || /^[0-9+\-() ]*$/.test(val), {
+      message: "Phone number can only contain numbers, +, -, (, ), and spaces"
+    }),
   email: z.string().email("Please enter a valid email address").min(1, "Email address is required"),
   profilePicture: z.string().optional().nullable(),
   driversLicenseNumber: z.string().optional(),

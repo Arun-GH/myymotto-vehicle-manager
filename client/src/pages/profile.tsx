@@ -753,6 +753,11 @@ export default function Profile() {
                             placeholder="Enter your full name"
                             className="h-8 text-sm"
                             {...field}
+                            onChange={(e) => {
+                              // Remove any numbers from the input
+                              const value = e.target.value.replace(/[0-9]/g, '');
+                              field.onChange(value);
+                            }}
                           />
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -999,7 +1004,7 @@ export default function Profile() {
                         <FormLabel className="text-xs">Pin Code</FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="Pin code"
+                            placeholder="Pin code (numbers or text allowed)"
                             className="h-8 text-sm"
                             {...field}
                           />
@@ -1023,9 +1028,14 @@ export default function Profile() {
                           <FormLabel className="text-xs">Phone</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="Alternate phone"
+                              placeholder="Alternate phone (numbers only)"
                               className="h-8 text-sm"
                               {...field}
+                              onChange={(e) => {
+                                // Allow only numbers, +, -, (, ), and spaces
+                                const value = e.target.value.replace(/[^0-9+\-() ]/g, '');
+                                field.onChange(value);
+                              }}
                             />
                           </FormControl>
                           <FormMessage className="text-xs" />
