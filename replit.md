@@ -15,6 +15,7 @@ Preferred communication style: Simple, everyday language.
 - FIXED SQL syntax error in vehicle deletion by removing invalid calendarReminders deletion (calendar reminders are user-specific, not vehicle-specific)
 - ENHANCED vehicle deletion logic in storage.ts to properly cascade delete all related records including documentExpiries table
 - COMPLETED comprehensive deletion process: notifications → service alerts → broadcasts → maintenance records → service logs → traffic violations → documents → document expiries → vehicle
+- FIXED vehicle deletion API call in vehicle-card.tsx to include proper userId parameter ensuring users can only delete their own vehicles
 - ENHANCED emergency contacts page with mobile-first professional design and improved field validations
 - IMPLEMENTED input validation for name fields: automatically removes numbers and special characters, allowing only letters and spaces
 - ADDED phone number field validation: restricts input to numbers, plus signs, hyphens, spaces, and parentheses only

@@ -180,7 +180,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
 
   const deleteVehicle = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("DELETE", `/api/vehicles/${vehicle.id}`);
+      const response = await apiRequest("DELETE", `/api/vehicles/${vehicle.id}?userId=${vehicle.userId}`);
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to delete vehicle");
