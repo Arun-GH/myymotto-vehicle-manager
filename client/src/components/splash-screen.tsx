@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import logoImage from "@assets/Mymotto_Logo_Green_Revised_1753721911529.png";
+import ColorfulLogo from "@/components/colorful-logo";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -37,7 +38,9 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             className="w-64 h-64 object-contain"
           />
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-800 mb-1">Myymotto</h1>
+            <div className="text-2xl font-bold mb-1">
+              <ColorfulLogo />
+            </div>
             <p className="text-sm text-red-600">Timely Care for your carrier</p>
           </div>
         </div>
@@ -57,7 +60,9 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           }}
         />
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-1">Myymotto</h1>
+          <div className="text-2xl font-bold mb-1">
+            <ColorfulLogo />
+          </div>
           <p className="text-sm text-red-600">Timely Care for your carrier</p>
         </div>
       </div>
