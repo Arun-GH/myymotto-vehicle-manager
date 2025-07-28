@@ -665,7 +665,15 @@ export default function CombinedServicePage() {
                     <Input
                       id="serviceDate"
                       type="date"
-                      {...serviceForm.register("serviceDate")}
+                      {...serviceForm.register("serviceDate", {
+                        validate: (value) => {
+                          if (!value) return true; // Allow empty dates
+                          const selectedDate = new Date(value);
+                          const today = new Date();
+                          today.setHours(23, 59, 59, 999); // End of today
+                          return selectedDate <= today || "Service date cannot be in the future";
+                        }
+                      })}
                       className="h-8"
                       max={new Date().toISOString().split('T')[0]}
                     />

@@ -403,7 +403,15 @@ export default function AddServiceLog() {
                     id="serviceDate"
                     type="date"
                     className="h-9 pl-10"
-                    {...form.register("serviceDate")}
+                    {...form.register("serviceDate", {
+                      validate: (value) => {
+                        if (!value) return true; // Allow empty dates
+                        const selectedDate = new Date(value);
+                        const today = new Date();
+                        today.setHours(23, 59, 59, 999); // End of today
+                        return selectedDate <= today || "Service date cannot be in the future";
+                      }
+                    })}
                     max={new Date().toISOString().split('T')[0]}
                   />
                 </div>
