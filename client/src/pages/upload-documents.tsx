@@ -17,7 +17,7 @@ import { OCRInsuranceScanner } from "@/components/ocr-insurance-scanner";
 import { type InsurancePolicyData } from "@/lib/ocr-utils";
 import { formatForDatabase } from "@/lib/date-format";
 
-type DocumentType = "emission" | "insurance" | "rc" | "fuel" | "miscellaneous" | "road_tax" | "travel_permits" | "fitness_certificate" | "fast_tag_renewals";
+type DocumentType = "emission" | "insurance" | "rc" | "fuel" | "miscellaneous" | "road_tax" | "travel_permits" | "fitness_certificate" | "fast_tag_renewals" | "parking_receipts" | "claims_on_insurance";
 
 interface DocumentUpload {
   type: DocumentType;
@@ -250,6 +250,8 @@ export default function UploadDocuments() {
     { value: "travel_permits" as DocumentType, label: "Travel Permits", icon: FileText, requiresExpiry: true },
     { value: "fitness_certificate" as DocumentType, label: "Fitness Certificate", icon: FileText, requiresExpiry: true },
     { value: "fast_tag_renewals" as DocumentType, label: "Fast Tag Renewals", icon: FileText, requiresExpiry: true },
+    { value: "parking_receipts" as DocumentType, label: "Parking Receipts", icon: FileText, requiresExpiry: false },
+    { value: "claims_on_insurance" as DocumentType, label: "Claims on Insurance", icon: FileText, requiresExpiry: false },
     { value: "miscellaneous" as DocumentType, label: "Miscellaneous", icon: File, requiresExpiry: false },
   ];
 
