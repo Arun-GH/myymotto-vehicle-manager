@@ -219,10 +219,10 @@ export default function SignIn() {
       // Clear notification cache to refresh notifications on login
       localStorage.removeItem("notifications_last_fetched");
       
-      // Show welcome toast that auto-fades after 1 second
+      // Show profile creation toast that auto-fades after 1 second
       toast({
-        title: "Welcome to Myymotto!",
-        description: "Your account setup is complete",
+        title: "Create your profile",
+        description: "Let's get started with your vehicle management",
       });
       
       // Direct new users to welcome page after PIN setup
