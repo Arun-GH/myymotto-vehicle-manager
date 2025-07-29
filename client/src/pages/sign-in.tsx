@@ -219,8 +219,8 @@ export default function SignIn() {
       // Clear notification cache to refresh notifications on login
       localStorage.removeItem("notifications_last_fetched");
       
-      // Direct new users to welcome page after PIN setup
-      setLocation("/welcome");
+      // Direct new users straight to profile creation
+      setLocation("/profile");
     },
     onError: (error: any) => {
       toast({

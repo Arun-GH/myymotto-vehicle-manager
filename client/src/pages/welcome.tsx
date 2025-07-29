@@ -8,19 +8,13 @@ export default function Welcome() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Show "Create your profile" toast immediately
-    toast({
-      title: "Create your profile",
-      description: "Let's get started with your vehicle management",
-    });
-
     // Show welcome screen for 1 second, then redirect to profile
     const timer = setTimeout(() => {
       setLocation("/profile");
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [setLocation, toast]);
+  }, [setLocation]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center p-4">
