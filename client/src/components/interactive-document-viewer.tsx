@@ -16,9 +16,38 @@ import {
   Save,
   Plus,
   Move,
-  Type
+  Type,
+  FileText
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+
+// Component for viewing text files
+function TextFileViewer({ fileData, mimeType }: { fileData: ArrayBuffer; mimeType: string }) {
+  const [textContent, setTextContent] = useState<string>('Loading...');
+
+  useEffect(() => {
+    const loadText = async () => {
+      try {
+        const decoder = new TextDecoder('utf-8');
+        const text = decoder.decode(fileData);
+        setTextContent(text);
+      } catch (error) {
+        console.error('Error decoding text file:', error);
+        setTextContent('Error: Unable to decode text file');
+      }
+    };
+    
+    loadText();
+  }, [fileData]);
+
+  return (
+    <div className="w-full h-full p-4 bg-white overflow-auto">
+      <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
+        {textContent}
+      </pre>
+    </div>
+  );
+}
 
 interface Annotation {
   id: string;
@@ -355,20 +384,40 @@ export function InteractiveDocumentViewer({
                   ))}
                 </div>
               ) : isPDF ? (
-                <iframe
-                  src={fileUrl}
-                  className="w-full h-full border-0"
-                  style={{
-                    transform: `scale(${zoom / 100})`,
-                    transformOrigin: 'top left',
-                    width: `${10000 / zoom}%`,
-                    height: `${10000 / zoom}%`,
-                  }}
-                />
+                <div className="w-full h-full relative">
+                  <iframe
+                    src={`${fileUrl}#toolbar=1&navpanes=1&scrollbar=1`}
+                    className="w-full h-full border-0"
+                    style={{
+                      transform: `scale(${zoom / 100})`,
+                      transformOrigin: 'top left',
+                      width: `${10000 / zoom}%`,
+                      height: `${10000 / zoom}%`,
+                    }}
+                    title={fileName}
+                  />
+                  {/* PDF fallback if iframe fails */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100" style={{ display: 'none' }}>
+                    <div className="text-center">
+                      <p className="text-gray-600 mb-4">PDF preview unavailable</p>
+                      <Button onClick={handleDownload} className="bg-blue-600 hover:bg-blue-700">
+                        <Download className="w-4 h-4 mr-2" />
+                        Download PDF
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : mimeType.startsWith('text/') || mimeType === 'application/json' ? (
+                <TextFileViewer fileData={fileData} mimeType={mimeType} />
               ) : (
                 <div className="text-center text-gray-500 p-8">
-                  <p>Preview not available for this file type</p>
-                  <Button onClick={handleDownload} className="mt-4">
+                  <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                  <p className="text-lg mb-2">{fileName}</p>
+                  <p className="text-sm text-gray-600 mb-4">
+                    File type: {mimeType}
+                  </p>
+                  <p className="mb-4">Preview not available for this file type</p>
+                  <Button onClick={handleDownload} className="bg-blue-600 hover:bg-blue-700">
                     <Download className="w-4 h-4 mr-2" />
                     Download to View
                   </Button>

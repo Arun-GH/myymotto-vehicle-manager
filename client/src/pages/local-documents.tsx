@@ -95,24 +95,48 @@ export default function LocalDocuments() {
         setViewingDocument(document);
       } else {
         console.log("Opening document in new tab:", document.fileName);
-        // Fallback: open in new tab
+        // Enhanced document opening with proper MIME type handling
         try {
           const blob = new Blob([document.fileData], { type: document.mimeType });
           const url = URL.createObjectURL(blob);
-          console.log("Created blob URL for viewing:", url);
-          window.open(url, '_blank');
+          console.log("Created blob URL for viewing:", url, "MIME type:", document.mimeType);
+          
+          // Enhanced opening logic for different file types
+          if (document.mimeType === 'application/pdf') {
+            // For PDFs, add proper parameters for better compatibility
+            const pdfUrl = `${url}#toolbar=1&navpanes=1&scrollbar=1&view=FitH`;
+            window.open(pdfUrl, '_blank');
+          } else if (document.mimeType.startsWith('image/')) {
+            // For images, open directly
+            window.open(url, '_blank');
+          } else if (document.mimeType.startsWith('text/') || document.mimeType === 'application/json') {
+            // For text files, open with proper UTF-8 encoding
+            window.open(url, '_blank');
+          } else {
+            // For other file types, open directly and let browser handle
+            window.open(url, '_blank');
+          }
           
           toast({
             title: "Document Opened",
             description: `${document.fileName} opened in new tab`,
           });
+          
+          // Clean up the URL after a delay
+          setTimeout(() => {
+            URL.revokeObjectURL(url);
+          }, 10000);
+          
         } catch (error) {
           console.error("Error opening document:", error);
           toast({
             title: "View Error",
-            description: "Failed to open document",
+            description: "Failed to open document. Trying download instead...",
             variant: "destructive",
           });
+          
+          // Fallback: download the file
+          handleDownloadDocument(document);
         }
       }
     } else {
@@ -126,8 +150,38 @@ export default function LocalDocuments() {
   };
 
   const handleDownloadDocument = (document: LocalDocument) => {
-    localDocumentStorage.downloadDocument(document);
+    if (document.fileData && document.fileData.byteLength > 0) {
+      try {
+        const blob = new Blob([document.fileData], { type: document.mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = window.document.createElement('a');
+        link.href = url;
+        link.download = document.fileName;
+        link.click();
+        URL.revokeObjectURL(url);
+        
+        toast({
+          title: "Document Downloaded",
+          description: `${document.fileName} has been downloaded to your device`,
+        });
+      } catch (error) {
+        console.error("Download failed:", error);
+        toast({
+          title: "Download Error",
+          description: "Unable to download document",
+          variant: "destructive",
+        });
+      }
+    } else {
+      toast({
+        title: "Download Error",
+        description: "No file available to download - this is a metadata-only entry",
+        variant: "destructive",
+      });
+    }
   };
+
+
 
   const handleShareDocument = async (document: LocalDocument) => {
     try {
