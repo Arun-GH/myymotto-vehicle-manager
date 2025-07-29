@@ -620,15 +620,66 @@ Myymotto Team`);
   
   // Auto-backup reminder system
   static shouldShowBackupReminder(): boolean {
+    // Get user account creation date from localStorage
+    const userProfile = localStorage.getItem('userProfile');
     const lastBackup = localStorage.getItem('lastBackupDate');
-    const reminderInterval = 7; // days
+    const today = new Date();
     
-    if (!lastBackup) return true;
+    // Parse account creation date
+    let accountCreationDate: Date | null = null;
+    if (userProfile) {
+      try {
+        const profile = JSON.parse(userProfile);
+        if (profile.createdAt) {
+          accountCreationDate = new Date(profile.createdAt);
+        }
+      } catch (error) {
+        console.log('Error parsing user profile for backup reminder');
+      }
+    }
     
-    const lastBackupDate = new Date(lastBackup);
-    const daysSinceBackup = Math.floor((Date.now() - lastBackupDate.getTime()) / (1000 * 60 * 60 * 24));
+    // If no account creation date, fallback to check if user has been using app for at least 30 days
+    if (!accountCreationDate) {
+      const firstAppUsage = localStorage.getItem('firstAppUsage');
+      if (firstAppUsage) {
+        accountCreationDate = new Date(firstAppUsage);
+      } else {
+        // Mark first app usage now
+        localStorage.setItem('firstAppUsage', today.toISOString());
+        return false; // Don't show reminder on first usage
+      }
+    }
     
-    return daysSinceBackup >= reminderInterval;
+    // Check if account is at least 1 month old
+    const oneMonthAgo = new Date(today);
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    
+    if (accountCreationDate > oneMonthAgo) {
+      return false; // Account is less than 1 month old
+    }
+    
+    // Check if today is the last day of the month
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const isLastDayOfMonth = tomorrow.getMonth() !== today.getMonth();
+    
+    if (!isLastDayOfMonth) {
+      return false; // Not the last day of the month
+    }
+    
+    // Check if reminder was already shown this month
+    const lastReminderDate = localStorage.getItem('lastBackupReminderShown');
+    if (lastReminderDate) {
+      const lastReminder = new Date(lastReminderDate);
+      const currentMonth = today.getMonth();
+      const currentYear = today.getFullYear();
+      
+      if (lastReminder.getMonth() === currentMonth && lastReminder.getFullYear() === currentYear) {
+        return false; // Already showed reminder this month
+      }
+    }
+    
+    return true; // Show reminder on last day of month for accounts older than 1 month
   }
   
   static markBackupCompleted(): void {

@@ -19,6 +19,8 @@ export default function BackupReminder() {
     // Show reminder if needed and not dismissed today
     if (shouldShow && reminderDismissed !== today) {
       setShowReminder(true);
+      // Mark that reminder was shown this month
+      localStorage.setItem('lastBackupReminderShown', new Date().toISOString());
     }
   }, []);
 
@@ -66,7 +68,7 @@ export default function BackupReminder() {
               Backup Reminder
             </h3>
             <p className="text-xs text-orange-700 mb-3">
-              It's been a week since your last backup. Keep your vehicle documents safe when switching phones.
+              Monthly backup reminder: Keep your vehicle documents safe when switching phones.
             </p>
             <div className="flex space-x-2">
               <Button

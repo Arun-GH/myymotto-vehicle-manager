@@ -190,7 +190,8 @@ export default function BiometricAuth({ onSuccess, onError, identifier }: Biomet
     }
 
     // Store credential ID for future authentication
-    const credentialId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
+    const publicKeyCredential = credential as PublicKeyCredential;
+    const credentialId = btoa(String.fromCharCode(...Array.from(new Uint8Array(publicKeyCredential.rawId))));
     localStorage.setItem(`webauthn_credentialId_${identifier}`, credentialId);
   };
 
