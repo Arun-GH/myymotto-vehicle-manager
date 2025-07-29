@@ -16,6 +16,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ColorfulLogo from "@/components/colorful-logo";
+import BiometricAuth from "@/components/biometric-auth";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 type AuthStep = "signin" | "verify-otp" | "pin-login" | "direct-pin" | "set-pin" | "biometric-setup" | "register";
@@ -44,6 +45,36 @@ export default function SignIn() {
       setIsExistingUser(true);
     }
   }, []);
+
+  // Handle biometric authentication success
+  const handleBiometricSuccess = async (authenticatedIdentifier: string) => {
+    try {
+      // Store authentication state
+      const savedUserId = localStorage.getItem("currentUserId");
+      if (savedUserId) {
+        localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("authMethod", "biometric");
+        localStorage.setItem("lastUsedIdentifier", authenticatedIdentifier);
+        
+        // Clear notification cache to refresh notifications on login
+        localStorage.removeItem("notifications_last_fetched");
+        
+        // Check if user has profile and navigate accordingly
+        const hasProfile = localStorage.getItem("hasProfile") === "true";
+        if (hasProfile) {
+          toast({
+            title: "Welcome Back!",
+            description: "Biometric authentication successful",
+          });
+          setLocation("/");
+        } else {
+          setLocation("/profile");
+        }
+      }
+    } catch (error) {
+      console.error("Biometric authentication error:", error);
+    }
+  };
 
   const signInForm = useForm<SignInData>({
     resolver: zodResolver(signInSchema),
@@ -891,25 +922,47 @@ export default function SignIn() {
                   {pinLoginMutation.isPending ? "Verifying..." : "Sign In"}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
-
-                <div className="text-center">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      localStorage.removeItem("lastUsedIdentifier");
-                      localStorage.removeItem("hasPin");
-                      setStep("signin");
-                      setIdentifier("");
-                      setIsExistingUser(false);
-                    }}
-                    className="text-sm text-gray-600 hover:text-gray-800"
-                  >
-                    Sign in with different account
-                  </Button>
-                </div>
               </form>
             </Form>
+
+            {/* Biometric Authentication Option */}
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-gray-300" />
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="bg-white px-2 text-gray-500">OR</span>
+                </div>
+              </div>
+              
+              <div className="mt-4">
+                <BiometricAuth
+                  identifier={identifier}
+                  onSuccess={handleBiometricSuccess}
+                  onError={(error) => {
+                    console.error("Biometric auth error:", error);
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="text-center mt-6">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  localStorage.removeItem("lastUsedIdentifier");
+                  localStorage.removeItem("hasPin");
+                  setStep("signin");
+                  setIdentifier("");
+                  setIsExistingUser(false);
+                }}
+                className="text-sm text-gray-600 hover:text-gray-800"
+              >
+                Sign in with different account
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
