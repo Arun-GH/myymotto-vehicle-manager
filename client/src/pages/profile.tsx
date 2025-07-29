@@ -524,6 +524,9 @@ export default function Profile() {
         <div className="p-4 flex items-center justify-center min-h-[80vh] bg-warm-pattern">
           <Card className="w-full max-w-md card-hover shadow-orange">
             <CardContent className="p-6 text-center">
+              <h1 className="text-2xl font-bold mb-4 text-gray-800">
+                Welcome to <ColorfulLogo />!
+              </h1>
               <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
                 <img 
                   src={logoImage} 
