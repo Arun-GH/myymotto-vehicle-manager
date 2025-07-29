@@ -500,7 +500,7 @@ export default function SignIn() {
                 className="w-16 h-16 rounded-full"
               />
             </div>
-            <CardTitle className="text-2xl font-bold text-gray-800">Welcome to <ColorfulLogo />!</CardTitle>
+            <CardTitle className="text-2xl font-bold text-gray-800">Welcome to <ColorfulLogo /></CardTitle>
             <p className="text-gray-600">Complete your registration to continue</p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -574,12 +574,12 @@ export default function SignIn() {
                       <FormControl>
                         <InputOTP maxLength={6} {...field}>
                           <InputOTPGroup className="gap-2 justify-center">
-                            <InputOTPSlot index={0} className="border-primary/30 focus:border-primary" />
-                            <InputOTPSlot index={1} className="border-primary/30 focus:border-primary" />
-                            <InputOTPSlot index={2} className="border-primary/30 focus:border-primary" />
-                            <InputOTPSlot index={3} className="border-primary/30 focus:border-primary" />
-                            <InputOTPSlot index={4} className="border-primary/30 focus:border-primary" />
-                            <InputOTPSlot index={5} className="border-primary/30 focus:border-primary" />
+                            <InputOTPSlot index={0} className="border-gray-400 focus:border-primary" />
+                            <InputOTPSlot index={1} className="border-gray-400 focus:border-primary" />
+                            <InputOTPSlot index={2} className="border-gray-400 focus:border-primary" />
+                            <InputOTPSlot index={3} className="border-gray-400 focus:border-primary" />
+                            <InputOTPSlot index={4} className="border-gray-400 focus:border-primary" />
+                            <InputOTPSlot index={5} className="border-gray-400 focus:border-primary" />
                           </InputOTPGroup>
                         </InputOTP>
                       </FormControl>
@@ -732,7 +732,7 @@ export default function SignIn() {
               className="w-16 h-16 rounded-full"
             />
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-800">Welcome to <ColorfulLogo />!</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-800">Welcome to <ColorfulLogo /></CardTitle>
           <p className="text-red-600 font-medium">Timely Care for your carrier</p>
         </CardHeader>
         <CardContent>
@@ -881,7 +881,7 @@ export default function SignIn() {
                 className="w-16 h-16 rounded-full"
               />
             </div>
-            <CardTitle className="text-2xl font-bold text-gray-800">Welcome Back!</CardTitle>
+            <CardTitle className="text-2xl font-bold text-gray-800">Welcome Back</CardTitle>
             <p className="text-gray-600">Enter your PIN to continue</p>
             <div className="bg-gray-50 px-3 py-2 rounded-lg mt-4">
               <p className="text-sm text-gray-700">{identifier}</p>
