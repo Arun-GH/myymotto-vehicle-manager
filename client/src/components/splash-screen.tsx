@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import logoImage from "@assets/Mymotto_Logo_Green_Revised_1753803272333.png";
-import splash2Image from "@assets/Splash2_1753803363441.PNG?url";
+import splash2Image from "@assets/Splash2_1753803523478.JPG?url";
 import ColorfulLogo from "@/components/colorful-logo";
 
 interface SplashScreenProps {
@@ -8,32 +8,58 @@ interface SplashScreenProps {
 }
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
-  const [currentScreen, setCurrentScreen] = useState<"splash2" | "main" | "fadeout">("splash2");
+  const [currentScreen, setCurrentScreen] = useState<"main" | "splash2" | "fadeout">("main");
   const [logoScale, setLogoScale] = useState(0.3);
 
   useEffect(() => {
-    // Show second splash for 1 second
-    const splash2Timer = setTimeout(() => {
-      setCurrentScreen("main");
-      // Start logo animation immediately when main splash appears
-      setTimeout(() => {
-        setLogoScale(1);
-      }, 100);
-    }, 1000);
+    // Start logo animation immediately
+    const animationTimer = setTimeout(() => {
+      setLogoScale(1);
+    }, 100);
 
-    // Complete splash screen after main animation
+    // Show features splash after logo animation (3.5 seconds)
+    const featuresTimer = setTimeout(() => {
+      setCurrentScreen("splash2");
+    }, 3500);
+
+    // Complete splash screen after features screen (1 second)
     const completeTimer = setTimeout(() => {
       setCurrentScreen("fadeout");
       setTimeout(onComplete, 300); // Allow fade out animation to complete
-    }, 4500); // 1s for splash2 + 3.5s for main splash
+    }, 4500); // 3.5s for logo + 1s for features
 
     return () => {
-      clearTimeout(splash2Timer);
+      clearTimeout(animationTimer);
+      clearTimeout(featuresTimer);
       clearTimeout(completeTimer);
     };
   }, [onComplete]);
 
-  // Second splash screen (1 second)
+  // Main logo splash screen (3.5 seconds)
+  if (currentScreen === "main") {
+    return (
+      <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-300">
+        <div className="flex flex-col items-center space-y-8">
+          <img 
+            src={logoImage} 
+            alt="Myymotto Logo" 
+            className="w-64 h-64 object-contain transition-transform duration-1000 ease-out"
+            style={{ 
+              transform: `scale(${logoScale})`,
+            }}
+          />
+          <div className="text-center">
+            <div className="text-5xl font-bold mb-2">
+              <ColorfulLogo />
+            </div>
+            <p className="text-xl text-red-600">Timely Care for your carrier</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Features splash screen (1 second)
   if (currentScreen === "splash2") {
     return (
       <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
@@ -47,44 +73,14 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   }
 
   // Fade out screen
-  if (currentScreen === "fadeout") {
-    return (
-      <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
-        <div className="flex flex-col items-center space-y-8">
-          <img 
-            src={logoImage} 
-            alt="Myymotto Logo" 
-            className="w-64 h-64 object-contain"
-          />
-          <div className="text-center">
-            <div className="text-5xl font-bold mb-2">
-              <ColorfulLogo />
-            </div>
-            <p className="text-xl text-red-600">Timely Care for your carrier</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Main splash screen (3.5 seconds)
   return (
-    <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-300">
+    <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
       <div className="flex flex-col items-center space-y-8">
         <img 
-          src={logoImage} 
-          alt="Myymotto Logo" 
-          className="w-64 h-64 object-contain transition-transform duration-1000 ease-out"
-          style={{ 
-            transform: `scale(${logoScale})`,
-          }}
+          src={splash2Image} 
+          alt="Myymotto Features" 
+          className="w-full h-full object-contain max-w-md mx-auto"
         />
-        <div className="text-center">
-          <div className="text-5xl font-bold mb-2">
-            <ColorfulLogo />
-          </div>
-          <p className="text-xl text-red-600">Timely Care for your carrier</p>
-        </div>
       </div>
     </div>
   );
