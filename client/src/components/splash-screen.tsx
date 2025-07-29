@@ -35,13 +35,13 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           <img 
             src={logoImage} 
             alt="Myymotto Logo" 
-            className="w-80 h-80 object-contain"
+            className="w-64 h-64 object-contain"
           />
           <div className="text-center">
-            <div className="text-4xl font-bold mb-2">
+            <div className="text-5xl font-bold mb-2">
               <ColorfulLogo />
             </div>
-            <p className="text-lg text-red-600">Timely Care for your carrier</p>
+            <p className="text-xl text-red-600">Timely Care for your carrier</p>
           </div>
         </div>
       </div>
@@ -54,16 +54,16 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         <img 
           src={logoImage} 
           alt="Myymotto Logo" 
-          className="w-80 h-80 object-contain transition-transform duration-1000 ease-out"
+          className="w-64 h-64 object-contain transition-transform duration-1000 ease-out"
           style={{ 
             transform: `scale(${logoScale})`,
           }}
         />
         <div className="text-center">
-          <div className="text-4xl font-bold mb-2">
+          <div className="text-5xl font-bold mb-2">
             <ColorfulLogo />
           </div>
-          <p className="text-lg text-red-600">Timely Care for your carrier</p>
+          <p className="text-xl text-red-600">Timely Care for your carrier</p>
         </div>
       </div>
     </div>
