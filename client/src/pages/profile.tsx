@@ -521,25 +521,33 @@ export default function Profile() {
           </div>
         </header>
 
-        <div className="p-4 flex items-center justify-center min-h-[80vh] bg-warm-pattern">
-          <Card className="w-full max-w-md card-hover shadow-orange">
-            <CardContent className="p-6 text-center">
-              <h1 className="text-2xl font-bold mb-4 text-gray-800">
-                Welcome to <ColorfulLogo />!
-              </h1>
-              <div className="bg-white p-2 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center shadow-lg">
-                <img 
-                  src={logoImage} 
-                  alt="Myymotto Logo" 
-                  className="w-16 h-16 rounded-full"
-                />
+        <div className="p-4 flex items-center justify-center min-h-[80vh] bg-gradient-to-br from-gray-50 to-white">
+          <Card className="w-full max-w-lg shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-8 text-center space-y-6">
+              <div className="space-y-4">
+                <h1 className="text-2xl font-semibold text-gray-700">
+                  Welcome to <ColorfulLogo />
+                </h1>
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-3 rounded-2xl w-24 h-24 mx-auto flex items-center justify-center shadow-md">
+                  <img 
+                    src={logoImage} 
+                    alt="Myymotto Logo" 
+                    className="w-16 h-16 rounded-xl object-cover"
+                  />
+                </div>
               </div>
-              <h2 className="text-2xl font-bold mb-2 text-gray-800">Create Your Profile</h2>
-              <p className="text-gray-600 mb-6">
-                Let's get started with timely care for your carrier.
-              </p>
-              <div className="text-center text-gray-600">
-                <p>Please fill out the form below to create your profile.</p>
+              
+              <div className="space-y-3">
+                <h2 className="text-2xl font-bold text-gray-800">Create Your Profile</h2>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Complete your profile to access personalized vehicle management features and timely care for your carrier.
+                </p>
+              </div>
+              
+              <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                <p className="text-blue-700 text-sm font-medium">
+                  Please provide accurate information for the best experience
+                </p>
               </div>
             </CardContent>
           </Card>
