@@ -38,6 +38,7 @@ import AccountManagement from "@/pages/account-management";
 import SearchPage from "@/pages/search";
 import CalendarReminder from "@/pages/calendar-reminder";
 import BlockedUser from "@/pages/blocked-user";
+import Welcome from "@/pages/welcome";
 
 import NotFound from "@/pages/not-found";
 
@@ -53,13 +54,8 @@ function Router() {
   // Handle splash screen completion
   const handleSplashComplete = () => {
     setShowSplash(false);
-    // After splash, check authentication and redirect accordingly
-    if (!isAuthenticated) {
-      setLocation("/sign-in");
-    } else {
-      // User is authenticated, redirect to dashboard
-      setLocation("/");
-    }
+    // Always go to sign-in page after splash screen as requested
+    setLocation("/sign-in");
   };
 
   // Handle permissions completion
@@ -118,23 +114,14 @@ function Router() {
     // Skip routing logic during splash screen
     if (showSplash) return;
     
-    if (!isAuthenticated && location !== "/sign-in") {
+    // Only redirect unauthenticated users to sign-in, let authenticated users navigate freely
+    if (!isAuthenticated && location !== "/sign-in" && location !== "/blocked-user") {
       setLocation("/sign-in");
-    } else if (isAuthenticated && !isLoading && !vehiclesLoading) {
-      if (!profile && location !== "/profile") {
-        setLocation("/profile");
-      } else if (profile) {
-        // For existing users with vehicles, skip permissions and go directly to dashboard
-        if (vehicles && vehicles.length > 0 && location === "/") {
-          // User has vehicles, they are an existing user - no need for permissions
-          return;
-        }
-        
-        // Check if this is a new user who needs permissions setup
-        const permissionsCompleted = localStorage.getItem(`permissionsCompleted_${currentUserId}`);
-        if (!permissionsCompleted && !showPermissions && !showSplash && (!vehicles || vehicles.length === 0)) {
-          setShowPermissions(true);
-        }
+    } else if (isAuthenticated && !isLoading && !vehiclesLoading && profile) {
+      // Check if this is a new user who needs permissions setup
+      const permissionsCompleted = localStorage.getItem(`permissionsCompleted_${currentUserId}`);
+      if (!permissionsCompleted && !showPermissions && !showSplash && (!vehicles || vehicles.length === 0)) {
+        setShowPermissions(true);
       }
     }
   }, [isAuthenticated, isLoading, vehiclesLoading, profile, vehicles, location, setLocation, currentUserId, showPermissions, showSplash]);
@@ -165,6 +152,7 @@ function Router() {
     <Switch>
       <Route path="/sign-in" component={SignIn} />
       <Route path="/blocked-user" component={BlockedUser} />
+      <Route path="/welcome" component={Welcome} />
       <Route path="/" component={Dashboard} />
       <Route path="/add-vehicle" component={AddVehicle} />
       <Route path="/vehicle/:id/edit" component={EditVehicle} />

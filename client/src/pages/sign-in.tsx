@@ -196,16 +196,8 @@ export default function SignIn() {
       // Clear notification cache to refresh notifications on login
       localStorage.removeItem("notifications_last_fetched");
       
-      // Show welcome toast and then redirect to profile page for new users
-      toast({
-        title: "Welcome to Myymotto!",
-        description: "Let's complete your profile to get started",
-      });
-      
-      // Always direct new users to profile page after PIN setup
-      setTimeout(() => {
-        setLocation("/profile");
-      }, 1500); // Small delay to show the welcome message
+      // Direct new users to welcome page after PIN setup
+      setLocation("/welcome");
     },
     onError: (error: any) => {
       toast({

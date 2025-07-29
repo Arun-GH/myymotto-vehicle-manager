@@ -10,13 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 29, 2025**: FIXED PIN creation welcome popup auto-fade and navigation issue
-- CRITICAL FIX: Resolved welcome popup after PIN creation not fading away and blocking navigation to profile page
-- UPDATED setPinMutation success handler to automatically redirect users to profile page after 1.5 seconds
-- ENHANCED welcome toast message to clearly indicate next step: "Let's complete your profile to get started"
-- FIXED authentication flow for new users: OTP verification → PIN setup → Welcome toast → Auto-redirect to profile completion
-- IMPLEMENTED proper timeout-based navigation ensuring toast displays briefly before automatic redirection
-- MAINTAINED all existing PIN functionality while adding seamless user journey for new user onboarding
+**July 29, 2025**: COMPLETED authentication flow overhaul with proper welcome screen for new users
+- IMPLEMENTED proper authentication flow: Splash Screen → Login Page → Welcome Page (new users) → Profile Page OR Dashboard (existing users)
+- CREATED dedicated Welcome page component with 1-second auto-redirect to profile page for new users
+- FIXED splash screen to always redirect to login page instead of checking authentication status
+- UPDATED PIN setup flow to redirect new users to welcome page instead of direct profile navigation
+- ENHANCED authentication routing to let sign-in page handle all post-login navigation logic
+- SIMPLIFIED App.tsx routing logic to prevent interference with authentication flow
+- MAINTAINED existing user experience for returning users while improving new user onboarding journey
+- COMPLETED user flow: New users see welcome screen briefly before profile setup, existing users go directly to dashboard
 
 **July 28, 2025**: FIXED critical vehicle deletion bug and enhanced splash screen with animated logo
 - CRITICAL BUG FIX: Resolved vehicle deletion failing with "vehicle not found" error caused by foreign key constraint violations with document_expiries table
