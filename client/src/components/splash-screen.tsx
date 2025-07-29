@@ -17,16 +17,16 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       setLogoScale(1);
     }, 100);
 
-    // Show features splash after logo animation (3.5 seconds)
+    // Show features splash after logo animation (2 seconds)
     const featuresTimer = setTimeout(() => {
       setCurrentScreen("splash2");
-    }, 3500);
+    }, 2000);
 
-    // Complete splash screen after features screen (1 second)
+    // Complete splash screen after features screen (2 seconds)
     const completeTimer = setTimeout(() => {
       setCurrentScreen("fadeout");
       setTimeout(onComplete, 300); // Allow fade out animation to complete
-    }, 4500); // 3.5s for logo + 1s for features
+    }, 4000); // 2s for logo + 2s for features
 
     return () => {
       clearTimeout(animationTimer);
