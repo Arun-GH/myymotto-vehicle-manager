@@ -158,20 +158,41 @@ export default function PermissionsScreen({ onComplete }: PermissionsScreenProps
           break;
       }
       
-      setPermissions(prev => prev.map(p => 
-        p.id === permissionId 
-          ? { ...p, status: granted ? 'granted' : 'denied' }
-          : p
-      ));
+      setPermissions(prev => {
+        const updated = prev.map(p => 
+          p.id === permissionId 
+            ? { ...p, status: (granted ? 'granted' : 'denied') as Permission['status'] }
+            : p
+        );
+        
+        // Save settings automatically when permission is granted/denied
+        savePermissionSettings(updated);
+        return updated;
+      });
     } catch (error) {
-      setPermissions(prev => prev.map(p => 
-        p.id === permissionId 
-          ? { ...p, status: 'denied' }
-          : p
-      ));
+      setPermissions(prev => {
+        const updated = prev.map(p => 
+          p.id === permissionId 
+            ? { ...p, status: 'denied' as Permission['status'] }
+            : p
+        );
+        
+        // Save settings automatically even when denied
+        savePermissionSettings(updated);
+        return updated;
+      });
     }
     
     setIsRequesting(false);
+  };
+
+  const savePermissionSettings = (updatedPermissions: Permission[]) => {
+    const permissionStatus = updatedPermissions.reduce((acc, p) => {
+      acc[p.id] = p.status;
+      return acc;
+    }, {} as Record<string, string>);
+    
+    localStorage.setItem('appPermissions', JSON.stringify(permissionStatus));
   };
 
   const requestAllPermissions = async () => {
@@ -312,36 +333,29 @@ export default function PermissionsScreen({ onComplete }: PermissionsScreenProps
           </div>
 
           {/* Action Buttons */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <Button
               onClick={requestAllPermissions}
               disabled={isRequesting}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white h-12"
             >
               {isRequesting ? 'Requesting Permissions...' : 'Allow All Permissions'}
             </Button>
             
-            {allRequiredGranted && (
-              <Button
-                onClick={handleContinue}
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
-              >
-                Continue to App
-              </Button>
-            )}
-            
+            {/* Next Button - Always visible for new users */}
             <Button
               onClick={handleContinue}
-              variant="outline"
-              className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg transition-all duration-200"
             >
-              Skip for Now
+              Next →
             </Button>
             
             {!allRequiredGranted && (
-              <p className="text-center text-sm text-orange-600">
-                Note: Some features may be limited without required permissions
-              </p>
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                <p className="text-center text-sm text-orange-700">
+                  Note: Some features may be limited without required permissions
+                </p>
+              </div>
             )}
           </div>
 
