@@ -22,11 +22,11 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       setCurrentScreen("splash2");
     }, 2000);
 
-    // Complete splash screen after features screen (2 seconds)
+    // Complete splash screen after features screen (3 seconds)
     const completeTimer = setTimeout(() => {
       setCurrentScreen("fadeout");
       setTimeout(onComplete, 300); // Allow fade out animation to complete
-    }, 4000); // 2s for logo + 2s for features
+    }, 5000); // 2s for logo + 3s for features
 
     return () => {
       clearTimeout(animationTimer);
