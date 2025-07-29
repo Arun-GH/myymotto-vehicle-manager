@@ -284,8 +284,15 @@ export default function CalendarReminder() {
         // Create date in local timezone
         date = new Date(year, month - 1, day, hours, minutes, 0);
       } else {
-        // This is from database (ISO string) - handle timezone properly
-        date = new Date(dateInput);
+        // This is from database (ISO string) - the database stores time with +5:30 offset
+        // so when we get it back, we need to adjust it back to display correct local time
+        const dbDate = new Date(dateInput);
+        const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+        date = new Date(dbDate.getTime() - istOffset);
+        
+        console.log(`Database time: ${dateInput}`);
+        console.log(`Parsed DB date: ${dbDate.toString()}`);
+        console.log(`Adjusted display date: ${date.toString()}`);
       }
     } else {
       date = new Date(dateInput);

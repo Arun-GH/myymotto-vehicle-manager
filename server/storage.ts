@@ -1812,11 +1812,22 @@ export class DatabaseStorage implements IStorage {
     let reminderDate: Date;
     if (typeof reminder.reminderDate === 'string' && reminder.reminderDate.includes('T') && !reminder.reminderDate.includes('Z')) {
       // This is from datetime-local input: "2025-01-29T00:10"
-      // Parse as local time to avoid UTC conversion
+      // Parse as local time but adjust for Indian timezone offset to store correctly in GMT database
       const parts = reminder.reminderDate.split('T');
       const [year, month, day] = parts[0].split('-').map(Number);
       const [hours, minutes] = parts[1].split(':').map(Number);
-      reminderDate = new Date(year, month - 1, day, hours, minutes, 0);
+      
+      // Create local date
+      const localDate = new Date(year, month - 1, day, hours, minutes, 0);
+      
+      // Since database is GMT and we want to store the actual local time,
+      // we need to offset by IST (+5:30) to compensate for the automatic UTC conversion
+      const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+      reminderDate = new Date(localDate.getTime() + istOffset);
+      
+      console.log(`Original input: ${reminder.reminderDate}`);
+      console.log(`Local date created: ${localDate.toString()}`);
+      console.log(`Adjusted for DB storage: ${reminderDate.toString()}`);
     } else {
       reminderDate = new Date(reminder.reminderDate);
     }
@@ -1837,11 +1848,18 @@ export class DatabaseStorage implements IStorage {
       // Handle datetime-local input properly to preserve local time
       if (typeof reminder.reminderDate === 'string' && reminder.reminderDate.includes('T') && !reminder.reminderDate.includes('Z')) {
         // This is from datetime-local input: "2025-01-29T00:10"
-        // Parse as local time to avoid UTC conversion
+        // Parse as local time but adjust for Indian timezone offset to store correctly in GMT database
         const parts = reminder.reminderDate.split('T');
         const [year, month, day] = parts[0].split('-').map(Number);
         const [hours, minutes] = parts[1].split(':').map(Number);
-        updateData.reminderDate = new Date(year, month - 1, day, hours, minutes, 0);
+        
+        // Create local date
+        const localDate = new Date(year, month - 1, day, hours, minutes, 0);
+        
+        // Since database is GMT and we want to store the actual local time,
+        // we need to offset by IST (+5:30) to compensate for the automatic UTC conversion
+        const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+        updateData.reminderDate = new Date(localDate.getTime() + istOffset);
       } else {
         updateData.reminderDate = new Date(reminder.reminderDate);
       }
