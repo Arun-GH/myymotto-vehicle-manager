@@ -499,59 +499,43 @@ export default function Profile() {
   // If no profile exists, show the create profile form
   if (!isLoading && !profile) {
     return (
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="header-gradient-border shadow-lg relative z-10">
-          <div className="px-3 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4">
+        <Card className="w-full max-w-lg shadow-xl border-0 bg-white/90 backdrop-blur-sm">
+          <CardContent className="p-8 text-center space-y-8">
+            <div className="space-y-4">
+              <h1 className="text-3xl font-semibold text-gray-700">
+                Welcome to <ColorfulLogo />
+              </h1>
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-2xl w-28 h-28 mx-auto flex items-center justify-center shadow-md">
                 <img 
                   src={logoImage} 
                   alt="Myymotto Logo" 
-                  className="w-12 h-12 rounded-lg"
+                  className="w-20 h-20 rounded-xl object-cover"
                 />
-                <div>
-                  <div className="text-base font-bold">
-                    <ColorfulLogo />
-                  </div>
-                  <p className="text-xs text-red-600">Timely Care For Your Carrier</p>
-                </div>
               </div>
             </div>
-          </div>
-        </header>
+            
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-gray-800">Create Your Profile</h2>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Complete your profile to access personalized vehicle management features and timely care for your carrier.
+              </p>
+            </div>
+            
+            <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
+              <p className="text-blue-700 text-sm font-medium">
+                Please provide accurate information for the best experience
+              </p>
+            </div>
 
-        <div className="p-4 flex items-center justify-center min-h-[80vh] bg-gradient-to-br from-gray-50 to-white">
-          <Card className="w-full max-w-lg shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-8 text-center space-y-6">
-              <div className="space-y-4">
-                <h1 className="text-2xl font-semibold text-gray-700">
-                  Welcome to <ColorfulLogo />
-                </h1>
-                <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-3 rounded-2xl w-24 h-24 mx-auto flex items-center justify-center shadow-md">
-                  <img 
-                    src={logoImage} 
-                    alt="Myymotto Logo" 
-                    className="w-16 h-16 rounded-xl object-cover"
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                <h2 className="text-2xl font-bold text-gray-800">Create Your Profile</h2>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Complete your profile to access personalized vehicle management features and timely care for your carrier.
-                </p>
-              </div>
-              
-              <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-                <p className="text-blue-700 text-sm font-medium">
-                  Please provide accurate information for the best experience
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            <Button 
+              onClick={() => setIsEditing(true)}
+              className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg transition-all duration-200"
+            >
+              Get Started
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
