@@ -20,7 +20,10 @@ export default function LocalDocuments() {
   const [documents, setDocuments] = useState<LocalDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [storageInfo, setStorageInfo] = useState({ used: 0, available: 0 });
-  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({
+    fuel: true,
+    parking_receipts: true
+  });
 
   // Fetch vehicle data
   const { data: vehicle, isLoading: vehicleLoading } = useQuery({
