@@ -314,10 +314,10 @@ export default function LocalDocuments() {
                 </div>
               )}
               <div className="flex-1">
-                <h3 className="font-medium text-gray-800 text-sm">{vehicle.make?.toUpperCase()} {vehicle.model} {vehicle.year && `(${vehicle.year})`}</h3>
+                <h3 className="font-medium text-gray-800 text-base">{vehicle.make?.toUpperCase()} {vehicle.model} {vehicle.year && `(${vehicle.year})`}</h3>
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-600">{vehicle.licensePlate}</p>
-                  <div className="text-xs text-blue-600">
+                  <p className="text-sm text-gray-600">{vehicle.licensePlate}</p>
+                  <div className="text-sm text-blue-600">
                     <FileText className="w-3 h-3 inline mr-0.5" />
                     {documents.length} doc{documents.length !== 1 ? 's' : ''}
                   </div>
@@ -335,13 +335,13 @@ export default function LocalDocuments() {
                 <div className="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center">
                   <HardDrive className="w-2.5 h-2.5 text-green-600" />
                 </div>
-                <span className="text-xs font-medium text-gray-800">Device Storage</span>
+                <span className="text-sm font-medium text-gray-800">Device Storage</span>
               </div>
               <div className="text-right">
-                <div className="text-xs font-medium text-blue-600">{documents.length} docs • {formatFileSize(storageInfo.used)}</div>
+                <div className="text-sm font-medium text-blue-600">{documents.length} docs • {formatFileSize(storageInfo.used)}</div>
               </div>
             </div>
-            <div className="text-xs text-green-600 mt-0.5 flex items-center">
+            <div className="text-sm text-green-600 mt-0.5 flex items-center">
               <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></div>
               Secured locally
             </div>
