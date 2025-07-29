@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 29, 2025**: REVERTED interactive document preview functionality to original simple viewing system per user request
+- REMOVED Interactive Document Viewer toggle button and dual viewing modes from local documents page
+- SIMPLIFIED document viewing to direct opening in new browser tabs for all file types
+- CLEANED UP unused imports and functions including Share2 icon, InteractiveDocumentViewer component, and handleShareDocument function
+- REMOVED Share button from document action buttons keeping only View and Delete buttons
+- REVERTED to basic View button that creates blob URL and opens document in new tab with 10-second cleanup timer
+- MAINTAINED all existing document storage and management functionality while simplifying the viewing experience
+- PRESERVED document type detection and proper MIME type handling for PDFs, images, and text files
+- COMPLETED cleanup of interactive preview features while keeping core document viewing functionality intact
+
 **July 29, 2025**: COMPLETED biometric authentication integration and updated backup reminder scheduling system
 - INTEGRATED biometric authentication component into direct PIN login screen with "OR" divider and fingerprint option
 - FIXED TypeScript errors in biometric-auth.tsx component by properly casting PublicKeyCredential and using Array.from() for Uint8Array iteration

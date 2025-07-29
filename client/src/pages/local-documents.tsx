@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car, Plus, Edit, Share2, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car, Plus, Edit, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
 import { apiRequest } from "@/lib/queryClient";
 import ColorfulLogo from "@/components/colorful-logo";
-import { InteractiveDocumentViewer } from "@/components/interactive-document-viewer";
+
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function LocalDocuments() {
@@ -28,7 +28,6 @@ export default function LocalDocuments() {
   
   // Interactive document viewer state
   const [viewingDocument, setViewingDocument] = useState<LocalDocument | null>(null);
-  const [useInteractiveViewer, setUseInteractiveViewer] = useState(false);
 
   // Fetch vehicle data
   const { data: vehicle, isLoading: vehicleLoading } = useQuery({
@@ -85,62 +84,32 @@ export default function LocalDocuments() {
   };
 
   const handleViewDocument = (document: LocalDocument) => {
-    console.log("handleViewDocument called:", document);
-    console.log("File data exists:", !!document.fileData);
-    console.log("File data length:", document.fileData?.byteLength || 0);
-    
     if (document.fileData && document.fileData.byteLength > 0) {
-      if (useInteractiveViewer) {
-        console.log("Opening document with interactive viewer:", document.fileName);
-        setViewingDocument(document);
-      } else {
-        console.log("Opening document in new tab:", document.fileName);
-        // Enhanced document opening with proper MIME type handling
-        try {
-          const blob = new Blob([document.fileData], { type: document.mimeType });
-          const url = URL.createObjectURL(blob);
-          console.log("Created blob URL for viewing:", url, "MIME type:", document.mimeType);
-          
-          // Enhanced opening logic for different file types
-          if (document.mimeType === 'application/pdf') {
-            // For PDFs, add proper parameters for better compatibility
-            const pdfUrl = `${url}#toolbar=1&navpanes=1&scrollbar=1&view=FitH`;
-            window.open(pdfUrl, '_blank');
-          } else if (document.mimeType.startsWith('image/')) {
-            // For images, open directly
-            window.open(url, '_blank');
-          } else if (document.mimeType.startsWith('text/') || document.mimeType === 'application/json') {
-            // For text files, open with proper UTF-8 encoding
-            window.open(url, '_blank');
-          } else {
-            // For other file types, open directly and let browser handle
-            window.open(url, '_blank');
-          }
-          
-          toast({
-            title: "Document Opened",
-            description: `${document.fileName} opened in new tab`,
-          });
-          
-          // Clean up the URL after a delay
-          setTimeout(() => {
-            URL.revokeObjectURL(url);
-          }, 10000);
-          
-        } catch (error) {
-          console.error("Error opening document:", error);
-          toast({
-            title: "View Error",
-            description: "Failed to open document. Trying download instead...",
-            variant: "destructive",
-          });
-          
-          // Fallback: download the file
-          handleDownloadDocument(document);
-        }
+      // Simple direct opening in new tab
+      try {
+        const blob = new Blob([document.fileData], { type: document.mimeType });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        
+        toast({
+          title: "Document Opened",
+          description: `${document.fileName} opened in new tab`,
+        });
+        
+        // Clean up the URL after a delay
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 10000);
+        
+      } catch (error) {
+        console.error("Error opening document:", error);
+        toast({
+          title: "View Error",
+          description: "Failed to open document",
+          variant: "destructive",
+        });
       }
     } else {
-      console.log("No file data available for document:", document.fileName);
       toast({
         title: "View Document",
         description: "No file available to preview - this is a metadata-only entry",
@@ -149,113 +118,9 @@ export default function LocalDocuments() {
     }
   };
 
-  const handleDownloadDocument = (document: LocalDocument) => {
-    if (document.fileData && document.fileData.byteLength > 0) {
-      try {
-        const blob = new Blob([document.fileData], { type: document.mimeType });
-        const url = URL.createObjectURL(blob);
-        const link = window.document.createElement('a');
-        link.href = url;
-        link.download = document.fileName;
-        link.click();
-        URL.revokeObjectURL(url);
-        
-        toast({
-          title: "Document Downloaded",
-          description: `${document.fileName} has been downloaded to your device`,
-        });
-      } catch (error) {
-        console.error("Download failed:", error);
-        toast({
-          title: "Download Error",
-          description: "Unable to download document",
-          variant: "destructive",
-        });
-      }
-    } else {
-      toast({
-        title: "Download Error",
-        description: "No file available to download - this is a metadata-only entry",
-        variant: "destructive",
-      });
-    }
-  };
 
 
 
-  const handleShareDocument = async (document: LocalDocument) => {
-    try {
-      // Create blob URL for sharing
-      if (!document.fileData) {
-        toast({
-          title: "Share Failed",
-          description: "No file data available to share",
-          variant: "destructive",
-        });
-        return;
-      }
-      const blob = new Blob([document.fileData], { type: document.mimeType });
-      const file = new File([blob], document.fileName, { type: document.mimeType });
-      
-      // Check if Web Share API is supported and can share files
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: `${document.fileName} - ${vehicle.make} ${vehicle.model}`,
-          text: `Sharing document: ${document.fileName} for ${vehicle.make} ${vehicle.model}`,
-          files: [file]
-        });
-      } else {
-        // Fallback: Show share options
-        const blob2 = new Blob([document.fileData!], { type: document.mimeType });
-        const url = URL.createObjectURL(blob2);
-        
-        // Try different share methods
-        const shareOptions = [
-          {
-            name: "WhatsApp",
-            action: () => {
-              const message = `Sharing document: ${document.fileName} for ${vehicle.make} ${vehicle.model}`;
-              window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-              // Note: WhatsApp Web doesn't support direct file sharing via URL, user will need to manually attach
-              toast({
-                title: "WhatsApp Share",
-                description: "Please manually attach the downloaded file to your WhatsApp message.",
-              });
-              localDocumentStorage.downloadDocument(document);
-            }
-          },
-          {
-            name: "Email",
-            action: () => {
-              const subject = `Document: ${document.fileName} - ${vehicle.make} ${vehicle.model}`;
-              const body = `Please find attached the document: ${document.fileName} for ${vehicle.make} ${vehicle.model}`;
-              window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
-              toast({
-                title: "Email Share",
-                description: "Please manually attach the downloaded file to your email.",
-              });
-              localDocumentStorage.downloadDocument(document);
-            }
-          }
-        ];
-
-        // Show a toast with share instructions
-        toast({
-          title: "Share Document",
-          description: "Document will be downloaded. You can then share it via your preferred app.",
-        });
-        localDocumentStorage.downloadDocument(document);
-      }
-    } catch (error) {
-      console.error('Error sharing document:', error);
-      toast({
-        title: "Share Failed",
-        description: "Unable to share document. File will be downloaded instead.",
-        variant: "destructive",
-      });
-      localDocumentStorage.downloadDocument(document);
-    }
-  };
 
   const handleDeleteDocument = async (document: LocalDocument) => {
     try {
@@ -441,19 +306,9 @@ export default function LocalDocuments() {
                 <div className="text-sm font-medium text-blue-600">{documents.length} docs • {formatFileSize(storageInfo.used)}</div>
               </div>
             </div>
-            <div className="text-sm text-green-600 mt-0.5 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></div>
-                Secured locally
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setUseInteractiveViewer(!useInteractiveViewer)}
-                className="h-6 px-2 text-xs"
-              >
-                {useInteractiveViewer ? "Simple View" : "Interactive View"}
-              </Button>
+            <div className="text-sm text-green-600 mt-0.5 flex items-center">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></div>
+              Secured locally
             </div>
           </CardContent>
         </Card>
@@ -654,26 +509,15 @@ export default function LocalDocuments() {
                       )}
                       
                       {document.fileSize > 0 ? (
-                        <>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleViewDocument(document)}
-                            className="flex-1 h-6 text-[10px] py-0"
-                          >
-                            <Eye className="w-2.5 h-2.5 mr-0.5" />
-                            View
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleShareDocument(document)}
-                            className="flex-1 h-6 text-[10px] py-0"
-                          >
-                            <Share2 className="w-2.5 h-2.5 mr-0.5" />
-                            Share
-                          </Button>
-                        </>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleViewDocument(document)}
+                          className="flex-1 h-6 text-[10px] py-0"
+                        >
+                          <Eye className="w-2.5 h-2.5 mr-0.5" />
+                          View
+                        </Button>
                       ) : (
                         <div className="flex-1 text-center text-[10px] text-gray-500 py-1">
                           No file - Amount only
@@ -716,23 +560,7 @@ export default function LocalDocuments() {
         </Button>
       </div>
 
-      {/* Interactive Document Viewer */}
-      {viewingDocument && (
-        <InteractiveDocumentViewer
-          documentId={viewingDocument.id}
-          fileName={viewingDocument.fileName}
-          fileData={viewingDocument.fileData!}
-          mimeType={viewingDocument.mimeType}
-          onClose={() => setViewingDocument(null)}
-          onSave={(annotations) => {
-            // Save annotations and close viewer
-            toast({
-              title: "Annotations Saved",
-              description: `${annotations.length} annotation(s) saved for ${viewingDocument.fileName}`,
-            });
-          }}
-        />
-      )}
+
     </div>
   );
 }
