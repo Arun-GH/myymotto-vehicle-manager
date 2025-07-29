@@ -84,77 +84,134 @@ export default function LocalDocuments() {
   };
 
   const handleViewDocument = (document: LocalDocument) => {
-    if (document.fileData && document.fileData.byteLength > 0) {
-      try {
-        console.log("Opening document:", {
-          fileName: document.fileName,
-          mimeType: document.mimeType,
-          fileSize: document.fileSize,
-          dataLength: document.fileData.byteLength
-        });
-
-        // Ensure proper MIME type for PDFs
-        let mimeType = document.mimeType;
-        if (document.fileName.toLowerCase().endsWith('.pdf') && !mimeType.includes('pdf')) {
-          mimeType = 'application/pdf';
-        }
-        
-        // Create blob with proper MIME type
-        const blob = new Blob([document.fileData], { type: mimeType });
-        const url = URL.createObjectURL(blob);
-        
-        // For PDFs, try opening directly in browser
-        if (mimeType === 'application/pdf' || document.fileName.toLowerCase().endsWith('.pdf')) {
-          // Try to open in new tab first
-          const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
-          
-          if (!newWindow) {
-            // Fallback: trigger download if popup blocked
-            const link = window.document.createElement('a');
-            link.href = url;
-            link.download = document.fileName;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            window.document.body.appendChild(link);
-            link.click();
-            window.document.body.removeChild(link);
-            
-            toast({
-              title: "PDF Downloaded",
-              description: `${document.fileName} downloaded to your device`,
-            });
-          } else {
-            toast({
-              title: "PDF Opened",
-              description: `${document.fileName} opened in new tab`,
-            });
-          }
-        } else {
-          // For other file types, open directly
-          window.open(url, '_blank');
-          toast({
-            title: "Document Opened",
-            description: `${document.fileName} opened in new tab`,
-          });
-        }
-        
-        // Clean up the URL after a delay
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-        }, 10000);
-        
-      } catch (error) {
-        console.error("Error opening document:", error);
-        toast({
-          title: "Can't open PDF file",
-          description: "There was an error opening the document. Please try downloading it instead.",
-          variant: "destructive",
-        });
-      }
-    } else {
+    if (!document.fileData || document.fileData.byteLength === 0) {
       toast({
         title: "View Document",
         description: "No file available to preview - this is a metadata-only entry",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      console.log("Opening document:", {
+        fileName: document.fileName,
+        mimeType: document.mimeType,
+        fileSize: document.fileSize,
+        dataLength: document.fileData.byteLength,
+        firstBytes: Array.from(new Uint8Array(document.fileData.slice(0, 10))).map(b => b.toString(16)).join(' ')
+      });
+
+      // Detect file type and set proper MIME type
+      let mimeType = document.mimeType || 'application/octet-stream';
+      const fileName = document.fileName.toLowerCase();
+      
+      if (fileName.endsWith('.pdf')) {
+        mimeType = 'application/pdf';
+      } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
+        mimeType = 'image/jpeg';
+      } else if (fileName.endsWith('.png')) {
+        mimeType = 'image/png';
+      } else if (fileName.endsWith('.gif')) {
+        mimeType = 'image/gif';
+      } else if (fileName.endsWith('.txt')) {
+        mimeType = 'text/plain';
+      }
+      
+      console.log("Using MIME type:", mimeType);
+      
+      // Create blob with proper MIME type
+      const blob = new Blob([document.fileData], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      
+      console.log("Created blob URL:", url);
+      
+      // Always try to open in new window first
+      const newWindow = window.open('', '_blank');
+      
+      if (newWindow) {
+        newWindow.location.href = url;
+        toast({
+          title: "Document Opened",
+          description: `${document.fileName} opened in new tab`,
+        });
+      } else {
+        // If popup blocked, create download link
+        const link = window.document.createElement('a');
+        link.href = url;
+        link.download = document.fileName;
+        
+        // Temporarily add to DOM and click
+        link.style.display = 'none';
+        window.document.body.appendChild(link);
+        link.click();
+        
+        // Clean up immediately
+        setTimeout(() => {
+          window.document.body.removeChild(link);
+        }, 100);
+        
+        toast({
+          title: "Download Started",
+          description: `${document.fileName} is being downloaded`,
+        });
+      }
+      
+      // Clean up the URL after a delay
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 30000);
+      
+    } catch (error) {
+      console.error("Error opening document:", error);
+      toast({
+        title: "Error Opening File",
+        description: `Failed to open ${document.fileName}. Check console for details.`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDownloadPDF = (document: LocalDocument) => {
+    if (!document.fileData || document.fileData.byteLength === 0) {
+      toast({
+        title: "Download Failed",
+        description: "No file data available",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      console.log("Downloading PDF:", document.fileName);
+      
+      const blob = new Blob([document.fileData], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = window.document.createElement('a');
+      link.href = url;
+      link.download = document.fileName;
+      link.style.display = 'none';
+      
+      window.document.body.appendChild(link);
+      link.click();
+      window.document.body.removeChild(link);
+      
+      toast({
+        title: "Download Started",
+        description: `${document.fileName} is being downloaded`,
+      });
+      
+      // Clean up after download
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 10000);
+      
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      toast({
+        title: "Download Failed",
+        description: "Failed to download PDF file",
         variant: "destructive",
       });
     }
@@ -551,13 +608,24 @@ export default function LocalDocuments() {
                       )}
                       
                       {document.fileSize > 0 ? (
-                        <button
-                          onClick={() => handleViewDocument(document)}
-                          className="flex items-center justify-center space-x-1 px-2 py-1 text-[10px] text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded"
-                        >
-                          <Eye className="w-2.5 h-2.5" />
-                          <span>View</span>
-                        </button>
+                        <div className="flex space-x-1">
+                          <button
+                            onClick={() => handleViewDocument(document)}
+                            className="flex items-center justify-center space-x-1 px-2 py-1 text-[10px] text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded"
+                          >
+                            <Eye className="w-2.5 h-2.5" />
+                            <span>View</span>
+                          </button>
+                          {document.fileName.toLowerCase().endsWith('.pdf') && (
+                            <button
+                              onClick={() => handleDownloadPDF(document)}
+                              className="flex items-center justify-center space-x-1 px-2 py-1 text-[10px] text-green-600 hover:text-green-700 hover:bg-green-50 rounded"
+                            >
+                              <Download className="w-2.5 h-2.5" />
+                              <span>Download</span>
+                            </button>
+                          )}
+                        </div>
                       ) : (
                         <div className="flex-1 text-center text-[10px] text-gray-500 py-1">
                           No file - Amount only
