@@ -613,7 +613,7 @@ export default function LocalDocuments() {
                             onClick={() => handleViewDocument(document)}
                             className="flex items-center justify-center space-x-1 px-2 py-1 text-[10px] text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded"
                           >
-                            <Eye className="w-2.5 h-2.5" />
+                            <Eye className="w-3 h-3" />
                             <span>View</span>
                           </button>
                           {document.fileName.toLowerCase().endsWith('.pdf') && (
