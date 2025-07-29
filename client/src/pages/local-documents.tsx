@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { localDocumentStorage, type LocalDocument } from "@/lib/local-storage";
 import { apiRequest } from "@/lib/queryClient";
 import ColorfulLogo from "@/components/colorful-logo";
+import { InteractiveDocumentViewer } from "@/components/interactive-document-viewer";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 
 export default function LocalDocuments() {
@@ -24,6 +25,9 @@ export default function LocalDocuments() {
     fuel: true,
     parking_receipts: true
   });
+  
+  // Interactive document viewer state
+  const [viewingDocument, setViewingDocument] = useState<LocalDocument | null>(null);
 
   // Fetch vehicle data
   const { data: vehicle, isLoading: vehicleLoading } = useQuery({
@@ -78,8 +82,15 @@ export default function LocalDocuments() {
   };
 
   const handleViewDocument = (document: LocalDocument) => {
-    const url = localDocumentStorage.createObjectURL(document);
-    window.open(url, '_blank');
+    if (document.fileData && document.fileData.byteLength > 0) {
+      setViewingDocument(document);
+    } else {
+      toast({
+        title: "View Document",
+        description: "No file available to preview - this is a metadata-only entry",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDownloadDocument = (document: LocalDocument) => {
@@ -608,6 +619,24 @@ export default function LocalDocuments() {
           <Plus className="h-4 w-4 text-white" />
         </Button>
       </div>
+
+      {/* Interactive Document Viewer */}
+      {viewingDocument && (
+        <InteractiveDocumentViewer
+          documentId={viewingDocument.id}
+          fileName={viewingDocument.fileName}
+          fileData={viewingDocument.fileData!}
+          mimeType={viewingDocument.mimeType}
+          onClose={() => setViewingDocument(null)}
+          onSave={(annotations) => {
+            // Save annotations and close viewer
+            toast({
+              title: "Annotations Saved",
+              description: `${annotations.length} annotation(s) saved for ${viewingDocument.fileName}`,
+            });
+          }}
+        />
+      )}
     </div>
   );
 }
