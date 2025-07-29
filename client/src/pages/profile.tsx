@@ -496,8 +496,8 @@ export default function Profile() {
     }
   };
 
-  // If no profile exists, show the create profile form
-  if (!isLoading && !profile) {
+  // If no profile exists and not editing, show the welcome screen
+  if (!isLoading && !profile && !isEditing) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4">
         <Card className="w-full max-w-lg shadow-xl border-0 bg-white/90 backdrop-blur-sm">
