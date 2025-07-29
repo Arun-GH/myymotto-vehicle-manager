@@ -304,11 +304,7 @@ export default function SignIn() {
           confirmPin: "",
         });
         setStep("set-pin");
-        // Show a brief welcome toast that auto-fades after 1 second
-        toast({
-          title: "Welcome to Myymotto!",
-          description: "Let's set up a PIN for secure access",
-        });
+        // No toast here - let PIN setup success handle the welcome message
       }
     },
     onError: (error: any) => {
