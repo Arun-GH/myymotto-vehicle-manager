@@ -531,9 +531,9 @@ export default function Profile() {
                   className="w-16 h-16 rounded-full"
                 />
               </div>
-              <h2 className="text-2xl font-bold mb-2 text-gray-800">Welcome to <ColorfulLogo />!</h2>
+              <h2 className="text-2xl font-bold mb-2 text-gray-800">Create Your Profile</h2>
               <p className="text-gray-600 mb-6">
-                Let's create your profile to get started with timely care for your carrier.
+                Let's get started with timely care for your carrier.
               </p>
               <div className="text-center text-gray-600">
                 <p>Please fill out the form below to create your profile.</p>
