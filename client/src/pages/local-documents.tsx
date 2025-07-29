@@ -85,16 +85,58 @@ export default function LocalDocuments() {
 
   const handleViewDocument = (document: LocalDocument) => {
     if (document.fileData && document.fileData.byteLength > 0) {
-      // Simple direct opening in new tab
       try {
-        const blob = new Blob([document.fileData], { type: document.mimeType });
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-        
-        toast({
-          title: "Document Opened",
-          description: `${document.fileName} opened in new tab`,
+        console.log("Opening document:", {
+          fileName: document.fileName,
+          mimeType: document.mimeType,
+          fileSize: document.fileSize,
+          dataLength: document.fileData.byteLength
         });
+
+        // Ensure proper MIME type for PDFs
+        let mimeType = document.mimeType;
+        if (document.fileName.toLowerCase().endsWith('.pdf') && !mimeType.includes('pdf')) {
+          mimeType = 'application/pdf';
+        }
+        
+        // Create blob with proper MIME type
+        const blob = new Blob([document.fileData], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        
+        // For PDFs, try opening directly in browser
+        if (mimeType === 'application/pdf' || document.fileName.toLowerCase().endsWith('.pdf')) {
+          // Try to open in new tab first
+          const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+          
+          if (!newWindow) {
+            // Fallback: trigger download if popup blocked
+            const link = window.document.createElement('a');
+            link.href = url;
+            link.download = document.fileName;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            window.document.body.appendChild(link);
+            link.click();
+            window.document.body.removeChild(link);
+            
+            toast({
+              title: "PDF Downloaded",
+              description: `${document.fileName} downloaded to your device`,
+            });
+          } else {
+            toast({
+              title: "PDF Opened",
+              description: `${document.fileName} opened in new tab`,
+            });
+          }
+        } else {
+          // For other file types, open directly
+          window.open(url, '_blank');
+          toast({
+            title: "Document Opened",
+            description: `${document.fileName} opened in new tab`,
+          });
+        }
         
         // Clean up the URL after a delay
         setTimeout(() => {
@@ -104,8 +146,8 @@ export default function LocalDocuments() {
       } catch (error) {
         console.error("Error opening document:", error);
         toast({
-          title: "View Error",
-          description: "Failed to open document",
+          title: "Can't open PDF file",
+          description: "There was an error opening the document. Please try downloading it instead.",
           variant: "destructive",
         });
       }
