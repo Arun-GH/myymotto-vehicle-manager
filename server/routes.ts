@@ -2366,13 +2366,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             notificationType: 'expired',
             sentDate: now.toISOString(),
             isRead: false,
-            title: 'Myymotto Subscription Expired',
+            title: 'MyyMotto Subscription Expired',
             message: 'Your premium subscription has expired. Renew now to restore full access!'
           });
           
           // Send expired push notification
           const pushResult = await sendPushNotification(subscription.userId, {
-            title: 'Myymotto Subscription Expired',
+            title: 'MyyMotto Subscription Expired',
             body: 'Your premium subscription has expired. Renew now to restore full access!',
             data: {
               type: 'subscription_expired',
@@ -2776,12 +2776,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 // Helper functions for push notifications
 function getNotificationTitle(daysUntilExpiry: number): string {
-  if (daysUntilExpiry <= 0) return 'Myymotto Subscription Expired';
-  if (daysUntilExpiry <= 2) return 'Myymotto Critical Alert';
-  if (daysUntilExpiry <= 9) return 'Myymotto Final Notice';
-  if (daysUntilExpiry <= 16) return 'Myymotto Renewal Urgent';
-  if (daysUntilExpiry <= 23) return 'Myymotto Subscription Alert';
-  return 'Myymotto Subscription Reminder';
+  if (daysUntilExpiry <= 0) return 'MyyMotto Subscription Expired';
+  if (daysUntilExpiry <= 2) return 'MyyMotto Critical Alert';
+  if (daysUntilExpiry <= 9) return 'MyyMotto Final Notice';
+  if (daysUntilExpiry <= 16) return 'MyyMotto Renewal Urgent';
+  if (daysUntilExpiry <= 23) return 'MyyMotto Subscription Alert';
+  return 'MyyMotto Subscription Reminder';
 }
 
 function getNotificationMessage(daysUntilExpiry: number): string {
@@ -2856,7 +2856,7 @@ function generatePDFContent(payment: any): Buffer {
     Description: Annual Premium Subscription
     Validity: 1 Year
     
-    Thank you for choosing Myymotto!
+    Thank you for choosing MyyMotto!
   `;
   
   return Buffer.from(content, 'utf-8');

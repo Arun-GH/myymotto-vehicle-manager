@@ -509,7 +509,7 @@ export default function Profile() {
               <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-2xl w-28 h-28 mx-auto flex items-center justify-center shadow-md">
                 <img 
                   src={logoImage} 
-                  alt="Myymotto Logo" 
+                  alt="MyyMotto Logo" 
                   className="w-20 h-20 rounded-xl object-cover"
                 />
               </div>
@@ -559,7 +559,7 @@ export default function Profile() {
               )}
               <img 
                 src={logoImage} 
-                alt="Myymotto Logo" 
+                alt="MyyMotto Logo" 
                 className="w-12 h-12 rounded-lg"
               />
               <div>

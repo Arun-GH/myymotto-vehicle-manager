@@ -165,7 +165,7 @@ export default function BiometricAuth({ onSuccess, onError, identifier }: Biomet
       publicKey: {
         challenge,
         rp: {
-          name: "Myymotto",
+          name: "MyyMotto",
           id: window.location.hostname,
         },
         user: {

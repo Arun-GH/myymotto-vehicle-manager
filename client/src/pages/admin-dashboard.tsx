@@ -426,7 +426,7 @@ export default function AdminDashboard() {
               </button>
               <img 
                 src={logoImage} 
-                alt="Myymotto Logo" 
+                alt="MyyMotto Logo" 
                 className="w-12 h-12 rounded-lg"
               />
               <div>

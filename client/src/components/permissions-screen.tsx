@@ -246,7 +246,7 @@ export default function PermissionsScreen({ onComplete }: PermissionsScreenProps
             </div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">App Permissions</h2>
             <p className="text-gray-600 text-sm">
-              To provide the best experience, Myymotto needs access to some device features
+              To provide the best experience, MyyMotto needs access to some device features
             </p>
           </div>
 

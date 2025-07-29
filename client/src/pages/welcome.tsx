@@ -26,7 +26,7 @@ export default function Welcome() {
         </div>
         
         <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Welcome to <span className="text-orange-600">Myymotto</span>!
+          Welcome to <span className="text-orange-600">MyyMotto</span>!
         </h1>
         
         <p className="text-lg text-gray-600 mb-2">

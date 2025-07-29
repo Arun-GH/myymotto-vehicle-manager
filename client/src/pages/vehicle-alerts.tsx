@@ -39,7 +39,7 @@ export default function VehicleAlerts() {
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               </Link>
-              <img src={logoImage} alt="Myymotto Logo" className="w-10 h-10 rounded-lg" />
+              <img src={logoImage} alt="MyyMotto Logo" className="w-10 h-10 rounded-lg" />
               <div>
                 <ColorfulLogo />
                 <p className="text-sm text-red-600">Service Alerts</p>

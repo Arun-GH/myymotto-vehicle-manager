@@ -42,7 +42,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         <div className="flex flex-col items-center space-y-8">
           <img 
             src={logoImage} 
-            alt="Myymotto Logo" 
+            alt="MyyMotto Logo" 
             className="w-64 h-64 object-contain transition-transform duration-1000 ease-out"
             style={{ 
               transform: `scale(${logoScale})`,
@@ -65,7 +65,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
         <img 
           src={splash2Image} 
-          alt="Myymotto Features" 
+          alt="MyyMotto Features" 
           className="w-full h-full object-contain max-w-md mx-auto"
         />
       </div>
@@ -78,7 +78,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       <div className="flex flex-col items-center space-y-8">
         <img 
           src={splash2Image} 
-          alt="Myymotto Features" 
+          alt="MyyMotto Features" 
           className="w-full h-full object-contain max-w-md mx-auto"
         />
       </div>

@@ -137,7 +137,7 @@ export class PushNotificationService {
   async sendTestNotification(): Promise<void> {
     // Send a test notification for subscription renewal
     const testPayload = {
-      title: 'Myymotto Subscription Reminder',
+      title: 'MyyMotto Subscription Reminder',
       body: 'Your premium subscription expires in 30 days. Renew now to continue enjoying all features!',
       data: {
         type: 'subscription_expiry',
@@ -164,32 +164,32 @@ export class PushNotificationService {
 // Subscription renewal notification templates
 export const SUBSCRIPTION_NOTIFICATION_TEMPLATES = {
   EXPIRY_30_DAYS: {
-    title: 'Myymotto Subscription Reminder',
+    title: 'MyyMotto Subscription Reminder',
     body: 'Your premium subscription expires in 30 days. Renew now to avoid service interruption!',
     data: { type: 'subscription_expiry', daysUntilExpiry: 30 }
   },
   EXPIRY_23_DAYS: {
-    title: 'Myymotto Subscription Alert',
+    title: 'MyyMotto Subscription Alert',
     body: 'Only 23 days left on your premium subscription. Secure your renewal today!',
     data: { type: 'subscription_expiry', daysUntilExpiry: 23 }
   },
   EXPIRY_16_DAYS: {
-    title: 'Myymotto Renewal Urgent',
+    title: 'MyyMotto Renewal Urgent',
     body: 'Your subscription expires in 16 days. Don\'t lose access to premium features!',
     data: { type: 'subscription_expiry', daysUntilExpiry: 16 }
   },
   EXPIRY_9_DAYS: {
-    title: 'Myymotto Final Notice',
+    title: 'MyyMotto Final Notice',
     body: 'Last chance! Your subscription expires in 9 days. Renew immediately!',
     data: { type: 'subscription_expiry', daysUntilExpiry: 9 }
   },
   EXPIRY_2_DAYS: {
-    title: 'Myymotto Critical Alert',
+    title: 'MyyMotto Critical Alert',
     body: 'URGENT: Your subscription expires in 2 days! Renew now to avoid service loss.',
     data: { type: 'subscription_expiry', daysUntilExpiry: 2 }
   },
   EXPIRED: {
-    title: 'Myymotto Subscription Expired',
+    title: 'MyyMotto Subscription Expired',
     body: 'Your premium subscription has expired. Renew now to restore full access!',
     data: { type: 'subscription_expired', daysUntilExpiry: 0 }
   }

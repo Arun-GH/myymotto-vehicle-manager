@@ -147,7 +147,7 @@ export default function Dashboard() {
             <div className="flex items-center space-x-2">
               <img 
                 src={logoImage} 
-                alt="Myymotto Logo" 
+                alt="MyyMotto Logo" 
                 className="w-12 h-12 rounded-lg"
               />
               <div>
@@ -219,7 +219,7 @@ export default function Dashboard() {
           <section className="px-3 py-4">
             <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 text-center shadow-md">
               <Car className="w-16 h-16 text-orange-500 mx-auto mb-4" />
-              <h2 className="text-lg font-semibold text-gray-800 mb-2">Welcome to Myymotto!</h2>
+              <h2 className="text-lg font-semibold text-gray-800 mb-2">Welcome to MyyMotto!</h2>
               <p className="text-sm text-gray-600 mb-4">Start managing your vehicle by adding your first one</p>
               <Link href="/add-vehicle">
                 <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2">

@@ -245,7 +245,7 @@ export class TrafficViolationService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'User-Agent': 'Myymotto Vehicle Management App'
+          'User-Agent': 'MyyMotto Vehicle Management App'
         },
         body: JSON.stringify(payload),
         signal: AbortSignal.timeout(3000) // 3 second timeout for faster fallback

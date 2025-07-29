@@ -29,7 +29,7 @@ export interface LocalDocument {
 }
 
 class LocalDocumentStorage {
-  private dbName = 'MyymottoDocuments';
+  private dbName = 'MyyMottoDocuments';
   private dbVersion = 1;
   private storeName = 'documents';
 

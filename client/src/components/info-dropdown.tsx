@@ -73,7 +73,7 @@ export default function InfoDropdown() {
   };
 
   const handleContact = () => {
-    window.open("mailto:info@arudhihsolutions.com?subject=Myymotto Support Request&body=Dear Arudhih Team,%0D%0AI am reaching out to request information and assistance regarding few features on the app.I would appreciate it if someone from your team could get in touch with me at your earliest convenience.%0D%0A%0D%0ARegards,", "_blank");
+    window.open("mailto:info@arudhihsolutions.com?subject=MyyMotto Support Request&body=Dear Arudhih Team,%0D%0AI am reaching out to request information and assistance regarding few features on the app.I would appreciate it if someone from your team could get in touch with me at your earliest convenience.%0D%0A%0D%0ARegards,", "_blank");
   };
 
   const handleFeedback = () => {
@@ -118,7 +118,7 @@ export default function InfoDropdown() {
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem onClick={handleAbout} className="cursor-pointer">
             <Info className="w-4 h-4 mr-2" />
-            About Myymotto
+            About MyyMotto
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setLocation("/account-management")} className="cursor-pointer text-orange-600 hover:text-orange-700 hover:bg-orange-50">
             <Shield className="w-4 h-4 mr-2" />
@@ -160,7 +160,7 @@ export default function InfoDropdown() {
           <DialogHeader className="pb-4 text-center">
             <DialogTitle className="text-lg font-bold text-orange-600 flex items-center justify-center gap-2 mb-2">
               <Info className="w-5 h-5" />
-              About Myymotto
+              About MyyMotto
             </DialogTitle>
             <div className="w-12 h-0.5 bg-orange-500 mx-auto rounded-full"></div>
           </DialogHeader>
@@ -232,7 +232,7 @@ export default function InfoDropdown() {
             </div>
             <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
               <p className="text-xs text-blue-700 font-medium">
-                💡 Your feedback helps us improve Myymotto for everyone!
+                💡 Your feedback helps us improve MyyMotto for everyone!
               </p>
             </div>
           </div>
@@ -253,7 +253,7 @@ export default function InfoDropdown() {
           <DialogHeader className="pb-4 text-center">
             <DialogTitle className="text-lg font-bold text-orange-600 flex items-center justify-center gap-2 mb-2">
               <Star className="w-5 h-5" />
-              Rate Myymotto
+              Rate MyyMotto
             </DialogTitle>
             <div className="w-12 h-0.5 bg-orange-500 mx-auto rounded-full"></div>
           </DialogHeader>
@@ -261,7 +261,7 @@ export default function InfoDropdown() {
             {/* Star Rating */}
             <div className="text-center">
               <p className="text-sm text-gray-700 mb-4 leading-relaxed font-medium">
-                Rate your overall experience and usefulness of Myymotto
+                Rate your overall experience and usefulness of MyyMotto
               </p>
               <div className="bg-orange-50 p-4 rounded-xl border border-orange-200">
                 <div className="flex justify-center gap-2 mb-3">
@@ -290,7 +290,7 @@ export default function InfoDropdown() {
               </label>
               <Textarea
                 {...form.register("feedback")}
-                placeholder="What do you love about Myymotto? How can we make it even better?"
+                placeholder="What do you love about MyyMotto? How can we make it even better?"
                 rows={4}
                 className="text-sm resize-none border-orange-200 focus:border-orange-400 focus:ring-orange-400"
               />

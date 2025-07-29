@@ -13,7 +13,7 @@ interface ReferralDialogProps {
 export default function ReferralDialog({ open, onOpenChange }: ReferralDialogProps) {
   const [showLaterReminder, setShowLaterReminder] = useState(false);
 
-  const shareMessage = `🚗 Hey! I've been using Myymotto to manage my vehicles and it's amazing! 
+  const shareMessage = `🚗 Hey! I've been using MyyMotto to manage my vehicles and it's amazing! 
 
 ✅ Track insurance & emission renewals
 ✅ Store all vehicle documents safely
@@ -50,7 +50,7 @@ Try it out: ${window.location.origin}`;
               <Users className="w-8 h-8 text-green-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-800 mb-2">We'll remind you later!</h3>
-            <p className="text-gray-600">You can share Myymotto with friends anytime from the profile page.</p>
+            <p className="text-gray-600">You can share MyyMotto with friends anytime from the profile page.</p>
           </div>
         </DialogContent>
       </Dialog>
@@ -80,7 +80,7 @@ Try it out: ${window.location.origin}`;
                   <ColorfulLogo className="text-sm font-bold" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-800">Share Myymotto</p>
+                  <p className="text-sm font-medium text-gray-800">Share MyyMotto</p>
                   <p className="text-xs text-red-600">Timely Care for your carrier</p>
                 </div>
               </div>

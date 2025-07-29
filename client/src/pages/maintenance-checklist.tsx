@@ -122,7 +122,7 @@ export default function MaintenanceChecklist() {
                     <ArrowLeft className="w-5 h-5" />
                   </Button>
                 </Link>
-                <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
+                <img src={logoImage} alt="MyyMotto Logo" className="w-14 h-14 rounded-lg" />
                 <div>
                   <ColorfulLogo />
                   <p className="text-sm text-red-600">Maintenance Schedule</p>
@@ -161,7 +161,7 @@ export default function MaintenanceChecklist() {
                     <ArrowLeft className="w-5 h-5" />
                   </Button>
                 </Link>
-                <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
+                <img src={logoImage} alt="MyyMotto Logo" className="w-14 h-14 rounded-lg" />
                 <div>
                   <ColorfulLogo />
                   <p className="text-sm text-red-600">Maintenance Schedule</p>
@@ -199,7 +199,7 @@ export default function MaintenanceChecklist() {
                     <ArrowLeft className="w-5 h-5" />
                   </Button>
                 </Link>
-                <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
+                <img src={logoImage} alt="MyyMotto Logo" className="w-14 h-14 rounded-lg" />
                 <div>
                   <ColorfulLogo />
                   <p className="text-sm text-red-600">Maintenance Schedule</p>
@@ -242,7 +242,7 @@ export default function MaintenanceChecklist() {
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
               </Link>
-              <img src={logoImage} alt="Myymotto Logo" className="w-14 h-14 rounded-lg" />
+              <img src={logoImage} alt="MyyMotto Logo" className="w-14 h-14 rounded-lg" />
               <div>
                 <ColorfulLogo />
                 <p className="text-sm text-red-600">Maintenance Schedule</p>

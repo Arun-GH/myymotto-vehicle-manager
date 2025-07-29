@@ -405,7 +405,7 @@ export default function InsuranceRenewals() {
                           <div className="flex items-start space-x-2">
                             <Calendar className="w-4 h-4 text-blue-600 mt-0.5" />
                             <div className="text-sm">
-                              <p className="text-blue-800 font-medium">Don't forget to update Myymotto!</p>
+                              <p className="text-blue-800 font-medium">Don't forget to update MyyMotto!</p>
                               <p className="text-blue-600">After renewing, update your insurance details in the vehicle edit page.</p>
                             </div>
                           </div>

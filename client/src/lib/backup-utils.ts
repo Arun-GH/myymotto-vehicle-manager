@@ -265,10 +265,10 @@ export class BackupManager {
     URL.revokeObjectURL(url);
     
     // Create simplified email content with clear attachment instructions
-    const subject = encodeURIComponent(`Myymotto ${backupType === 'full' ? 'Complete' : 'Documents'} Data Backup - ${cleanBackupData.metadata.exportedOn}`);
+    const subject = encodeURIComponent(`MyyMotto ${backupType === 'full' ? 'Complete' : 'Documents'} Data Backup - ${cleanBackupData.metadata.exportedOn}`);
     const body = encodeURIComponent(`Dear User,
 
-Your Myymotto ${backupType === 'full' ? 'complete' : 'documents-only'} data backup has been created successfully!
+Your MyyMotto ${backupType === 'full' ? 'complete' : 'documents-only'} data backup has been created successfully!
 
 📁 BACKUP FILE LOCATION:
 Path: Downloads/${fileName}
@@ -289,7 +289,7 @@ ${backupType === 'full' ? `• Service Logs: ${cleanBackupData.metadata.fieldCou
 4. Send this email to yourself or save the file in cloud storage
 
 🔄 TO RESTORE ON NEW DEVICE:
-1. Install Myymotto app
+1. Install MyyMotto app
 2. Go to Settings → Data Management → Restore Backup  
 3. Upload the ${fileName} file
 4. All your vehicles, documents, and data will be restored
@@ -297,15 +297,15 @@ ${backupType === 'full' ? `• Service Logs: ${cleanBackupData.metadata.fieldCou
 ⚠️ IMPORTANT: Keep this backup file secure - it contains your personal vehicle documents and information.
 
 Best regards,
-Myymotto Team`);
+MyyMotto Team`);
     
     // Show user notification about the process
     if (typeof window !== 'undefined' && 'navigator' in window && 'share' in navigator) {
       // Use Web Share API if available (mobile browsers)
       try {
         await navigator.share({
-          title: `Myymotto Data Backup - ${cleanBackupData.metadata.exportedOn}`,
-          text: `Your Myymotto backup file "${fileName}" has been downloaded. Please attach this file when sharing.`,
+          title: `MyyMotto Data Backup - ${cleanBackupData.metadata.exportedOn}`,
+          text: `Your MyyMotto backup file "${fileName}" has been downloaded. Please attach this file when sharing.`,
         });
         return;
       } catch (error) {

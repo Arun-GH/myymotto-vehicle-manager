@@ -28,7 +28,7 @@ export default function Subscribe() {
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
           amount: amount,
           currency: currency,
-          name: "Myymotto",
+          name: "MyyMotto",
           description: "Annual Vehicle Management Subscription",
           order_id: orderId,
           handler: async (response: any) => {
@@ -102,7 +102,7 @@ export default function Subscribe() {
               </Button>
               <img 
                 src={logoImage} 
-                alt="Myymotto Logo" 
+                alt="MyyMotto Logo" 
                 className="w-14 h-14 rounded-lg"
               />
               <div>
