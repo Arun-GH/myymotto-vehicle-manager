@@ -80,7 +80,18 @@ export default function CalendarReminder() {
     }
 
     try {
-      const reminderDate = new Date(reminder.reminderDate);
+      // Handle the date correctly for device notifications
+      let reminderDate: Date;
+      if (typeof reminder.reminderDate === 'string' && reminder.reminderDate.includes('T') && !reminder.reminderDate.includes('Z')) {
+        // This is from datetime-local, parse as local time
+        const parts = reminder.reminderDate.split('T');
+        const [year, month, day] = parts[0].split('-').map(Number);
+        const [hours, minutes] = parts[1].split(':').map(Number);
+        reminderDate = new Date(year, month - 1, day, hours, minutes, 0);
+      } else {
+        reminderDate = new Date(reminder.reminderDate);
+      }
+      
       const notificationId = reminder.id || Date.now();
 
       // Schedule persistent notification that works even when app is closed
@@ -130,6 +141,8 @@ export default function CalendarReminder() {
       }
 
       console.log(`Persistent device notification scheduled for: ${reminderDate.toLocaleString()}`);
+      console.log(`Original reminder.reminderDate: ${reminder.reminderDate}`);
+      console.log(`Parsed reminderDate: ${reminderDate.toString()}`);
       return true;
     } catch (error) {
       console.error('Error scheduling device notification:', error);
@@ -177,8 +190,18 @@ export default function CalendarReminder() {
 
   const createReminderMutation = useMutation({
     mutationFn: async (data: InsertCalendarReminder) => {
+      // Handle datetime-local input properly
+      // datetime-local gives us "2025-01-29T00:10" which should be treated as local time
+      let reminderDate = data.reminderDate;
+      if (typeof reminderDate === 'string' && reminderDate.includes('T') && !reminderDate.includes('Z')) {
+        // This is a local datetime string from datetime-local input
+        // Don't convert to UTC, send as is - the server will handle it correctly
+        reminderDate = reminderDate;
+      }
+      
       const response = await apiRequest("POST", "/api/calendar-reminders", {
         ...data,
+        reminderDate,
         userId: parseInt(currentUserId),
       });
       return response.json();
@@ -244,7 +267,30 @@ export default function CalendarReminder() {
   };
 
   const formatDate = (dateInput: string | Date) => {
-    const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    let date: Date;
+    
+    if (dateInput instanceof Date) {
+      date = dateInput;
+    } else if (typeof dateInput === 'string') {
+      // Handle datetime-local format specifically
+      if (dateInput.includes('T') && !dateInput.includes('Z') && !dateInput.includes('+')) {
+        // This is from datetime-local input: "2025-01-29T00:10"
+        // Parse it as local time without timezone conversion
+        const parts = dateInput.split('T');
+        const [year, month, day] = parts[0].split('-').map(Number);
+        const [hours, minutes] = parts[1].split(':').map(Number);
+        
+        // Create date in local timezone
+        date = new Date(year, month - 1, day, hours, minutes, 0);
+      } else {
+        // This is from database (ISO string) - handle timezone properly
+        date = new Date(dateInput);
+      }
+    } else {
+      date = new Date(dateInput);
+    }
+
+    // Format in local timezone
     return date.toLocaleString('en-IN', {
       day: '2-digit',
       month: 'short',
