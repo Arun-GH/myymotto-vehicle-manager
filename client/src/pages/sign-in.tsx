@@ -161,10 +161,33 @@ export default function SignIn() {
       console.log("Error type:", typeof error.message);
       
       // Check if user is blocked - 403 status indicates blocked user
-      if (error.message?.includes("403") && error.message?.includes("Account access restricted")) {
-        console.log("Blocked user detected, redirecting to /blocked-user");
-        setLocation("/blocked-user");
-        return;
+      if (error.message?.includes("403")) {
+        try {
+          // Parse the JSON response from the error message
+          const jsonPart = error.message.substring(4); // Remove "403: " prefix
+          const errorResponse = JSON.parse(jsonPart);
+          
+          if (errorResponse.isBlocked) {
+            console.log("Blocked user detected, redirecting to /blocked-user");
+            
+            // Store blocked user info for the blocked-user page
+            localStorage.setItem("blockedUserInfo", JSON.stringify({
+              reason: errorResponse.blockedReason,
+              contactEmail: errorResponse.contactEmail
+            }));
+            
+            setLocation("/blocked-user");
+            return;
+          }
+        } catch (parseError) {
+          console.log("Failed to parse error response:", parseError);
+          // Check using the original string-based approach as fallback
+          if (error.message?.includes("Account access restricted")) {
+            console.log("Blocked user detected (fallback), redirecting to /blocked-user");
+            setLocation("/blocked-user");
+            return;
+          }
+        }
       }
       
       toast({
@@ -293,10 +316,33 @@ export default function SignIn() {
       console.log("Error type:", typeof error.message);
       
       // Check if user is blocked - 403 status indicates blocked user
-      if (error.message?.includes("403") && error.message?.includes("Account access restricted")) {
-        console.log("Blocked user detected, redirecting to /blocked-user");
-        setLocation("/blocked-user");
-        return;
+      if (error.message?.includes("403")) {
+        try {
+          // Parse the JSON response from the error message
+          const jsonPart = error.message.substring(4); // Remove "403: " prefix
+          const errorResponse = JSON.parse(jsonPart);
+          
+          if (errorResponse.isBlocked) {
+            console.log("Blocked user detected, redirecting to /blocked-user");
+            
+            // Store blocked user info for the blocked-user page
+            localStorage.setItem("blockedUserInfo", JSON.stringify({
+              reason: errorResponse.blockedReason,
+              contactEmail: errorResponse.contactEmail
+            }));
+            
+            setLocation("/blocked-user");
+            return;
+          }
+        } catch (parseError) {
+          console.log("Failed to parse error response:", parseError);
+          // Check using the original string-based approach as fallback
+          if (error.message?.includes("Account access restricted")) {
+            console.log("Blocked user detected (fallback), redirecting to /blocked-user");
+            setLocation("/blocked-user");
+            return;
+          }
+        }
       }
       
       toast({

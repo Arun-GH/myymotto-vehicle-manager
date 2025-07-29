@@ -3,8 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
+import { useEffect, useState } from "react";
 
 export default function BlockedUser() {
+  const [blockedInfo, setBlockedInfo] = useState<{reason?: string, contactEmail?: string} | null>(null);
+
+  useEffect(() => {
+    // Try to get blocked user info from localStorage
+    const storedInfo = localStorage.getItem("blockedUserInfo");
+    if (storedInfo) {
+      try {
+        const parsed = JSON.parse(storedInfo);
+        setBlockedInfo(parsed);
+      } catch (error) {
+        console.log("Failed to parse blocked user info:", error);
+      }
+    }
+  }, []);
   const handleEmailSupport = () => {
     window.open(
       "mailto:info@arudhih.com?subject=Account%20Access%20Request%20-%20Myymotto&body=Dear%20Arudhih%20Team%2C%0D%0A%0D%0AI%20am%20writing%20to%20request%20the%20restoration%20of%20my%20Myymotto%20account%20access.%20My%20account%20has%20been%20blocked%2C%20and%20I%20would%20like%20to%20understand%20the%20reason%20and%20request%20unblocking.%0D%0A%0D%0AUser%20Details%3A%0D%0A-%20Mobile%2FEmail%3A%20%5BYour%20registered%20mobile%2Femail%5D%0D%0A-%20Name%3A%20%5BYour%20name%5D%0D%0A-%20Reason%20for%20access%20request%3A%20%5BExplain%20briefly%5D%0D%0A%0D%0AI%20understand%20that%20accounts%20are%20blocked%20for%20policy%20violations%20and%20I%20assure%20you%20of%20my%20compliance%20with%20app%20guidelines%20going%20forward.%0D%0A%0D%0AThank%20you%20for%20your%20consideration.%0D%0A%0D%0ABest%20regards%2C%0D%0A%5BYour%20Name%5D",
@@ -62,6 +77,12 @@ export default function BlockedUser() {
             <p className="text-base font-medium text-gray-800 mb-2">
               Your account has been temporarily blocked by our admin team.
             </p>
+            {blockedInfo?.reason && (
+              <div className="bg-white p-3 rounded-lg border border-red-300 mb-3">
+                <p className="text-sm font-medium text-red-800 mb-1">Reason for blocking:</p>
+                <p className="text-sm text-red-700">{blockedInfo.reason}</p>
+              </div>
+            )}
             <p className="text-sm text-gray-600 leading-relaxed">
               This action was taken due to a violation of our terms of service or app usage policies.
             </p>
@@ -105,7 +126,7 @@ export default function BlockedUser() {
 
           <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
             <p className="text-xs text-blue-700 font-medium leading-relaxed">
-              💡 <strong>Support Email:</strong> info@arudhih.com
+              💡 <strong>Support Email:</strong> {blockedInfo?.contactEmail || "info@arudhih.com"}
               <br />
               Response time: 24-48 hours
             </p>

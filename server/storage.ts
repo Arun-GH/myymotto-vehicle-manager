@@ -577,7 +577,11 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByIdentifier(identifier: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(
-      eq(users.username, identifier)
+      or(
+        eq(users.username, identifier),
+        eq(users.mobile, identifier),
+        eq(users.email, identifier)
+      )
     );
     return user || undefined;
   }
@@ -595,7 +599,11 @@ export class DatabaseStorage implements IStorage {
   async verifyPin(identifier: string, pin: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(
       and(
-        eq(users.username, identifier),
+        or(
+          eq(users.username, identifier),
+          eq(users.mobile, identifier), 
+          eq(users.email, identifier)
+        ),
         eq(users.pin, pin)
       )
     );
