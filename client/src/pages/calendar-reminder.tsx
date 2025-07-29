@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowLeft, Calendar, Clock, Bell, CheckCircle, Plus, Edit, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Calendar, Clock, Bell, CheckCircle, Plus, Edit, Trash2, Smartphone } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertCalendarReminderSchema, type InsertCalendarReminder, type CalendarReminder } from "@shared/schema";
+import { LocalNotifications, type PermissionStatus } from '@capacitor/local-notifications';
+import { Capacitor } from '@capacitor/core';
 
 import ColorfulLogo from "@/components/colorful-logo";
 import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
@@ -22,8 +24,81 @@ export default function CalendarReminder() {
   const queryClient = useQueryClient();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingReminder, setEditingReminder] = useState<CalendarReminder | null>(null);
+  const [notificationPermission, setNotificationPermission] = useState<PermissionStatus | null>(null);
 
   const currentUserId = localStorage.getItem("currentUserId") || localStorage.getItem("userId") || "1";
+
+  // Check notification permissions on component mount
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      checkNotificationPermissions();
+    }
+  }, []);
+
+  const checkNotificationPermissions = async () => {
+    try {
+      const permission = await LocalNotifications.checkPermissions();
+      setNotificationPermission(permission);
+      
+      if (permission.display !== 'granted') {
+        const result = await LocalNotifications.requestPermissions();
+        setNotificationPermission(result);
+      }
+    } catch (error) {
+      console.error('Error checking notification permissions:', error);
+    }
+  };
+
+  const scheduleDeviceNotification = async (reminder: InsertCalendarReminder & { id?: number }) => {
+    if (!Capacitor.isNativePlatform()) {
+      console.log('Local notifications only work on mobile devices');
+      return;
+    }
+
+    try {
+      const reminderDate = new Date(reminder.reminderDate);
+      const notificationId = reminder.id || Date.now();
+
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            title: 'Alert from MyyMotto',
+            body: reminder.title,
+            id: notificationId,
+            schedule: { at: reminderDate },
+            sound: 'default',
+            attachments: undefined,
+            actionTypeId: '',
+            extra: {
+              reminderDetails: reminder.details || '',
+              source: 'MyyMotto'
+            }
+          }
+        ]
+      });
+
+      console.log(`Device notification scheduled for: ${reminderDate.toLocaleString()}`);
+      return true;
+    } catch (error) {
+      console.error('Error scheduling device notification:', error);
+      return false;
+    }
+  };
+
+  const cancelDeviceNotification = async (reminderId: number) => {
+    if (!Capacitor.isNativePlatform()) {
+      return;
+    }
+
+    try {
+      await LocalNotifications.cancel({
+        notifications: [{ id: reminderId }]
+      });
+      console.log(`Device notification cancelled for reminder ${reminderId}`);
+    } catch (error) {
+      console.error('Error cancelling device notification:', error);
+    }
+  };
 
   // Fetch existing reminders
   const { data: reminders = [], isLoading } = useQuery<CalendarReminder[]>({
@@ -45,15 +120,24 @@ export default function CalendarReminder() {
 
   const createReminderMutation = useMutation({
     mutationFn: async (data: InsertCalendarReminder) => {
-      return apiRequest("POST", "/api/calendar-reminders", {
+      const response = await apiRequest("POST", "/api/calendar-reminders", {
         ...data,
         userId: parseInt(currentUserId),
       });
+      return response.json();
     },
-    onSuccess: () => {
+    onSuccess: async (newReminder: CalendarReminder) => {
+      // Schedule device notification
+      const notificationScheduled = await scheduleDeviceNotification({
+        ...newReminder,
+        id: newReminder.id
+      });
+
       toast({
         title: "Success",
-        description: "Calendar reminder created successfully",
+        description: notificationScheduled 
+          ? "Reminder created and device alarm set!"
+          : "Reminder created successfully",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/calendar-reminders", currentUserId] });
       setShowCreateForm(false);
@@ -70,12 +154,14 @@ export default function CalendarReminder() {
 
   const deleteReminderMutation = useMutation({
     mutationFn: async (reminderId: number) => {
+      // Cancel device notification first
+      await cancelDeviceNotification(reminderId);
       return apiRequest("DELETE", `/api/calendar-reminders/${reminderId}?userId=${currentUserId}`);
     },
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Calendar reminder deleted successfully",
+        description: "Reminder and device alarm cancelled successfully",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/calendar-reminders", currentUserId] });
     },
@@ -157,6 +243,42 @@ export default function CalendarReminder() {
           </Button>
         </div>
 
+        {/* Device Alarm Status Info */}
+        {Capacitor.isNativePlatform() && (
+          <Card className="bg-blue-50 border-blue-200">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Smartphone className="w-4 h-4 text-blue-600" />
+                <span className="text-sm font-medium text-blue-800">Device Alarm Integration</span>
+                <div className={`w-2 h-2 rounded-full ${
+                  notificationPermission?.display === 'granted' ? 'bg-green-500' : 'bg-red-500'
+                }`} />
+              </div>
+              <p className="text-xs text-blue-700">
+                {notificationPermission?.display === 'granted' 
+                  ? "✓ Reminders will ring your device alarm at scheduled time"
+                  : "⚠ Allow notifications to enable device alarms"
+                }
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Web Platform Info */}
+        {!Capacitor.isNativePlatform() && (
+          <Card className="bg-orange-50 border-orange-200">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Bell className="w-4 h-4 text-orange-600" />
+                <span className="text-sm font-medium text-orange-800">Web Version</span>
+              </div>
+              <p className="text-xs text-orange-700">
+                Device alarms work in the mobile app. Web version saves reminders for viewing.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Existing Reminders List */}
         {isLoading ? (
           <div className="text-center py-8">
@@ -192,6 +314,12 @@ export default function CalendarReminder() {
                       <div className="flex items-center gap-2 text-sm text-orange-600">
                         <Clock className="w-4 h-4" />
                         {formatDate(reminder.reminderDate)}
+                        {Capacitor.isNativePlatform() && (
+                          <div className="flex items-center gap-1 ml-2 px-2 py-1 bg-blue-100 rounded-full">
+                            <Smartphone className="w-3 h-3 text-blue-600" />
+                            <span className="text-xs text-blue-700">Device Alarm</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <Button
