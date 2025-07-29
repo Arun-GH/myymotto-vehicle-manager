@@ -48,6 +48,7 @@ export function InteractiveDocumentViewer({
   onClose,
   onSave
 }: InteractiveDocumentViewerProps) {
+  console.log("InteractiveDocumentViewer props:", { documentId, fileName, mimeType, fileDataLength: fileData.byteLength });
   const [zoom, setZoom] = useState(100);
   const [rotation, setRotation] = useState(0);
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
@@ -65,9 +66,11 @@ export function InteractiveDocumentViewer({
   const [fileUrl, setFileUrl] = useState<string>('');
 
   useEffect(() => {
+    console.log("Creating blob URL for file data, size:", fileData.byteLength);
     // Create blob URL for file data
     const blob = new Blob([fileData], { type: mimeType });
     const url = URL.createObjectURL(blob);
+    console.log("Created blob URL:", url);
     setFileUrl(url);
 
     // Load existing annotations from localStorage

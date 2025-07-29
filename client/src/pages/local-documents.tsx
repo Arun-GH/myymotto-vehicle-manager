@@ -82,9 +82,15 @@ export default function LocalDocuments() {
   };
 
   const handleViewDocument = (document: LocalDocument) => {
+    console.log("handleViewDocument called:", document);
+    console.log("File data exists:", !!document.fileData);
+    console.log("File data length:", document.fileData?.byteLength || 0);
+    
     if (document.fileData && document.fileData.byteLength > 0) {
+      console.log("Setting viewing document:", document.fileName);
       setViewingDocument(document);
     } else {
+      console.log("No file data available for document:", document.fileName);
       toast({
         title: "View Document",
         description: "No file available to preview - this is a metadata-only entry",
