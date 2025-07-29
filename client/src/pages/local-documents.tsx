@@ -464,7 +464,7 @@ export default function LocalDocuments() {
                 <CardContent className="space-y-0.5 px-1.5 pb-1.5">
                   {docs.map((document) => (
                   <div key={document.id} className="border rounded-lg p-1.5 space-y-1">
-                    <div className="flex items-start justify-between">
+                    <div className="flex flex-col space-y-2">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-1 mb-0.5">
                           <span className="text-[10px] font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-sm">
@@ -592,9 +592,9 @@ export default function LocalDocuments() {
                           </div>
                         )}
                       </div>
-                    </div>
-                    
-                    <div className="flex space-x-1">
+                      
+                      {/* Action buttons at bottom right */}
+                      <div className="flex justify-end space-x-1">
                       {/* Edit button for unique document types */}
                       {localDocumentStorage.isUniqueDocumentType(document.type) && (
                         <Button
@@ -631,14 +631,15 @@ export default function LocalDocuments() {
                           No file - Amount only
                         </div>
                       )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleDeleteDocument(document)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50 h-6 px-1.5 py-0"
-                      >
-                        <Trash2 className="w-2.5 h-2.5" />
-                      </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDeleteDocument(document)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 h-6 px-1.5 py-0"
+                        >
+                          <Trash2 className="w-2.5 h-2.5" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                   ))}
