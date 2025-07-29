@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, FileText, Eye, Trash2, Download, HardDrive, Car, Plus, Edit, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, FileText, Trash2, Download, HardDrive, Car, Plus, Edit, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -509,15 +509,12 @@ export default function LocalDocuments() {
                       )}
                       
                       {document.fileSize > 0 ? (
-                        <Button
-                          size="sm"
-                          variant="outline"
+                        <button
                           onClick={() => handleViewDocument(document)}
-                          className="flex-1 h-6 text-[10px] py-0"
+                          className="flex-1 text-center text-[10px] text-blue-600 hover:text-blue-700 hover:underline cursor-pointer py-1"
                         >
-                          <Eye className="w-2.5 h-2.5 mr-0.5" />
                           View
-                        </Button>
+                        </button>
                       ) : (
                         <div className="flex-1 text-center text-[10px] text-gray-500 py-1">
                           No file - Amount only
