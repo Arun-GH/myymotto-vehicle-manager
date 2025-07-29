@@ -100,10 +100,13 @@ export default function CalendarReminder() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-IN', {
+    return date.toLocaleString('en-IN', {
       day: '2-digit',
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
     });
   };
 
@@ -121,7 +124,7 @@ export default function CalendarReminder() {
               </Link>
               <img 
                 src={logoImage} 
-                alt="Myymotto Logo" 
+                alt="MyyMotto Logo" 
                 className="w-12 h-12 rounded-lg"
               />
               <div>
@@ -187,7 +190,7 @@ export default function CalendarReminder() {
                         <p className="text-sm text-gray-600 mb-2">{reminder.details}</p>
                       )}
                       <div className="flex items-center gap-2 text-sm text-orange-600">
-                        <Calendar className="w-4 h-4" />
+                        <Clock className="w-4 h-4" />
                         {formatDate(reminder.reminderDate)}
                       </div>
                     </div>
@@ -272,12 +275,12 @@ export default function CalendarReminder() {
                     name="reminderDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xs font-medium">Reminder Date *</FormLabel>
+                        <FormLabel className="text-xs font-medium">Reminder Date & Time *</FormLabel>
                         <FormControl>
                           <Input 
-                            type="date"
+                            type="datetime-local"
                             className="h-8"
-                            min={new Date().toISOString().slice(0, 10)}
+                            min={new Date().toISOString().slice(0, 16)}
                             {...field}
                           />
                         </FormControl>
