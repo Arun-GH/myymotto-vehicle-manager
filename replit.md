@@ -10,15 +10,21 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
-**July 29, 2025**: COMPLETED authentication flow overhaul with proper welcome screen for new users
-- IMPLEMENTED proper authentication flow: Splash Screen → Login Page → Welcome Page (new users) → Profile Page OR Dashboard (existing users)
+**July 29, 2025**: COMPLETED blocked user functionality with enhanced error handling and authentication flow improvements
+- COMPLETED blocked user functionality with proper 403 status detection and JSON response parsing in frontend error handling
+- ENHANCED PIN login and OTP verification to properly parse server JSON responses containing blocked user information
+- FIXED database storage methods to support mobile/email identifiers for PIN authentication instead of username-only lookup
+- ADDED localStorage storage for blocked user details (reason, contact email) passed from server to blocked-user page
+- UPDATED blocked-user page to display specific blocking reason and custom contact email when available
+- IMPLEMENTED comprehensive error handling that detects 403 status, parses JSON response, and redirects to contact screen
+- MAINTAINED fallback string-based detection for backward compatibility with enhanced JSON parsing as primary method
+- COMPLETED proper authentication flow: Splash Screen → Login Page → Welcome Page (new users) → Profile Page OR Dashboard (existing users)
 - CREATED dedicated Welcome page component with 1-second auto-redirect to profile page for new users
 - FIXED splash screen to always redirect to login page instead of checking authentication status
 - UPDATED PIN setup flow to redirect new users to welcome page instead of direct profile navigation
 - ENHANCED authentication routing to let sign-in page handle all post-login navigation logic
 - SIMPLIFIED App.tsx routing logic to prevent interference with authentication flow
 - MAINTAINED existing user experience for returning users while improving new user onboarding journey
-- COMPLETED user flow: New users see welcome screen briefly before profile setup, existing users go directly to dashboard
 
 **July 28, 2025**: FIXED critical vehicle deletion bug and enhanced splash screen with animated logo
 - CRITICAL BUG FIX: Resolved vehicle deletion failing with "vehicle not found" error caused by foreign key constraint violations with document_expiries table
