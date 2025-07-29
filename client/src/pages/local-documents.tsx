@@ -39,6 +39,8 @@ export default function LocalDocuments() {
     service: { label: "Service Invoices", color: "bg-orange-500" },
     rc: { label: "RC Book Copies", color: "bg-purple-500" },
     fuel: { label: "Fuel Bills", color: "bg-yellow-500" },
+    parking_receipts: { label: "Parking Receipts", color: "bg-cyan-500" },
+    claims_on_insurance: { label: "Claims on Insurance", color: "bg-emerald-500" },
     road_tax: { label: "Road Tax", color: "bg-red-500" },
     travel_permits: { label: "Travel Permits", color: "bg-indigo-500" },
     fitness_certificate: { label: "Fitness Certificate", color: "bg-teal-500" },
@@ -376,7 +378,7 @@ export default function LocalDocuments() {
                   )}
                 </CardTitle>
               </CardHeader>
-              {(!collapsedSections[type] || type !== 'fuel') && (
+              {(!collapsedSections[type] || (type !== 'fuel' && type !== 'parking_receipts')) && (
                 <CardContent className="space-y-0.5 px-1.5 pb-1.5">
                   {docs.map((document) => (
                   <div key={document.id} className="border rounded-lg p-1.5 space-y-1">
@@ -422,6 +424,9 @@ export default function LocalDocuments() {
                           )}
                           {document.metadata?.billDate && (
                             <span className="text-yellow-600">Bill: {formatDate(document.metadata.billDate)}</span>
+                          )}
+                          {document.metadata?.receiptDate && (
+                            <span className="text-cyan-600">Receipt: {formatDate(document.metadata.receiptDate)}</span>
                           )}
                           {document.metadata?.expiryDate && (
                             <span className="text-green-600">Expiry: {formatDate(document.metadata.expiryDate)}</span>
