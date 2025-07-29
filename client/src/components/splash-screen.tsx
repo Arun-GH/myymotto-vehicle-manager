@@ -30,18 +30,18 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
   if (!isVisible) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-green-50 to-white z-50 flex flex-col items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
-        <div className="flex flex-col items-center space-y-6">
+      <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div className="flex flex-col items-center space-y-8">
           <img 
             src={logoImage} 
             alt="Myymotto Logo" 
-            className="w-64 h-64 object-contain"
+            className="w-80 h-80 object-contain"
           />
           <div className="text-center">
-            <div className="text-2xl font-bold mb-1">
+            <div className="text-4xl font-bold mb-2">
               <ColorfulLogo />
             </div>
-            <p className="text-sm text-red-600">Timely Care for your carrier</p>
+            <p className="text-lg text-red-600">Timely Care for your carrier</p>
           </div>
         </div>
       </div>
@@ -49,21 +49,21 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-green-50 to-white z-50 flex flex-col items-center justify-center transition-opacity duration-300">
-      <div className="flex flex-col items-center space-y-6">
+    <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-300">
+      <div className="flex flex-col items-center space-y-8">
         <img 
           src={logoImage} 
           alt="Myymotto Logo" 
-          className="w-64 h-64 object-contain transition-transform duration-1000 ease-out"
+          className="w-80 h-80 object-contain transition-transform duration-1000 ease-out"
           style={{ 
             transform: `scale(${logoScale})`,
           }}
         />
         <div className="text-center">
-          <div className="text-2xl font-bold mb-1">
+          <div className="text-4xl font-bold mb-2">
             <ColorfulLogo />
           </div>
-          <p className="text-sm text-red-600">Timely Care for your carrier</p>
+          <p className="text-lg text-red-600">Timely Care for your carrier</p>
         </div>
       </div>
     </div>
