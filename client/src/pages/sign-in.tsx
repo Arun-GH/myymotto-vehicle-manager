@@ -185,11 +185,6 @@ export default function SignIn() {
       return response.json();
     },
     onSuccess: () => {
-      toast({
-        title: "PIN Set Successfully",
-        description: "You can now use PIN for future logins. Welcome to Myymotto!",
-      });
-      
       // Store authentication state and user data
       localStorage.setItem("currentUserId", userId!.toString());
       localStorage.setItem("userId", userId!.toString());
@@ -198,8 +193,19 @@ export default function SignIn() {
       localStorage.setItem("lastUsedIdentifier", identifier);
       localStorage.setItem("hasPin", "true");
       
-      // Take user to dashboard after PIN setup
-      setLocation("/");
+      // Clear notification cache to refresh notifications on login
+      localStorage.removeItem("notifications_last_fetched");
+      
+      // Show welcome toast and then redirect to profile page for new users
+      toast({
+        title: "Welcome to Myymotto!",
+        description: "Let's complete your profile to get started",
+      });
+      
+      // Always direct new users to profile page after PIN setup
+      setTimeout(() => {
+        setLocation("/profile");
+      }, 1500); // Small delay to show the welcome message
     },
     onError: (error: any) => {
       toast({

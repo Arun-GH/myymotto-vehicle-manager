@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes: Latest modifications with dates
 
+**July 29, 2025**: FIXED PIN creation welcome popup auto-fade and navigation issue
+- CRITICAL FIX: Resolved welcome popup after PIN creation not fading away and blocking navigation to profile page
+- UPDATED setPinMutation success handler to automatically redirect users to profile page after 1.5 seconds
+- ENHANCED welcome toast message to clearly indicate next step: "Let's complete your profile to get started"
+- FIXED authentication flow for new users: OTP verification → PIN setup → Welcome toast → Auto-redirect to profile completion
+- IMPLEMENTED proper timeout-based navigation ensuring toast displays briefly before automatic redirection
+- MAINTAINED all existing PIN functionality while adding seamless user journey for new user onboarding
+
 **July 28, 2025**: FIXED critical vehicle deletion bug and enhanced splash screen with animated logo
 - CRITICAL BUG FIX: Resolved vehicle deletion failing with "vehicle not found" error caused by foreign key constraint violations with document_expiries table
 - FIXED SQL syntax error in vehicle deletion by removing invalid calendarReminders deletion (calendar reminders are user-specific, not vehicle-specific)
