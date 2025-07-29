@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import logoImage from "@assets/Mymotto_Logo_Green_Revised_1753721911529.png";
+import logoImage from "@assets/Mymotto_Logo_Green_Revised_1753803272333.png";
 import ColorfulLogo from "@/components/colorful-logo";
 
 interface SplashScreenProps {
