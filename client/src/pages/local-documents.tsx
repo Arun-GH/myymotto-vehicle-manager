@@ -195,6 +195,19 @@ export default function LocalDocuments() {
     }).format(amount);
   };
 
+  const calculateCurrentYearFuelTotal = (fuelDocs: LocalDocument[]) => {
+    const currentYear = new Date().getFullYear();
+    return fuelDocs.reduce((total, doc) => {
+      if (doc.metadata?.billDate && doc.metadata?.billAmount) {
+        const billYear = new Date(doc.metadata.billDate).getFullYear();
+        if (billYear === currentYear) {
+          return total + doc.metadata.billAmount;
+        }
+      }
+      return total;
+    }, 0);
+  };
+
   const getExpiryStatus = (expiryDate: string) => {
     if (!expiryDate) return { status: "unknown", color: "gray", text: "No expiry" };
     
@@ -363,6 +376,11 @@ export default function LocalDocuments() {
                   <div className={`w-3 h-3 rounded-full ${documentTypes[type]?.color || 'bg-gray-500'}`} />
                   <span>{documentTypes[type]?.label || type}</span>
                   <Badge variant="secondary" className="ml-auto text-xs h-4 px-1.5">{docs.length}</Badge>
+                  {type === 'fuel' && (
+                    <span className="text-[10px] font-medium text-green-700 bg-green-50 px-1.5 py-0.5 rounded-sm border border-green-200 ml-1">
+                      {formatCurrency(calculateCurrentYearFuelTotal(docs))} this year
+                    </span>
+                  )}
                   {(type === 'fuel' || type === 'parking_receipts') && (
                     <Button
                       variant="ghost"
