@@ -190,6 +190,7 @@ export default function UploadDocuments() {
   const [sumInsured, setSumInsured] = useState<string>("");
   const [insurancePremium, setInsurancePremium] = useState<string>("");
   const [insuranceProvider, setInsuranceProvider] = useState<string>("");
+  const [receiptDate, setReceiptDate] = useState<string>("");
 
   const [showCamera, setShowCamera] = useState(false);
   const [showOCRScanner, setShowOCRScanner] = useState(false);
@@ -228,6 +229,7 @@ export default function UploadDocuments() {
         setSumInsured(existing.metadata.sumInsured?.toString() || "");
         setInsurancePremium(existing.metadata.insurancePremium?.toString() || "");
         setInsuranceProvider(existing.metadata.insuranceProvider || "");
+        setReceiptDate(existing.metadata.receiptDate || "");
       }
     } else {
       setExistingDocument(null);
@@ -368,6 +370,7 @@ export default function UploadDocuments() {
           sumInsured?: number;
           insurancePremium?: number;
           insuranceProvider?: string;
+          receiptDate?: string;
         } = {};
         
         // Add metadata based on document type
@@ -391,6 +394,8 @@ export default function UploadDocuments() {
           if (sumInsured) metadata.sumInsured = parseFloat(sumInsured);
           if (insurancePremium) metadata.insurancePremium = parseFloat(insurancePremium);
           if (insuranceProvider) metadata.insuranceProvider = insuranceProvider;
+        } else if (selectedType === "parking_receipts" && receiptDate) {
+          metadata.receiptDate = receiptDate;
         } else if (selectedType === "miscellaneous" && documentName) {
           metadata.documentName = documentName;
         } else if (selectedDocumentType?.requiresExpiry && expiryDate) {
@@ -437,6 +442,7 @@ export default function UploadDocuments() {
       setTaxAmount("");
       setPermitFee("");
       setRechargeAmount("");
+      setReceiptDate("");
       setIsEditMode(false);
       
       // Refresh existing document data
@@ -649,6 +655,7 @@ export default function UploadDocuments() {
                 setSumInsured("");
                 setInsurancePremium("");
                 setInsuranceProvider("");
+                setReceiptDate("");
               }}>
                 <SelectTrigger className="h-8">
                   <SelectValue placeholder="Select document type" />
@@ -923,6 +930,26 @@ export default function UploadDocuments() {
                     step="0.01"
                   />
                 </div>
+              </div>
+            )}
+
+            {/* Receipt Date for Parking Receipts */}
+            {selectedType === "parking_receipts" && (
+              <div className="space-y-1">
+                <Label htmlFor="receipt-date" className="text-xs font-medium">
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="w-3 h-3" />
+                    <span>Receipt Date</span>
+                  </div>
+                </Label>
+                <Input
+                  id="receipt-date"
+                  type="date"
+                  className="h-8"
+                  value={receiptDate}
+                  onChange={(e) => setReceiptDate(e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
+                />
               </div>
             )}
 
