@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Camera, MapPin, Users, Image, Mic, Shield, Check, X, Folder, FileText, Download, HardDrive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ColorfulLogo from "@/components/colorful-logo";
+import { useLocation } from "wouter";
 
 interface PermissionsScreenProps {
   onComplete: () => void;
@@ -17,6 +18,7 @@ interface Permission {
 }
 
 export default function PermissionsScreen({ onComplete }: PermissionsScreenProps) {
+  const [, setLocation] = useLocation();
   const [permissions, setPermissions] = useState<Permission[]>([
     {
       id: 'camera',
@@ -220,6 +222,9 @@ export default function PermissionsScreen({ onComplete }: PermissionsScreenProps
     localStorage.setItem('appPermissions', JSON.stringify(permissionStatus));
     // Mark permissions as completed for this specific user
     localStorage.setItem(`permissionsCompleted_${currentUserId}`, 'true');
+    
+    // Navigate directly to dashboard for new users
+    setLocation("/");
     onComplete();
   };
 
