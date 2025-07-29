@@ -191,6 +191,11 @@ export default function UploadDocuments() {
   const [insurancePremium, setInsurancePremium] = useState<string>("");
   const [insuranceProvider, setInsuranceProvider] = useState<string>("");
   const [receiptDate, setReceiptDate] = useState<string>("");
+  
+  // Claims on Insurance specific fields
+  const [claimInsuranceProvider, setClaimInsuranceProvider] = useState<string>("");
+  const [claimSettlementDate, setClaimSettlementDate] = useState<string>("");
+  const [claimAmount, setClaimAmount] = useState<string>("");
 
   const [showCamera, setShowCamera] = useState(false);
   const [showOCRScanner, setShowOCRScanner] = useState(false);
@@ -230,6 +235,9 @@ export default function UploadDocuments() {
         setInsurancePremium(existing.metadata.insurancePremium?.toString() || "");
         setInsuranceProvider(existing.metadata.insuranceProvider || "");
         setReceiptDate(existing.metadata.receiptDate || "");
+        setClaimInsuranceProvider(existing.metadata.claimInsuranceProvider || "");
+        setClaimSettlementDate(existing.metadata.claimSettlementDate || "");
+        setClaimAmount(existing.metadata.claimAmount?.toString() || "");
       }
     } else {
       setExistingDocument(null);
@@ -314,8 +322,8 @@ export default function UploadDocuments() {
 
   const uploadDocuments = useMutation({
     mutationFn: async () => {
-      // Fast Tag Renewals and Insurance copy allow optional file upload
-      if (selectedFiles.length === 0 && selectedType !== "fast_tag_renewals" && selectedType !== "insurance") {
+      // Fast Tag Renewals, Insurance copy, and Claims on Insurance allow optional file upload
+      if (selectedFiles.length === 0 && selectedType !== "fast_tag_renewals" && selectedType !== "insurance" && selectedType !== "claims_on_insurance") {
         throw new Error("Please select at least one file to upload");
       }
 
@@ -396,6 +404,10 @@ export default function UploadDocuments() {
           if (insuranceProvider) metadata.insuranceProvider = insuranceProvider;
         } else if (selectedType === "parking_receipts" && receiptDate) {
           metadata.receiptDate = receiptDate;
+        } else if (selectedType === "claims_on_insurance") {
+          if (claimInsuranceProvider) metadata.claimInsuranceProvider = claimInsuranceProvider;
+          if (claimSettlementDate) metadata.claimSettlementDate = claimSettlementDate;
+          if (claimAmount) metadata.claimAmount = parseFloat(claimAmount);
         } else if (selectedType === "miscellaneous" && documentName) {
           metadata.documentName = documentName;
         } else if (selectedDocumentType?.requiresExpiry && expiryDate) {
@@ -443,6 +455,9 @@ export default function UploadDocuments() {
       setPermitFee("");
       setRechargeAmount("");
       setReceiptDate("");
+      setClaimInsuranceProvider("");
+      setClaimSettlementDate("");
+      setClaimAmount("");
       setIsEditMode(false);
       
       // Refresh existing document data
@@ -656,6 +671,9 @@ export default function UploadDocuments() {
                 setInsurancePremium("");
                 setInsuranceProvider("");
                 setReceiptDate("");
+                setClaimInsuranceProvider("");
+                setClaimSettlementDate("");
+                setClaimAmount("");
               }}>
                 <SelectTrigger className="h-8">
                   <SelectValue placeholder="Select document type" />
@@ -953,6 +971,90 @@ export default function UploadDocuments() {
               </div>
             )}
 
+            {/* Claims on Insurance specific fields */}
+            {selectedType === "claims_on_insurance" && (
+              <>
+                <div className="space-y-1">
+                  <Label htmlFor="claim-insurance-provider" className="text-xs font-medium">
+                    <div className="flex items-center space-x-1">
+                      <FileText className="w-3 h-3" />
+                      <span>Insurance Provider (Who settled the claim)</span>
+                    </div>
+                  </Label>
+                  <Select value={claimInsuranceProvider} onValueChange={setClaimInsuranceProvider}>
+                    <SelectTrigger className="h-8">
+                      <SelectValue placeholder="Select insurance provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="HDFC ERGO">HDFC ERGO General Insurance</SelectItem>
+                      <SelectItem value="ICICI Lombard">ICICI Lombard General Insurance</SelectItem>
+                      <SelectItem value="Bajaj Allianz">Bajaj Allianz General Insurance</SelectItem>
+                      <SelectItem value="New India Assurance">New India Assurance</SelectItem>
+                      <SelectItem value="National Insurance">National Insurance Company</SelectItem>
+                      <SelectItem value="Oriental Insurance">Oriental Insurance</SelectItem>
+                      <SelectItem value="United India Insurance">United India Insurance</SelectItem>
+                      <SelectItem value="TATA AIG">TATA AIG General Insurance</SelectItem>
+                      <SelectItem value="Reliance General">Reliance General Insurance</SelectItem>
+                      <SelectItem value="Royal Sundaram">Royal Sundaram General Insurance</SelectItem>
+                      <SelectItem value="Future Generali">Future Generali India Insurance</SelectItem>
+                      <SelectItem value="Kotak Mahindra">Kotak Mahindra General Insurance</SelectItem>
+                      <SelectItem value="Bharti AXA">Bharti AXA General Insurance</SelectItem>
+                      <SelectItem value="Cholamandalam MS">Cholamandalam MS General Insurance</SelectItem>
+                      <SelectItem value="Liberty General">Liberty General Insurance</SelectItem>
+                      <SelectItem value="SBI General">SBI General Insurance</SelectItem>
+                      <SelectItem value="Digit Insurance">Digit General Insurance</SelectItem>
+                      <SelectItem value="Go Digit">Go Digit General Insurance</SelectItem>
+                      <SelectItem value="Acko General">ACKO General Insurance</SelectItem>
+                      <SelectItem value="Magma HDI">Magma HDI General Insurance</SelectItem>
+                      <SelectItem value="Universal Sompo">Universal Sompo General Insurance</SelectItem>
+                      <SelectItem value="Iffco Tokio">IFFCO Tokio General Insurance</SelectItem>
+                      <SelectItem value="Shriram General">Shriram General Insurance</SelectItem>
+                      <SelectItem value="Raheja QBE">Raheja QBE General Insurance</SelectItem>
+                      <SelectItem value="L&T General">L&T General Insurance</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="claim-settlement-date" className="text-xs font-medium">
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>Claim Settlement Date</span>
+                    </div>
+                  </Label>
+                  <Input
+                    id="claim-settlement-date"
+                    type="date"
+                    className="h-8"
+                    value={claimSettlementDate}
+                    onChange={(e) => setClaimSettlementDate(e.target.value)}
+                    max={new Date().toISOString().split('T')[0]}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="claim-amount" className="text-xs font-medium">
+                    <div className="flex items-center space-x-1">
+                      <DollarSign className="w-3 h-3" />
+                      <span>Claim / Settlement Amount (₹)</span>
+                    </div>
+                  </Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">₹</span>
+                    <Input
+                      id="claim-amount"
+                      type="number"
+                      className="h-8 pl-8"
+                      value={claimAmount}
+                      onChange={(e) => setClaimAmount(e.target.value)}
+                      placeholder="Enter claim amount"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
             {/* Document Type/Name for Miscellaneous */}
             {selectedType === "miscellaneous" && (
               <div className="space-y-1">
@@ -978,7 +1080,7 @@ export default function UploadDocuments() {
             {/* File Upload Section */}
             <div className="space-y-2">
               <Label className="text-xs font-medium">
-                Upload Files {(selectedType === "fast_tag_renewals" || selectedType === "insurance") && <span className="text-gray-500">(Optional)</span>}
+                Upload Files {(selectedType === "fast_tag_renewals" || selectedType === "insurance" || selectedType === "claims_on_insurance") && <span className="text-gray-500">(Optional)</span>}
               </Label>
               
               <div className="flex justify-center">
@@ -1055,7 +1157,7 @@ export default function UploadDocuments() {
               </Button>
               <Button 
                 onClick={handleUpload}
-                disabled={selectedFiles.length === 0 || uploadDocuments.isPending}
+                disabled={(selectedFiles.length === 0 && selectedType !== "fast_tag_renewals" && selectedType !== "insurance" && selectedType !== "claims_on_insurance") || uploadDocuments.isPending}
                 className="flex-1 h-8 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-xs"
               >
                 {uploadDocuments.isPending ? (

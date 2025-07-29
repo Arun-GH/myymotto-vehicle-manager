@@ -484,8 +484,29 @@ export default function LocalDocuments() {
                           </div>
                         )}
 
+                        {/* Claims on Insurance specific display */}
+                        {document.type === 'claims_on_insurance' && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {document.metadata?.claimInsuranceProvider && (
+                              <span className="text-[10px] font-medium text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded-sm border border-blue-200">
+                                Provider: {document.metadata.claimInsuranceProvider}
+                              </span>
+                            )}
+                            {document.metadata?.claimSettlementDate && (
+                              <span className="text-[10px] font-medium text-green-700 bg-green-50 px-1.5 py-0.5 rounded-sm border border-green-200">
+                                Settled: {formatDate(document.metadata.claimSettlementDate)}
+                              </span>
+                            )}
+                            {document.metadata?.claimAmount && (
+                              <span className="text-[10px] font-medium text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded-sm border border-orange-200">
+                                Amount: {formatCurrency(document.metadata.claimAmount)}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
                         {/* Amount Fields Display for Other Documents */}
-                        {document.type !== 'insurance' && (
+                        {document.type !== 'insurance' && document.type !== 'claims_on_insurance' && (
                           <div className="flex flex-wrap gap-1 mt-1">
                             {document.metadata?.billAmount && (
                               <span className="text-[10px] font-medium text-green-700 bg-green-50 px-1.5 py-0.5 rounded-sm border border-green-200">
