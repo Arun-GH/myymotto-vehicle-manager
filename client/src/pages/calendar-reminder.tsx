@@ -143,6 +143,7 @@ export default function CalendarReminder() {
       console.log(`Persistent device notification scheduled for: ${reminderDate.toLocaleString()}`);
       console.log(`Original reminder.reminderDate: ${reminder.reminderDate}`);
       console.log(`Parsed reminderDate: ${reminderDate.toString()}`);
+      console.log(`Formatted display time: ${formatDate(reminder.reminderDate)}`);
       return true;
     } catch (error) {
       console.error('Error scheduling device notification:', error);

@@ -1808,11 +1808,24 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createCalendarReminder(reminder: InsertCalendarReminder & { userId: number }): Promise<CalendarReminder> {
+    // Handle datetime-local input properly to preserve local time
+    let reminderDate: Date;
+    if (typeof reminder.reminderDate === 'string' && reminder.reminderDate.includes('T') && !reminder.reminderDate.includes('Z')) {
+      // This is from datetime-local input: "2025-01-29T00:10"
+      // Parse as local time to avoid UTC conversion
+      const parts = reminder.reminderDate.split('T');
+      const [year, month, day] = parts[0].split('-').map(Number);
+      const [hours, minutes] = parts[1].split(':').map(Number);
+      reminderDate = new Date(year, month - 1, day, hours, minutes, 0);
+    } else {
+      reminderDate = new Date(reminder.reminderDate);
+    }
+
     const [newReminder] = await db
       .insert(calendarReminders)
       .values({
         ...reminder,
-        reminderDate: new Date(reminder.reminderDate),
+        reminderDate,
       })
       .returning();
     return newReminder;
@@ -1821,7 +1834,17 @@ export class DatabaseStorage implements IStorage {
   async updateCalendarReminder(id: number, userId: number, reminder: Partial<InsertCalendarReminder>): Promise<CalendarReminder | undefined> {
     const updateData: any = { ...reminder, updatedAt: new Date() };
     if (reminder.reminderDate) {
-      updateData.reminderDate = new Date(reminder.reminderDate);
+      // Handle datetime-local input properly to preserve local time
+      if (typeof reminder.reminderDate === 'string' && reminder.reminderDate.includes('T') && !reminder.reminderDate.includes('Z')) {
+        // This is from datetime-local input: "2025-01-29T00:10"
+        // Parse as local time to avoid UTC conversion
+        const parts = reminder.reminderDate.split('T');
+        const [year, month, day] = parts[0].split('-').map(Number);
+        const [hours, minutes] = parts[1].split(':').map(Number);
+        updateData.reminderDate = new Date(year, month - 1, day, hours, minutes, 0);
+      } else {
+        updateData.reminderDate = new Date(reminder.reminderDate);
+      }
     }
     
     const [updated] = await db
