@@ -28,6 +28,7 @@ export default function LocalDocuments() {
   
   // Interactive document viewer state
   const [viewingDocument, setViewingDocument] = useState<LocalDocument | null>(null);
+  const [useInteractiveViewer, setUseInteractiveViewer] = useState(false);
 
   // Fetch vehicle data
   const { data: vehicle, isLoading: vehicleLoading } = useQuery({
@@ -64,8 +65,10 @@ export default function LocalDocuments() {
     try {
       setIsLoading(true);
       const docs = await localDocumentStorage.getDocumentsByVehicle(vehicleId);
+      console.log("Loaded documents:", docs.length, docs);
       setDocuments(docs);
     } catch (error) {
+      console.error("Error loading documents:", error);
       toast({
         title: "Error",
         description: "Failed to load documents from local storage",
@@ -87,8 +90,31 @@ export default function LocalDocuments() {
     console.log("File data length:", document.fileData?.byteLength || 0);
     
     if (document.fileData && document.fileData.byteLength > 0) {
-      console.log("Setting viewing document:", document.fileName);
-      setViewingDocument(document);
+      if (useInteractiveViewer) {
+        console.log("Opening document with interactive viewer:", document.fileName);
+        setViewingDocument(document);
+      } else {
+        console.log("Opening document in new tab:", document.fileName);
+        // Fallback: open in new tab
+        try {
+          const blob = new Blob([document.fileData], { type: document.mimeType });
+          const url = URL.createObjectURL(blob);
+          console.log("Created blob URL for viewing:", url);
+          window.open(url, '_blank');
+          
+          toast({
+            title: "Document Opened",
+            description: `${document.fileName} opened in new tab`,
+          });
+        } catch (error) {
+          console.error("Error opening document:", error);
+          toast({
+            title: "View Error",
+            description: "Failed to open document",
+            variant: "destructive",
+          });
+        }
+      }
     } else {
       console.log("No file data available for document:", document.fileName);
       toast({
@@ -361,9 +387,19 @@ export default function LocalDocuments() {
                 <div className="text-sm font-medium text-blue-600">{documents.length} docs • {formatFileSize(storageInfo.used)}</div>
               </div>
             </div>
-            <div className="text-sm text-green-600 mt-0.5 flex items-center">
-              <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></div>
-              Secured locally
+            <div className="text-sm text-green-600 mt-0.5 flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></div>
+                Secured locally
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setUseInteractiveViewer(!useInteractiveViewer)}
+                className="h-6 px-2 text-xs"
+              >
+                {useInteractiveViewer ? "Simple View" : "Interactive View"}
+              </Button>
             </div>
           </CardContent>
         </Card>
