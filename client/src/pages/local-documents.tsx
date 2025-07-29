@@ -357,13 +357,13 @@ export default function LocalDocuments() {
             <Card key={type} className="card-hover shadow-orange border-l-4 border-l-purple-500 mb-1.5">
               <CardHeader className="pb-0.5 px-1.5 pt-1.5">
                 <CardTitle 
-                  className={`flex items-center space-x-1.5 text-xs ${type === 'fuel' ? 'cursor-pointer hover:bg-gray-50 rounded p-1 -m-1' : ''}`}
-                  onClick={type === 'fuel' ? () => toggleSection(type) : undefined}
+                  className={`flex items-center space-x-1.5 text-xs ${(type === 'fuel' || type === 'parking_receipts') ? 'cursor-pointer hover:bg-gray-50 rounded p-1 -m-1' : ''}`}
+                  onClick={(type === 'fuel' || type === 'parking_receipts') ? () => toggleSection(type) : undefined}
                 >
                   <div className={`w-3 h-3 rounded-full ${documentTypes[type]?.color || 'bg-gray-500'}`} />
                   <span>{documentTypes[type]?.label || type}</span>
                   <Badge variant="secondary" className="ml-auto text-xs h-4 px-1.5">{docs.length}</Badge>
-                  {type === 'fuel' && (
+                  {(type === 'fuel' || type === 'parking_receipts') && (
                     <Button
                       variant="ghost"
                       size="sm"
