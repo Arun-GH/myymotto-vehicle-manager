@@ -547,14 +547,16 @@ export default function Profile() {
         <div className="px-3 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-600 hover:bg-red-50 p-1"
-                onClick={() => setLocation("/")}
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
+              {profile && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:bg-red-50 p-1"
+                  onClick={() => setLocation("/")}
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </Button>
+              )}
               <img 
                 src={logoImage} 
                 alt="Myymotto Logo" 
@@ -580,16 +582,20 @@ export default function Profile() {
                   Edit
                 </Button>
               )}
-              <Link href="/settings">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-gray-600 hover:bg-red-50 w-8 h-8"
-                >
-                  <Settings className="w-4 h-4" />
-                </Button>
-              </Link>
-              <NotificationBell />
+              {profile && (
+                <>
+                  <Link href="/settings">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-gray-600 hover:bg-red-50 w-8 h-8"
+                    >
+                      <Settings className="w-4 h-4" />
+                    </Button>
+                  </Link>
+                  <NotificationBell />
+                </>
+              )}
             </div>
           </div>
         </div>
