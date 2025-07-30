@@ -31,6 +31,26 @@
 - Optional hardware features (camera not required)
 - Architecture compatibility declarations
 
+## SOLUTION FOR "HELLO ANDROID" ISSUE
+
+If your APK installs but shows "Hello Android" instead of MyyMotto:
+
+### 1. Run these commands first:
+```bash
+npm run build
+npx cap sync android
+```
+
+### 2. Clean the Android project:
+- In Android Studio: **Build** → **Clean Project**
+- Or command line: `cd android && ./gradlew clean`
+
+### 3. Verify web assets are synced:
+Check that `android/app/src/main/assets/public` contains:
+- index.html
+- assets/ folder with CSS and JS files
+- capacitor.config.json
+
 ## Build Instructions After Changes
 
 ### Option 1: Clean Build in Android Studio
@@ -118,8 +138,35 @@ After building, verify the APK contains:
 - All Capacitor plugins are properly configured
 - Native features (camera, notifications) work on compatible devices
 
+## "Hello Android" Issue Fix
+
+If the APK installs but shows "Hello Android" page:
+
+1. **First, ensure web build is current:**
+   ```bash
+   npm run build
+   npx cap sync android
+   ```
+
+2. **Clean and rebuild in Android Studio:**
+   - **Build** → **Clean Project**
+   - **Build** → **Rebuild Project**
+   - **Build** → **Generate Signed Bundle/APK**
+
+3. **Check web assets:** Verify `android/app/src/main/assets/public/` contains your app files
+
+4. **Alternative fix:** Try this in command line:
+   ```bash
+   cd android
+   ./gradlew clean
+   ./gradlew assembleDebug --rerun-tasks
+   ```
+
+The updated MainActivity and proper Capacitor sync should resolve the loading issue.
+
 If you continue to experience issues, please share:
 1. Your Android version
 2. Device model
 3. Available storage space
 4. Any specific error messages during installation
+5. Whether you see "Hello Android" or any other content

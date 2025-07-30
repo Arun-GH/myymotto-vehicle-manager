@@ -2,12 +2,10 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.myymotto.vehiclemanager',
-  appName: 'Myymotto',
+  appName: 'MyyMotto',
   webDir: 'dist/public',
   server: {
     androidScheme: 'https',
-    // Comment out for production APK builds
-    // url: 'http://localhost:5000',
     cleartext: true
   },
   plugins: {
