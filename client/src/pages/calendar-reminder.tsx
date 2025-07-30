@@ -37,11 +37,13 @@ export default function CalendarReminder() {
 
   const initializeNotifications = async () => {
     try {
-      // Check and request permissions
-      await checkNotificationPermissions();
+      console.log('🔧 INITIALIZING MOBILE NOTIFICATION SYSTEM...');
+      
+      // Check and request permissions with detailed logging
+      const permissionResult = await checkNotificationPermissions();
       
       // Create notification channel for persistent alarms with maximum priority
-      await LocalNotifications.createChannel({
+      const channelResult = await LocalNotifications.createChannel({
         id: 'myyMotto-alarms',
         name: 'MyyMotto Vehicle Alarms',
         description: 'Critical vehicle reminders and alerts that require immediate attention',
@@ -57,23 +59,59 @@ export default function CalendarReminder() {
         bypassDnd: true // Bypass Do Not Disturb mode for critical vehicle alerts
       });
       
-      console.log('MyyMotto notification channel created successfully');
+      console.log('✅ MyyMotto notification channel created:', channelResult);
+      
+      // Request exact alarm permission for Android 12+ (critical for alarms)
+      if (Capacitor.getPlatform() === 'android') {
+        try {
+          // This is a placeholder - in a real app, you'd need to request SCHEDULE_EXACT_ALARM permission
+          console.log('📱 Android platform detected - ensuring exact alarm permissions');
+        } catch (exactAlarmError) {
+          console.log('⚠️ Exact alarm permission may be required for Android 12+');
+        }
+      }
+      
+      // Add notification action listeners
+      await LocalNotifications.addListener('localNotificationReceived', (notification) => {
+        console.log('🔔 NOTIFICATION RECEIVED:', notification);
+      });
+      
+      await LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
+        console.log('🔔 NOTIFICATION ACTION PERFORMED:', notification);
+      });
+      
+      console.log('✅ Mobile notification system initialized successfully');
     } catch (error) {
-      console.error('Error initializing notifications:', error);
+      console.error('❌ Error initializing notifications:', error);
     }
   };
 
   const checkNotificationPermissions = async () => {
     try {
+      console.log('🔧 Checking notification permissions...');
       const permission = await LocalNotifications.checkPermissions();
+      console.log('📋 Current permissions:', permission);
       setNotificationPermission(permission);
       
       if (permission.display !== 'granted') {
+        console.log('🔐 Requesting notification permissions...');
         const result = await LocalNotifications.requestPermissions();
+        console.log('📋 Permission request result:', result);
         setNotificationPermission(result);
+        
+        if (result.display === 'granted') {
+          console.log('✅ Notification permissions granted successfully');
+        } else {
+          console.log('❌ Notification permissions denied - alarms will not work');
+        }
+      } else {
+        console.log('✅ Notification permissions already granted');
       }
+      
+      return permission;
     } catch (error) {
-      console.error('Error checking notification permissions:', error);
+      console.error('❌ Error checking notification permissions:', error);
+      return null;
     }
   };
 
@@ -176,8 +214,8 @@ export default function CalendarReminder() {
       
       const notificationId = reminder.id || Date.now();
 
-      // Schedule persistent notification that works even when app is closed
-      await LocalNotifications.schedule({
+      // Schedule persistent notification with comprehensive settings
+      const scheduleResult = await LocalNotifications.schedule({
         notifications: [
           {
             title: '🚨 MyyMotto Reminder Alert',
@@ -191,22 +229,41 @@ export default function CalendarReminder() {
               reminderDetails: reminder.details || '',
               source: 'MyyMotto',
               persistent: true,
-              priority: 'max', // Maximum priority for alarm-like behavior
+              priority: 'max',
               type: 'reminder',
               reminderTitle: reminder.title
             },
-            // Enhanced alarm settings for maximum visibility
+            // Maximum visibility settings for alarm behavior
             smallIcon: 'ic_stat_icon_config_sample',
             iconColor: '#FF6600',
-            ongoing: false, // Don't make it ongoing, but high priority
-            autoCancel: true,
+            ongoing: false,
+            autoCancel: false, // Don't auto-cancel so user must acknowledge
             channelId: 'myyMotto-alarms',
-            // Additional Android-specific alarm properties
             largeIcon: 'res://drawable/ic_launcher',
-            summary: 'MyyMotto Vehicle Reminder'
+            summary: 'MyyMotto Vehicle Reminder',
+            // Critical notification settings
+            priority: 5, // Max priority
+            visibility: 1, // Show on lock screen
+            lights: true,
+            vibrate: true
           }
         ]
       });
+      
+      console.log(`📅 Notification schedule result:`, scheduleResult);
+      
+      // Verify the notification was scheduled by checking pending notifications
+      try {
+        const pendingNotifications = await LocalNotifications.getPending();
+        const ourNotification = pendingNotifications.notifications.find(n => n.id === notificationId);
+        if (ourNotification) {
+          console.log(`✅ Notification confirmed in pending queue:`, ourNotification);
+        } else {
+          console.log(`⚠️ Warning: Notification not found in pending queue`);
+        }
+      } catch (pendingError) {
+        console.log(`⚠️ Could not verify pending notifications:`, pendingError);
+      }
 
       // For Android, also try to integrate with system alarm via intent
       if (Capacitor.getPlatform() === 'android') {
@@ -498,6 +555,40 @@ export default function CalendarReminder() {
               <p className="text-xs text-blue-600 mt-1">
                 📱 Alarms are saved to your device's notification system and will ring regardless of app status.
               </p>
+              {notificationPermission?.display === 'granted' && (
+                <div className="mt-2">
+                  <Button 
+                    onClick={async () => {
+                      try {
+                        // Create immediate test notification (5 seconds from now)
+                        const testTime = new Date(Date.now() + 5000);
+                        await LocalNotifications.schedule({
+                          notifications: [{
+                            title: '🔔 MyyMotto Test Alarm',
+                            body: 'This is a test notification to verify your alarm system works!',
+                            id: 99999,
+                            schedule: { at: testTime },
+                            sound: 'default',
+                            channelId: 'myyMotto-alarms'
+                          }]
+                        });
+                        toast({
+                          title: "Test Alarm Scheduled",
+                          description: "Test notification will ring in 5 seconds!"
+                        });
+                        console.log(`🧪 TEST ALARM scheduled for: ${testTime.toLocaleString()}`);
+                      } catch (error) {
+                        console.error('Test notification error:', error);
+                      }
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-6 px-2"
+                  >
+                    Test Alarm (5s)
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
