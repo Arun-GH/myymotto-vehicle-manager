@@ -3,11 +3,12 @@ import { useLocation, Link } from "wouter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Phone, Shield, Wrench, Settings, AlertTriangle, Users, Package } from "lucide-react";
+import { ArrowLeft, Phone, Shield, Wrench, Settings, AlertTriangle, Users, Package, Share2, Send, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertEmergencyContactSchema, type InsertEmergencyContact, type EmergencyContact } from "@shared/schema";
@@ -19,6 +20,7 @@ import logoImage from "@/assets/Mymotto_Logo_Green_Revised_1752603344750.png";
 export default function EmergencyContacts() {
   const [, setLocation] = useLocation();
   const [isEditing, setIsEditing] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -121,6 +123,112 @@ export default function EmergencyContacts() {
 
   const hasContacts = contacts && Object.keys(contacts).length > 0;
 
+  // Generate emergency contact sharing message
+  const generateShareMessage = () => {
+    if (!contacts) return "";
+    
+    let message = "🚨 EMERGENCY CONTACTS - MyyMotto User\n\n";
+    
+    if (contacts.emergencyName || contacts.emergencyPhone) {
+      message += `🆘 Emergency Contact:\n`;
+      if (contacts.emergencyName) message += `Name: ${contacts.emergencyName}\n`;
+      if (contacts.emergencyPhone) message += `Phone: ${contacts.emergencyPhone}\n\n`;
+    }
+    
+    if (contacts.insuranceName || contacts.insurancePhone) {
+      message += `🛡️ Insurance Company:\n`;
+      if (contacts.insuranceName) message += `Company: ${contacts.insuranceName}\n`;
+      if (contacts.insurancePhone) message += `Phone: ${contacts.insurancePhone}\n\n`;
+    }
+    
+    if (contacts.roadsidePhone) {
+      message += `🚗 Roadside Assistance:\n`;
+      message += `Phone: ${contacts.roadsidePhone}\n\n`;
+    }
+    
+    if (contacts.serviceCentreName || contacts.serviceCentrePhone) {
+      message += `🔧 Service Centre:\n`;
+      if (contacts.serviceCentreName) message += `Name: ${contacts.serviceCentreName}\n`;
+      if (contacts.serviceCentrePhone) message += `Phone: ${contacts.serviceCentrePhone}\n\n`;
+    }
+    
+    if (contacts.sparePartsName || contacts.sparePartsPhone) {
+      message += `🔩 Spare Parts:\n`;
+      if (contacts.sparePartsName) message += `Name: ${contacts.sparePartsName}\n`;
+      if (contacts.sparePartsPhone) message += `Phone: ${contacts.sparePartsPhone}\n\n`;
+    }
+    
+    message += "---\nShared via MyyMotto - Vehicle Management App";
+    return message;
+  };
+
+  // Share emergency contacts using Web Share API or fallback
+  const handleShareContacts = async () => {
+    const shareMessage = generateShareMessage();
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Emergency Contacts - MyyMotto",
+          text: shareMessage,
+        });
+        toast({
+          title: "Shared Successfully",
+          description: "Emergency contacts shared successfully",
+        });
+      } catch (error) {
+        if ((error as Error).name !== 'AbortError') {
+          console.error('Error sharing:', error);
+          // Fallback to copy to clipboard
+          handleCopyToClipboard(shareMessage);
+        }
+      }
+    } else {
+      // Fallback: copy to clipboard
+      handleCopyToClipboard(shareMessage);
+    }
+  };
+
+  // Copy emergency contacts to clipboard
+  const handleCopyToClipboard = async (message: string) => {
+    try {
+      await navigator.clipboard.writeText(message);
+      toast({
+        title: "Copied to Clipboard",
+        description: "Emergency contacts copied. You can now paste and share via any app.",
+      });
+    } catch (error) {
+      console.error('Error copying to clipboard:', error);
+      toast({
+        title: "Copy Failed",
+        description: "Unable to copy to clipboard. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Share via SMS
+  const handleShareViaSMS = () => {
+    const shareMessage = generateShareMessage();
+    const smsUrl = `sms:?body=${encodeURIComponent(shareMessage)}`;
+    window.open(smsUrl, '_blank');
+    toast({
+      title: "SMS Ready",
+      description: "SMS app opened with emergency contacts ready to send",
+    });
+  };
+
+  // Share via WhatsApp
+  const handleShareViaWhatsApp = () => {
+    const shareMessage = generateShareMessage();
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
+    window.open(whatsappUrl, '_blank');
+    toast({
+      title: "WhatsApp Ready", 
+      description: "WhatsApp opened with emergency contacts ready to send",
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -203,14 +311,26 @@ export default function EmergencyContacts() {
             </div>
             <div className="flex items-center space-x-1">
               {hasContacts && !isEditing && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-600 hover:bg-red-50 p-1"
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit
-                </Button>
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-green-600 hover:bg-green-50 p-1 font-medium"
+                    onClick={handleShareContacts}
+                    title="One-tap emergency contact sharing"
+                  >
+                    <Share2 className="w-4 h-4 mr-1" />
+                    Share
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-600 hover:bg-red-50 p-1"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Edit
+                  </Button>
+                </>
               )}
               <Link href="/settings">
                 <Button
@@ -231,6 +351,37 @@ export default function EmergencyContacts() {
         {!isEditing && hasContacts ? (
           // Display Mode - Compact Tiles
           <div className="grid grid-cols-1 gap-3">
+            {/* One-Tap Emergency Share Card */}
+            <Card className="shadow-orange border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Share2 className="w-6 h-6 text-green-600" />
+                  </div>
+                  <h3 className="font-bold text-green-800 text-sm mb-2">Emergency Contact Sharing</h3>
+                  <p className="text-xs text-green-700 mb-4 leading-relaxed">
+                    Share all your emergency contacts instantly in case of accidents or emergencies
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      onClick={handleShareContacts}
+                      className="h-9 text-xs bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <Share2 className="w-3 h-3 mr-1" />
+                      Quick Share
+                    </Button>
+                    <Button
+                      onClick={() => setIsSharing(true)}
+                      variant="outline"
+                      className="h-9 text-xs border-green-300 text-green-700 hover:bg-green-50"
+                    >
+                      <Send className="w-3 h-3 mr-1" />
+                      More Options
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
             {/* Emergency Contact */}
             {(contacts.emergencyName || contacts.emergencyPhone) && (
               <Card className="shadow-orange border-l-4 border-l-red-500">
@@ -676,6 +827,58 @@ export default function EmergencyContacts() {
           </Card>
         )}
       </div>
+
+      {/* Share Options Dialog */}
+      <Dialog open={isSharing} onOpenChange={setIsSharing}>
+        <DialogContent className="w-[90%] max-w-md rounded-xl">
+          <DialogHeader>
+            <DialogTitle className="text-center text-lg font-bold text-gray-800">
+              Share Emergency Contacts
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 gap-3 p-4">
+            <Button
+              onClick={handleShareContacts}
+              className="h-12 bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center space-x-2"
+            >
+              <Share2 className="w-5 h-5" />
+              <span>Share via System (Recommended)</span>
+            </Button>
+            
+            <Button
+              onClick={handleShareViaWhatsApp}
+              className="h-12 bg-green-600 hover:bg-green-700 text-white flex items-center justify-center space-x-2"
+            >
+              <Send className="w-5 h-5" />
+              <span>Share via WhatsApp</span>
+            </Button>
+            
+            <Button
+              onClick={handleShareViaSMS}
+              className="h-12 bg-orange-600 hover:bg-orange-700 text-white flex items-center justify-center space-x-2"
+            >
+              <Phone className="w-5 h-5" />
+              <span>Share via SMS</span>
+            </Button>
+            
+            <Button
+              onClick={() => handleCopyToClipboard(generateShareMessage())}
+              variant="outline"
+              className="h-12 border-gray-300 text-gray-700 hover:bg-gray-50 flex items-center justify-center space-x-2"
+            >
+              <Copy className="w-5 h-5" />
+              <span>Copy to Clipboard</span>
+            </Button>
+            
+            <div className="mt-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
+              <p className="text-xs text-amber-800 text-center leading-relaxed">
+                <AlertTriangle className="w-4 h-4 inline mr-1" />
+                Share your emergency contacts with trusted friends, family, or colleagues for quick access during emergencies.
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <BottomNav currentPath="/emergency-contacts" />
     </div>
