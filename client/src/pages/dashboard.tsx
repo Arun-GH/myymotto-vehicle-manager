@@ -217,12 +217,12 @@ export default function Dashboard() {
         {vehicles.length === 0 ? (
           /* Clean slate for new users */
           <section className="px-3 py-4">
-            <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 text-center shadow-md">
-              <Car className="w-16 h-16 text-orange-500 mx-auto mb-4" />
+            <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 text-center shadow-orange">
+              <Car className="w-16 h-16 text-orange-500 mx-auto mb-4 icon-3d" />
               <h2 className="text-lg font-semibold text-gray-800 mb-2">Welcome to MyyMotto!</h2>
               <p className="text-sm text-gray-600 mb-4">Start managing your vehicle by adding your first one</p>
               <Link href="/add-vehicle">
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 smooth-button">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Vehicle
                 </Button>
@@ -232,15 +232,15 @@ export default function Dashboard() {
             {/* Additional engagement options for new users */}
             <div className="grid grid-cols-2 gap-3 mt-4">
               <Link href="/broadcast" className="block">
-                <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                  <Radio className="w-8 h-8 text-blue-500 mb-2" />
+                <div className="smooth-card bg-white rounded-xl p-4 shadow-orange border border-gray-100 hover:shadow-orange-dark transition-all">
+                  <Radio className="w-8 h-8 text-blue-500 mb-2 icon-3d" />
                   <h3 className="text-sm font-semibold text-gray-800">Community</h3>
                   <p className="text-xs text-gray-600">Connect with fellow vehicle owners</p>
                 </div>
               </Link>
               <Link href="/news-tidbits" className="block">
-                <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                  <Newspaper className="w-8 h-8 text-green-500 mb-2" />
+                <div className="smooth-card bg-white rounded-xl p-4 shadow-orange border border-gray-100 hover:shadow-orange-dark transition-all">
+                  <Newspaper className="w-8 h-8 text-green-500 mb-2 icon-3d" />
                   <h3 className="text-sm font-semibold text-gray-800">News & Updates</h3>
                   <p className="text-xs text-gray-600">Latest automotive news and policies</p>
                 </div>
