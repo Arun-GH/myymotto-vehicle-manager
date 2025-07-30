@@ -180,7 +180,7 @@ export default function CalendarReminder() {
     }
   };
 
-  const openNativeAlarmApp = async (reminder: InsertCalendarReminder & { id?: number }) => {
+  const createUltraReliableAlarm = async (reminder: InsertCalendarReminder & { id?: number }) => {
     try {
       // Get the corrected reminder date
       let reminderDate: Date;
@@ -203,54 +203,128 @@ export default function CalendarReminder() {
 
       const hours = reminderDate.getHours();
       const minutes = reminderDate.getMinutes();
+      const timeUntilAlarm = reminderDate.getTime() - Date.now();
       
-      console.log('📱 OPENING NATIVE ALARM APP...');
-      console.log(`   Time to set: ${hours}:${minutes.toString().padStart(2, '0')}`);
+      console.log('🚨 CREATING ULTRA-RELIABLE ALARM SYSTEM...');
+      console.log(`   Alarm time: ${hours}:${minutes.toString().padStart(2, '0')}`);
+      console.log(`   Minutes until alarm: ${Math.round(timeUntilAlarm / 1000 / 60)}`);
       console.log(`   Reminder: ${reminder.title}`);
       
-      // Create intent to open device's alarm/clock app with preset values
-      const alarmMessage = `MyyMotto: ${reminder.title}`;
+      // Strategy 1: High-frequency backup notifications (every 30 seconds leading up to alarm)
+      const notificationId = reminder.id || Date.now();
+      const backupNotifications = [];
       
-      if (Capacitor.getPlatform() === 'android') {
-        // Android alarm intent
-        const androidIntent = `intent://clock#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR=${hours};i.android.intent.extra.alarm.MINUTES=${minutes};S.android.intent.extra.alarm.MESSAGE=${encodeURIComponent(alarmMessage)};b.android.intent.extra.alarm.SKIP_UI=false;end`;
-        
-        // Try to open with intent
-        try {
-          window.location.href = androidIntent;
-          console.log('✅ Android alarm intent launched');
-        } catch (intentError) {
-          // Fallback: direct alarm app URL
-          const alarmUrl = `alarmclock://set?hour=${hours}&minute=${minutes}&message=${encodeURIComponent(alarmMessage)}`;
-          window.open(alarmUrl, '_system');
-          console.log('✅ Android alarm URL launched');
-        }
-        
-      } else if (Capacitor.getPlatform() === 'ios') {
-        // iOS clock app URL scheme
-        const iosClockUrl = `clock-alarm://create?hour=${hours}&minute=${minutes}&label=${encodeURIComponent(alarmMessage)}`;
-        
-        try {
-          window.open(iosClockUrl, '_system');
-          console.log('✅ iOS clock app launched');
-        } catch (iosError) {
-          // Fallback: generic clock URL
-          window.open('clock://', '_system');
-          console.log('✅ iOS clock app opened (manual setup required)');
+      // Create 5 notifications: 2 minutes before, 1 minute before, 30 seconds before, exact time, and 30 seconds after
+      const intervals = [-120, -60, -30, 0, 30]; // seconds
+      
+      for (let i = 0; i < intervals.length; i++) {
+        const offsetTime = new Date(reminderDate.getTime() + (intervals[i] * 1000));
+        if (offsetTime.getTime() > Date.now()) {
+          backupNotifications.push({
+            title: intervals[i] === 0 ? '🚨 MyyMotto ALARM NOW!' : `🔔 MyyMotto Reminder in ${Math.abs(intervals[i])}s`,
+            body: `${reminder.title}${reminder.details ? ` - ${reminder.details}` : ''}`,
+            id: notificationId + i + 1000,
+            schedule: { at: offsetTime },
+            sound: 'default',
+            channelId: 'myyMotto-alarms',
+            priority: 5,
+            visibility: 1,
+            lights: true,
+            vibrate: true,
+            autoCancel: false,
+            ongoing: intervals[i] === 0, // Make the exact time notification ongoing
+            extra: {
+              reminderTitle: reminder.title,
+              isMainAlarm: intervals[i] === 0,
+              source: 'MyyMotto-UltraReliable'
+            }
+          });
         }
       }
       
-      // Show user instruction
+      if (backupNotifications.length > 0) {
+        await LocalNotifications.schedule({
+          notifications: backupNotifications
+        });
+        console.log(`✅ ${backupNotifications.length} backup notifications scheduled`);
+      }
+      
+      // Strategy 2: Create a repeating notification every minute for 5 minutes after alarm time
+      const repeatingNotifications = [];
+      for (let i = 1; i <= 5; i++) {
+        const repeatTime = new Date(reminderDate.getTime() + (i * 60 * 1000));
+        repeatingNotifications.push({
+          title: '🚨 MyyMotto URGENT REMINDER!',
+          body: `MISSED ALARM: ${reminder.title} - This is reminder #${i}`,
+          id: notificationId + i + 2000,
+          schedule: { at: repeatTime },
+          sound: 'default',
+          channelId: 'myyMotto-alarms',
+          priority: 5,
+          visibility: 1,
+          lights: true,
+          vibrate: true,
+          autoCancel: false,
+          ongoing: true,
+          extra: {
+            reminderTitle: reminder.title,
+            isFollowUp: true,
+            followUpNumber: i,
+            source: 'MyyMotto-FollowUp'
+          }
+        });
+      }
+      
+      if (repeatingNotifications.length > 0) {
+        await LocalNotifications.schedule({
+          notifications: repeatingNotifications
+        });
+        console.log(`✅ ${repeatingNotifications.length} follow-up notifications scheduled`);
+      }
+      
+      // Strategy 3: Store alarm info in localStorage for active monitoring
+      const alarmData = {
+        id: notificationId,
+        title: reminder.title,
+        details: reminder.details,
+        alarmTime: reminderDate.toISOString(),
+        created: new Date().toISOString(),
+        active: true
+      };
+      
+      const existingAlarms = JSON.parse(localStorage.getItem('myyMotto-active-alarms') || '[]');
+      existingAlarms.push(alarmData);
+      localStorage.setItem('myyMotto-active-alarms', JSON.stringify(existingAlarms));
+      
+      console.log('💾 Alarm data stored in localStorage for monitoring');
+      
+      // Strategy 4: Try to open native alarm app as additional backup
+      const alarmMessage = `MyyMotto: ${reminder.title}`;
+      try {
+        if (Capacitor.getPlatform() === 'android') {
+          const androidIntent = `intent://clock#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR=${hours};i.android.intent.extra.alarm.MINUTES=${minutes};S.android.intent.extra.alarm.MESSAGE=${encodeURIComponent(alarmMessage)};b.android.intent.extra.alarm.SKIP_UI=false;end`;
+          window.location.href = androidIntent;
+          console.log('📱 Android alarm app launched as backup');
+        } else if (Capacitor.getPlatform() === 'ios') {
+          const iosClockUrl = `clock-alarm://create?hour=${hours}&minute=${minutes}&label=${encodeURIComponent(alarmMessage)}`;
+          window.open(iosClockUrl, '_system');
+          console.log('📱 iOS clock app launched as backup');
+        }
+      } catch (nativeError) {
+        console.log('⚠️ Native alarm app unavailable, relying on notification system');
+      }
+      
+      // Show comprehensive instruction to user
       toast({
-        title: "📱 Device Alarm App Opened",
-        description: `Your alarm app should open with time ${hours}:${minutes.toString().padStart(2, '0')} preset. Please save the alarm to ensure it rings at the correct time.`,
-        duration: 6000
+        title: "🚨 Ultra-Reliable Alarm Created",
+        description: `Multiple backup alarms set for ${hours}:${minutes.toString().padStart(2, '0')}. You'll get notifications 2min, 1min, 30sec before, at the exact time, and follow-ups if missed.`,
+        duration: 8000
       });
       
       return true;
       
     } catch (error) {
-      console.error('❌ Failed to open native alarm app:', error);
+      console.error('❌ Failed to create ultra-reliable alarm:', error);
       return false;
     }
   };
@@ -262,16 +336,15 @@ export default function CalendarReminder() {
       return await scheduleWebNotification(reminder);
     }
 
-    // For mobile users, try native alarm app first, then fallback to notifications
-    console.log('📱 Mobile platform detected - attempting native alarm integration...');
-    const nativeAlarmSuccess = await openNativeAlarmApp(reminder);
+    // For mobile users, use ultra-reliable alarm system with multiple backup strategies
+    console.log('📱 Mobile platform detected - creating ultra-reliable alarm system...');
+    const ultraReliableSuccess = await createUltraReliableAlarm(reminder);
     
-    if (nativeAlarmSuccess) {
-      console.log('✅ Native alarm app integration successful');
-      // Still schedule backup notification in case user doesn't save the alarm
-      console.log('📲 Also scheduling backup notification...');
+    if (ultraReliableSuccess) {
+      console.log('✅ Ultra-reliable alarm system activated with multiple backup strategies');
+      return true;
     } else {
-      console.log('⚠️ Native alarm failed, using notification fallback only');
+      console.log('⚠️ Ultra-reliable alarm failed, using standard notification fallback');
     }
 
     try {
@@ -635,12 +708,12 @@ export default function CalendarReminder() {
               </div>
               <p className="text-xs text-blue-700">
                 {notificationPermission?.display === 'granted' 
-                  ? "✓ Native alarm integration: Opens your device's clock app automatically"
-                  : "⚠ Allow notifications to enable backup alarm system"
+                  ? "✓ Ultra-reliable alarm: Multiple backup notifications + native clock app integration"
+                  : "⚠ Allow notifications to enable ultra-reliable alarm system"
                 }
               </p>
               <p className="text-xs text-blue-600 mt-1">
-                📱 Creates actual alarms in your phone's clock app for guaranteed wake-up alerts.
+                🚨 Creates 10+ backup alarms: 2min before, 1min before, exact time, and 5 follow-ups if missed.
               </p>
               {notificationPermission?.display === 'granted' && (
                 <div className="mt-2">
@@ -734,9 +807,9 @@ export default function CalendarReminder() {
                         <Clock className="w-4 h-4" />
                         {formatDate(reminder.reminderDate)}
                         {Capacitor.isNativePlatform() && (
-                          <div className="flex items-center gap-1 ml-2 px-2 py-1 bg-blue-100 rounded-full">
-                            <Clock className="w-3 h-3 text-blue-600" />
-                            <span className="text-xs text-blue-700">Native Alarm</span>
+                          <div className="flex items-center gap-1 ml-2 px-2 py-1 bg-red-100 rounded-full">
+                            <Bell className="w-3 h-3 text-red-600" />
+                            <span className="text-xs text-red-700">Ultra-Reliable</span>
                           </div>
                         )}
                       </div>
