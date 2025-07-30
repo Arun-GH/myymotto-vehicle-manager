@@ -253,12 +253,12 @@ export default function Dashboard() {
             <h2 className="text-sm font-semibold mb-3 text-gray-800">Quick Actions</h2>
             <div className="grid grid-cols-5 gap-2">
               <Link href="/add-vehicle" className="block">
-                <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-red-300 transition-all duration-200 h-16 px-1 active:scale-95">
+                <div className="smooth-card quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-red-300 transition-all duration-200 h-16 px-1 active:scale-95">
                   <Plus className="w-6 h-6 text-red-500 mb-1" />
                   <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Add Vehicle</span>
                 </div>
               </Link>
-              <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-purple-300 transition-all duration-200 h-16 px-1 active:scale-95" 
+              <div className="smooth-card quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-purple-300 transition-all duration-200 h-16 px-1 active:scale-95" 
                    onClick={() => {
                      if (vehicles.length === 1) {
                        navigate(`/vehicle/${vehicles[0].id}/local-documents`);
@@ -270,7 +270,7 @@ export default function Dashboard() {
                 <Files className="w-6 h-6 text-purple-500 mb-1" />
                 <span className="text-[10px] font-medium text-gray-800 text-center leading-tight whitespace-nowrap">Documents</span>
               </div>
-              <div className="quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-teal-300 transition-all duration-200 h-16 px-1 active:scale-95"
+              <div className="smooth-card quick-action-3d rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-teal-300 transition-all duration-200 h-16 px-1 active:scale-95"
                    onClick={() => {
                      if (vehicles.length === 1) {
                        navigate(`/vehicle/${vehicles[0].id}/service-logs`);

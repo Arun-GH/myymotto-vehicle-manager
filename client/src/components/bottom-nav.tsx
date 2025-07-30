@@ -40,7 +40,7 @@ export default function BottomNav({ currentPath }: BottomNavProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className={`flex flex-col items-center justify-center py-2 px-0.5 h-16 space-y-0.5 w-full rounded-lg relative transition-all duration-200 ${
+                className={`smooth-button flex flex-col items-center justify-center py-2 px-0.5 h-16 space-y-0.5 w-full rounded-lg relative nav-link ${
                   isActive ? colors[index].active : colors[index].inactive
                 }`}
               >

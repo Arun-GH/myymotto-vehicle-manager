@@ -795,7 +795,7 @@ export default function CalendarReminder() {
         ) : (
           <div className="space-y-3">
             {reminders.map((reminder) => (
-              <Card key={reminder.id} className="border-l-4 border-l-orange-500 shadow-orange">
+              <Card key={reminder.id} className="smooth-card list-item-enter border-l-4 border-l-orange-500 shadow-orange">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -818,7 +818,7 @@ export default function CalendarReminder() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDeleteReminder(reminder.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1"
+                      className="smooth-button text-red-600 hover:text-red-700 hover:bg-red-50 p-1"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>

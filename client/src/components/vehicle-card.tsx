@@ -213,7 +213,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   };
 
   return (
-    <Card className="tile-3d border-l-4 border-l-blue-500">
+    <Card className="smooth-card tile-3d border-l-4 border-l-blue-500">
       <CardContent className="p-3">
         <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
@@ -248,7 +248,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="text-blue-600 hover:bg-blue-50 p-1 h-auto w-auto"
+                    className="smooth-button text-blue-600 hover:bg-blue-50 p-1 h-auto w-auto"
                     title="Edit vehicle"
                   >
                     <Edit className="w-3 h-3" />
@@ -257,7 +257,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className={`p-1 h-auto w-auto ${
+                  className={`smooth-button p-1 h-auto w-auto ${
                     showDeleteConfirm 
                       ? "text-red-700 bg-red-100 hover:bg-red-200" 
                       : "text-red-600 hover:bg-red-50"

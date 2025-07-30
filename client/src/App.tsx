@@ -149,38 +149,40 @@ function Router() {
   }
 
   return (
-    <Switch>
-      <Route path="/sign-in" component={SignIn} />
-      <Route path="/blocked-user" component={BlockedUser} />
-      <Route path="/welcome" component={Welcome} />
-      <Route path="/" component={Dashboard} />
-      <Route path="/add-vehicle" component={AddVehicle} />
-      <Route path="/vehicle/:id/edit" component={EditVehicle} />
-      <Route path="/vehicle/:id/upload" component={UploadDocuments} />
-      <Route path="/vehicle/:id/upload-documents" component={UploadDocuments} />
-      <Route path="/vehicle/:id/local-documents" component={LocalDocuments} />
-      <Route path="/vehicle/:id/service" component={CombinedServicePage} />
-      <Route path="/vehicle/:id/service-logs" component={ServiceLogs} />
-      <Route path="/vehicle/:id/add-service-log" component={AddServiceLog} />
+    <div className="page-transition">
+      <Switch>
+        <Route path="/sign-in" component={SignIn} />
+        <Route path="/blocked-user" component={BlockedUser} />
+        <Route path="/welcome" component={Welcome} />
+        <Route path="/" component={Dashboard} />
+        <Route path="/add-vehicle" component={AddVehicle} />
+        <Route path="/vehicle/:id/edit" component={EditVehicle} />
+        <Route path="/vehicle/:id/upload" component={UploadDocuments} />
+        <Route path="/vehicle/:id/upload-documents" component={UploadDocuments} />
+        <Route path="/vehicle/:id/local-documents" component={LocalDocuments} />
+        <Route path="/vehicle/:id/service" component={CombinedServicePage} />
+        <Route path="/vehicle/:id/service-logs" component={ServiceLogs} />
+        <Route path="/vehicle/:id/add-service-log" component={AddServiceLog} />
 
-      <Route path="/vehicle/:id/alerts" component={VehicleAlerts} />
-      <Route path="/emergency-contacts" component={EmergencyContacts} />
-      <Route path="/subscribe" component={Subscribe} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/settings" component={Settings} />
-      <Route path="/search" component={SearchPage} />
-      <Route path="/climbing-game" component={ClimbingGame} />
-      <Route path="/news-tidbits" component={NewsTidbits} />
-      <Route path="/dashboard/customize" component={DashboardCustomize} />
-      <Route path="/traffic-violations" component={TrafficViolations} />
-      <Route path="/insurance-renewals" component={InsuranceRenewals} />
-      <Route path="/insurance" component={Insurance} />
-      <Route path="/broadcast" component={BroadcastPage} />
-      <Route path="/admin-dashboard" component={AdminDashboard} />
-      <Route path="/account-management" component={AccountManagement} />
-      <Route path="/calendar-reminder" component={CalendarReminder} />
-      <Route component={NotFound} />
-    </Switch>
+        <Route path="/vehicle/:id/alerts" component={VehicleAlerts} />
+        <Route path="/emergency-contacts" component={EmergencyContacts} />
+        <Route path="/subscribe" component={Subscribe} />
+        <Route path="/profile" component={Profile} />
+        <Route path="/settings" component={Settings} />
+        <Route path="/search" component={SearchPage} />
+        <Route path="/climbing-game" component={ClimbingGame} />
+        <Route path="/news-tidbits" component={NewsTidbits} />
+        <Route path="/dashboard/customize" component={DashboardCustomize} />
+        <Route path="/traffic-violations" component={TrafficViolations} />
+        <Route path="/insurance-renewals" component={InsuranceRenewals} />
+        <Route path="/insurance" component={Insurance} />
+        <Route path="/broadcast" component={BroadcastPage} />
+        <Route path="/admin-dashboard" component={AdminDashboard} />
+        <Route path="/account-management" component={AccountManagement} />
+        <Route path="/calendar-reminder" component={CalendarReminder} />
+        <Route component={NotFound} />
+      </Switch>
+    </div>
   );
 }
 
