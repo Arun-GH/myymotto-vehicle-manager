@@ -89,7 +89,11 @@ export default function CalendarReminder() {
         const [hours, minutes] = parts[1].split(':').map(Number);
         reminderDate = new Date(year, month - 1, day, hours, minutes, 0);
       } else {
-        reminderDate = new Date(reminder.reminderDate);
+        // This is from database (ISO string) - the database stores time with +5:30 offset
+        // For notification scheduling, we need the original local time
+        const dbDate = new Date(reminder.reminderDate);
+        const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+        reminderDate = new Date(dbDate.getTime() - istOffset);
       }
       
       const notificationId = reminder.id || Date.now();
@@ -144,6 +148,15 @@ export default function CalendarReminder() {
       console.log(`Original reminder.reminderDate: ${reminder.reminderDate}`);
       console.log(`Parsed reminderDate: ${reminderDate.toString()}`);
       console.log(`Formatted display time: ${formatDate(reminder.reminderDate)}`);
+      console.log(`Current time: ${new Date().toLocaleString()}`);
+      console.log(`Time until alarm: ${Math.round((reminderDate.getTime() - Date.now()) / 1000 / 60)} minutes`);
+      
+      // Additional check for immediate notifications (within next 2 minutes)
+      const timeUntilAlarm = reminderDate.getTime() - Date.now();
+      if (timeUntilAlarm < 2 * 60 * 1000 && timeUntilAlarm > 0) {
+        console.log(`⚠️ IMMEDIATE ALARM: This alarm will ring in ${Math.round(timeUntilAlarm / 1000)} seconds!`);
+      }
+      
       return true;
     } catch (error) {
       console.error('Error scheduling device notification:', error);
