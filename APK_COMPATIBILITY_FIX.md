@@ -138,15 +138,22 @@ After building, verify the APK contains:
 - All Capacitor plugins are properly configured
 - Native features (camera, notifications) work on compatible devices
 
-## "Hello Android" Issue Fix
+## "Hello Android" Issue Fix - UPDATED SOLUTION
 
 If the APK installs but shows "Hello Android" page:
 
-1. **First, ensure web build is current:**
+1. **Complete rebuild sequence (IMPORTANT):**
    ```bash
    npm run build
-   npx cap sync android
+   npx cap copy android
    ```
+
+2. **Verify these files exist and are not empty:**
+   - `android/app/src/main/assets/public/cordova.js`
+   - `android/app/src/main/assets/public/cordova_plugins.js`
+   - `android/app/src/main/assets/public/index.html` (should include `<script src="cordova.js"></script>`)
+
+3. **In Android Studio - CRITICAL STEPS:**
 
 2. **Clean and rebuild in Android Studio:**
    - **Build** → **Clean Project**
