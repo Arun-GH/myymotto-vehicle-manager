@@ -1998,6 +1998,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete('/api/admin/users/:userId', isAdmin, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const userIdInt = parseInt(userId);
+      
+      // Prevent deletion of admin users
+      if (userIdInt === 1) {
+        return res.status(403).json({ message: "Cannot delete primary admin user" });
+      }
+      
+      const deleted = await storage.deleteUser(userIdInt);
+      if (deleted) {
+        res.json({ success: true, message: 'User and all associated data deleted successfully' });
+      } else {
+        res.status(404).json({ message: 'User not found' });
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
   // Admin post management routes
   app.delete('/api/admin/broadcasts/:id', isAdmin, async (req, res) => {
     try {

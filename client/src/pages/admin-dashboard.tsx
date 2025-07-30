@@ -360,6 +360,32 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      const response = await apiRequest("DELETE", `/api/admin/users/${userId}`, { 
+        userId: 1 
+      });
+      const result = await response.json();
+      
+      if (result.success) {
+        toast({
+          title: "User Deleted",
+          description: "User and all associated data has been permanently deleted.",
+        });
+        // Refetch users data without page reload
+        await queryClient.invalidateQueries({ queryKey: ["/api/admin/users/recent"] });
+        await queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete user. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
 
 
   // Post management handler
@@ -803,6 +829,48 @@ export default function AdminDashboard() {
                                 </AlertDialogContent>
                               </AlertDialog>
                             )}
+                            
+                            {/* Delete User Button */}
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-6 text-xs px-2 text-red-700 border-red-400 hover:bg-red-100"
+                                >
+                                  <Trash2 className="w-3 h-3 mr-1" />
+                                  Delete
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="w-[90%] max-w-md">
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className="text-red-600">⚠️ Delete User</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    <div className="space-y-2">
+                                      <p className="font-medium">This action cannot be undone!</p>
+                                      <p>You are about to permanently delete user "{user.name || user.username}" ({user.mobile}) and ALL their data including:</p>
+                                      <ul className="list-disc list-inside text-sm space-y-1 text-gray-600">
+                                        <li>User profile and account information</li>
+                                        <li>All vehicles and vehicle data</li>
+                                        <li>All documents and document metadata</li>
+                                        <li>All service logs and maintenance records</li>
+                                        <li>All notifications and alerts</li>
+                                        <li>All broadcast posts and ratings</li>
+                                      </ul>
+                                    </div>
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction 
+                                    onClick={() => handleDeleteUser(user.id)}
+                                    className="bg-red-700 hover:bg-red-800"
+                                  >
+                                    Permanently Delete User
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           </div>
                         </div>
                       </div>

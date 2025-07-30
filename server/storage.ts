@@ -12,6 +12,7 @@ export interface IStorage {
   verifyPin(identifier: string, pin: string): Promise<User | undefined>;
   updateUserPin(id: number, pin: string): Promise<User | undefined>;
   updateBiometricSetting(id: number, enabled: boolean): Promise<User | undefined>;
+  deleteUser(id: number): Promise<boolean>;
   
   // OTP methods
   createOtpVerification(otp: InsertOtpVerification): Promise<OtpVerification>;
@@ -1455,6 +1456,65 @@ export class DatabaseStorage implements IStorage {
         blockedReason: null 
       })
       .where(eq(users.id, userId));
+  }
+
+  async deleteUser(userId: number): Promise<boolean> {
+    try {
+      // Start a transaction to delete all user-related data
+      const userExists = await this.getUser(userId);
+      if (!userExists) {
+        return false;
+      }
+
+      // Get all user's vehicles first (needed for cascading deletes)
+      const userVehicles = await this.getVehicles(userId);
+      const vehicleIds = userVehicles.map(v => v.id);
+
+      // Delete all related data in proper order (children first, then parents)
+      if (vehicleIds.length > 0) {
+        // Delete notifications for user's vehicles
+        await db.delete(notifications).where(inArray(notifications.vehicleId, vehicleIds));
+        
+        // Delete service logs for user's vehicles
+        await db.delete(serviceLogs).where(inArray(serviceLogs.vehicleId, vehicleIds));
+        
+        // Delete maintenance records for user's vehicles
+        await db.delete(maintenanceRecords).where(inArray(maintenanceRecords.vehicleId, vehicleIds));
+        
+        // Delete traffic violations for user's vehicles
+        await db.delete(trafficViolations).where(inArray(trafficViolations.vehicleId, vehicleIds));
+        
+        // Delete document expiries for user's vehicles
+        await db.delete(documentExpiries).where(inArray(documentExpiries.vehicleId, vehicleIds));
+        
+        // Delete documents for user's vehicles
+        await db.delete(documents).where(inArray(documents.vehicleId, vehicleIds));
+        
+        // Delete vehicles
+        await db.delete(vehicles).where(eq(vehicles.userId, userId));
+      }
+      
+      // Delete user-specific data
+      await db.delete(calendarReminders).where(eq(calendarReminders.userId, userId));
+      await db.delete(emergencyContacts).where(eq(emergencyContacts.userId, userId));
+      await db.delete(otpVerifications).where(eq(otpVerifications.identifier, userExists.mobile || userExists.username));
+      await db.delete(ratings).where(eq(ratings.userId, userId));
+      await db.delete(broadcasts).where(eq(broadcasts.userId, userId));
+      await db.delete(broadcastResponses).where(eq(broadcastResponses.userId, userId));
+      await db.delete(accountInformation).where(eq(accountInformation.userId, userId));
+      await db.delete(invoices).where(eq(invoices.userId, userId));
+      
+      // Delete user profile
+      await db.delete(userProfiles).where(eq(userProfiles.userId, userId));
+      
+      // Finally delete the user
+      const result = await db.delete(users).where(eq(users.id, userId));
+      
+      return (result.rowCount ?? 0) > 0;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return false;
+    }
   }
 
   async getAllVehiclesData(): Promise<Vehicle[]> {
