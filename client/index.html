@@ -3,13 +3,58 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Myymotto - Timely Care for your carrier</title>
-    <meta name="description" content="Myymotto - Complete vehicle management solution with document tracking, renewal alerts, and timely care for your carrier." />
+    <title>MyyMotto - Vehicle Management</title>
+    <meta name="description" content="MyyMotto - Complete vehicle management solution with document tracking, renewal alerts, and timely care for your carrier." />
+    <style>
+      /* Critical: Override any default Android styling */
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { 
+        width: 100%; 
+        height: 100%; 
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important; 
+        font-family: system-ui, -apple-system, sans-serif !important;
+        overflow-x: hidden;
+      }
+      #loading-debug {
+        position: fixed !important;
+        top: 50px !important;
+        left: 20px !important;
+        right: 20px !important;
+        background: #059669 !important;
+        color: white !important;
+        padding: 20px !important;
+        border-radius: 12px !important;
+        font-size: 18px !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        z-index: 99999 !important;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important;
+      }
+      #root {
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+      }
+    </style>
   </head>
   <body>
+    <div id="loading-debug">🚗 MyyMotto Vehicle Management Loading...</div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
-    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+    <script src="cordova.js"></script>
+    <script>
+      console.log('=== MYYMOTTO APP INITIALIZING ===');
+      setTimeout(() => {
+        const debug = document.getElementById('loading-debug');
+        if (debug) {
+          debug.innerHTML = '🚗 MyyMotto Successfully Loaded!';
+          debug.style.background = '#16a34a';
+        }
+      }, 2000);
+      setTimeout(() => {
+        const debug = document.getElementById('loading-debug');
+        if (debug) debug.style.display = 'none';
+      }, 5000);
+    </script>
   </body>
 </html>
