@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Myymotto</string>
-    <string name="title_activity_main">Myymotto</string>
+    <string name="app_name">MyyMotto</string>
+    <string name="title_activity_main">MyyMotto</string>
     <string name="package_name">com.myymotto.vehiclemanager</string>
     <string name="custom_url_scheme">com.myymotto.vehiclemanager</string>
 </resources>
