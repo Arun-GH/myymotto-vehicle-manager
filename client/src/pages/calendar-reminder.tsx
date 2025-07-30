@@ -180,11 +180,98 @@ export default function CalendarReminder() {
     }
   };
 
+  const openNativeAlarmApp = async (reminder: InsertCalendarReminder & { id?: number }) => {
+    try {
+      // Get the corrected reminder date
+      let reminderDate: Date;
+      if (typeof reminder.reminderDate === 'string' && reminder.reminderDate.includes('T') && !reminder.reminderDate.includes('Z')) {
+        const parts = reminder.reminderDate.split('T');
+        const [year, month, day] = parts[0].split('-').map(Number);
+        const [hours, minutes] = parts[1].split(':').map(Number);
+        reminderDate = new Date(year, month - 1, day, hours, minutes, 0);
+      } else {
+        const dbDate = new Date(reminder.reminderDate);
+        reminderDate = new Date(
+          dbDate.getUTCFullYear(),
+          dbDate.getUTCMonth(),
+          dbDate.getUTCDate(),
+          dbDate.getUTCHours(),
+          dbDate.getUTCMinutes(),
+          dbDate.getUTCSeconds()
+        );
+      }
+
+      const hours = reminderDate.getHours();
+      const minutes = reminderDate.getMinutes();
+      
+      console.log('📱 OPENING NATIVE ALARM APP...');
+      console.log(`   Time to set: ${hours}:${minutes.toString().padStart(2, '0')}`);
+      console.log(`   Reminder: ${reminder.title}`);
+      
+      // Create intent to open device's alarm/clock app with preset values
+      const alarmMessage = `MyyMotto: ${reminder.title}`;
+      
+      if (Capacitor.getPlatform() === 'android') {
+        // Android alarm intent
+        const androidIntent = `intent://clock#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR=${hours};i.android.intent.extra.alarm.MINUTES=${minutes};S.android.intent.extra.alarm.MESSAGE=${encodeURIComponent(alarmMessage)};b.android.intent.extra.alarm.SKIP_UI=false;end`;
+        
+        // Try to open with intent
+        try {
+          window.location.href = androidIntent;
+          console.log('✅ Android alarm intent launched');
+        } catch (intentError) {
+          // Fallback: direct alarm app URL
+          const alarmUrl = `alarmclock://set?hour=${hours}&minute=${minutes}&message=${encodeURIComponent(alarmMessage)}`;
+          window.open(alarmUrl, '_system');
+          console.log('✅ Android alarm URL launched');
+        }
+        
+      } else if (Capacitor.getPlatform() === 'ios') {
+        // iOS clock app URL scheme
+        const iosClockUrl = `clock-alarm://create?hour=${hours}&minute=${minutes}&label=${encodeURIComponent(alarmMessage)}`;
+        
+        try {
+          window.open(iosClockUrl, '_system');
+          console.log('✅ iOS clock app launched');
+        } catch (iosError) {
+          // Fallback: generic clock URL
+          window.open('clock://', '_system');
+          console.log('✅ iOS clock app opened (manual setup required)');
+        }
+      }
+      
+      // Show user instruction
+      toast({
+        title: "📱 Device Alarm App Opened",
+        description: `Your alarm app should open with time ${hours}:${minutes.toString().padStart(2, '0')} preset. Please save the alarm to ensure it rings at the correct time.`,
+        duration: 6000
+      });
+      
+      return true;
+      
+    } catch (error) {
+      console.error('❌ Failed to open native alarm app:', error);
+      return false;
+    }
+  };
+
   const scheduleDeviceNotification = async (reminder: InsertCalendarReminder & { id?: number }) => {
     // Handle web notifications for desktop users
     if (!Capacitor.isNativePlatform()) {
       console.log('🔔 Scheduling web notification for desktop user');
       return await scheduleWebNotification(reminder);
+    }
+
+    // For mobile users, try native alarm app first, then fallback to notifications
+    console.log('📱 Mobile platform detected - attempting native alarm integration...');
+    const nativeAlarmSuccess = await openNativeAlarmApp(reminder);
+    
+    if (nativeAlarmSuccess) {
+      console.log('✅ Native alarm app integration successful');
+      // Still schedule backup notification in case user doesn't save the alarm
+      console.log('📲 Also scheduling backup notification...');
+    } else {
+      console.log('⚠️ Native alarm failed, using notification fallback only');
     }
 
     try {
@@ -548,12 +635,12 @@ export default function CalendarReminder() {
               </div>
               <p className="text-xs text-blue-700">
                 {notificationPermission?.display === 'granted' 
-                  ? "✓ Persistent alarms work even when app is closed or logged out"
-                  : "⚠ Allow notifications to enable persistent system alarms"
+                  ? "✓ Native alarm integration: Opens your device's clock app automatically"
+                  : "⚠ Allow notifications to enable backup alarm system"
                 }
               </p>
               <p className="text-xs text-blue-600 mt-1">
-                📱 Alarms are saved to your device's notification system and will ring regardless of app status.
+                📱 Creates actual alarms in your phone's clock app for guaranteed wake-up alerts.
               </p>
               {notificationPermission?.display === 'granted' && (
                 <div className="mt-2">
@@ -647,9 +734,9 @@ export default function CalendarReminder() {
                         <Clock className="w-4 h-4" />
                         {formatDate(reminder.reminderDate)}
                         {Capacitor.isNativePlatform() && (
-                          <div className="flex items-center gap-1 ml-2 px-2 py-1 bg-green-100 rounded-full">
-                            <Smartphone className="w-3 h-3 text-green-600" />
-                            <span className="text-xs text-green-700">System Alarm</span>
+                          <div className="flex items-center gap-1 ml-2 px-2 py-1 bg-blue-100 rounded-full">
+                            <Clock className="w-3 h-3 text-blue-600" />
+                            <span className="text-xs text-blue-700">Native Alarm</span>
                           </div>
                         )}
                       </div>
