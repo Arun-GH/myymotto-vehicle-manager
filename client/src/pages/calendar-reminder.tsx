@@ -89,7 +89,7 @@ export default function CalendarReminder() {
         }
         
         if (permission === 'granted') {
-          // Calculate time until reminder
+          // Calculate time until reminder with timezone correction
           let reminderDate: Date;
           if (typeof reminder.reminderDate === 'string' && reminder.reminderDate.includes('T') && !reminder.reminderDate.includes('Z')) {
             const parts = reminder.reminderDate.split('T');
@@ -97,7 +97,16 @@ export default function CalendarReminder() {
             const [hours, minutes] = parts[1].split(':').map(Number);
             reminderDate = new Date(year, month - 1, day, hours, minutes, 0);
           } else {
-            reminderDate = new Date(reminder.reminderDate);
+            // Apply same timezone fix as display and mobile notifications
+            const dbDate = new Date(reminder.reminderDate);
+            reminderDate = new Date(
+              dbDate.getUTCFullYear(),
+              dbDate.getUTCMonth(),
+              dbDate.getUTCDate(),
+              dbDate.getUTCHours(),
+              dbDate.getUTCMinutes(),
+              dbDate.getUTCSeconds()
+            );
           }
           
           const timeUntilReminder = reminderDate.getTime() - Date.now();
@@ -150,9 +159,19 @@ export default function CalendarReminder() {
         const [hours, minutes] = parts[1].split(':').map(Number);
         reminderDate = new Date(year, month - 1, day, hours, minutes, 0);
       } else {
-        // This is from database (ISO string) - now that timezone handling is fixed,
-        // we can directly use the date without adjustment
-        reminderDate = new Date(reminder.reminderDate);
+        // This is from database (ISO string with Z) - apply same timezone fix as display
+        const dbDate = new Date(reminder.reminderDate);
+        reminderDate = new Date(
+          dbDate.getUTCFullYear(),
+          dbDate.getUTCMonth(),
+          dbDate.getUTCDate(),
+          dbDate.getUTCHours(),
+          dbDate.getUTCMinutes(),
+          dbDate.getUTCSeconds()
+        );
+        
+        console.log(`🔔 ALARM SCHEDULE: Database time: ${reminder.reminderDate}`);
+        console.log(`🔔 ALARM SCHEDULE: Alarm will ring at: ${reminderDate.toLocaleString('en-IN', { hour12: true })}`);
       }
       
       const notificationId = reminder.id || Date.now();
@@ -208,19 +227,38 @@ export default function CalendarReminder() {
         }
       }
 
-      console.log(`Persistent device notification scheduled for: ${reminderDate.toLocaleString()}`);
-      console.log(`Original reminder.reminderDate: ${reminder.reminderDate}`);
-      console.log(`Parsed reminderDate: ${reminderDate.toString()}`);
-      console.log(`Formatted display time: ${formatDate(reminder.reminderDate)}`);
-      console.log(`Current time: ${new Date().toLocaleString()}`);
-      console.log(`Time until alarm: ${Math.round((reminderDate.getTime() - Date.now()) / 1000 / 60)} minutes`);
-      
-      // Additional check for immediate notifications (within next 2 minutes)
       const timeUntilAlarm = reminderDate.getTime() - Date.now();
-      if (timeUntilAlarm < 2 * 60 * 1000 && timeUntilAlarm > 0) {
-        console.log(`⚠️ IMMEDIATE ALARM: This alarm will ring in ${Math.round(timeUntilAlarm / 1000)} seconds!`);
+      
+      console.log(`📱 MOBILE ALARM SYSTEM DEBUG:`);
+      console.log(`   Database time: ${reminder.reminderDate}`);
+      console.log(`   Corrected alarm time: ${reminderDate.toLocaleString('en-IN', { hour12: true })}`);
+      console.log(`   Current time: ${new Date().toLocaleString('en-IN', { hour12: true })}`);
+      console.log(`   Time until alarm: ${Math.round(timeUntilAlarm / 1000 / 60)} minutes`);
+      console.log(`   Notification ID: ${notificationId}`);
+      console.log(`   Channel ID: myyMotto-alarms`);
+      console.log(`   Platform: ${Capacitor.getPlatform()}`);
+      
+      // Check if alarm is in the past
+      if (timeUntilAlarm < 0) {
+        console.log(`❌ ALARM ERROR: Cannot set alarm for past time (${Math.abs(Math.round(timeUntilAlarm / 1000 / 60))} minutes ago)`);
+        return false;
       }
       
+      // Check for immediate notifications (within next 2 minutes)
+      if (timeUntilAlarm < 2 * 60 * 1000 && timeUntilAlarm > 0) {
+        console.log(`🚨 IMMEDIATE ALARM: This alarm will ring in ${Math.round(timeUntilAlarm / 1000)} seconds!`);
+      }
+      
+      // Check permission status
+      const permission = await LocalNotifications.checkPermissions();
+      console.log(`   Notification permission: ${permission.display}`);
+      
+      if (permission.display !== 'granted') {
+        console.log(`❌ ALARM ERROR: Notification permission not granted`);
+        return false;
+      }
+      
+      console.log(`✅ MOBILE ALARM SCHEDULED SUCCESSFULLY`);
       return true;
     } catch (error) {
       console.error('Error scheduling device notification:', error);
@@ -361,13 +399,22 @@ export default function CalendarReminder() {
         // Create date in local timezone
         date = new Date(year, month - 1, day, hours, minutes, 0);
       } else {
-        // This is from database (ISO string) - now that timezone handling is fixed,
-        // we can directly parse the date without adjustment
-        date = new Date(dateInput);
+        // This is from database (ISO string with Z) - it's stored as UTC but represents local time
+        // We need to create a local date with the same time values
+        const dbDate = new Date(dateInput);
+        // Get the UTC components and create a local date with those same values
+        date = new Date(
+          dbDate.getUTCFullYear(),
+          dbDate.getUTCMonth(),
+          dbDate.getUTCDate(),
+          dbDate.getUTCHours(),
+          dbDate.getUTCMinutes(),
+          dbDate.getUTCSeconds()
+        );
         
-        console.log(`✅ FIXED DISPLAY: Database time: ${dateInput}`);
-        console.log(`✅ FIXED DISPLAY: Parsed date: ${date.toString()}`);
-        console.log(`✅ FIXED DISPLAY: Formatted time: ${date.toLocaleString('en-IN', { hour12: true })}`);
+        console.log(`🔧 TIMEZONE FIX: Database time: ${dateInput}`);
+        console.log(`🔧 TIMEZONE FIX: UTC components: ${dbDate.getUTCHours()}:${dbDate.getUTCMinutes()}`);
+        console.log(`🔧 TIMEZONE FIX: Local display time: ${date.toLocaleString('en-IN', { hour12: true })}`);
       }
     } else {
       date = new Date(dateInput);
