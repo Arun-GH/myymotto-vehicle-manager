@@ -3,5 +3,6 @@
   "build": "debug",
   "packageName": "com.myymotto.vehiclemanager",
   "appName": "MyyMotto",
-  "javaVersion": "17"
+  "javaVersion": "17",
+  "webDir": "www"
 }
