@@ -1,0 +1,7 @@
+{
+  "platform": "android",
+  "build": "debug",
+  "packageName": "com.myymotto.vehiclemanager",
+  "appName": "MyyMotto",
+  "javaVersion": "17"
+}
