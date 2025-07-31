@@ -21,10 +21,7 @@ cd ..
 
 # Step 4: Create package for VoltBuilder
 echo "📁 Creating VoltBuilder package..."
-tar -czf myymotto-voltbuilder.tar.gz android/ \
-  --exclude="*/build" \
-  --exclude="*/.gradle" \
-  --exclude="*/node_modules"
+tar -czf myymotto-voltbuilder.tar.gz android/
 
 # Step 5: Display results
 echo "✅ Package ready for VoltBuilder!"
